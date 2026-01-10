@@ -1,0 +1,66 @@
+name: Deploy Spring Boot to NAS
+
+on:
+  push:
+    branches: [ "main" ] # main 브랜치에 푸시될 때 실행
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. 코드 가져오기
+    - uses: actions/checkout@v4
+
+    # 2. JDK 17 설정
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    # 3. Gradle 빌드 (jar 생성)
+    - name: Build with Gradle
+      run: |
+        chmod +x gradlew
+        ./gradlew clean bootJar
+
+    # 4. Docker Hub 로그인
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # 5. Docker 이미지 빌드 및 푸시
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/my-spring-server:latest
+        # platforms: linux/amd64 # NAS CPU 아키텍처에 맞게 설정 (보통 amd64)
+
+    # 6. NAS에 SSH 접속하여 배포 실행
+    - name: Deploy to NAS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.NAS_HOST }}
+        username: ${{ secrets.NAS_USERNAME }}
+        password: ${{ secrets.NAS_PASSWORD }}
+        port: ${{ secrets.NAS_PORT }}
+        script: |
+          # 관리자 권한으로 실행 (필요 시 sudo -S 사용 방식 고려)
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/my-spring-server:latest
+          sudo docker stop spring-server || true
+          sudo docker rm spring-server || true
+          
+          # 새 컨테이너 실행 (네트워크, DB설정 포함)
+          sudo docker run -d \
+            --name spring-server \
+            -p 8080:8080 \
+            --network my-net \
+            -e SPRING_DATASOURCE_URL="jdbc:postgresql://postgres-db:5432/mydb" \
+            -e SPRING_DATASOURCE_USERNAME="dbuser" \
+            -e SPRING_DATASOURCE_PASSWORD="dbpass" \
+            ${{ secrets.DOCKER_USERNAME }}/my-spring-server:latest
