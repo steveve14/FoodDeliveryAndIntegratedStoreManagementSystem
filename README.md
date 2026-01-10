@@ -6,8 +6,7 @@
 ![MSA](https://img.shields.io/badge/Architecture-MSA-orange?style=flat)
 ![MyBatis Version](https://img.shields.io/badge/MyBatis-3.5.13-blue?style=flat&logo=MyBatis)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=flat&logo=postgresql)
-
-
+![Volta](https://img.shields.io/badge/Volta-Node%20Toolchain-4B32C3?style=flat&logo=volta)
 
 > **배달 앱과 매장 내 POS 시스템을 하나로 통합한 차세대 관리 플랫폼 개발 프로젝트입니다.**  
 > Spring Boot 기반의 MSA 아키텍처와 Nuxt.js 프론트엔드를 적용하여 확장성과 유지보수성을 극대화했습니다.

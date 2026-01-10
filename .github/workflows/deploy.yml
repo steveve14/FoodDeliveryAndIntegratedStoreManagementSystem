@@ -8,6 +8,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./backend
+
     steps:
     # 1. 코드 가져오기
     - uses: actions/checkout@v4
