@@ -44,27 +44,3 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/my-spring-server:latest
         # platforms: linux/amd64 # NAS CPU 아키텍처에 맞게 설정 (보통 amd64)
-
-    # 6. NAS에 SSH 접속하여 배포 실행
-    - name: Deploy to NAS
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.NAS_HOST }}
-        username: ${{ secrets.NAS_USERNAME }}
-        password: ${{ secrets.NAS_PASSWORD }}
-        port: ${{ secrets.NAS_PORT }}
-        script: |
-          # 관리자 권한으로 실행 (필요 시 sudo -S 사용 방식 고려)
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/my-spring-server:latest
-          sudo docker stop spring-server || true
-          sudo docker rm spring-server || true
-          
-          # 새 컨테이너 실행 (네트워크, DB설정 포함)
-          sudo docker run -d \
-            --name spring-server \
-            -p 8080:8080 \
-            --network my-net \
-            -e SPRING_DATASOURCE_URL="jdbc:postgresql://postgres-db:5432/mydb" \
-            -e SPRING_DATASOURCE_USERNAME="dbuser" \
-            -e SPRING_DATASOURCE_PASSWORD="dbpass" \
-            ${{ secrets.DOCKER_USERNAME }}/my-spring-server:latest
