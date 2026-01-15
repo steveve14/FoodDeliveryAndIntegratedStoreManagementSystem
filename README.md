@@ -10,6 +10,7 @@
 
 > **배달 앱과 매장 내 POS 시스템을 하나로 통합한 차세대 관리 플랫폼 개발 프로젝트입니다.**  
 > Spring Boot 기반의 MSA 아키텍처와 Nuxt.js 프론트엔드를 적용하여 확장성과 유지보수성을 극대화했습니다.
+> 개발순서(예정) -> 어드민 -> 가게주인 -> 배달기사 -> 사용자
 
 ---
 
@@ -70,6 +71,6 @@ graph TD
     Store <-->|Feign| Order
     Order <-->|Feign| Payment
     
-    Auth -.-> DB_Auth[(SQLite/MySQL)]
-    Store -.-> DB_Store[(SQLite/MySQL)]
-    Order -.-> DB_Order[(SQLite/MySQL)]
+    Auth -.-> DB_Auth[(PostgreSQL)]
+    Store -.-> DB_Store[(PostgreSQL)]
+    Order -.-> DB_Order[(PostgreSQL)]
