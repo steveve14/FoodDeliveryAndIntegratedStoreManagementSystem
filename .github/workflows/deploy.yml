@@ -1,3 +1,11 @@
+name: Test My Runner
+on: [push]
 jobs:
-  build:
+  test-job:
     runs-on: self-hosted
+    steps:
+      - name: Check Runner Info
+        run: |
+          echo "Hello! I am running on your Ugreen NAS!"
+          hostname
+          whoami
