@@ -1,0 +1,13 @@
+server:
+  port: 60000 # 임의의 포트 설정 (또는 0으로 설정하여 랜덤 포트 사용 가능)
+
+spring:
+  application:
+    name: service-user
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

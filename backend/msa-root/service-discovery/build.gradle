@@ -1,4 +1,3 @@
 dependencies {
-    // Eureka Server 라이브러리 (버전은 Root의 BOM이 관리함)
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
 }
