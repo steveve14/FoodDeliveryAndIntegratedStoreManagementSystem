@@ -2,6 +2,31 @@ server:
   port: 7000
 
 spring:
+  cloud:
+    gateway:
+      routes:
+        # 1. 인증 서버 (로그인은 누구나 가능해야 하므로 필터 X)
+        - id: service-auth
+          uri: lb://SERVICE-AUTH
+          predicates:
+            - Path=/auth/**
+
+        # 2. 회원 서비스 (로그인 체크 필요!)
+        - id: service-user
+          uri: lb://SERVICE-USER
+          predicates:
+            - Path=/users/**
+          filters:
+            - AuthorizationHeaderFilter # [적용] 위에서 만든 클래스 이름
+
+        # 3. 주문 서비스 (로그인 체크 필요!)
+        - id: service-order
+          uri: lb://SERVICE-ORDER
+          predicates:
+            - Path=/orders/**
+          filters:
+            - AuthorizationHeaderFilter
+            -
   application:
     name: service-auth
 

@@ -3,22 +3,25 @@ server:
 
 spring:
   application:
-    name: service-user
+    name: service-user  # Eureka에 등록될 이름
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8100/eureka/
-
-datasource:
-  driver-class-name: org.postgresql.Driver
-  url: jdbc:postgresql://192.168.0.25:6000/db_user
-  username: postgres
-  password: 1234
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.0.25:6000/db_user
+    username: postgres
+    password: 1234 # 본인의 DB 비밀번호로 수정하세요
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: update  # 개발 단계에서는 update 사용
+    show-sql: true      # 쿼리 로그 확인
+    properties:
+      hibernate:
+        format_sql: true
+
+eureka:
+  client:
+    register-with-eureka: true   # Eureka에 등록
+    fetch-registry: true         # 다른 서비스 주소 조회
+    service-url:
+      defaultZone: http://localhost:8100/eureka/  # Discovery Service 주소
