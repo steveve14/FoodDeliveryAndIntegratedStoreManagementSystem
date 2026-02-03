@@ -1,6 +1,64 @@
+server:
+  port: 8000  # 클라이언트가 접근할 Gateway 포트
+
+spring:
+  application:
+    name: service-gateway
+
+  cloud:
+    gateway:
+      routes:
+        # ==========================================
+        # 1. 인증/보안 서비스 (로그인, 토큰발급)
+        # ==========================================
+        - id: service-auth
+          uri: lb://SERVICE-AUTH
+          predicates:
+            - Path=/auth/**, /login/**, /oauth2/**
+
+        # ==========================================
+        # 2. 회원 서비스 (사용자 정보, 주소)
+        # ==========================================
+        - id: service-user
+          uri: lb://SERVICE-USER
+          predicates:
+            - Path=/users/**, /addresses/**
+
+        # ==========================================
+        # 3. 가게 서비스 (가게정보, 메뉴, 광고, 등급)
+        # ==========================================
+        - id: service-store
+          uri: lb://SERVICE-STORE
+          predicates:
+            - Path=/stores/**, /menus/**, /reviews/**
+
+        # ==========================================
+        # 4. 주문 서비스 (주문생성, 결제)
+        # ==========================================
+        - id: service-order
+          uri: lb://SERVICE-ORDER
+          predicates:
+            - Path=/orders/**, /payments/**
+
+        # ==========================================
+        # 5. 배달 서비스 (라이더 배차, 위치추적)
+        # ==========================================
+        - id: service-delivery
+          uri: lb://SERVICE-DELIVERY
+          predicates:
+            - Path=/deliveries/**
+
+        # ==========================================
+        # 6. 이벤트 서비스 (쿠폰, 선착순)
+        # ==========================================
+        - id: service-event
+          uri: lb://SERVICE-EVENT
+          predicates:
+            - Path=/events/**, /coupons/**
+
 eureka:
   client:
-    register-with-eureka: false
+    register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8100/eureka/

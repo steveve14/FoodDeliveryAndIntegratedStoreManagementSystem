@@ -2,19 +2,19 @@
 import { DateFormatter, getLocalTimeZone, CalendarDate, today } from '@internationalized/date'
 import type { Range } from '~/types'
 
-const df = new DateFormatter('en-US', {
+const df = new DateFormatter('ko-KR', {
   dateStyle: 'medium'
 })
 
 const selected = defineModel<Range>({ required: true })
 
 const ranges = [
-  { label: 'Last 7 days', days: 7 },
-  { label: 'Last 14 days', days: 14 },
-  { label: 'Last 30 days', days: 30 },
-  { label: 'Last 3 months', months: 3 },
-  { label: 'Last 6 months', months: 6 },
-  { label: 'Last year', years: 1 }
+  { label: '지난 7일', days: 7 },
+  { label: '지난 14일', days: 14 },
+  { label: '지난 30일', days: 30 },
+  { label: '지난 3개월', months: 3 },
+  { label: '지난 6개월', months: 6 },
+  { label: '지난 1년', years: 1 }
 ]
 
 const toCalendarDate = (date: Date) => {

@@ -29,7 +29,7 @@ const { data } = await useAsyncData('sales', async () => {
     sales.push({
       id: (4600 - i).toString(),
       date: date.toISOString(),
-      status: randomFrom(['paid', 'failed', 'refunded']),
+      status: randomFrom(['성공', '실패', '대기중']) as Sale['status'], 
       email: randomFrom(sampleEmails),
       amount: randomInt(100, 1000)
     })
@@ -49,9 +49,9 @@ const columns: TableColumn<Sale>[] = [
   },
   {
     accessorKey: 'date',
-    header: 'Date',
+    header: '날짜',
     cell: ({ row }) => {
-      return new Date(row.getValue('date')).toLocaleString('en-US', {
+      return new Date(row.getValue('date')).toLocaleString('ko-KR', {
         day: 'numeric',
         month: 'short',
         hour: '2-digit',
@@ -62,12 +62,12 @@ const columns: TableColumn<Sale>[] = [
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: '상태',
     cell: ({ row }) => {
       const color = {
-        paid: 'success' as const,
-        failed: 'error' as const,
-        refunded: 'neutral' as const
+        성공: 'success' as const,
+        실패: 'error' as const,
+        대기중: 'neutral' as const
       }[row.getValue('status') as string]
 
       return h(UBadge, { class: 'capitalize', variant: 'subtle', color }, () =>
@@ -77,17 +77,17 @@ const columns: TableColumn<Sale>[] = [
   },
   {
     accessorKey: 'email',
-    header: 'Email'
+    header: '이메일'
   },
   {
     accessorKey: 'amount',
-    header: () => h('div', { class: 'text-right' }, 'Amount'),
+    header: () => h('div', { class: 'text-right' }, '금액'),
     cell: ({ row }) => {
       const amount = Number.parseFloat(row.getValue('amount'))
 
-      const formatted = new Intl.NumberFormat('en-US', {
+      const formatted = new Intl.NumberFormat('ko-KR', {
         style: 'currency',
-        currency: 'EUR'
+        currency: 'KRW'
       }).format(amount)
 
       return h('div', { class: 'text-right font-medium' }, formatted)

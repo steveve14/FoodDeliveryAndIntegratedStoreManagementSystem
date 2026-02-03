@@ -2,7 +2,7 @@ import type { AvatarProps } from '@nuxt/ui'
 
 export type UserStatus = 'subscribed' | 'unsubscribed' | 'bounced'
 export type SaleStatus = 'paid' | 'failed' | 'refunded'
-
+export type Period = 'daily' | 'weekly' | 'monthly'
 export interface User {
   id: number
   name: string
@@ -51,8 +51,6 @@ export interface Notification {
   body: string
   date: string
 }
-
-export type Period = 'daily' | 'weekly' | 'monthly'
 
 export interface Range {
   start: Date

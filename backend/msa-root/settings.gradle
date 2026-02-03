@@ -1,6 +1,10 @@
 rootProject.name = 'msa-root'
 
-include 'service-discovery'
 include 'service-gateway'
+include 'service-auth'
+include 'service-discovery'
 include 'service-user'
-include 'service-authorization'
+include 'service-store'
+include 'service-event'
+include 'service-order'
+include 'service-delivery'

@@ -7,15 +7,15 @@ const props = defineProps<{
 }>()
 
 function formatCurrency(value: number): string {
-  return value.toLocaleString('en-US', {
+  return value.toLocaleString('ko-kr', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'KRW',
     maximumFractionDigits: 0
   })
 }
 
 const baseStats = [{
-  title: 'Customers',
+  title: '사용자',
   icon: 'i-lucide-users',
   minValue: 400,
   maxValue: 1000,
