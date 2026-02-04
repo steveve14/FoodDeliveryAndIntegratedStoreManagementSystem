@@ -14,35 +14,40 @@ function formatCurrency(value: number): string {
   })
 }
 
+// 1. 각 항목별로 이동할 링크(link)를 정의합니다.
 const baseStats = [{
   title: '사용자',
   icon: 'i-lucide-users',
   minValue: 400,
   maxValue: 1000,
   minVariation: -15,
-  maxVariation: 25
+  maxVariation: 25,
+  link: '/customers' // 사용자 목록 페이지
 }, {
-  title: 'Conversions',
-  icon: 'i-lucide-chart-pie',
+  title: '등록 가게',
+  icon: 'i-lucide-store',
   minValue: 1000,
   maxValue: 2000,
   minVariation: -10,
-  maxVariation: 20
+  maxVariation: 20,
+  link: '/stores' // (예시) 가게 목록 페이지
 }, {
-  title: 'Revenue',
-  icon: 'i-lucide-circle-dollar-sign',
+  title: '총 수익',
+  icon: 'i-lucide-coins',
   minValue: 200000,
   maxValue: 500000,
   minVariation: -20,
   maxVariation: 30,
-  formatter: formatCurrency
+  formatter: formatCurrency,
+  link: '/finance' // (예시) 수익 관련 페이지
 }, {
-  title: 'Orders',
-  icon: 'i-lucide-shopping-cart',
+  title: '오류 내역',
+  icon: 'i-lucide-alert-triangle',
   minValue: 100,
   maxValue: 300,
   minVariation: -5,
-  maxVariation: 15
+  maxVariation: 15,
+  link: '/error'
 }]
 
 const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
@@ -54,7 +59,8 @@ const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
       title: stat.title,
       icon: stat.icon,
       value: stat.formatter ? stat.formatter(value) : value,
-      variation
+      variation,
+      link: stat.link // 2. 링크 정보를 반환 객체에 포함시킵니다.
     }
   })
 }, {
@@ -70,7 +76,7 @@ const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
       :key="index"
       :icon="stat.icon"
       :title="stat.title"
-      to="/customers"
+      :to="stat.link"
       variant="subtle"
       :ui="{
         container: 'gap-y-1.5',

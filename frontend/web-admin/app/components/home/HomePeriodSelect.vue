@@ -8,42 +8,57 @@ const props = defineProps<{
   range: Range
 }>()
 
-const days = computed(() => eachDayOfInterval(props.range))
+// range가 유효하지 않을 때 에러를 막기 위한 방어 코드 추가
+const days = computed(() => {
+  try {
+    return eachDayOfInterval(props.range)
+  } catch (e) {
+    return [] // 날짜 계산 실패 시 빈 배열 반환
+  }
+})
 
-const periods = computed<Period[]>(() => {
+// UI용 라벨과 실제 값을 분리
+const periods = computed(() => {
+  const options = []
+  
+  if (days.value.length === 0) return [] // 날짜가 없으면 빈 옵션 반환
+
   if (days.value.length <= 8) {
-    return [
-      '일간'
-    ]
+    options.push({ label: '일간', value: 'daily' })
+  } else if (days.value.length <= 31) {
+    options.push({ label: '일간', value: 'daily' })
+    options.push({ label: '주간', value: 'weekly' })
+  } else {
+    options.push({ label: '주간', value: 'weekly' })
+    options.push({ label: '월간', value: 'monthly' })
   }
-
-  if (days.value.length <= 31) {
-    return [
-      '일간',
-      '주간'
-    ]
-  }
-
-  return [
-    '주간',
-    '월간'
-  ]
+  
+  return options as { label: string, value: Period }[]
 })
 
-// Ensure the model value is always a valid period
-watch(periods, () => {
-  if (!periods.value.includes(model.value)) {
-    model.value = periods.value[0]!
+watch(periods, (newPeriods) => {
+  if (!newPeriods || newPeriods.length === 0) return
+
+  const isValueValid = newPeriods.some(p => p.value === model.value)
+
+  if (!isValueValid) {
+    // [0] 뒤에 !를 붙여서 undefined가 아님을 강제합니다.
+    model.value = newPeriods[0]!.value 
   }
-})
+}, { immediate: true })
+
 </script>
 
 <template>
   <USelect
     v-model="model"
     :items="periods"
+    option-attribute="label"
+    value-attribute="value"
     variant="ghost"
     class="data-[state=open]:bg-elevated"
-    :ui="{ value: 'capitalize', itemLabel: 'capitalize', trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
+    :ui="{ 
+      trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' 
+    }"
   />
 </template>

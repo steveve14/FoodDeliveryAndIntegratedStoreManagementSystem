@@ -7,14 +7,14 @@ const toast = useToast()
 const open = ref(false)
 
 const links = [[{
-  label: 'Home',
+  label: '홈',
   icon: 'i-lucide-house',
   to: '/',
   onSelect: () => {
     open.value = false
   }
 }, {
-  label: 'Inbox',
+  label: '메시지함',
   icon: 'i-lucide-inbox',
   to: '/inbox',
   badge: '4',
@@ -22,50 +22,52 @@ const links = [[{
     open.value = false
   }
 }, {
-  label: 'Customers',
+  label: '에러 관리',
+  icon: 'i-lucide-users',
+  to: '/error',
+  onSelect: () => {
+    open.value = false
+  }
+}, {
+  label: '고객 관리',
   icon: 'i-lucide-users',
   to: '/customers',
   onSelect: () => {
     open.value = false
   }
 }, {
-  label: 'Settings',
+  label: '설정',
   to: '/settings',
   icon: 'i-lucide-settings',
   defaultOpen: true,
   type: 'trigger',
   children: [{
-    label: 'General',
+    label: '프로필 설정',
     to: '/settings',
     exact: true,
     onSelect: () => {
       open.value = false
     }
   }, {
-    label: 'Members',
+    label: '멤버 관리',
     to: '/settings/members',
     onSelect: () => {
       open.value = false
     }
   }, {
-    label: 'Notifications',
+    label: '알람 설정',
     to: '/settings/notifications',
     onSelect: () => {
       open.value = false
     }
   }, {
-    label: 'Security',
+    label: '보안 설정',
     to: '/settings/security',
     onSelect: () => {
       open.value = false
     }
   }]
 }], [{
-  label: 'Feedback',
-  icon: 'i-lucide-message-circle',
-  to: 'https://github.com/nuxt-ui-templates/dashboard',
-  target: '_blank'
-}, {
   label: 'Help & Support',
   icon: 'i-lucide-info',
   to: 'https://github.com/nuxt-ui-templates/dashboard',
@@ -74,7 +76,7 @@ const links = [[{
 
 const groups = computed(() => [{
   id: 'links',
-  label: 'Go to',
+  label: '빠른 이동',
   items: links.flat()
 }, {
   id: 'code',

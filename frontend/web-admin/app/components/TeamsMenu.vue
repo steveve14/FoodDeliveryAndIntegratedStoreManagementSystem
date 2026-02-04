@@ -6,22 +6,16 @@ defineProps<{
 }>()
 
 const teams = ref([{
-  label: 'Nuxt',
+  label: '기본',
   avatar: {
     src: 'https://github.com/nuxt.png',
     alt: 'Nuxt'
   }
 }, {
-  label: 'NuxtHub',
+  label: 'Test 팀',
   avatar: {
     src: 'https://github.com/nuxt-hub.png',
     alt: 'NuxtHub'
-  }
-}, {
-  label: 'NuxtLabs',
-  avatar: {
-    src: 'https://github.com/nuxtlabs.png',
-    alt: 'NuxtLabs'
   }
 }])
 const selectedTeam = ref(teams.value[0])

@@ -19,136 +19,94 @@ const user = ref({
   }
 })
 
-const items = computed<DropdownMenuItem[][]>(() => ([[{
-  type: 'label',
-  label: user.value.name,
-  avatar: user.value.avatar
-}], [{
-  label: 'Profile',
-  icon: 'i-lucide-user'
-}, {
-  label: 'Billing',
-  icon: 'i-lucide-credit-card'
-}, {
-  label: 'Settings',
-  icon: 'i-lucide-settings',
-  to: '/settings'
-}], [{
-  label: 'Theme',
-  icon: 'i-lucide-palette',
-  children: [{
-    label: 'Primary',
-    slot: 'chip',
-    chip: appConfig.ui.colors.primary,
-    content: {
-      align: 'center',
-      collisionPadding: 16
-    },
-    children: colors.map(color => ({
-      label: color,
-      chip: color,
+const items = computed<DropdownMenuItem[][]>(() => ([
+  [{
+    type: 'label',
+    label: user.value.name,
+    avatar: user.value.avatar
+  }], 
+  [{
+    label: '프로필',
+    icon: 'i-lucide-user'
+  }, {
+    label: '설정',
+    icon: 'i-lucide-settings',
+    to: '/settings'
+  }], 
+  [{
+    label: '테마 색상', // 오타 수정: 태마 -> 테마
+    icon: 'i-lucide-palette',
+    children: [{
+      label: '메인 색상', // Primary -> 메인 색상
       slot: 'chip',
-      checked: appConfig.ui.colors.primary === color,
-      type: 'checkbox',
-      onSelect: (e) => {
-        e.preventDefault()
-
-        appConfig.ui.colors.primary = color
-      }
-    }))
-  }, {
-    label: 'Neutral',
-    slot: 'chip',
-    chip: appConfig.ui.colors.neutral === 'neutral' ? 'old-neutral' : appConfig.ui.colors.neutral,
-    content: {
-      align: 'end',
-      collisionPadding: 16
-    },
-    children: neutrals.map(color => ({
-      label: color,
-      chip: color === 'neutral' ? 'old-neutral' : color,
+      chip: appConfig.ui.colors.primary,
+      content: {
+        align: 'center',
+        collisionPadding: 16
+      },
+      children: colors.map(color => ({
+        label: color, // 색상 이름(Red 등)은 보통 그대로 두거나, 필요하면 변환 함수 사용
+        chip: color,
+        slot: 'chip',
+        checked: appConfig.ui.colors.primary === color,
+        type: 'checkbox',
+        onSelect: (e) => {
+          e.preventDefault()
+          appConfig.ui.colors.primary = color
+        }
+      }))
+    }, {
+      label: '회색 계열', // Neutral -> 회색 계열 (또는 베이스 색상)
       slot: 'chip',
+      chip: appConfig.ui.colors.neutral === 'neutral' ? 'old-neutral' : appConfig.ui.colors.neutral,
+      content: {
+        align: 'end',
+        collisionPadding: 16
+      },
+      children: neutrals.map(color => ({
+        label: color,
+        chip: color === 'neutral' ? 'old-neutral' : color,
+        slot: 'chip',
+        type: 'checkbox',
+        checked: appConfig.ui.colors.neutral === color,
+        onSelect: (e) => {
+          e.preventDefault()
+          appConfig.ui.colors.neutral = color
+        }
+      }))
+    }]
+  }, {
+    label: '화면 모드', // Appearance -> 화면 모드
+    icon: 'i-lucide-sun-moon',
+    children: [{
+      label: '라이트 모드', // Light
+      icon: 'i-lucide-sun',
       type: 'checkbox',
-      checked: appConfig.ui.colors.neutral === color,
-      onSelect: (e) => {
+      checked: colorMode.value === 'light',
+      onSelect(e: Event) {
         e.preventDefault()
-
-        appConfig.ui.colors.neutral = color
+        colorMode.preference = 'light'
       }
-    }))
-  }]
-}, {
-  label: 'Appearance',
-  icon: 'i-lucide-sun-moon',
-  children: [{
-    label: 'Light',
-    icon: 'i-lucide-sun',
-    type: 'checkbox',
-    checked: colorMode.value === 'light',
-    onSelect(e: Event) {
-      e.preventDefault()
-
-      colorMode.preference = 'light'
-    }
-  }, {
-    label: 'Dark',
-    icon: 'i-lucide-moon',
-    type: 'checkbox',
-    checked: colorMode.value === 'dark',
-    onUpdateChecked(checked: boolean) {
-      if (checked) {
-        colorMode.preference = 'dark'
+    }, {
+      label: '다크 모드', // Dark
+      icon: 'i-lucide-moon',
+      type: 'checkbox',
+      checked: colorMode.value === 'dark',
+      onUpdateChecked(checked: boolean) {
+        if (checked) {
+          colorMode.preference = 'dark'
+        }
+      },
+      onSelect(e: Event) {
+        e.preventDefault()
       }
-    },
-    onSelect(e: Event) {
-      e.preventDefault()
-    }
+    }]
+  }],  
+  [{
+    label: '로그아웃',
+    icon: 'i-lucide-log-out'
   }]
-}], [{
-  label: 'Templates',
-  icon: 'i-lucide-layout-template',
-  children: [{
-    label: 'Starter',
-    to: 'https://starter-template.nuxt.dev/'
-  }, {
-    label: 'Landing',
-    to: 'https://landing-template.nuxt.dev/'
-  }, {
-    label: 'Docs',
-    to: 'https://docs-template.nuxt.dev/'
-  }, {
-    label: 'SaaS',
-    to: 'https://saas-template.nuxt.dev/'
-  }, {
-    label: 'Dashboard',
-    to: 'https://dashboard-template.nuxt.dev/',
-    color: 'primary',
-    checked: true,
-    type: 'checkbox'
-  }, {
-    label: 'Chat',
-    to: 'https://chat-template.nuxt.dev/'
-  }, {
-    label: 'Portfolio',
-    to: 'https://portfolio-template.nuxt.dev/'
-  }, {
-    label: 'Changelog',
-    to: 'https://changelog-template.nuxt.dev/'
-  }]
-}], [{
-  label: 'Documentation',
-  icon: 'i-lucide-book-open',
-  to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-  target: '_blank'
-}, {
-  label: 'GitHub repository',
-  icon: 'i-simple-icons-github',
-  to: 'https://github.com/nuxt-ui-templates/dashboard',
-  target: '_blank'
-}, {
-  label: 'Log out',
-  icon: 'i-lucide-log-out'
-}]]))
+]))
 </script>
 
 <template>

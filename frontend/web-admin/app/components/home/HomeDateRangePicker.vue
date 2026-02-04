@@ -125,6 +125,7 @@ const selectRange = (range: { days?: number, months?: number, years?: number }) 
           class="p-2"
           :number-of-months="2"
           range
+          locale="ko"
         />
       </div>
     </template>
