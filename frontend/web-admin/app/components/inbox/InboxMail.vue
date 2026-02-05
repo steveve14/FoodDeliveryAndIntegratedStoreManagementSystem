@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { format } from 'date-fns'
+import { ko } from 'date-fns/locale' // ★ 한국어 로케일 추가
 import type { Mail } from '~/types'
 
 defineProps<{
@@ -8,17 +9,18 @@ defineProps<{
 
 const emits = defineEmits(['close'])
 
+// 1. 드롭다운 메뉴 한글화
 const dropdownItems = [[{
-  label: 'Mark as unread',
+  label: '읽지 않음으로 표시',
   icon: 'i-lucide-check-circle'
 }, {
-  label: 'Mark as important',
+  label: '중요 메일로 표시',
   icon: 'i-lucide-triangle-alert'
 }], [{
-  label: 'Star thread',
+  label: '별표 표시',
   icon: 'i-lucide-star'
 }, {
-  label: 'Mute thread',
+  label: '메일 숨기기',
   icon: 'i-lucide-circle-pause'
 }]]
 
@@ -33,9 +35,10 @@ function onSubmit() {
   setTimeout(() => {
     reply.value = ''
 
+    // 2. 전송 완료 메시지 한글화
     toast.add({
-      title: 'Email sent',
-      description: 'Your email has been sent successfully',
+      title: '발송 완료',
+      description: '메일이 성공적으로 발송되었습니다.',
       icon: 'i-lucide-check-circle',
       color: 'success'
     })
@@ -59,7 +62,7 @@ function onSubmit() {
       </template>
 
       <template #right>
-        <UTooltip text="Archive">
+        <UTooltip text="보관함으로 이동">
           <UButton
             icon="i-lucide-inbox"
             color="neutral"
@@ -67,7 +70,7 @@ function onSubmit() {
           />
         </UTooltip>
 
-        <UTooltip text="Reply">
+        <UTooltip text="답장하기">
           <UButton icon="i-lucide-reply" color="neutral" variant="ghost" />
         </UTooltip>
 
@@ -100,7 +103,7 @@ function onSubmit() {
       </div>
 
       <p class="max-sm:pl-16 text-muted text-sm sm:mt-2">
-        {{ format(new Date(mail.date), 'dd MMM HH:mm') }}
+        {{ format(new Date(mail.date), 'M월 d일 HH:mm', { locale: ko }) }}
       </p>
     </div>
 
@@ -116,7 +119,7 @@ function onSubmit() {
           <UIcon name="i-lucide-reply" class="size-5" />
 
           <span class="text-sm truncate">
-            Reply to {{ mail.from.name }} ({{ mail.from.email }})
+            {{ mail.from.name }} ({{ mail.from.email }})님에게 답장하기
           </span>
         </template>
 
@@ -127,7 +130,7 @@ function onSubmit() {
             variant="none"
             required
             autoresize
-            placeholder="Write your reply..."
+            placeholder="답장 내용을 입력하세요..."
             :rows="4"
             :disabled="loading"
             class="w-full"
@@ -135,7 +138,7 @@ function onSubmit() {
           />
 
           <div class="flex items-center justify-between">
-            <UTooltip text="Attach file">
+            <UTooltip text="파일 첨부">
               <UButton
                 color="neutral"
                 variant="ghost"
@@ -147,13 +150,13 @@ function onSubmit() {
               <UButton
                 color="neutral"
                 variant="ghost"
-                label="Save draft"
+                label="임시 저장"
               />
               <UButton
                 type="submit"
                 color="neutral"
                 :loading="loading"
-                label="Send"
+                label="보내기"
                 icon="i-lucide-send"
               />
             </div>

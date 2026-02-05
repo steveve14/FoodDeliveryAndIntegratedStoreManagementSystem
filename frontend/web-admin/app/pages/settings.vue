@@ -2,20 +2,16 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const links = [[{
-  label: 'General',
+  label: '프로필 설정',
   icon: 'i-lucide-user',
   to: '/settings',
   exact: true
 }, {
-  label: 'Members',
-  icon: 'i-lucide-users',
-  to: '/settings/members'
-}, {
-  label: 'Notifications',
+  label: '알람설정',
   icon: 'i-lucide-bell',
   to: '/settings/notifications'
 }, {
-  label: 'Security',
+  label: '비밀번호 변경',
   icon: 'i-lucide-shield',
   to: '/settings/security'
 }]] satisfies NavigationMenuItem[][]
@@ -24,7 +20,7 @@ const links = [[{
 <template>
   <UDashboardPanel id="settings" :ui="{ body: 'lg:py-12' }">
     <template #header>
-      <UDashboardNavbar title="Settings">
+      <UDashboardNavbar title="설정">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>

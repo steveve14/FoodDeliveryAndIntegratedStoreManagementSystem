@@ -3,18 +3,19 @@ import { computed, ref, watch } from 'vue'
 import { breakpointsTailwind } from '@vueuse/core'
 import type { Mail } from '~/types'
 
+// 1. 탭 메뉴 한글화
 const tabItems = [{
-  label: 'All',
+  label: '전체', // All -> 전체
   value: 'all'
 }, {
-  label: 'Unread',
+  label: '안 읽음', // Unread -> 안 읽음
   value: 'unread'
 }]
 const selectedTab = ref('all')
 
 const { data: mails } = await useFetch<Mail[]>('/api/mails', { default: () => [] })
 
-// Filter mails based on the selected tab
+// 선택된 탭에 따라 메일 필터링
 const filteredMails = computed(() => {
   if (selectedTab.value === 'unread') {
     return mails.value.filter(mail => !!mail.unread)
@@ -36,7 +37,7 @@ const isMailPanelOpen = computed({
   }
 })
 
-// Reset selected mail if it's not in the filtered mails
+// 필터링된 목록에 선택된 메일이 없으면 선택 해제
 watch(filteredMails, () => {
   if (!filteredMails.value.find(mail => mail.id === selectedMail.value?.id)) {
     selectedMail.value = null
@@ -55,7 +56,7 @@ const isMobile = breakpoints.smaller('lg')
     :max-size="30"
     resizable
   >
-    <UDashboardNavbar title="Inbox">
+    <UDashboardNavbar title="메시지함">
       <template #leading>
         <UDashboardSidebarCollapse />
       </template>
@@ -72,6 +73,7 @@ const isMobile = breakpoints.smaller('lg')
         />
       </template>
     </UDashboardNavbar>
+    
     <InboxList v-model="selectedMail" :mails="filteredMails" />
   </UDashboardPanel>
 

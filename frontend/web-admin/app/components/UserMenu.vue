@@ -26,9 +26,6 @@ const items = computed<DropdownMenuItem[][]>(() => ([
     avatar: user.value.avatar
   }], 
   [{
-    label: '프로필',
-    icon: 'i-lucide-user'
-  }, {
     label: '설정',
     icon: 'i-lucide-settings',
     to: '/settings'
@@ -104,7 +101,11 @@ const items = computed<DropdownMenuItem[][]>(() => ([
   }],  
   [{
     label: '로그아웃',
-    icon: 'i-lucide-log-out'
+    icon: 'i-lucide-log-out',
+    onSelect: () => {
+      const { logout } = useAuth()
+      logout()
+    }
   }]
 ]))
 </script>

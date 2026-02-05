@@ -4,10 +4,11 @@ import type { FormSubmitEvent } from '@nuxt/ui'
 
 const fileRef = ref<HTMLInputElement>()
 
+// 1. 유효성 검사 메시지 한글화
 const profileSchema = z.object({
-  name: z.string().min(2, 'Too short'),
-  email: z.string().email('Invalid email'),
-  username: z.string().min(2, 'Too short'),
+  name: z.string().min(2, '이름은 최소 2글자 이상이어야 합니다.'),
+  email: z.string().email('유효하지 않은 이메일 형식입니다.'),
+  username: z.string().min(2, '사용자명은 최소 2글자 이상이어야 합니다.'),
   avatar: z.string().optional(),
   bio: z.string().optional()
 })
@@ -21,11 +22,14 @@ const profile = reactive<Partial<ProfileSchema>>({
   avatar: undefined,
   bio: undefined
 })
+
 const toast = useToast()
+
 async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
+  // 2. 토스트 알림 메시지 한글화
   toast.add({
-    title: 'Success',
-    description: 'Your settings have been updated.',
+    title: '저장 완료',
+    description: '프로필 설정이 성공적으로 업데이트되었습니다.',
     icon: 'i-lucide-check',
     color: 'success'
   })
@@ -55,15 +59,15 @@ function onFileClick() {
     @submit="onSubmit"
   >
     <UPageCard
-      title="Profile"
-      description="These informations will be displayed publicly."
+      title="프로필"
+      description="이 정보는 다른 사용자에게 공개적으로 표시됩니다."
       variant="naked"
       orientation="horizontal"
       class="mb-4"
     >
       <UButton
         form="settings"
-        label="Save changes"
+        label="변경 사항 저장"
         color="neutral"
         type="submit"
         class="w-fit lg:ms-auto"
@@ -73,8 +77,8 @@ function onFileClick() {
     <UPageCard variant="subtle">
       <UFormField
         name="name"
-        label="Name"
-        description="Will appear on receipts, invoices, and other communication."
+        label="이름"
+        description="영수증, 청구서 및 기타 안내 메일에 표시될 이름입니다."
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
@@ -84,10 +88,11 @@ function onFileClick() {
         />
       </UFormField>
       <USeparator />
+      
       <UFormField
         name="email"
-        label="Email"
-        description="Used to sign in, for email receipts and product updates."
+        label="이메일"
+        description="로그인, 영수증 수신 및 제품 업데이트 안내에 사용됩니다."
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
@@ -98,10 +103,11 @@ function onFileClick() {
         />
       </UFormField>
       <USeparator />
+      
       <UFormField
         name="username"
-        label="Username"
-        description="Your unique username for logging in and your profile URL."
+        label="사용자명(ID)"
+        description="로그인 및 프로필 URL에 사용되는 고유한 아이디입니다."
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
@@ -112,10 +118,11 @@ function onFileClick() {
         />
       </UFormField>
       <USeparator />
+      
       <UFormField
         name="avatar"
-        label="Avatar"
-        description="JPG, GIF or PNG. 1MB Max."
+        label="프로필 사진"
+        description="JPG, GIF 또는 PNG 형식. 최대 1MB."
         class="flex max-sm:flex-col justify-between sm:items-center gap-4"
       >
         <div class="flex flex-wrap items-center gap-3">
@@ -125,7 +132,7 @@ function onFileClick() {
             size="lg"
           />
           <UButton
-            label="Choose"
+            label="파일 선택"
             color="neutral"
             @click="onFileClick"
           />
@@ -139,10 +146,11 @@ function onFileClick() {
         </div>
       </UFormField>
       <USeparator />
+      
       <UFormField
         name="bio"
-        label="Bio"
-        description="Brief description for your profile. URLs are hyperlinked."
+        label="자기소개"
+        description="프로필에 표시될 간략한 소개글입니다. URL은 자동으로 링크됩니다."
         class="flex max-sm:flex-col justify-between items-start gap-4"
         :ui="{ container: 'w-full' }"
       >

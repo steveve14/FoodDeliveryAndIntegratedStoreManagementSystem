@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { format, isToday } from 'date-fns'
+import { ko } from 'date-fns/locale' // ★ 1. 한국어 로케일 추가
 import type { Mail } from '~/types'
 
 const props = defineProps<{
@@ -55,7 +56,7 @@ defineShortcuts({
           mail.unread ? 'text-highlighted' : 'text-toned',
           selectedMail && selectedMail.id === mail.id
             ? 'border-primary bg-primary/10'
-            : 'border-(--ui-bg) hover:border-primary hover:bg-primary/5'
+            : 'border-bg hover:border-primary hover:bg-primary/5'
         ]"
         @click="selectedMail = mail"
       >
@@ -66,7 +67,13 @@ defineShortcuts({
             <UChip v-if="mail.unread" />
           </div>
 
-          <span>{{ isToday(new Date(mail.date)) ? format(new Date(mail.date), 'HH:mm') : format(new Date(mail.date), 'dd MMM') }}</span>
+          <span>
+            {{ 
+              isToday(new Date(mail.date)) 
+                ? format(new Date(mail.date), 'HH:mm') 
+                : format(new Date(mail.date), 'M월 d일', { locale: ko }) 
+            }}
+          </span>
         </div>
         <p class="truncate" :class="[mail.unread && 'font-semibold']">
           {{ mail.subject }}

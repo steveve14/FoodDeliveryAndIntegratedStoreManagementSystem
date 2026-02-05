@@ -5,6 +5,7 @@ import { getPaginationRowModel } from '@tanstack/table-core'
 import type { Row } from '@tanstack/table-core'
 import type { User } from '~/types'
 
+// 컴포넌트 수동 리졸브
 const UAvatar = resolveComponent('UAvatar')
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
@@ -18,6 +19,16 @@ const columnFilters = ref([{
   id: 'email',
   value: ''
 }])
+const columnLabels: Record<string, string> = {
+  select: '선택',
+  id: 'ID',
+  name: '이름',
+  email: '이메일',
+  location: '지역',
+  status: '상태',
+  amount: '금액', // 다른 테이블용
+  actions: '관리'
+}
 const columnVisibility = ref()
 const rowSelection = ref({ 1: true })
 
@@ -25,20 +36,21 @@ const { data, status } = await useFetch<User[]>('/api/customers', {
   lazy: true
 })
 
+// 행(Row) 액션 메뉴 한글화
 function getRowItems(row: Row<User>) {
   return [
     {
       type: 'label',
-      label: 'Actions'
+      label: '관리'
     },
     {
-      label: 'Copy customer ID',
+      label: '고객 ID 복사',
       icon: 'i-lucide-copy',
       onSelect() {
         navigator.clipboard.writeText(row.original.id.toString())
         toast.add({
-          title: 'Copied to clipboard',
-          description: 'Customer ID copied to clipboard'
+          title: '복사 완료',
+          description: '고객 ID가 클립보드에 복사되었습니다.'
         })
       }
     },
@@ -46,24 +58,24 @@ function getRowItems(row: Row<User>) {
       type: 'separator'
     },
     {
-      label: 'View customer details',
+      label: '상세 정보 보기',
       icon: 'i-lucide-list'
     },
     {
-      label: 'View customer payments',
+      label: '결제 내역 보기',
       icon: 'i-lucide-wallet'
     },
     {
       type: 'separator'
     },
     {
-      label: 'Delete customer',
+      label: '고객 삭제',
       icon: 'i-lucide-trash',
       color: 'error',
       onSelect() {
         toast.add({
-          title: 'Customer deleted',
-          description: 'The customer has been deleted.'
+          title: '삭제 완료',
+          description: '고객 정보가 삭제되었습니다.'
         })
       }
     }
@@ -80,13 +92,13 @@ const columns: TableColumn<User>[] = [
           : table.getIsAllPageRowsSelected(),
         'onUpdate:modelValue': (value: boolean | 'indeterminate') =>
           table.toggleAllPageRowsSelected(!!value),
-        'ariaLabel': 'Select all'
+        'ariaLabel': '전체 선택'
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
         'modelValue': row.getIsSelected(),
         'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
-        'ariaLabel': 'Select row'
+        'ariaLabel': '행 선택'
       })
   },
   {
@@ -95,7 +107,7 @@ const columns: TableColumn<User>[] = [
   },
   {
     accessorKey: 'name',
-    header: 'Name',
+    header: '이름',
     cell: ({ row }) => {
       return h('div', { class: 'flex items-center gap-3' }, [
         h(UAvatar, {
@@ -117,7 +129,7 @@ const columns: TableColumn<User>[] = [
       return h(UButton, {
         color: 'neutral',
         variant: 'ghost',
-        label: 'Email',
+        label: '이메일',
         icon: isSorted
           ? isSorted === 'asc'
             ? 'i-lucide-arrow-up-narrow-wide'
@@ -130,12 +142,12 @@ const columns: TableColumn<User>[] = [
   },
   {
     accessorKey: 'location',
-    header: 'Location',
+    header: '지역',
     cell: ({ row }) => row.original.location
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: '상태',
     filterFn: 'equals',
     cell: ({ row }) => {
       const color = {
@@ -144,8 +156,15 @@ const columns: TableColumn<User>[] = [
         bounced: 'warning' as const
       }[row.original.status]
 
+      // 상태 값 한글 변환
+      const statusLabel = {
+        subscribed: '구독 중',
+        unsubscribed: '구독 해지',
+        bounced: '발송 실패'
+      }[row.original.status] || row.original.status
+
       return h(UBadge, { class: 'capitalize', variant: 'subtle', color }, () =>
-        row.original.status
+        statusLabel
       )
     }
   },
@@ -207,15 +226,15 @@ const pagination = ref({
 </script>
 
 <template>
-  <UDashboardPanel id="customers">
+  <UDashboardPanel id="users">
     <template #header>
-      <UDashboardNavbar title="Customers">
+      <UDashboardNavbar title="고객 목록">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
 
         <template #right>
-          <CustomersAddModal />
+          <UsersAddModal />
         </template>
       </UDashboardNavbar>
     </template>
@@ -226,14 +245,14 @@ const pagination = ref({
           v-model="email"
           class="max-w-sm"
           icon="i-lucide-search"
-          placeholder="Filter emails..."
+          placeholder="이메일 검색..."
         />
 
         <div class="flex flex-wrap items-center gap-1.5">
-          <CustomersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
+          <UsersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
             <UButton
               v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-              label="Delete"
+              label="선택 삭제"
               color="error"
               variant="subtle"
               icon="i-lucide-trash"
@@ -244,19 +263,19 @@ const pagination = ref({
                 </UKbd>
               </template>
             </UButton>
-          </CustomersDeleteModal>
+          </UsersDeleteModal>
 
           <USelect
             v-model="statusFilter"
             :items="[
-              { label: 'All', value: 'all' },
-              { label: 'Subscribed', value: 'subscribed' },
-              { label: 'Unsubscribed', value: 'unsubscribed' },
-              { label: 'Bounced', value: 'bounced' }
+              { label: '전체 상태', value: 'all' },
+              { label: '구독 중', value: 'subscribed' },
+              { label: '구독 해지', value: 'unsubscribed' },
+              { label: '발송 실패', value: 'bounced' }
             ]"
             :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
-            placeholder="Filter status"
-            class="min-w-28"
+            placeholder="상태 필터"
+            class="min-w-32"
           />
           <UDropdownMenu
             :items="
@@ -264,7 +283,7 @@ const pagination = ref({
                 ?.getAllColumns()
                 .filter((column: any) => column.getCanHide())
                 .map((column: any) => ({
-                  label: upperFirst(column.id),
+                  label: columnLabels[column.id] || column.id,
                   type: 'checkbox' as const,
                   checked: column.getIsVisible(),
                   onUpdateChecked(checked: boolean) {
@@ -278,7 +297,7 @@ const pagination = ref({
             :content="{ align: 'end' }"
           >
             <UButton
-              label="Display"
+              label="컬럼 설정"
               color="neutral"
               variant="outline"
               trailing-icon="i-lucide-settings-2"
@@ -312,8 +331,9 @@ const pagination = ref({
 
       <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto">
         <div class="text-sm text-muted">
-          {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }} of
-          {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }} row(s) selected.
+          총
+          {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}명 중
+          {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}명 선택됨.
         </div>
 
         <div class="flex items-center gap-1.5">

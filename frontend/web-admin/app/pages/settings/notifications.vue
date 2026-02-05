@@ -7,38 +7,23 @@ const state = reactive<{ [key: string]: boolean }>({
   important_updates: true
 })
 
+// UI 텍스트 한글화
 const sections = [{
-  title: 'Notification channels',
-  description: 'Where can we notify you?',
+  title: '알림 수신 채널',
+  description: '알림을 받을 경로를 설정합니다.',
   fields: [{
     name: 'email',
-    label: 'Email',
-    description: 'Receive a daily email digest.'
+    label: '이메일',
+    description: '일일 요약 리포트를 이메일로 수신합니다.'
   }, {
     name: 'desktop',
-    label: 'Desktop',
-    description: 'Receive desktop notifications.'
-  }]
-}, {
-  title: 'Account updates',
-  description: 'Receive updates about Nuxt UI.',
-  fields: [{
-    name: 'weekly_digest',
-    label: 'Weekly digest',
-    description: 'Receive a weekly digest of news.'
-  }, {
-    name: 'product_updates',
-    label: 'Product updates',
-    description: 'Receive a monthly email with all new features and updates.'
-  }, {
-    name: 'important_updates',
-    label: 'Important updates',
-    description: 'Receive emails about important updates like security fixes, maintenance, etc.'
+    label: '데스크톱 알림',
+    description: '브라우저 데스크톱 푸시 알림을 수신합니다.'
   }]
 }]
 
 async function onChange() {
-  // Do something with data
+  // 변경 사항 처리 로직 (API 호출 등)
   console.log(state)
 }
 </script>

@@ -1,16 +1,37 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core'
+import type { UseTimeAgoMessages } from '@vueuse/core' // 타입 임포트 (선택사항)
 import type { Notification } from '~/types'
 
 const { isNotificationsSlideoverOpen } = useDashboard()
 
 const { data: notifications } = await useFetch<Notification[]>('/api/notifications')
+
+// 한국어 변환 설정
+const koMessages: UseTimeAgoMessages = {
+  justNow: '방금 전',
+  past: n => n.match(/\d/) ? `${n} 전` : n,
+  future: n => n.match(/\d/) ? `${n} 후` : n,
+  month: (n) => `${n}개월`,
+  year: (n) => `${n}년`,
+  day: (n) => `${n}일`,
+  week: (n) => `${n}주`,
+  hour: (n) => `${n}시간`,
+  minute: (n) => `${n}분`,
+  second: (n) => `${n}초`,
+  invalid: '유효하지 않은 날짜'
+}
+
+// 래퍼 함수 생성
+function formatTimeKr(dateString: string) {
+  return formatTimeAgo(new Date(dateString), { messages: koMessages })
+}
 </script>
 
 <template>
   <USlideover
     v-model:open="isNotificationsSlideoverOpen"
-    title="Notifications"
+    title="알림"
   >
     <template #body>
       <NuxtLink
@@ -38,7 +59,7 @@ const { data: notifications } = await useFetch<Notification[]>('/api/notificatio
             <time
               :datetime="notification.date"
               class="text-muted text-xs"
-              v-text="formatTimeAgo(new Date(notification.date))"
+              v-text="formatTimeKr(notification.date)"
             />
           </p>
 

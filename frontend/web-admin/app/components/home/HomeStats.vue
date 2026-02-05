@@ -22,7 +22,7 @@ const baseStats = [{
   maxValue: 1000,
   minVariation: -15,
   maxVariation: 25,
-  link: '/customers' // 사용자 목록 페이지
+  link: '/users' // 사용자 목록 페이지
 }, {
   title: '등록 가게',
   icon: 'i-lucide-store',

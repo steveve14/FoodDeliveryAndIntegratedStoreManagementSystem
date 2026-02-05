@@ -7,10 +7,10 @@ defineProps<{
 }>()
 
 const items = [{
-  label: 'Edit member',
+  label: '맴버 수정',
   onSelect: () => console.log('Edit member')
 }, {
-  label: 'Remove member',
+  label: '맴버 삭제',
   color: 'error' as const,
   onSelect: () => console.log('Remove member')
 }] satisfies DropdownMenuItem[]

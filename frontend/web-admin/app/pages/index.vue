@@ -6,13 +6,13 @@ import type { Period, Range } from '~/types'
 const { isNotificationsSlideoverOpen } = useDashboard()
 
 const items = [[{
-  label: 'New mail',
+  label: '메시지 전송',
   icon: 'i-lucide-send',
   to: '/inbox'
 }, {
-  label: 'New customer',
+  label: '고객 추가',
   icon: 'i-lucide-user-plus',
-  to: '/customers'
+  to: '/users'
 }]] satisfies DropdownMenuItem[][]
 
 const range = shallowRef<Range>({
@@ -31,7 +31,7 @@ const period = ref<Period>('daily')
         </template>
 
         <template #right>
-          <UTooltip text="Notifications" :shortcuts="['N']">
+          <UTooltip text="알림" :shortcuts="['N']">
             <UButton
               color="neutral"
               variant="ghost"
