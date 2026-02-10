@@ -1,53 +1,53 @@
 <script setup lang="ts">
-import * as z from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
+import * as z from "zod";
+import type { FormSubmitEvent } from "@nuxt/ui";
 
-const fileRef = ref<HTMLInputElement>()
+const fileRef = ref<HTMLInputElement>();
 
 // 1. 유효성 검사 메시지 한글화
 const profileSchema = z.object({
-  name: z.string().min(2, '이름은 최소 2글자 이상이어야 합니다.'),
-  email: z.string().email('유효하지 않은 이메일 형식입니다.'),
-  username: z.string().min(2, '사용자명은 최소 2글자 이상이어야 합니다.'),
+  name: z.string().min(2, "이름은 최소 2글자 이상이어야 합니다."),
+  email: z.string().email("유효하지 않은 이메일 형식입니다."),
+  username: z.string().min(2, "사용자명은 최소 2글자 이상이어야 합니다."),
   avatar: z.string().optional(),
-  bio: z.string().optional()
-})
+  bio: z.string().optional(),
+});
 
-type ProfileSchema = z.output<typeof profileSchema>
+type ProfileSchema = z.output<typeof profileSchema>;
 
 const profile = reactive<Partial<ProfileSchema>>({
-  name: 'Benjamin Canac',
-  email: 'ben@nuxtlabs.com',
-  username: 'benjamincanac',
+  name: "Benjamin Canac",
+  email: "ben@nuxtlabs.com",
+  username: "benjamincanac",
   avatar: undefined,
-  bio: undefined
-})
+  bio: undefined,
+});
 
-const toast = useToast()
+const toast = useToast();
 
 async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
   // 2. 토스트 알림 메시지 한글화
   toast.add({
-    title: '저장 완료',
-    description: '프로필 설정이 성공적으로 업데이트되었습니다.',
-    icon: 'i-lucide-check',
-    color: 'success'
-  })
-  console.log(event.data)
+    title: "저장 완료",
+    description: "프로필 설정이 성공적으로 업데이트되었습니다.",
+    icon: "i-lucide-check",
+    color: "success",
+  });
+  console.log(event.data);
 }
 
 function onFileChange(e: Event) {
-  const input = e.target as HTMLInputElement
+  const input = e.target as HTMLInputElement;
 
   if (!input.files?.length) {
-    return
+    return;
   }
 
-  profile.avatar = URL.createObjectURL(input.files[0]!)
+  profile.avatar = URL.createObjectURL(input.files[0]!);
 }
 
 function onFileClick() {
-  fileRef.value?.click()
+  fileRef.value?.click();
 }
 </script>
 
@@ -82,13 +82,10 @@ function onFileClick() {
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
-        <UInput
-          v-model="profile.name"
-          autocomplete="off"
-        />
+        <UInput v-model="profile.name" autocomplete="off" />
       </UFormField>
       <USeparator />
-      
+
       <UFormField
         name="email"
         label="이메일"
@@ -96,14 +93,10 @@ function onFileClick() {
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
-        <UInput
-          v-model="profile.email"
-          type="email"
-          autocomplete="off"
-        />
+        <UInput v-model="profile.email" type="email" autocomplete="off" />
       </UFormField>
       <USeparator />
-      
+
       <UFormField
         name="username"
         label="사용자명(ID)"
@@ -111,14 +104,10 @@ function onFileClick() {
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
-        <UInput
-          v-model="profile.username"
-          type="username"
-          autocomplete="off"
-        />
+        <UInput v-model="profile.username" type="username" autocomplete="off" />
       </UFormField>
       <USeparator />
-      
+
       <UFormField
         name="avatar"
         label="프로필 사진"
@@ -126,27 +115,19 @@ function onFileClick() {
         class="flex max-sm:flex-col justify-between sm:items-center gap-4"
       >
         <div class="flex flex-wrap items-center gap-3">
-          <UAvatar
-            :src="profile.avatar"
-            :alt="profile.name"
-            size="lg"
-          />
-          <UButton
-            label="파일 선택"
-            color="neutral"
-            @click="onFileClick"
-          />
+          <UAvatar :src="profile.avatar" :alt="profile.name" size="lg" />
+          <UButton label="파일 선택" color="neutral" @click="onFileClick" />
           <input
             ref="fileRef"
             type="file"
             class="hidden"
             accept=".jpg, .jpeg, .png, .gif"
             @change="onFileChange"
-          >
+          />
         </div>
       </UFormField>
       <USeparator />
-      
+
       <UFormField
         name="bio"
         label="자기소개"
@@ -154,12 +135,7 @@ function onFileClick() {
         class="flex max-sm:flex-col justify-between items-start gap-4"
         :ui="{ container: 'w-full' }"
       >
-        <UTextarea
-          v-model="profile.bio"
-          :rows="5"
-          autoresize
-          class="w-full"
-        />
+        <UTextarea v-model="profile.bio" :rows="5" autoresize class="w-full" />
       </UFormField>
     </UPageCard>
   </UForm>

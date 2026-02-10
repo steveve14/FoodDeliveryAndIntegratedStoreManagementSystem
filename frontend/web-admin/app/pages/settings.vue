@@ -1,20 +1,26 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
+import type { NavigationMenuItem } from "@nuxt/ui";
 
-const links = [[{
-  label: '프로필 설정',
-  icon: 'i-lucide-user',
-  to: '/settings',
-  exact: true
-}, {
-  label: '알람설정',
-  icon: 'i-lucide-bell',
-  to: '/settings/notifications'
-}, {
-  label: '비밀번호 변경',
-  icon: 'i-lucide-shield',
-  to: '/settings/security'
-}]] satisfies NavigationMenuItem[][]
+const links = [
+  [
+    {
+      label: "프로필 설정",
+      icon: "i-lucide-user",
+      to: "/settings/profile",
+      exact: true,
+    },
+    {
+      label: "알람설정",
+      icon: "i-lucide-bell",
+      to: "/settings/notifications",
+    },
+    {
+      label: "비밀번호 변경",
+      icon: "i-lucide-shield",
+      to: "/settings/security",
+    },
+  ],
+] satisfies NavigationMenuItem[][];
 </script>
 
 <template>
@@ -33,7 +39,9 @@ const links = [[{
     </template>
 
     <template #body>
-      <div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full lg:max-w-2xl mx-auto">
+      <div
+        class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full lg:max-w-2xl mx-auto"
+      >
         <NuxtPage />
       </div>
     </template>
