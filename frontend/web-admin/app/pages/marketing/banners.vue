@@ -1,204 +1,181 @@
 <script setup lang="ts">
 /**
- * [필수 임포트]
- * Vue 핵심 기능 및 UI 라이브러리 타입, 테이블 코어 함수 등을 불러옵니다.
+ * [마케팅 > 배너/광고 관리]
+ * Base Code 아키텍처 기반 구현
  */
 import { h, ref, reactive, resolveComponent, watch, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import * as z from "zod"; // 유효성 검사 라이브러리
-import { format } from "date-fns"; // 날짜 포맷팅
-
-// [중요] TanStack Table의 정렬 및 페이지네이션 코어 함수
+import * as z from "zod";
+import { format, addDays, subDays } from "date-fns"; // isWithinInterval 제거 (미사용)
 import { getPaginationRowModel, getSortedRowModel } from "@tanstack/table-core";
 
 // ==========================================
-// 1. 컴포넌트 리졸브 (Nuxt UI 컴포넌트)
+// 1. 컴포넌트 리졸브
 // ==========================================
-// h() 함수 내에서 사용하기 위해 컴포넌트를 미리 해결(resolve)합니다.
 const UButton = resolveComponent("UButton");
 const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UCheckbox = resolveComponent("UCheckbox");
 const UIcon = resolveComponent("UIcon");
-const UAvatar = resolveComponent("UAvatar"); // [추가] 리스트 내 이미지 표시용
 
 const toast = useToast();
-const table = ref<any>(null); // 테이블 인스턴스 참조
+const table = ref<any>(null);
 
 // ==========================================
-// 2. 타입 및 데이터 모델 정의
+// 2. 설정 및 데이터 정의
 // ==========================================
-const PAGE_TITLE = "공지사항 관리";
-const DATA_KEY = "notices";
+const PAGE_TITLE = "배너/광고 관리";
+const DATA_KEY = "banners";
 
-// 공지사항 데이터 타입 정의
-type NoticeItem = {
+type BannerItem = {
   id: number;
   title: string;
-  content: string;
+  imageUrl: string;
+  linkUrl: string;
+  position: "main_top" | "main_middle" | "sidebar" | "popup";
+  priority: number; // 노출 순서
+  startDate: string;
+  endDate: string;
   status: "active" | "inactive" | "scheduled";
-  category: "general" | "urgent" | "event";
+  clickCount: number;
   createdAt: string;
-  author: string;
-  isPinned: boolean;
-  imageUrl?: string; // [추가] 이미지 URL (옵셔널)
 };
 
-// Zod를 이용한 폼 유효성 검사 스키마
+// 폼 스키마
 const formSchema = z.object({
-  title: z.string().min(2, "제목은 2글자 이상 입력해주세요."),
-  category: z.enum(["general", "urgent", "event"]).catch("general"),
-  status: z.enum(["active", "inactive", "scheduled"]).catch("active"),
-  content: z.string().min(1, "내용을 입력해주세요."),
-  isPinned: z.boolean().default(false),
-  imageUrl: z.string().optional(), // [추가] 이미지 필드 유효성
+  title: z.string().min(2, "배너 제목을 입력해주세요."),
+  linkUrl: z.string().url("유효한 URL을 입력해주세요.").or(z.literal("")),
+  position: z.enum(["main_top", "main_middle", "sidebar", "popup"]),
+  priority: z.number().min(0),
+  startDate: z.string(),
+  endDate: z.string(),
+  status: z.enum(["active", "inactive"]),
+  imageUrl: z.string().min(1, "이미지를 등록해주세요."),
 });
 
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. 상태 관리 (State Management)
+// 3. 상태 관리
 // ==========================================
-// 테이블 관련 상태
 const columnFilters = ref([{ id: "title", value: "" }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
+const sorting = ref([{ id: "priority", desc: false }]); // 순서 기준 정렬
 
-// UI 상태
+const positionFilter = ref("all");
 const statusFilter = ref("all");
-const isSlideoverOpen = ref(false);
+const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const selectedId = ref<number | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
 
 // 폼 상태
-const fileInput = ref<HTMLInputElement | null>(null); // 파일 인풋 참조
 const initialFormState: FormSchema = {
   title: "",
-  category: "general",
+  linkUrl: "",
+  position: "main_top",
+  priority: 1,
+  startDate: format(new Date(), "yyyy-MM-dd"),
+  endDate: format(addDays(new Date(), 30), "yyyy-MM-dd"),
   status: "active",
-  content: "",
-  isPinned: false,
   imageUrl: "",
 };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data 생성)
+// 4. 데이터 페칭 (Mock Data)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<NoticeItem[]>(
+const { data, status: loadingStatus } = await useAsyncData<BannerItem[]>(
   DATA_KEY,
   async () => {
-    // 랜덤 데이터 생성 헬퍼 함수
-    const getRandom = <T,>(arr: readonly T[]) =>
-      arr.length > 0 ? arr[Math.floor(Math.random() * arr.length)] : arr[0];
+    const positions = ["main_top", "main_middle", "sidebar", "popup"] as const;
 
-    const categories = ["general", "urgent", "event"] as const;
-    const statuses = ["active", "inactive", "scheduled"] as const;
-    const authors = ["관리자", "운영팀", "김철수 매니저", "시스템"];
-    const titles = [
-      "개인정보 처리방침 변경 안내",
-      "새벽 정기 서버 점검 안내",
-      "신규 가입자 대상 웰컴 쿠폰 증정",
-      "일부 결제 시스템 오류 수정 완료",
-      "추석 연휴 고객센터 운영 일정 안내",
-    ];
-
-    // 50개의 더미 데이터 생성
-    return Array.from({ length: 50 }).map((_, i) => {
-      const category = getRandom(categories) ?? "general";
-      const status = getRandom(statuses) ?? "active";
+    return Array.from({ length: 30 }).map((_, i) => {
+      // [수정] ?? "main_top"을 추가하여 undefined 타입 오류 해결
+      const position = positions[i % positions.length] ?? "main_top";
+      const isActive = i % 5 !== 0;
 
       return {
-        id: 50 - i, // ID 역순 생성
-        title: `[${category === "urgent" ? "긴급" : "안내"}] ${getRandom(titles)}`,
-        content: "공지사항 상세 내용입니다.",
-        status: status,
-        category: category,
-        createdAt: new Date(
-          Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000),
-        ).toISOString(),
-        author: getRandom(authors) ?? "관리자",
-        isPinned: category === "urgent" || Math.random() < 0.1,
-        // [추가] 약 30% 확률로 이미지 포함
-        imageUrl:
-          Math.random() > 0.7
-            ? `https://picsum.photos/seed/${i}/200/200`
-            : undefined,
+        id: 30 - i,
+        title: `프로모션 배너 ${i + 1} - ${position}`,
+        imageUrl: `https://picsum.photos/seed/banner${i}/400/200`,
+        linkUrl: "https://example.com/event",
+        position: position,
+        priority: (i % 5) + 1,
+        startDate: format(subDays(new Date(), i), "yyyy-MM-dd"),
+        endDate: format(addDays(new Date(), 30 - i), "yyyy-MM-dd"),
+        status: isActive ? "active" : "inactive",
+        clickCount: Math.floor(Math.random() * 5000),
+        createdAt: new Date().toISOString(),
       };
     });
   },
 );
 
 // ==========================================
-// 5. 비즈니스 로직 & 핸들러
+// 5. 액션 핸들러
 // ==========================================
-
-// 모달(Slideover) 열기 - 생성 모드
 function openCreateModal() {
   isEditMode.value = false;
   selectedId.value = null;
-  Object.assign(formState, initialFormState); // 폼 초기화
-  isSlideoverOpen.value = true;
+  Object.assign(formState, initialFormState);
+  isModalOpen.value = true;
 }
 
-// 모달(Slideover) 열기 - 수정 모드
-function openEditModal(row: NoticeItem) {
+function openEditModal(row: BannerItem) {
   isEditMode.value = true;
   selectedId.value = row.id;
-  // 선택된 행의 데이터로 폼 채우기
   Object.assign(formState, {
     title: row.title,
-    category: row.category,
-    status: row.status,
-    content: row.content,
-    isPinned: row.isPinned,
+    linkUrl: row.linkUrl,
+    position: row.position,
+    priority: row.priority,
+    startDate: row.startDate,
+    endDate: row.endDate,
+    status: row.status === "scheduled" ? "active" : row.status,
     imageUrl: row.imageUrl,
   });
-  isSlideoverOpen.value = true;
+  isModalOpen.value = true;
 }
 
-// [추가] 파일 선택 시 미리보기 URL 생성
+// 파일 선택 핸들러
 function onFileSelect(event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     const file = input.files[0];
-    // 브라우저 메모리에 임시 URL 생성 (실무에서는 업로드 API 호출 필요)
     const previewUrl = URL.createObjectURL(file);
     formState.imageUrl = previewUrl;
   }
 }
 
-// [추가] 이미지 삭제 핸들러
 function removeImage() {
   formState.imageUrl = "";
-  if (fileInput.value) fileInput.value.value = ""; // 인풋 초기화
+  if (fileInput.value) fileInput.value.value = "";
 }
 
-// 폼 제출 핸들러
 async function onSubmit(event: FormSubmitEvent<FormSchema>) {
-  const actionName = isEditMode.value ? "수정" : "등록";
+  const action = isEditMode.value ? "수정" : "등록";
   toast.add({
-    title: `${actionName} 완료`,
-    description: `성공적으로 ${actionName}되었습니다.`,
+    title: `${action} 완료`,
+    description: `배너가 성공적으로 ${action}되었습니다.`,
     color: "success",
   });
-  isSlideoverOpen.value = false;
+  isModalOpen.value = false;
 }
 
-// 삭제 핸들러
 function onDelete(ids: number[]) {
   toast.add({
     title: "삭제 완료",
-    description: `${ids.length}개의 항목이 삭제되었습니다.`,
+    description: `${ids.length}개의 배너가 삭제되었습니다.`,
     color: "error",
   });
-  rowSelection.value = {}; // 선택 초기화
+  rowSelection.value = {};
 }
 
-// 행(Row) 액션 메뉴 아이템 생성
-function getRowItems(row: NoticeItem) {
+function getRowItems(row: BannerItem) {
   return [
     { type: "label", label: "관리" },
     {
@@ -217,21 +194,21 @@ function getRowItems(row: NoticeItem) {
 }
 
 // ==========================================
-// 6. 테이블 컬럼 정의 (Custom Rendering)
+// 6. 테이블 컬럼 정의
 // ==========================================
 const columnLabels: Record<string, string> = {
   select: "선택",
   id: "No.",
-  category: "분류",
-  title: "제목",
+  imageUrl: "이미지",
+  title: "배너 정보",
+  position: "위치",
+  priority: "순서",
+  period: "게시 기간",
   status: "상태",
-  author: "작성자",
-  createdAt: "등록일",
   actions: "관리",
 };
 
-const columns: TableColumn<NoticeItem>[] = [
-  // 1. 체크박스 컬럼
+const columns: TableColumn<BannerItem>[] = [
   {
     id: "select",
     header: ({ table }) =>
@@ -249,115 +226,133 @@ const columns: TableColumn<NoticeItem>[] = [
         "onUpdate:modelValue": (v: boolean) => row.toggleSelected(!!v),
         ariaLabel: "행 선택",
       }),
-    enableSorting: false, // 정렬 불필요
+    enableSorting: false,
   },
-
-  // 2. ID (No.) 컬럼 - [추가] 정렬 기능 적용
   {
     accessorKey: "id",
-    // 헤더를 커스텀 렌더링하여 클릭 가능한 버튼으로 만듦
     header: ({ column }) => {
-      const isSorted = column.getIsSorted(); // 'asc' | 'desc' | false
+      const isSorted = column.getIsSorted();
       return h(UButton, {
         color: "neutral",
         variant: "ghost",
         label: "No.",
-        // 정렬 상태에 따라 아이콘 변경
         icon:
           isSorted === "asc"
             ? "i-lucide-arrow-up-narrow-wide"
             : isSorted === "desc"
               ? "i-lucide-arrow-down-wide-narrow"
-              : "i-lucide-arrow-up-down", // 기본 상태
+              : "i-lucide-arrow-up-down",
         class: "-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800",
-        // 클릭 시 정렬 토글 (오름차순 <-> 내림차순)
         onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
       });
     },
   },
-
-  // 3. 분류 컬럼
   {
-    accessorKey: "category",
-    header: "분류",
-    cell: ({ row }) => {
-      const map = { general: "일반", urgent: "긴급", event: "이벤트" };
-      const color = {
-        general: "neutral",
-        urgent: "error",
-        event: "primary",
-      } as const;
-      return h(
-        UBadge,
-        { variant: "subtle", color: color[row.original.category] },
-        () => map[row.original.category],
-      );
-    },
+    accessorKey: "imageUrl",
+    header: "이미지",
+    cell: ({ row }) =>
+      h("img", {
+        src: row.original.imageUrl,
+        class:
+          "h-10 w-20 object-cover rounded border border-gray-200 dark:border-gray-700 bg-gray-50",
+      }),
   },
-
-  // 4. 제목 컬럼 - [추가] 이미지(Avatar) 표시
   {
     accessorKey: "title",
-    header: "제목",
+    header: "배너 정보",
     cell: ({ row }) =>
-      h("div", { class: "flex items-center gap-2" }, [
-        // 고정핀 아이콘
-        row.original.isPinned &&
-          h(UIcon, {
-            name: "i-lucide-pin",
-            class: "text-primary w-4 h-4 shrink-0",
-          }),
-        // [추가] 이미지가 있으면 아바타 표시
-        row.original.imageUrl &&
-          h(UAvatar, { src: row.original.imageUrl, size: "2xs" }),
-        // 제목 텍스트
+      h("div", { class: "flex flex-col max-w-[250px]" }, [
         h(
           "span",
           {
             class:
-              "font-medium truncate max-w-[300px] cursor-pointer hover:text-primary hover:underline",
+              "font-medium truncate cursor-pointer hover:underline hover:text-primary",
             onClick: () => openEditModal(row.original),
           },
           row.original.title,
         ),
+        h(
+          "span",
+          { class: "text-xs text-gray-400 truncate" },
+          row.original.linkUrl,
+        ),
       ]),
   },
-
-  // 5. 상태 컬럼 - [수정] 필터 로직 개선
   {
-    accessorKey: "status",
-    header: "상태",
-    // [중요] 기본 'includes' 대신 'equals'를 사용하여 'active' 검색 시 'inactive'가 나오지 않게 함
-    filterFn: "equals",
+    accessorKey: "position",
+    header: "게시 위치",
     cell: ({ row }) => {
-      const map = { active: "게시중", inactive: "비공개", scheduled: "예약" };
-      const color = {
-        active: "success",
-        inactive: "neutral",
-        scheduled: "warning",
-      } as const;
+      const map: Record<string, string> = {
+        main_top: "메인 상단",
+        main_middle: "메인 중단",
+        sidebar: "사이드바",
+        popup: "팝업",
+      };
       return h(
         UBadge,
-        { variant: "subtle", color: color[row.original.status] },
-        () => map[row.original.status],
+        { color: "neutral", variant: "subtle" },
+        () => map[row.original.position],
       );
     },
   },
-
-  // 6. 작성자
   {
-    accessorKey: "author",
-    header: "작성자",
+    accessorKey: "priority",
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      return h(UButton, {
+        color: "neutral",
+        variant: "ghost",
+        label: "순서",
+        icon:
+          isSorted === "asc"
+            ? "i-lucide-arrow-up-narrow-wide"
+            : isSorted === "desc"
+              ? "i-lucide-arrow-down-wide-narrow"
+              : "i-lucide-arrow-up-down",
+        class: "-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800",
+        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+      });
+    },
+    cell: ({ row }) => h("span", { class: "font-mono" }, row.original.priority),
   },
-
-  // 7. 등록일
   {
-    accessorKey: "createdAt",
-    header: "등록일",
-    cell: ({ row }) => format(new Date(row.original.createdAt), "yyyy-MM-dd"),
+    id: "period",
+    header: "게시 기간",
+    cell: ({ row }) =>
+      h("div", { class: "text-xs flex flex-col" }, [
+        h("span", `${row.original.startDate} ~`),
+        h("span", row.original.endDate),
+      ]),
   },
+  {
+    accessorKey: "status",
+    header: "상태",
+    cell: ({ row }) => {
+      const today = new Date();
+      const start = new Date(row.original.startDate);
+      // const end = new Date(row.original.endDate);
 
-  // 8. 액션(더보기) 컬럼
+      let status: "active" | "inactive" | "scheduled" = row.original
+        .status as any;
+      if (status === "active") {
+        if (today < start) status = "scheduled";
+        // else if (today > end) status = 'inactive' // 만료 로직 포함 시
+      }
+
+      const map = {
+        active: { label: "게시중", color: "success" },
+        inactive: { label: "중지", color: "neutral" },
+        scheduled: { label: "예약", color: "warning" },
+      } as const;
+
+      const info = map[status] || map.inactive;
+      return h(
+        UBadge,
+        { color: info.color, variant: "subtle" },
+        () => info.label,
+      );
+    },
+  },
   {
     id: "actions",
     cell: ({ row }) =>
@@ -386,16 +381,20 @@ const columns: TableColumn<NoticeItem>[] = [
 // ==========================================
 // 7. Watchers & Computeds
 // ==========================================
-
-// 상태 필터 드롭다운 변경 감지 -> 테이블 컬럼 필터 적용
-watch(statusFilter, (val) => {
+watch([positionFilter, statusFilter], () => {
   if (!table.value?.tableApi) return;
   table.value.tableApi
+    .getColumn("position")
+    ?.setFilterValue(
+      positionFilter.value === "all" ? undefined : positionFilter.value,
+    );
+  table.value.tableApi
     .getColumn("status")
-    ?.setFilterValue(val === "all" ? undefined : val);
+    ?.setFilterValue(
+      statusFilter.value === "all" ? undefined : statusFilter.value,
+    );
 });
 
-// 제목 검색바 양방향 바인딩
 const titleSearch = computed({
   get: () =>
     (table.value?.tableApi?.getColumn("title")?.getFilterValue() as string) ||
@@ -411,13 +410,13 @@ const titleSearch = computed({
       <UInput
         v-model="titleSearch"
         icon="i-lucide-search"
-        placeholder="제목 검색..."
+        placeholder="배너명 검색..."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
-          label="공지 등록"
+          label="배너 등록"
           icon="i-lucide-plus"
           color="primary"
           @click="openCreateModal"
@@ -436,19 +435,31 @@ const titleSearch = computed({
             )
           "
         >
-          <template #trailing>
-            <UKbd>{{
+          <template #trailing
+            ><UKbd>{{
               table?.tableApi?.getFilteredSelectedRowModel().rows.length
-            }}</UKbd>
-          </template>
+            }}</UKbd></template
+          >
         </UButton>
+
+        <USelect
+          v-model="positionFilter"
+          :items="[
+            { label: '전체 위치', value: 'all' },
+            { label: '메인 상단', value: 'main_top' },
+            { label: '메인 중단', value: 'main_middle' },
+            { label: '사이드바', value: 'sidebar' },
+            { label: '팝업', value: 'popup' },
+          ]"
+          class="min-w-32"
+        />
 
         <USelect
           v-model="statusFilter"
           :items="[
             { label: '전체 상태', value: 'all' },
             { label: '게시중', value: 'active' },
-            { label: '비공개', value: 'inactive' },
+            { label: '중지/만료', value: 'inactive' },
             { label: '예약됨', value: 'scheduled' },
           ]"
           class="min-w-32"
@@ -486,6 +497,7 @@ const titleSearch = computed({
       v-model:column-visibility="columnVisibility"
       v-model:row-selection="rowSelection"
       v-model:pagination="pagination"
+      v-model:sorting="sorting"
       :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
       :sorting-options="{ getSortedRowModel: getSortedRowModel() } as any"
       :data="data || []"
@@ -510,7 +522,6 @@ const titleSearch = computed({
         {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}개
         선택됨.
       </div>
-
       <UPagination
         :default-page="
           (table?.tableApi?.getState().pagination.pageIndex || 0) + 1
@@ -523,8 +534,8 @@ const titleSearch = computed({
   </div>
 
   <UModal
-    v-model:open="isSlideoverOpen"
-    :title="isEditMode ? '공지사항 수정' : '신규 공지 등록'"
+    v-model:open="isModalOpen"
+    :title="isEditMode ? '배너 수정' : '배너 등록'"
     :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
   >
     <template #body>
@@ -534,19 +545,7 @@ const titleSearch = computed({
         class="space-y-4 p-4"
         @submit="onSubmit"
       >
-        <UFormField label="제목" name="title" required class="w-full">
-          <UInput
-            v-model="formState.title"
-            placeholder="제목을 입력하세요"
-            class="w-full"
-          />
-        </UFormField>
-
-        <UFormField name="isPinned">
-          <UCheckbox v-model="formState.isPinned" label="상단 고정 (중요)" />
-        </UFormField>
-
-        <UFormField label="대표 이미지" name="imageUrl" class="w-full">
+        <UFormField label="배너 이미지" name="imageUrl" required class="w-full">
           <div class="flex flex-col gap-2">
             <input
               ref="fileInput"
@@ -557,18 +556,17 @@ const titleSearch = computed({
             />
             <div
               v-if="formState.imageUrl"
-              class="relative w-full mt-2 rounded-lg overflow-hidden border border-gray-200"
+              class="relative w-full mt-2 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
             >
               <img
                 :src="formState.imageUrl"
                 alt="Preview"
-                class="w-full h-48 object-cover"
+                class="w-full h-48 object-contain"
               />
               <UButton
                 icon="i-lucide-x"
                 color="gray"
                 variant="solid"
-                size="xs"
                 class="absolute top-2 right-2"
                 @click="removeImage"
               />
@@ -576,31 +574,83 @@ const titleSearch = computed({
           </div>
         </UFormField>
 
-        <div class="grid grid-cols-2 gap-4">
-          <UFormField label="분류" name="category" required class="w-full">
-            <USelect
-              v-model="formState.category"
-              :items="['general', 'urgent', 'event']"
+        <div class="grid grid-cols-1 gap-4">
+          <UFormField label="배너 제목" name="title" required class="w-full">
+            <UInput
+              v-model="formState.title"
+              placeholder="관리용 배너 제목을 입력하세요."
               class="w-full"
             />
           </UFormField>
-          <UFormField label="게시 상태" name="status" required class="w-full">
-            <USelect
-              v-model="formState.status"
-              :items="['active', 'inactive', 'scheduled']"
+          <UFormField label="연결 링크 (URL)" name="linkUrl" class="w-full">
+            <UInput
+              v-model="formState.linkUrl"
+              placeholder="https://example.com/event"
               class="w-full"
             />
           </UFormField>
         </div>
 
-        <UFormField label="내용" name="content" required class="w-full">
-          <UTextarea
-            v-model="formState.content"
-            :rows="10"
-            autoresize
+        <div class="grid grid-cols-2 gap-4">
+          <UFormField label="게시 위치" name="position" required class="w-full">
+            <USelect
+              v-model="formState.position"
+              :items="[
+                { label: '메인 상단', value: 'main_top' },
+                { label: '메인 중단', value: 'main_middle' },
+                { label: '사이드바', value: 'sidebar' },
+                { label: '팝업', value: 'popup' },
+              ]"
+              class="w-full"
+            />
+          </UFormField>
+          <UFormField
+            label="노출 순서 (우선순위)"
+            name="priority"
+            required
             class="w-full"
-            placeholder="공지 내용을 입력하세요."
-          />
+          >
+            <UInput
+              v-model.number="formState.priority"
+              type="number"
+              placeholder="1"
+              class="w-full"
+            />
+          </UFormField>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <UFormField
+            label="게시 시작일"
+            name="startDate"
+            required
+            class="w-full"
+          >
+            <UInput v-model="formState.startDate" type="date" class="w-full" />
+          </UFormField>
+          <UFormField
+            label="게시 종료일"
+            name="endDate"
+            required
+            class="w-full"
+          >
+            <UInput v-model="formState.endDate" type="date" class="w-full" />
+          </UFormField>
+        </div>
+
+        <UFormField label="운영 상태" name="status" required class="w-full">
+          <div class="flex items-center gap-4">
+            <UCheckbox
+              :model-value="formState.status === 'active'"
+              @update:model-value="
+                (v: boolean) => (formState.status = v ? 'active' : 'inactive')
+              "
+              label="활성화 (즉시 게시)"
+            />
+            <span class="text-xs text-gray-500"
+              >* 기간 내라도 비활성화 시 노출되지 않습니다.</span
+            >
+          </div>
         </UFormField>
 
         <div
@@ -610,7 +660,7 @@ const titleSearch = computed({
             label="취소"
             color="neutral"
             variant="ghost"
-            @click="isSlideoverOpen = false"
+            @click="isModalOpen = false"
           />
           <UButton
             type="submit"

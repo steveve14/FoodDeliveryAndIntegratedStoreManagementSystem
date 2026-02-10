@@ -20,21 +20,19 @@ const links = [[{
     open.value = false
   }
 }, {
-  // 1. 회원 및 파트너
-  id: 'users',
-  label: '고객 및 매장 관리',
-  icon: 'i-lucide-users',
-  children: [{
-    label: '고객 목록',
-    to: '/customer',
-    icon: 'i-lucide-user',
-    onSelect: () => { open.value = false } // 모바일 닫기 추가
-  }, {
-    label: '매장 관리',
-    to: '/stores',
-    icon: 'i-lucide-store',
-    onSelect: () => { open.value = false }
-  }]
+  label: '고객 목록',
+  icon: 'i-lucide-user',
+  to: '/customer',
+  onSelect: () => {
+    open.value = false
+  }
+}, {
+  label: '매장 관리',
+  to: '/stores',
+  icon: 'i-lucide-store',
+  onSelect: () => {
+    open.value = false
+  }
 }, {
   // 2. 서비스 운영
   id: 'operation',

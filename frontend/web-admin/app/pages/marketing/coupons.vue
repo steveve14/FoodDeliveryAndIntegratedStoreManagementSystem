@@ -1,13 +1,13 @@
 <script setup lang="ts">
 /**
- * [FAQ 관리]
+ * [마케팅 > 쿠폰 관리]
  * Base Code 아키텍처 기반 리팩토링
  */
 import { h, ref, reactive, resolveComponent, watch, computed } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import * as z from "zod";
-import { format, subDays, subHours } from "date-fns";
+import { format, addDays } from "date-fns";
 import { getPaginationRowModel, getSortedRowModel } from "@tanstack/table-core";
 
 // ==========================================
@@ -18,7 +18,7 @@ const UBadge = resolveComponent("UBadge");
 const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UCheckbox = resolveComponent("UCheckbox");
 const UIcon = resolveComponent("UIcon");
-const UTextarea = resolveComponent("UTextarea");
+const UInput = resolveComponent("UInput");
 
 const toast = useToast();
 const table = ref<any>(null);
@@ -26,25 +26,36 @@ const table = ref<any>(null);
 // ==========================================
 // 2. 설정 및 데이터 정의
 // ==========================================
-const PAGE_TITLE = "FAQ 관리";
-const DATA_KEY = "faqs";
+const PAGE_TITLE = "쿠폰 관리";
+const DATA_KEY = "coupons";
 
-type FaqItem = {
+type CouponItem = {
   id: number;
-  category: "member" | "payment" | "shipping" | "etc";
-  question: string;
-  answer: string;
-  viewCount: number;
-  isPublished: boolean;
+  name: string;
+  code: string;
+  discountType: "percent" | "amount"; // 퍼센트 할인 or 정액 할인
+  discountValue: number;
+  totalLimit: number | null; // null이면 무제한
+  usedCount: number;
+  startDate: string;
+  endDate: string;
+  status: "active" | "inactive" | "expired";
   createdAt: string;
 };
 
 // 폼 스키마
 const formSchema = z.object({
-  category: z.enum(["member", "payment", "shipping", "etc"]).catch("etc"),
-  question: z.string().min(2, "질문을 입력해주세요."),
-  answer: z.string().min(5, "답변 내용을 입력해주세요."),
-  isPublished: z.boolean().default(true),
+  name: z.string().min(2, "쿠폰명을 입력해주세요."),
+  code: z
+    .string()
+    .min(3, "쿠폰 코드를 입력해주세요.")
+    .regex(/^[A-Z0-9]+$/, "영문 대문자와 숫자만 가능합니다."),
+  discountType: z.enum(["percent", "amount"]),
+  discountValue: z.number().min(1, "할인 값을 입력해주세요."),
+  totalLimit: z.number().nullable().optional(), // 선택사항
+  startDate: z.string(),
+  endDate: z.string(),
+  status: z.enum(["active", "inactive"]),
 });
 
 type FormSchema = z.output<typeof formSchema>;
@@ -52,49 +63,57 @@ type FormSchema = z.output<typeof formSchema>;
 // ==========================================
 // 3. 상태 관리
 // ==========================================
-const columnFilters = ref([{ id: "question", value: "" }]);
+const columnFilters = ref([{ id: "name", value: "" }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
 const sorting = ref([{ id: "id", desc: true }]);
 
-const categoryFilter = ref("all");
+const statusFilter = ref("all");
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const selectedId = ref<number | null>(null);
 
 // 폼 상태
 const initialFormState: FormSchema = {
-  category: "member",
-  question: "",
-  answer: "",
-  isPublished: true,
+  name: "",
+  code: "",
+  discountType: "percent",
+  discountValue: 10,
+  totalLimit: 100,
+  startDate: format(new Date(), "yyyy-MM-dd"),
+  endDate: format(addDays(new Date(), 7), "yyyy-MM-dd"),
+  status: "active",
 };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
 // 4. 데이터 페칭 (Mock Data)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<FaqItem[]>(
+const { data, status: loadingStatus } = await useAsyncData<CouponItem[]>(
   DATA_KEY,
   async () => {
-    const categories = ["member", "payment", "shipping", "etc"] as const;
-
     return Array.from({ length: 50 }).map((_, i) => {
-      const category = categories[i % 4] as
-        | "member"
-        | "payment"
-        | "shipping"
-        | "etc";
+      const isPercent = Math.random() > 0.5;
+      const limit = Math.random() > 0.8 ? null : 100 + i * 10;
+      const used = limit
+        ? Math.floor(Math.random() * limit)
+        : Math.floor(Math.random() * 500);
 
       return {
         id: 50 - i,
-        category: category,
-        question: `자주 묻는 질문 예시입니다 (${i + 1})?`,
-        answer: `해당 질문에 대한 상세 답변 내용입니다.\n줄바꿈이 포함된 예시 텍스트입니다.`,
-        viewCount: Math.floor(Math.random() * 2000),
-        isPublished: i % 10 !== 0, // 10% 확률로 비공개
-        createdAt: subDays(new Date(), i).toISOString(),
+        name: i % 2 === 0 ? `신규 가입 환영 쿠폰 ${i}` : `주말 깜짝 할인 ${i}`,
+        code: `WELCOME${50 - i}${String.fromCharCode(65 + (i % 26))}`,
+        discountType: isPercent ? "percent" : "amount",
+        discountValue: isPercent
+          ? (Math.floor(Math.random() * 5) + 1) * 10
+          : (Math.floor(Math.random() * 10) + 1) * 1000,
+        totalLimit: limit,
+        usedCount: used,
+        startDate: format(new Date(), "yyyy-MM-dd"),
+        endDate: format(addDays(new Date(), 30), "yyyy-MM-dd"),
+        status: i % 5 === 0 ? "inactive" : "active",
+        createdAt: new Date().toISOString(),
       };
     });
   },
@@ -107,26 +126,31 @@ function openCreateModal() {
   isEditMode.value = false;
   selectedId.value = null;
   Object.assign(formState, initialFormState);
+  generateRandomCode(); // 신규 등록 시 코드 자동 생성 편의성
   isModalOpen.value = true;
 }
 
-function openEditModal(row: FaqItem) {
+function openEditModal(row: CouponItem) {
   isEditMode.value = true;
   selectedId.value = row.id;
   Object.assign(formState, {
-    category: row.category,
-    question: row.question,
-    answer: row.answer,
-    isPublished: row.isPublished,
+    name: row.name,
+    code: row.code,
+    discountType: row.discountType,
+    discountValue: row.discountValue,
+    totalLimit: row.totalLimit,
+    startDate: row.startDate,
+    endDate: row.endDate,
+    status: row.status === "expired" ? "inactive" : row.status,
   });
   isModalOpen.value = true;
 }
 
 async function onSubmit(event: FormSubmitEvent<FormSchema>) {
-  const action = isEditMode.value ? "수정" : "등록";
+  const action = isEditMode.value ? "수정" : "생성";
   toast.add({
     title: `${action} 완료`,
-    description: `FAQ가 성공적으로 ${action}되었습니다.`,
+    description: `쿠폰이 성공적으로 ${action}되었습니다.`,
     color: "success",
   });
   isModalOpen.value = false;
@@ -135,13 +159,23 @@ async function onSubmit(event: FormSubmitEvent<FormSchema>) {
 function onDelete(ids: number[]) {
   toast.add({
     title: "삭제 완료",
-    description: `${ids.length}개의 항목이 삭제되었습니다.`,
+    description: `${ids.length}개의 쿠폰이 삭제되었습니다.`,
     color: "error",
   });
   rowSelection.value = {};
 }
 
-function getRowItems(row: FaqItem) {
+// 랜덤 쿠폰 코드 생성기
+function generateRandomCode() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  formState.code = result;
+}
+
+function getRowItems(row: CouponItem) {
   return [
     { type: "label", label: "관리" },
     {
@@ -165,15 +199,16 @@ function getRowItems(row: FaqItem) {
 const columnLabels: Record<string, string> = {
   select: "선택",
   id: "No.",
-  category: "카테고리",
-  question: "질문",
-  viewCount: "조회수",
-  isPublished: "상태",
-  createdAt: "등록일",
+  name: "쿠폰명",
+  code: "코드",
+  discount: "혜택",
+  usage: "사용량",
+  period: "유효기간",
+  status: "상태",
   actions: "관리",
 };
 
-const columns: TableColumn<FaqItem>[] = [
+const columns: TableColumn<CouponItem>[] = [
   {
     id: "select",
     header: ({ table }) =>
@@ -213,74 +248,81 @@ const columns: TableColumn<FaqItem>[] = [
     },
   },
   {
-    accessorKey: "category",
-    header: "카테고리",
+    accessorKey: "name",
+    header: "쿠폰명",
+    cell: ({ row }) =>
+      h("div", { class: "flex flex-col" }, [
+        h(
+          "span",
+          {
+            class:
+              "font-medium cursor-pointer hover:underline hover:text-primary",
+            onClick: () => openEditModal(row.original),
+          },
+          row.original.name,
+        ),
+        h("span", { class: "text-xs text-gray-500" }, row.original.code), // 코드 함께 표시
+      ]),
+  },
+  {
+    id: "discount",
+    header: "할인 혜택",
     cell: ({ row }) => {
-      const map: Record<string, string> = {
-        member: "회원/계정",
-        payment: "결제/환불",
-        shipping: "배송/택배",
-        etc: "기타",
-      };
+      const isPercent = row.original.discountType === "percent";
+      const value = row.original.discountValue;
       return h(
-        UBadge,
-        { variant: "subtle", color: "neutral" },
-        () => map[row.original.category],
+        "span",
+        { class: "font-bold text-primary-600 dark:text-primary-400" },
+        isPercent ? `${value}% 할인` : `${value.toLocaleString()}원 할인`,
       );
     },
   },
   {
-    accessorKey: "question",
-    header: "질문",
-    cell: ({ row }) =>
-      h(
-        "span",
-        {
-          class:
-            "font-medium cursor-pointer hover:underline hover:text-primary",
-          onClick: () => openEditModal(row.original),
-        },
-        row.original.question,
-      ),
-  },
-  {
-    accessorKey: "viewCount",
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-      return h(UButton, {
-        color: "neutral",
-        variant: "ghost",
-        label: "조회수",
-        icon:
-          isSorted === "asc"
-            ? "i-lucide-arrow-up-narrow-wide"
-            : isSorted === "desc"
-              ? "i-lucide-arrow-down-wide-narrow"
-              : "i-lucide-arrow-up-down",
-        class: "-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800",
-        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-      });
+    id: "usage",
+    header: "사용 현황",
+    cell: ({ row }) => {
+      const { usedCount, totalLimit } = row.original;
+      const limitText = totalLimit ? `${totalLimit.toLocaleString()}` : "∞";
+      const percent = totalLimit
+        ? Math.round((usedCount / totalLimit) * 100)
+        : 0;
+
+      return h("div", { class: "flex items-center gap-2" }, [
+        h(
+          "span",
+          { class: "text-sm" },
+          `${usedCount.toLocaleString()} / ${limitText}`,
+        ),
+        totalLimit &&
+          h(UBadge, { color: "gray", variant: "subtle" }, () => `${percent}%`),
+      ]);
     },
-    cell: ({ row }) => row.original.viewCount.toLocaleString(),
   },
   {
-    accessorKey: "isPublished",
+    accessorKey: "status",
     header: "상태",
-    cell: ({ row }) =>
-      h(
+    cell: ({ row }) => {
+      const map: Record<string, any> = {
+        active: { label: "발급중", color: "success" },
+        inactive: { label: "중지됨", color: "neutral" },
+        expired: { label: "만료됨", color: "error" },
+      };
+      const status = map[row.original.status];
+      return h(
         UBadge,
-        {
-          color: row.original.isPublished ? "success" : "neutral",
-          variant: "subtle",
-          size: "xs",
-        },
-        () => (row.original.isPublished ? "게시중" : "비공개"),
-      ),
+        { color: status.color, variant: "subtle" },
+        () => status.label,
+      );
+    },
   },
   {
-    accessorKey: "createdAt",
-    header: "등록일",
-    cell: ({ row }) => format(new Date(row.original.createdAt), "yyyy-MM-dd"),
+    id: "period",
+    header: "유효 기간",
+    cell: ({ row }) =>
+      h("div", { class: "text-xs text-gray-500 flex flex-col" }, [
+        h("span", `${row.original.startDate} ~`),
+        h("span", row.original.endDate),
+      ]),
   },
   {
     id: "actions",
@@ -310,22 +352,19 @@ const columns: TableColumn<FaqItem>[] = [
 // ==========================================
 // 7. Watchers & Computeds
 // ==========================================
-watch(categoryFilter, (val) => {
+watch(statusFilter, (val) => {
   if (!table.value?.tableApi) return;
   table.value.tableApi
-    .getColumn("category")
+    .getColumn("status")
     ?.setFilterValue(val === "all" ? undefined : val);
 });
 
-const questionSearch = computed({
+const nameSearch = computed({
   get: () =>
-    (table.value?.tableApi
-      ?.getColumn("question")
-      ?.getFilterValue() as string) || "",
+    (table.value?.tableApi?.getColumn("name")?.getFilterValue() as string) ||
+    "",
   set: (val) =>
-    table.value?.tableApi
-      ?.getColumn("question")
-      ?.setFilterValue(val || undefined),
+    table.value?.tableApi?.getColumn("name")?.setFilterValue(val || undefined),
 });
 </script>
 
@@ -333,13 +372,19 @@ const questionSearch = computed({
   <div class="flex-1 flex flex-col">
     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
       <UInput
-        v-model="questionSearch"
+        v-model="nameSearch"
         icon="i-lucide-search"
-        placeholder="질문 검색..."
+        placeholder="쿠폰명 검색..."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
+        <UButton
+          label="쿠폰 생성"
+          icon="i-lucide-plus"
+          color="primary"
+          @click="openCreateModal"
+        />
         <UButton
           v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
           label="선택 삭제"
@@ -362,13 +407,12 @@ const questionSearch = computed({
         </UButton>
 
         <USelect
-          v-model="categoryFilter"
+          v-model="statusFilter"
           :items="[
-            { label: '전체 카테고리', value: 'all' },
-            { label: '회원/계정', value: 'member' },
-            { label: '결제/환불', value: 'payment' },
-            { label: '배송/택배', value: 'shipping' },
-            { label: '기타', value: 'etc' },
+            { label: '전체 상태', value: 'all' },
+            { label: '발급중', value: 'active' },
+            { label: '중지됨', value: 'inactive' },
+            { label: '만료됨', value: 'expired' },
           ]"
           class="min-w-32"
         />
@@ -443,7 +487,7 @@ const questionSearch = computed({
 
   <UModal
     v-model:open="isModalOpen"
-    :title="isEditMode ? 'FAQ 수정' : 'FAQ 등록'"
+    :title="isEditMode ? '쿠폰 수정' : '신규 쿠폰 생성'"
     :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
   >
     <template #body>
@@ -453,51 +497,102 @@ const questionSearch = computed({
         class="space-y-4 p-4"
         @submit="onSubmit"
       >
+        <UFormField label="쿠폰 이름" name="name" required class="w-full">
+          <UInput
+            v-model="formState.name"
+            placeholder="예: 신규 가입 환영 쿠폰"
+            class="w-full"
+          />
+        </UFormField>
+
+        <UFormField label="쿠폰 코드" name="code" required class="w-full">
+          <div class="flex gap-2">
+            <UInput
+              v-model="formState.code"
+              placeholder="예: WELCOME2024"
+              class="flex-1"
+            />
+            <UButton
+              label="랜덤 생성"
+              color="neutral"
+              variant="outline"
+              @click="generateRandomCode"
+            />
+          </div>
+        </UFormField>
+
         <div class="grid grid-cols-2 gap-4">
-          <UFormField label="카테고리" name="category" required class="w-full">
+          <UFormField
+            label="할인 종류"
+            name="discountType"
+            required
+            class="w-full"
+          >
             <USelect
-              v-model="formState.category"
+              v-model="formState.discountType"
               :items="[
-                { label: '회원/계정', value: 'member' },
-                { label: '결제/환불', value: 'payment' },
-                { label: '배송/택배', value: 'shipping' },
-                { label: '기타', value: 'etc' },
+                { label: '정액 할인 (원)', value: 'amount' },
+                { label: '정률 할인 (%)', value: 'percent' },
               ]"
               class="w-full"
             />
           </UFormField>
-
-          <div class="flex items-end pb-2">
-            <UCheckbox
-              v-model="formState.isPublished"
-              label="공개 상태로 등록"
-              color="primary"
-            />
-          </div>
+          <UFormField
+            label="할인 값"
+            name="discountValue"
+            required
+            class="w-full"
+          >
+            <UInput
+              v-model.number="formState.discountValue"
+              type="number"
+              :placeholder="
+                formState.discountType === 'percent' ? '예: 10' : '예: 5000'
+              "
+              class="w-full"
+            >
+              <template #trailing>
+                <span class="text-gray-500 text-sm">{{
+                  formState.discountType === "percent" ? "%" : "원"
+                }}</span>
+              </template>
+            </UInput>
+          </UFormField>
         </div>
 
-        <UFormField
-          label="질문 (Question)"
-          name="question"
-          required
-          class="w-full"
-        >
-          <UInput
-            v-model="formState.question"
-            placeholder="자주 묻는 질문을 입력하세요."
-            class="w-full"
-          />
-        </UFormField>
+        <div class="grid grid-cols-2 gap-4">
+          <UFormField label="시작일" name="startDate" required class="w-full">
+            <UInput v-model="formState.startDate" type="date" class="w-full" />
+          </UFormField>
+          <UFormField label="종료일" name="endDate" required class="w-full">
+            <UInput v-model="formState.endDate" type="date" class="w-full" />
+          </UFormField>
+        </div>
 
-        <UFormField label="답변 (Answer)" name="answer" required class="w-full">
-          <UTextarea
-            v-model="formState.answer"
-            :rows="8"
-            placeholder="답변 내용을 입력하세요."
-            autoresize
+        <div class="grid grid-cols-2 gap-4">
+          <UFormField
+            label="총 발급 수량 (비워두면 무제한)"
+            name="totalLimit"
             class="w-full"
-          />
-        </UFormField>
+          >
+            <UInput
+              v-model.number="formState.totalLimit"
+              type="number"
+              placeholder="무제한"
+              class="w-full"
+            />
+          </UFormField>
+          <UFormField label="활성 상태" name="status" required class="w-full">
+            <USelect
+              v-model="formState.status"
+              :items="[
+                { label: '활성 (발급 가능)', value: 'active' },
+                { label: '비활성 (중지)', value: 'inactive' },
+              ]"
+              class="w-full"
+            />
+          </UFormField>
+        </div>
 
         <div
           class="flex justify-end gap-2 pt-4 border-t border-default mt-auto"
@@ -510,7 +605,7 @@ const questionSearch = computed({
           />
           <UButton
             type="submit"
-            :label="isEditMode ? '수정 완료' : '등록하기'"
+            :label="isEditMode ? '수정 완료' : '쿠폰 생성'"
             color="primary"
           />
         </div>

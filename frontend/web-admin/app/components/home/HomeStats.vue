@@ -16,13 +16,13 @@ function formatCurrency(value: number): string {
 
 // 1. 각 항목별로 이동할 링크(link)를 정의합니다.
 const baseStats = [{
-  title: '사용자',
+  title: '고객',
   icon: 'i-lucide-users',
   minValue: 400,
   maxValue: 1000,
   minVariation: -15,
   maxVariation: 25,
-  link: '/users' // 사용자 목록 페이지
+  link: '/customer' // 사용자 목록 페이지
 }, {
   title: '등록 가게',
   icon: 'i-lucide-store',
@@ -47,7 +47,7 @@ const baseStats = [{
   maxValue: 300,
   minVariation: -5,
   maxVariation: 15,
-  link: '/error'
+  link: '/system/logs'
 }]
 
 const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
