@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Period, Range, Stat } from "~/types";
+import type { Period, Range } from "~/types";
 
 const props = defineProps<{
   period: Period;
@@ -7,67 +7,78 @@ const props = defineProps<{
 }>();
 
 function formatCurrency(value: number): string {
-  return value.toLocaleString("ko-kr", {
+  return new Intl.NumberFormat("ko-KR", {
     style: "currency",
     currency: "KRW",
     maximumFractionDigits: 0,
-  });
+  }).format(value);
 }
 
-// 1. 각 항목별로 이동할 링크(link)를 정의합니다.
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat("ko-KR").format(value);
+}
+
 const baseStats = [
   {
-    title: "고객",
-    icon: "i-lucide-users",
-    minValue: 400,
-    maxValue: 1000,
-    minVariation: -15,
-    maxVariation: 25,
-    link: "/customer", // 사용자 목록 페이지
-  },
-  {
-    title: "등록 가게",
-    icon: "i-lucide-store",
-    minValue: 1000,
-    maxValue: 2000,
+    title: "기간 내 주문수",
+    icon: "i-lucide-shopping-bag",
+    minValue: 50,
+    maxValue: 150,
     minVariation: -10,
     maxVariation: 20,
-    link: "/stores", // (예시) 가게 목록 페이지
+    formatter: (v: number) => `${formatNumber(v)}건`,
+    link: "/orders",
   },
   {
-    title: "총 수익",
-    icon: "i-lucide-coins",
-    minValue: 200000,
-    maxValue: 500000,
-    minVariation: -20,
-    maxVariation: 30,
-    formatter: formatCurrency,
-    link: "/finance/transactions",
-  },
-  {
-    title: "오류 내역",
-    icon: "i-lucide-alert-triangle",
-    minValue: 100,
-    maxValue: 300,
+    title: "기간 내 매출",
+    icon: "i-lucide-banknote",
+    minValue: 1500000,
+    maxValue: 3000000,
     minVariation: -5,
     maxVariation: 15,
-    link: "/system/logs",
+    formatter: formatCurrency,
+    link: "/finance/reports",
+  },
+  {
+    title: "현재 배달 중",
+    icon: "i-lucide-bike",
+    minValue: 3,
+    maxValue: 12,
+    minVariation: 0,
+    maxVariation: 5,
+    formatter: (v: number) => `${v}건`,
+    link: "/delivery/tracking",
+  },
+  {
+    title: "신규 리뷰",
+    icon: "i-lucide-star",
+    minValue: 2,
+    maxValue: 10,
+    minVariation: -2,
+    maxVariation: 5,
+    formatter: (v: number) => `${v}건`,
+    link: "/communication/reviews",
   },
 ];
 
-const { data: stats } = await useAsyncData<Stat[]>(
-  "stats",
+const { data: stats } = await useAsyncData(
+  "home-stats",
   async () => {
     return baseStats.map((stat) => {
-      const value = randomInt(stat.minValue, stat.maxValue);
-      const variation = randomInt(stat.minVariation, stat.maxVariation);
+      const value =
+        Math.floor(Math.random() * (stat.maxValue - stat.minValue + 1)) +
+        stat.minValue;
+      const variation =
+        Math.floor(
+          Math.random() * (stat.maxVariation - stat.minVariation + 1),
+        ) + stat.minVariation;
 
       return {
         title: stat.title,
         icon: stat.icon,
         value: stat.formatter ? stat.formatter(value) : value,
         variation,
-        link: stat.link, // 2. 링크 정보를 반환 객체에 포함시킵니다.
+        link: stat.link,
       };
     });
   },
@@ -79,7 +90,7 @@ const { data: stats } = await useAsyncData<Stat[]>(
 </script>
 
 <template>
-  <UPageGrid class="lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-px">
+  <UPageGrid class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-px">
     <UPageCard
       v-for="(stat, index) in stats"
       :key="index"
@@ -88,27 +99,25 @@ const { data: stats } = await useAsyncData<Stat[]>(
       :to="stat.link"
       variant="subtle"
       :ui="{
-        container: 'gap-y-1.5',
-        wrapper: 'items-start',
-        leading:
-          'p-2.5 rounded-full bg-primary/10 ring ring-inset ring-primary/25 flex-col',
-        title: 'font-normal text-muted text-xs uppercase',
+        title: 'uppercase',
       }"
-      class="lg:rounded-none first:rounded-l-lg last:rounded-r-lg hover:z-1"
+      class="lg:rounded-none first:rounded-l-lg last:rounded-r-lg transition-colors"
     >
-      <div class="flex items-center gap-2">
-        <span class="text-2xl font-semibold text-highlighted">
-          {{ stat.value }}
-        </span>
+      <template #description>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-2xl font-bold text-highlighted">
+            {{ stat.value }}
+          </span>
 
-        <UBadge
-          :color="stat.variation > 0 ? 'success' : 'error'"
-          variant="subtle"
-          class="text-xs"
-        >
-          {{ stat.variation > 0 ? "+" : "" }}{{ stat.variation }}%
-        </UBadge>
-      </div>
+          <UBadge
+            :color="stat.variation > 0 ? 'success' : 'error'"
+            variant="subtle"
+            class="text-xs font-medium px-1.5"
+          >
+            {{ stat.variation > 0 ? "+" : "" }}{{ stat.variation }}%
+          </UBadge>
+        </div>
+      </template>
     </UPageCard>
   </UPageGrid>
 </template>
