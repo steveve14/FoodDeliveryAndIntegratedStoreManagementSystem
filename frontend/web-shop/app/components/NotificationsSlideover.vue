@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { formatTimeAgo } from '@vueuse/core'
-import type { UseTimeAgoMessages } from '@vueuse/core' // 타입 임포트 (선택사항)
-import type { Notification } from '~/types'
+import { formatTimeAgo } from "@vueuse/core";
+import type { UseTimeAgoMessages } from "@vueuse/core"; // 타입 임포트 (선택사항)
+import type { Notification } from "~/types";
 
-const { isNotificationsSlideoverOpen } = useDashboard()
+const { isNotificationsSlideoverOpen } = useDashboard();
 
-const { data: notifications } = await useFetch<Notification[]>('/api/notifications')
+const { data: notifications } =
+  await useFetch<Notification[]>("/api/notifications");
 
 // 한국어 변환 설정
 const koMessages: UseTimeAgoMessages = {
-  justNow: '방금 전',
-  past: n => n.match(/\d/) ? `${n} 전` : n,
-  future: n => n.match(/\d/) ? `${n} 후` : n,
+  justNow: "방금 전",
+  past: (n) => (n.match(/\d/) ? `${n} 전` : n),
+  future: (n) => (n.match(/\d/) ? `${n} 후` : n),
   month: (n) => `${n}개월`,
   year: (n) => `${n}년`,
   day: (n) => `${n}일`,
@@ -19,20 +20,17 @@ const koMessages: UseTimeAgoMessages = {
   hour: (n) => `${n}시간`,
   minute: (n) => `${n}분`,
   second: (n) => `${n}초`,
-  invalid: '유효하지 않은 날짜'
-}
+  invalid: "유효하지 않은 날짜",
+};
 
 // 래퍼 함수 생성
 function formatTimeKr(dateString: string) {
-  return formatTimeAgo(new Date(dateString), { messages: koMessages })
+  return formatTimeAgo(new Date(dateString), { messages: koMessages });
 }
 </script>
 
 <template>
-  <USlideover
-    v-model:open="isNotificationsSlideoverOpen"
-    title="알림"
-  >
+  <USlideover v-model:open="isNotificationsSlideoverOpen" title="알림">
     <template #body>
       <NuxtLink
         v-for="notification in notifications"
@@ -40,11 +38,7 @@ function formatTimeKr(dateString: string) {
         :to="`/inbox?id=${notification.id}`"
         class="px-3 py-2.5 rounded-md hover:bg-elevated/50 flex items-center gap-3 relative -mx-3 first:-mt-3 last:-mb-3"
       >
-        <UChip
-          color="error"
-          :show="!!notification.unread"
-          inset
-        >
+        <UChip color="error" :show="!!notification.unread" inset>
           <UAvatar
             v-bind="notification.sender.avatar"
             :alt="notification.sender.name"
@@ -54,7 +48,9 @@ function formatTimeKr(dateString: string) {
 
         <div class="text-sm flex-1">
           <p class="flex items-center justify-between">
-            <span class="text-highlighted font-medium">{{ notification.sender.name }}</span>
+            <span class="text-highlighted font-medium">{{
+              notification.sender.name
+            }}</span>
 
             <time
               :datetime="notification.date"
