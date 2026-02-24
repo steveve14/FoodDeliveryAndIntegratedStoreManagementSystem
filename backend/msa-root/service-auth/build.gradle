@@ -2,4 +2,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // Google API Client (ID Token 검증용)
+    implementation 'com.google.api-client:google-api-client:2.8.1'
+
+    // JWT 발급용 (예: jjwt)
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    // Jakarta annotations for PostConstruct on Spring Boot 3/4
+    implementation 'jakarta.annotation:jakarta.annotation-api:2.1.0'
 }

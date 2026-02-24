@@ -2,6 +2,12 @@ server:
   port: 7000
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: "여기에_구글_클라이언트_ID를_입력하세요.apps.googleusercontent.com"
   cloud:
     gateway:
       routes:
