@@ -1,7 +1,14 @@
 package com.example.order.dto;
 
-/**
- * 주문 항목 DTO
- */
-public record OrderItemDto(Long productId, int quantity, long price) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderItemDto {
+	private Long productId;
+	private int quantity;
+	private long price;
 }

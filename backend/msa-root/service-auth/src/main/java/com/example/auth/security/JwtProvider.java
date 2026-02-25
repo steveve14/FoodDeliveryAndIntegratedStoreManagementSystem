@@ -1,6 +1,7 @@
 package com.example.auth.security;
 
 // JWT 생성 및 서명에 사용하는 JJWT 라이브러리의 클래스들
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -20,11 +21,9 @@ import java.util.Date;
 
 /**
  * JwtProvider
- *
  * 역할:
  * - 애플리케이션에서 JWT(액세스 토큰, 리프레시 토큰)를 생성하고 서명하는 책임을 가진 Spring 컴포넌트입니다.
  * - 구성은 application.yml(또는 환경 변수)을 통해 주입되는 값을 사용합니다.
- *
  * 주의:
  * - 현재 구현은 HS256(HMAC-SHA256) 대칭 서명을 사용합니다. 서비스 간 검증 / 키 회전을 고려한다면
  *   비대칭(RS256)으로 전환하는 것을 권장합니다.
@@ -50,12 +49,10 @@ public class JwtProvider {
 
     /**
      * 빈 초기화 시 실행되는 메소드.
-     *
      * 동작:
      * - 먼저 tokenSecret을 Base64로 디코딩 시도합니다. (비밀이 base64로 저장되어 있을 수 있음)
      * - 디코딩이 실패하면 원시 문자열의 바이트를 사용합니다.
      * - 최종적으로 Keys.hmacShaKeyFor(...)를 호출하여 SecretKey를 생성합니다.
-     *
      * 주의/권고:
      * - 현재 코드는 tokenSecret.getBytes()를 사용하므로 플랫폼 기본 문자셋에 영향을 받을 수 있습니다.
      *   안정적으로 하려면 UTF-8을 명시적으로 사용해야 합니다 (예: tokenSecret.getBytes(StandardCharsets.UTF_8)).
@@ -80,18 +77,15 @@ public class JwtProvider {
 
     /**
      * 액세스 토큰 생성
-     *
      * 파라미터:
      * - userId: 토큰의 subject(sub)으로 들어갈 사용자 식별자(필수)
      * - role: 사용자 권한 정보(예: "ROLE_USER")를 role 클레임으로 포함
-     *
      * 토큰 내용:
      * - subject(sub): userId
      * - claim("role"): role 정보
      * - iat: 발행 시각
      * - exp: 만료 시각(현재 시각 + accessTokenValidityMs)
      * - 서명: HS256과 위에서 생성된 SecretKey로 서명
-     *
      * 반환값: 서명된 JWT 문자열
      */
     public String createAccessToken(Long userId, String role) {
@@ -113,19 +107,15 @@ public class JwtProvider {
 
     /**
      * 리프레시 토큰 생성
-     *
      * 파라미터:
      * - userId: 토큰의 subject(sub)으로 들어갈 사용자 식별자(필수)
-     *
      * 토큰 내용:
      * - subject(sub): userId
      * - claim("type"): "refresh" 로 리프레시 토큰임을 표시
      * - iat: 발행 시각
      * - exp: 만료 시각(현재 시각 + refreshTokenValidityMs)
      * - 서명: HS256과 SecretKey로 서명
-     *
      * 반환값: 서명된 JWT 문자열
-     *
      * 권고:
      * - 리프레시 토큰의 경우 서버 측에서 jti(토큰 식별자)를 발급해 DB에 저장하고 폐기(revoke) 처리를 하는
      *   패턴이 안전합니다(여기서는 jti를 추가/저장하지 않음).
@@ -145,5 +135,54 @@ public class JwtProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 // compact()로 최종 토큰 문자열 생성
                 .compact();
+    }
+
+    /**
+     * JWT 토큰 유효성 검증
+     *
+     * @param token 검증할 JWT 토큰
+     * @return 유효하면 true, 그렇지 않으면 false
+     */
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return false;
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    /**
+     * JWT 토큰에서 사용자 ID 추출
+     *
+     * @param token JWT 토큰
+     * @return 사용자 ID
+     */
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return Long.parseLong(claims.getSubject());
+    }
+
+    /**
+     * JWT 토큰에서 권한(role) 정보 추출
+     *
+     * @param token JWT 토큰
+     * @return 권한 문자열 (없으면 빈 문자열)
+     */
+    public String getRolesFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        Object role = claims.get("role");
+        return role != null ? role.toString() : "";
     }
 }

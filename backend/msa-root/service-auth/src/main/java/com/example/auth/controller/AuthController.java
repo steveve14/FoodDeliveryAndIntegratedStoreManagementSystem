@@ -1,6 +1,5 @@
 package com.example.auth.controller;
 
-import com.example.auth.dto.GoogleLoginRequest;
 import com.example.auth.dto.LoginRequest;
 import com.example.auth.service.AuthenticationService;
 import com.example.auth.dto.TokenResponse;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * AuthController
- *
  * 역할:
  * - 인증 관련 HTTP 엔드포인트를 제공하는 REST 컨트롤러입니다.
  * - 실제 인증/토큰 발급 로직은 서비스 계층(AuthenticationService)에 위임합니다.
@@ -23,17 +21,19 @@ public class AuthController {
     // 비즈니스 로직을 담당하는 서비스 주입 (생성자 주입, Lombok의 @RequiredArgsConstructor로 자동 생성)
     private final AuthenticationService authService;
 
-    /**
-     * 구글 소셜 로그인 엔드포인트
-     * - 클라이언트는 Google ID 토큰을 body에 담아 전송합니다.
-     * - 컨트롤러는 토큰을 서비스로 전달하고, 서비스는 토큰 검증 후 자체 JWT를 발급합니다.
+    /*
+      구글 소셜 로그인 엔드포인트
+      - 클라이언트는 Google ID 토큰을 body에 담아 전송합니다.
+      - 컨트롤러는 토큰을 서비스로 전달하고, 서비스는 토큰 검증 후 자체 JWT를 발급합니다.
      */
-    @PostMapping("/google")
-    public ResponseEntity<TokenResponse> googleLogin(@RequestBody GoogleLoginRequest request) {
-        // 서비스로 토큰 검증 및 로그인 처리 위임
-        TokenResponse tokenResponse = authService.socialLogin("google", request.getIdToken());
-        return ResponseEntity.ok(tokenResponse);
-    }
+
+//    @PostMapping("/google")
+    // Google 소셜 로그인은 현재 비활성화(주석 처리)
+    // public ResponseEntity<TokenResponse> googleLogin(@RequestBody GoogleLoginRequest request) {
+    //     // 서비스로 토큰 검증 및 로그인 처리 위임
+    //     TokenResponse tokenResponse = authService.socialLogin("google", request.getIdToken());
+    //     return ResponseEntity.ok(tokenResponse);
+    // }
 
     /**
      * 일반적인 소셜 로그인 엔드포인트

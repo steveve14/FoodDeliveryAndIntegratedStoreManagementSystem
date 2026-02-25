@@ -1,9 +1,16 @@
 package com.example.order.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
-/**
- * 주문 생성 요청 DTO
- */
-public record CreateOrderRequest(Long userId, List<OrderItemDto> items, String address) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateOrderRequest {
+	private Long userId;
+	private List<OrderItemDto> items;
+	private String address;
 }

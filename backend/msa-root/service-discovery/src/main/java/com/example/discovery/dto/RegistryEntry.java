@@ -1,4 +1,15 @@
 package com.example.discovery.dto;
 
-public record RegistryEntry(String serviceId, String host, int port, String status) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegistryEntry {
+	private String serviceId;
+	private String host;
+	private int port;
+	private String status;
 }

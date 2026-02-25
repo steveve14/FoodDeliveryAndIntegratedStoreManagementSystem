@@ -7,5 +7,10 @@ package com.example.auth.dto;
  * - name: 사용자 이름
  * - roles: 콤마 구분 권한 문자열(간단 표현)
  */
-public record UserDto(Long id, String email, String name, String roles) {
+public class UserDto {
+	private Long id;
+	private String email;
+	private String name;
+	private String roles;
+	// Lombok will generate constructors/getters/setters
 }

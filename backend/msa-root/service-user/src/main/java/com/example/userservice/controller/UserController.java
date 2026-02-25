@@ -27,4 +27,16 @@ public class UserController {
         if (dto == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(dto);
     }
+
+    @GetMapping("/{id}/profile")
+    public ResponseEntity<com.example.userservice.dto.UserProfileDto> getProfile(@PathVariable Long id) {
+        com.example.userservice.dto.UserProfileDto dto = userService.getProfile(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<com.example.userservice.dto.UserProfileDto> updateProfile(@PathVariable Long id, @RequestBody com.example.userservice.dto.UpdateProfileRequest req) {
+        com.example.userservice.dto.UserProfileDto dto = userService.updateProfile(id, req);
+        return ResponseEntity.ok(dto);
+    }
 }

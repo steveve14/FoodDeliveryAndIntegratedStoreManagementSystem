@@ -2,12 +2,15 @@ server:
   port: 8000  # 클라이언트가 접근할 Gateway 포트
 
 spring:
+  profiles:
+    active: local  # 개발 환경
+
   application:
     name: service-gateway
 
   datasource:
     driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/db_gateway}
+    url: ${DB_URL:jdbc:postgresql://localhost:6000/db_gateway}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:password}
     hikari:
@@ -66,6 +69,13 @@ spring:
           uri: lb://SERVICE-EVENT
           predicates:
             - Path=/events/**, /coupons/**
+
+# gRPC 클라이언트 설정
+grpc:
+  client:
+    service-auth:
+      address: static://localhost:9000
+      negotiation-type: plaintext
 
 eureka:
   client:

@@ -1,8 +1,18 @@
 package com.example.store.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.Instant;
 
-public record InfoResponse(String service, String status, String timestamp) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class InfoResponse {
+    private String service;
+    private String status;
+    private String timestamp;
+
     public static InfoResponse up(String serviceName) {
         return new InfoResponse(serviceName, "UP", Instant.now().toString());
     }

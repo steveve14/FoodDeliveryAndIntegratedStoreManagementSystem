@@ -2,12 +2,15 @@ server:
   port: 8020
 
 spring:
+  profiles:
+    active: local  # 개발 환경
+
   application:
     name: service-store
 
   datasource:
     driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/db_store}
+    url: ${DB_URL:jdbc:postgresql://localhost:6000/db_store}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:password}
     hikari:
@@ -23,6 +26,10 @@ spring:
 
   flyway:
     enabled: false
+
+grpc:
+  server:
+    port: 9020
 
 eureka:
   client:

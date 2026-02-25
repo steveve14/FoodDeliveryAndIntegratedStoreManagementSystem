@@ -1,4 +1,14 @@
 package com.example.delivery.dto;
 
-public record CreateDeliveryRequest(Long orderId, String address, String courier) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateDeliveryRequest {
+	private Long orderId;
+	private String address;
+	private String courier;
 }

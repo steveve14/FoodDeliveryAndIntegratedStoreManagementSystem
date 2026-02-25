@@ -2,6 +2,9 @@ server:
   port: 8010
 
 spring:
+  profiles:
+    active: local  # 개발 환경: H2 인메모리 DB 사용
+
   application:
     name: service-user  # Eureka에 등록될 이름
 
@@ -29,3 +32,8 @@ eureka:
     fetch-registry: true         # 다른 서비스 주소 조회
     service-url:
       defaultZone: http://localhost:8100/eureka/  # Discovery Service 주소
+
+# gRPC 서버 설정
+grpc:
+  server:
+    port: 9010  # gRPC 서버 포트

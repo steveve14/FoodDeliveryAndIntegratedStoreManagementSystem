@@ -2,6 +2,9 @@ server:
   port: 8100
 
 spring:
+  profiles:
+    active: local  # 개발 환경
+
   application:
     name: discovery-service
 
@@ -15,6 +18,10 @@ spring:
 
   flyway:
     enabled: false
+
+grpc:
+  server:
+    port: -1
 
 eureka:
   instance:

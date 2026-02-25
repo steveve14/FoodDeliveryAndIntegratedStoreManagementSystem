@@ -1,7 +1,15 @@
 package com.example.userservice.dto;
 
-/**
- * 사용자 프로필 조회 응답 DTO
- */
-public record UserProfileDto(Long id, String email, String name, String phone) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserProfileDto {
+	private Long id;
+	private String email;
+	private String name;
+	private String phone;
 }

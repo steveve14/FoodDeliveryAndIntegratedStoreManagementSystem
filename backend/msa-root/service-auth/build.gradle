@@ -2,6 +2,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    // webflux는 gRPC로 대체되어 더 이상 필요하지 않음
+    // implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     // Google API Client (ID Token 검증용)
     implementation 'com.google.api-client:google-api-client:2.8.1'

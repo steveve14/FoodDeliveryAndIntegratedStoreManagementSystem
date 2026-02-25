@@ -1,10 +1,19 @@
 package com.example.order.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.Instant;
 import java.util.List;
 
-/**
- * 주문 정보를 표현하는 DTO
- */
-public record OrderDto(Long id, Long userId, List<OrderItemDto> items, String status, Instant createdAt) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderDto {
+	private Long id;
+	private Long userId;
+	private List<OrderItemDto> items;
+	private String status;
+	private Instant createdAt;
 }

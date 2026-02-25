@@ -2,6 +2,9 @@ server:
   port: 7000
 
 spring:
+  profiles:
+    active: local  # 개발 환경: H2 인메모리 DB 사용 (application-local.yml)
+  
   security:
     oauth2:
       client:
@@ -32,7 +35,7 @@ spring:
             - Path=/orders/**
           filters:
             - AuthorizationHeaderFilter
-            -
+
   application:
     name: service-auth
 
@@ -63,6 +66,15 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+# gRPC 설정 (최상위 레벨)
+grpc:
+  server:
+    port: 9000
+  client:
+    service-user:
+      address: static://localhost:9010
+      negotiation-type: plaintext
 
 eureka:
   client:

@@ -1,4 +1,14 @@
 package com.example.store.dto;
 
-public record CreateProductRequest(String name, String description, long price) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateProductRequest {
+	private String name;
+	private String description;
+	private long price;
 }

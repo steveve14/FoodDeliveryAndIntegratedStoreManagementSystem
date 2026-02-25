@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package com.example.delivery.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.example.delivery.grpc";
+option java_outer_classname = "DeliveryProto";
+
+// Delivery 서비스 gRPC 정의
+service DeliveryGrpcService {
+    // 배달 ID로 조회
+    rpc GetDeliveryById(GetDeliveryByIdRequest) returns (DeliveryResponse);
+    
+    // 배달 생성
+    rpc CreateDelivery(CreateDeliveryGrpcRequest) returns (DeliveryResponse);
+    
+    // 주문 ID로 배달 조회
+    rpc GetDeliveryByOrderId(GetDeliveryByOrderIdRequest) returns (DeliveryResponse);
+    
+    // 배달 상태 업데이트
+    rpc UpdateDeliveryStatus(UpdateDeliveryStatusRequest) returns (DeliveryResponse);
+}
+
+message GetDeliveryByIdRequest {
+    int64 delivery_id = 1;
+}
+
+message CreateDeliveryGrpcRequest {
+    int64 order_id = 1;
+    string address = 2;
+    string courier = 3;
+}
+
+message GetDeliveryByOrderIdRequest {
+    int64 order_id = 1;
+}
+
+message UpdateDeliveryStatusRequest {
+    int64 delivery_id = 1;
+    string status = 2;
+}
+
+message DeliveryResponse {
+    bool found = 1;
+    int64 delivery_id = 2;
+    int64 order_id = 3;
+    string courier = 4;
+    string status = 5;
+    int64 scheduled_at = 6;
+}

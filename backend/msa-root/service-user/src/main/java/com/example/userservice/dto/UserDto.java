@@ -1,9 +1,18 @@
 package com.example.userservice.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.Instant;
 
-/**
- * 사용자 정보를 표현하는 DTO
- */
-public record UserDto(Long id, String email, String name, String roles, Instant createdAt) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserDto {
+	private Long id;
+	private String email;
+	private String name;
+	private String roles;
+	private Instant createdAt;
 }

@@ -1,6 +1,8 @@
 package com.example.auth.service;
 // AuthService.java
 import com.example.auth.dto.TokenResponse;
+import com.example.auth.grpc.client.UserGrpcClient;
+import com.example.userservice.grpc.AuthenticateResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -15,11 +17,9 @@ import java.util.Collections;
 
 /**
  * AuthService
- *
  * 역할:
  * - 소셜 로그인(예: Google) 토큰 검증과 내부 로그인 로직(예: 이메일/비밀번호)을 담당하는 서비스 레이어입니다.
- * - 실제 사용자 저장/조회(UserService)나 사용자 엔티티는 분리되어 있어야 하며, 이 클래스는 그 부분을 호출하도록 구현해야 합니다.
- * - 현재는 예시/샘플 코드로 일부 동작은 더미 값으로 처리되어 있습니다.
+ * - 내부 MSA 통신은 gRPC를 사용합니다.
  */
 @Service
 @RequiredArgsConstructor
@@ -31,11 +31,11 @@ public class AuthService implements AuthenticationService {
 
     // JWT 발급용 유틸리티 (외부 주입)
     private final JwtProvider jwtProvider;
+    private final UserGrpcClient userGrpcClient; // gRPC 클라이언트로 변경
 
     /**
      * 구글 ID 토큰을 검증하고, 검증된 정보를 바탕으로 내부 로직으로 로그인/회원등록을 수행한 뒤
      * 자체 JWT(access/refresh)를 발급합니다.
-     *
      * 이 메서드는 주요 단계:
      * 1) GoogleIdTokenVerifier로 토큰 유효성 검증
      * 2) payload에서 이메일, 이름, subject(google id) 추출
@@ -96,27 +96,28 @@ public class AuthService implements AuthenticationService {
     }
 
     /**
-     * 간단한 이메일/비밀번호 로그인 예시
-     * - 실제로는 UserService로 사용자 조회 및 비밀번호(해시) 검증이 필요합니다.
-     * - 여기서는 데모를 위해 하드코드된 값으로 검증합니다.
+     * 이메일/비밀번호 로그인 - gRPC를 통해 service-user와 통신
      */
     @Transactional
     public TokenResponse login(String email, String password) {
-        // 필수 입력 체크
         if (email == null || password == null) {
             throw new IllegalArgumentException("이메일과 비밀번호를 입력해주세요.");
         }
 
-        // 임시 검증 로직(프로덕션에서는 절대 사용하지 마세요)
-        if (!email.equals("user@example.com") || !password.equals("password")) {
-            throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
+        // gRPC를 통해 service-user의 authenticate 호출
+        AuthenticateResponse response = userGrpcClient.authenticate(email, password);
+
+        if (!response.getSuccess()) {
+            throw new IllegalArgumentException(
+                response.getErrorMessage().isEmpty() 
+                    ? "이메일 또는 비밀번호가 올바르지 않습니다." 
+                    : response.getErrorMessage()
+            );
         }
 
-        // 임시 userId와 role (실제 시스템에서는 DB의 사용자 ID/권한 정보를 사용)
-        Long userId = 1L;
-        String role = "USER";
+        Long userId = response.getUserId();
+        String role = response.getRoles();
 
-        // JwtProvider를 통해 액세스/리프레시 토큰 생성
         String accessToken = jwtProvider.createAccessToken(userId, role);
         String refreshToken = jwtProvider.createRefreshToken(userId);
 

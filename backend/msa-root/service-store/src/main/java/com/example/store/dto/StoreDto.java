@@ -1,4 +1,15 @@
 package com.example.store.dto;
 
-public record StoreDto(Long id, String name, String address, String phone) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class StoreDto {
+	private Long id;
+	private String name;
+	private String address;
+	private String phone;
 }

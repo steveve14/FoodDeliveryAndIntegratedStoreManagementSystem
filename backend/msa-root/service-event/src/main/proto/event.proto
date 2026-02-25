@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package com.example.event.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.example.event.grpc";
+option java_outer_classname = "EventProto";
+
+// Event 서비스 gRPC 정의
+service EventGrpcService {
+    // 이벤트 발행
+    rpc PublishEvent(PublishEventRequest) returns (PublishEventResponse);
+    
+    // 이벤트 ID로 조회
+    rpc GetEventById(GetEventByIdRequest) returns (EventResponse);
+}
+
+message PublishEventRequest {
+    string type = 1;
+    string payload = 2;
+}
+
+message PublishEventResponse {
+    bool success = 1;
+    int64 event_id = 2;
+    string error_message = 3;
+}
+
+message GetEventByIdRequest {
+    int64 event_id = 1;
+}
+
+message EventResponse {
+    bool found = 1;
+    int64 event_id = 2;
+    string type = 3;
+    string payload = 4;
+    int64 created_at = 5;
+}

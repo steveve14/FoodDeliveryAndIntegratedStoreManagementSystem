@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package com.example.auth.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.example.auth.grpc";
+option java_outer_classname = "AuthProto";
+
+// Auth 서비스 gRPC 정의
+service AuthGrpcService {
+    // JWT 토큰 검증
+    rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+    
+    // 토큰 갱신
+    rpc RefreshToken(RefreshTokenRequest) returns (TokenPairResponse);
+}
+
+message ValidateTokenRequest {
+    string token = 1;
+}
+
+message ValidateTokenResponse {
+    bool valid = 1;
+    int64 user_id = 2;
+    string roles = 3;
+    string error_message = 4;
+}
+
+message RefreshTokenRequest {
+    string refresh_token = 1;
+}
+
+message TokenPairResponse {
+    bool success = 1;
+    string access_token = 2;
+    string refresh_token = 3;
+    string error_message = 4;
+}

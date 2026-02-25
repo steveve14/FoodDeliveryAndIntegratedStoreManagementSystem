@@ -2,6 +2,9 @@ server:
   port: 8050
 
 spring:
+  profiles:
+    active: local  # 개발 환경
+
   application:
     name: service-delivery
 
@@ -24,6 +27,11 @@ spring:
 
   flyway:
     enabled: false
+
+# gRPC 서버 설정
+grpc:
+  server:
+    port: 9050
 
 eureka:
   client:

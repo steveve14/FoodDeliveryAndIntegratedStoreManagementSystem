@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package com.example.userservice.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.example.userservice.grpc";
+option java_outer_classname = "UserProto";
+
+// User 서비스 gRPC 정의
+service UserGrpcService {
+    // 이메일/비밀번호 인증
+    rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse);
+    
+    // 사용자 ID로 조회
+    rpc GetUserById(GetUserByIdRequest) returns (UserResponse);
+    
+    // 이메일로 사용자 조회
+    rpc GetUserByEmail(GetUserByEmailRequest) returns (UserResponse);
+}
+
+message AuthenticateRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message AuthenticateResponse {
+    bool success = 1;
+    int64 user_id = 2;
+    string email = 3;
+    string name = 4;
+    string roles = 5;
+    string error_message = 6;
+}
+
+message GetUserByIdRequest {
+    int64 user_id = 1;
+}
+
+message GetUserByEmailRequest {
+    string email = 1;
+}
+
+message UserResponse {
+    bool found = 1;
+    int64 user_id = 2;
+    string email = 3;
+    string name = 4;
+    string phone = 5;
+    string roles = 6;
+    int64 created_at = 7;
+}

@@ -1,0 +1,30 @@
+package com.example.auth.grpc.client;
+
+import com.example.userservice.grpc.AuthenticateRequest;
+import com.example.userservice.grpc.AuthenticateResponse;
+import com.example.userservice.grpc.UserGrpcServiceGrpc;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.stereotype.Service;
+
+/**
+ * service-user gRPC 클라이언트
+ * service-auth에서 사용자 인증 시 호출
+ */
+@Service
+public class UserGrpcClient {
+
+    @GrpcClient("service-user")
+    private UserGrpcServiceGrpc.UserGrpcServiceBlockingStub userStub;
+
+    /**
+     * 이메일/비밀번호로 사용자 인증
+     * @return AuthenticateResponse (success, userId, email, name, roles, errorMessage)
+     */
+    public AuthenticateResponse authenticate(String email, String password) {
+        AuthenticateRequest request = AuthenticateRequest.newBuilder()
+                .setEmail(email)
+                .setPassword(password)
+                .build();
+        return userStub.authenticate(request);
+    }
+}
