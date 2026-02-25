@@ -4,21 +4,22 @@
 
 ```mermaid
 graph TD
-    Client[Web / Mobile / Tablet] -->|HTTPS| Gateway(Spring Cloud Gateway)
+    Client[Web / Mobile / Tablet] -->|HTTPS| Gateway(service-gateway)
     
     subgraph Infrastructure
-        Eureka(Eureka Server)
-        Config(Config Server)
+        Eureka(service-discovery)
     end
     
-    Gateway --> Auth(Auth Service)
-    Gateway --> Store(Store Service)
-    Gateway --> Order(Order Service)
-    Gateway --> Pay(Payment Service)
+    Gateway --> Auth(service-auth)
+    Gateway --> User(service-user)
+    Gateway --> Store(service-store)
+    Gateway --> Order(service-order)
+    Gateway --> Delivery(service-delivery)
+    Gateway --> Event(service-event)
     
     Auth -.->|JWT 검증| Gateway
     Order -->|Feign Client| Store
-    Order -->|Feign Client| Pay
+    Order -->|Feign Client| Delivery
 ```
 
 ## 2. 기술 스택 상세

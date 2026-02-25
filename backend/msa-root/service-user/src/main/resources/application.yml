@@ -6,18 +6,22 @@ spring:
     name: service-user  # Eureka에 등록될 이름
 
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.0.25:6000/db_user
-    username: postgres
-    password: 1234 # 본인의 DB 비밀번호로 수정하세요
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/db_user}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    hikari:
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:10}
 
+  # DB 구조 변경은 수동으로 처리합니다.
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+
+  # JPA 자동 DDL 비활성화(수동 마이그레이션 정책)
   jpa:
     hibernate:
-      ddl-auto: update  # 개발 단계에서는 update 사용
-    show-sql: true      # 쿼리 로그 확인
-    properties:
-      hibernate:
-        format_sql: true
+      ddl-auto: none
 
 eureka:
   client:

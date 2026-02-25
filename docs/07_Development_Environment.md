@@ -10,13 +10,13 @@
 MSA 특성상 실행 순서가 중요합니다.
 
 1.  **Discovery Service (Eureka)**
-    *   Path: `backend/discovery-service`
+    *   Path: `backend/msa-root/service-discovery`
     *   Command: `./gradlew bootRun`
-    *   Check: `http://localhost:8761` 접속
+    *   Check: `http://localhost:8100` 접속
 2.  **API Gateway**
-    *   Path: `backend/api-gateway`
+    *   Path: `backend/msa-root/service-gateway`
     *   Command: `./gradlew bootRun`
-    *   Port: `8080`
+    *   Port: `8000`
 3.  **Core Services (Auth, Store, Order)**
     *   Profile: `-Dspring.profiles.active=local` 옵션 필수.
     *   DB: `local` 프로필 사용 시 프로젝트 내 `sqlite` 파일 자동 생성됨.
@@ -27,4 +27,4 @@ MSA 특성상 실행 순서가 중요합니다.
 
 ## 4. 환경 변수 관리 (.env)
 보안 정보(API Key, DB 비밀번호)는 깃에 올리지 않고 `.env` 파일로 관리합니다.
-`backend/store-service/src/main/resources/application-secret.yml` 등을 생성하여 `.gitignore`에 등록 후 사용합니다.
+`backend/msa-root/service-store/src/main/resources/application-secret.yml` 등을 생성하여 `.gitignore`에 등록 후 사용합니다.

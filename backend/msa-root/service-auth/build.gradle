@@ -12,4 +12,9 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     // Jakarta annotations for PostConstruct on Spring Boot 3/4
     implementation 'jakarta.annotation:jakarta.annotation-api:2.1.0'
+    // Database: Spring Data JDBC + Flyway + BCrypt + Postgres
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.springframework.security:spring-security-crypto'
+    runtimeOnly 'org.postgresql:postgresql'
 }

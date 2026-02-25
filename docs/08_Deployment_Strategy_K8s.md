@@ -31,21 +31,21 @@ ENTRYPOINT ["java", "-jar", "-Djava.security.egd=file:/dev/./urandom", "-Dspring
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: store-service
+  name: service-store
   namespace: food-delivery
 spec:
   replicas: 2 # 가용성을 위해 2개 파드 실행
   selector:
     matchLabels:
-      app: store-service
+      app: service-store
   template:
     metadata:
       labels:
-        app: store-service
+        app: service-store
     spec:
       containers:
-        - name: store-service
-          image: my-registry/store-service:latest
+        - name: service-store
+          image: my-registry/service-store:latest
           ports:
             - containerPort: 8080
           readinessProbe: # 트래픽 받을 준비 됐는지 확인
@@ -60,6 +60,6 @@ spec:
 ```
 
 ## 3. 외부 노출 전략 (Ingress)
-외부(인터넷)에서의 접근은 `Nginx Ingress Controller`를 통해 `API Gateway`로만 허용합니다.
-*   `api.mydomain.com` -> `API Gateway Service`
-*   나머지 마이크로서비스(`Store`, `Order` 등)는 `ClusterIP` 타입으로 설정하여 외부 직접 접근 차단.
+외부(인터넷)에서의 접근은 `Nginx Ingress Controller`를 통해 `service-gateway`로만 허용합니다.
+*   `api.mydomain.com` -> `service-gateway`
+*   나머지 마이크로서비스(`service-store`, `service-order` 등)는 `ClusterIP` 타입으로 설정하여 외부 직접 접근 차단.

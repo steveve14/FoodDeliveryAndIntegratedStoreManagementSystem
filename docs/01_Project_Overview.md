@@ -13,7 +13,7 @@
 ## 3. 역할과 책임 (R&R)
 
 ### 3.1. 백엔드 개발 (Spring Boot)
-*   **MSA 환경 구축**: Service Discovery, Gateway, Config Server 설정 및 관리.
+*   **MSA 환경 구축**: `service-discovery`, `service-gateway` 및 `service-*` 모듈 설정/관리.
 *   **API 개발**: 도메인별(주문, 가게, 유저) 독립적인 REST API 서버 개발.
 *   **데이터 설계**: JPA를 활용한 DB 추상화 및 로컬(SQLite)/운영(RDBMS) 환경 분리.
 *   **통신 구현**: Feign Client를 이용한 서비스 간 동기 통신 구현.

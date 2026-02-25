@@ -6,18 +6,24 @@ spring:
     name: service-delivery
 
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.0.25:6000/db_delivery
-    username: postgres
-    password: 1234
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    url: ${DB_URL:jdbc:postgresql://localhost:6000/db_delivery}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    hikari:
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:10}
 
+  # 자동 DDL 및 Flyway 자동 적용을 비활성화합니다. DB 구조 변경은 수동으로 적용하세요.
   jpa:
     hibernate:
-      ddl-auto: update  # 개발 단계에서는 update 사용
-    show-sql: true      # 쿼리 로그 확인
+      ddl-auto: none
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
+
+  flyway:
+    enabled: false
 
 eureka:
   client:

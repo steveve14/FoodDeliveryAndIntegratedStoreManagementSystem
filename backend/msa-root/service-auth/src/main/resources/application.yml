@@ -38,19 +38,25 @@ spring:
 
   # 1. 데이터베이스 연결 (로그인 시 비밀번호 확인용)
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.0.25:6000/db_user  # 스키마 주의: db_user
-    username: postgres
-    password: Steveve14#
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    url: ${DB_URL:jdbc:postgresql://localhost:6000/db_user}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    hikari:
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:10}
 
-  # 2. JPA 설정
+  # 2. JPA 설정 (자동 DDL 비활성화: DB 구조 변경은 수동으로 처리합니다)
   jpa:
     hibernate:
-      ddl-auto: update  # 개발 단계에서는 update, 운영 시 validate/none
-    show-sql: true      # 쿼리 로그 보기
+      ddl-auto: none
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
+
+  # Flyway 자동 마이그레이션 비활성화: DB 구조 변경은 수동으로 적용합니다.
+  flyway:
+    enabled: false
 
   # 3. Redis 연결 (Refresh Token 저장용)
   data:
