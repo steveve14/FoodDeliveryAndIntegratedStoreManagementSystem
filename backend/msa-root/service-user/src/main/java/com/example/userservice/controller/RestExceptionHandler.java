@@ -9,6 +9,9 @@ import java.util.NoSuchElementException;
 import java.util.Map;
 
 @RestControllerAdvice
+/**
+ * Global REST exception handler mapping common exceptions to HTTP responses.
+ */
 public class RestExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)

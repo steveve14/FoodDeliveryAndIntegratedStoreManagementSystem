@@ -27,4 +27,11 @@ public class UserGrpcClient {
                 .build();
         return userStub.authenticate(request);
     }
+
+    public com.example.userservice.grpc.UserResponse getUserByEmail(String email) {
+        com.example.userservice.grpc.GetUserByEmailRequest req = com.example.userservice.grpc.GetUserByEmailRequest.newBuilder()
+                .setEmail(email)
+                .build();
+        return userStub.getUserByEmail(req);
+    }
 }

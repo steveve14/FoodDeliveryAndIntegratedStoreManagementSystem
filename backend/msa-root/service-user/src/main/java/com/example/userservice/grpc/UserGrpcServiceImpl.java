@@ -7,8 +7,7 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 /**
- * User 서비스 gRPC 서버 구현
- * 내부 MSA 통신용
+ * gRPC service implementation for user operations used by internal MSA communication.
  */
 @GrpcService
 public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImplBase {

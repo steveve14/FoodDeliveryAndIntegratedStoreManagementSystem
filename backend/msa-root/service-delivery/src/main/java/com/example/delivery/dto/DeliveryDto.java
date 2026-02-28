@@ -1,17 +1,19 @@
 package com.example.delivery.dto;
 
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.Instant;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryDto {
-	private Long id;
-	private Long orderId;
-	private String courier;
-	private String status;
-	private Instant scheduledAt;
+
+  private String id;
+  private String orderId;
+  private String courier;
+  private String status;
+  private int deliveryFee;
+  private Instant scheduledAt;
 }

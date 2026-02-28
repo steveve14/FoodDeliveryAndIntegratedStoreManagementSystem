@@ -8,7 +8,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateStoreRequest {
-	private String name;
-	private String address;
-	private String phone;
+	
+  private String name;
+  private String address;
+  private String phone;
+  private String category;
+  private String status;
+  private Double latitude;
+  private Double longitude;
+  private Long minOrderAmount;
+  private Double ratingAvg;
+  private String description;
+  private String openingHours;
+  private String ownerId;
 }

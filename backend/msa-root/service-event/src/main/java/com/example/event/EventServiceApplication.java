@@ -6,6 +6,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+/**
+ * Entry point for the event service Spring Boot application.
+ */
 public class EventServiceApplication {
 
     public static void main(String[] args) {

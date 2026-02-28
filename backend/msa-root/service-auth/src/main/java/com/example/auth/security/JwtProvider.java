@@ -1,21 +1,14 @@
 package com.example.auth.security;
 
-// JWT 생성 및 서명에 사용하는 JJWT 라이브러리의 클래스들
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-// Spring에서 프로퍼티 주입(@Value)과 컴포넌트 스캐닝(@Component)을 사용
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-// Jakarta의 PostConstruct 애노테이션: 빈 초기화 후 init()을 호출하기 위해 사용
 import jakarta.annotation.PostConstruct;
-// 대칭 키(HMAC)용 SecretKey 타입
 import javax.crypto.SecretKey;
-// 토큰 발행 시점 및 만료 시점을 계산하기 위한 시간 API
 import java.time.Instant;
-// Base64 디코딩(환경에 따라 secret이 base64로 제공될 수 있음)
 import java.util.Base64;
 import java.util.Date;
 
@@ -27,6 +20,11 @@ import java.util.Date;
  * 주의:
  * - 현재 구현은 HS256(HMAC-SHA256) 대칭 서명을 사용합니다. 서비스 간 검증 / 키 회전을 고려한다면
  *   비대칭(RS256)으로 전환하는 것을 권장합니다.
+ *
+ * 참고(임포트 관련):
+ * - JJWT 라이브러리(io.jsonwebtoken.*)를 사용하여 JWT를 생성하고 서명합니다.
+ * - Spring의 @Value 및 @Component를 사용하여 구성과 빈 등록을 처리합니다.
+ * - jakarta.annotation.PostConstruct로 빈 초기화 후 키를 생성합니다.
  */
 @Component
 public class JwtProvider {
@@ -88,11 +86,11 @@ public class JwtProvider {
      * - 서명: HS256과 위에서 생성된 SecretKey로 서명
      * 반환값: 서명된 JWT 문자열
      */
-    public String createAccessToken(Long userId, String role) {
+    public String createAccessToken(String userId, String role) {
         Instant now = Instant.now();
         return Jwts.builder()
                 // JWT 표준 클레임 subject에 사용자 ID를 문자열로 저장
-                .setSubject(userId.toString())
+                .setSubject(userId)
                 // 커스텀 클레임으로 권한(role) 정보를 추가
                 .claim("role", role)
                 // 발행 시간(iat)
@@ -120,11 +118,11 @@ public class JwtProvider {
      * - 리프레시 토큰의 경우 서버 측에서 jti(토큰 식별자)를 발급해 DB에 저장하고 폐기(revoke) 처리를 하는
      *   패턴이 안전합니다(여기서는 jti를 추가/저장하지 않음).
      */
-    public String createRefreshToken(Long userId) {
+    public String createRefreshToken(String userId) {
         Instant now = Instant.now();
         return Jwts.builder()
                 // JWT 표준 클레임 subject에 사용자 ID를 문자열로 저장
-                .setSubject(userId.toString())
+                .setSubject(userId)
                 // 리프레시 토큰임을 명시하는 커스텀 클레임
                 .claim("type", "refresh")
                 // 발행 시간(iat)
@@ -149,9 +147,11 @@ public class JwtProvider {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-            return false;
-        } catch (Exception e) {
+            // parsing succeeded -> token is valid
             return true;
+        } catch (Exception e) {
+            // parsing failed -> invalid
+            return false;
         }
     }
 
@@ -161,13 +161,13 @@ public class JwtProvider {
      * @param token JWT 토큰
      * @return 사용자 ID
      */
-    public Long getUserIdFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return Long.parseLong(claims.getSubject());
+        return claims.getSubject();
     }
 
     /**

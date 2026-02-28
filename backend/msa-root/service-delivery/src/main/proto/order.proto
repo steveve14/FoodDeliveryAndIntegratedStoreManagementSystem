@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package com.example.order.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.example.order.grpc";
+option java_outer_classname = "OrderProto";
+
+// Order 서비스 gRPC 정의 (service-delivery에서 클라이언트로 사용)
+service OrderGrpcService {
+    rpc GetOrderById(GetOrderByIdRequest) returns (OrderResponse);
+    rpc CreateOrder(CreateOrderGrpcRequest) returns (OrderResponse);
+    rpc GetOrdersByUserId(GetOrdersByUserIdRequest) returns (OrderListResponse);
+    rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (OrderResponse);
+}
+
+message GetOrderByIdRequest {
+    string order_id = 1;
+}
+
+message CreateOrderGrpcRequest {
+    string user_id = 1;
+    repeated OrderItemMessage items = 2;
+    string address = 3;
+}
+
+message OrderItemMessage {
+    string product_id = 1;
+    int32 quantity = 2;
+    int64 price = 3;
+}
+
+message GetOrdersByUserIdRequest {
+    string user_id = 1;
+}
+
+message UpdateOrderStatusRequest {
+    string order_id = 1;
+    string status = 2;
+}
+
+message OrderResponse {
+    bool found = 1;
+    string order_id = 2;
+    string user_id = 3;
+    repeated OrderItemMessage items = 4;
+    string status = 5;
+    int64 created_at = 6;
+}
+
+message OrderListResponse {
+    repeated OrderResponse orders = 1;
+}

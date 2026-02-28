@@ -1,23 +1,35 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.dto.ApiResponse;
 import com.example.userservice.dto.AuthRequest;
 import com.example.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
+/**
+ * Controller exposing authentication endpoints for users.
+ */
 public class AuthController {
-    private final UserService userService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+  private final UserService userService;
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<com.example.userservice.dto.AuthUserDto> authenticate(@RequestBody AuthRequest req) {
-        com.example.userservice.dto.AuthUserDto dto = userService.authenticate(req.getEmail(), req.getPassword());
-        if (dto == null) return ResponseEntity.status(401).build();
-        return ResponseEntity.ok(dto);
+  public AuthController(UserService userService) {
+    this.userService = userService;
+  }
+
+  @PostMapping("/authenticate")
+  public ResponseEntity<ApiResponse<com.example.userservice.dto.AuthUserDto>> authenticate(
+      @RequestBody AuthRequest req) {
+    com.example.userservice.dto.AuthUserDto dto = userService.authenticate(req.getEmail(),
+        req.getPassword());
+    if (dto == null) {
+      return ResponseEntity.status(401).body(ApiResponse.error("Unauthorized"));
     }
+    return ResponseEntity.ok(ApiResponse.ok(dto));
+  }
 }

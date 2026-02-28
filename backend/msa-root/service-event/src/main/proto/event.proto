@@ -22,17 +22,17 @@ message PublishEventRequest {
 
 message PublishEventResponse {
     bool success = 1;
-    int64 event_id = 2;
+    string event_id = 2;
     string error_message = 3;
 }
 
 message GetEventByIdRequest {
-    int64 event_id = 1;
+    string event_id = 1;
 }
 
 message EventResponse {
     bool found = 1;
-    int64 event_id = 2;
+    string event_id = 2;
     string type = 3;
     string payload = 4;
     int64 created_at = 5;

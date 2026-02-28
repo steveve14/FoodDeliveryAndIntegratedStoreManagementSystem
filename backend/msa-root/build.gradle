@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '4.0.2'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.google.protobuf' version '0.9.4' apply false
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 ext {
@@ -26,6 +27,7 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.google.protobuf'
+    apply plugin: 'com.diffplug.spotless'
 
     group = 'com.example'
     version = '0.0.1-SNAPSHOT'
@@ -76,11 +78,28 @@ subprojects {
             }
         }
     }
-
+    
     // MSA의 핵심: Spring Cloud 의존성 관리
     dependencyManagement {
         imports {
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
         }
     }
+
+    // Code formatting: enforce Google Java style via Spotless + google-java-format
+    spotless {
+        java {
+            // target java sources in each subproject
+            target 'src/**/*.java'
+            // google-java-format version (choose a stable version compatible with your Java toolchain)
+            // Recommend using 1.19.2 (requires JVM 11+). Project toolchain is Java 17.
+            googleJavaFormat('1.19.2')
+            // remove unused imports
+            removeUnusedImports()
+            // additional formatting rules can be added here (importOrder, licenseHeader, etc.)
+        }
+    }
+
+    // Make the standard check lifecycle depend on spotlessCheck so CI will fail on formatting violations
+    check.dependsOn 'spotlessCheck'
 }

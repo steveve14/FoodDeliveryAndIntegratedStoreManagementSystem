@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
@@ -14,10 +16,21 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Order {
+public class Order implements Persistable<String> {
     @Id
-    private Long id;
-    private Long userId;
+    private String id;
+    private String userId;
+    private String storeId;
+    private int totalAmount;
     private String status;
     private Instant createdAt;
+
+    @Transient
+    @Builder.Default
+    private boolean isNewEntity = true;
+
+    @Override
+    public boolean isNew() {
+        return isNewEntity;
+    }
 }

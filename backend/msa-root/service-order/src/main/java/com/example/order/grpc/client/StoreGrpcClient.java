@@ -19,7 +19,7 @@ public class StoreGrpcClient {
     /**
      * 상품 ID로 상품 정보 조회
      */
-    public ProductResponse getProductById(Long productId) {
+    public ProductResponse getProductById(String productId) {
         GetProductByIdRequest request = GetProductByIdRequest.newBuilder()
                 .setProductId(productId)
                 .build();

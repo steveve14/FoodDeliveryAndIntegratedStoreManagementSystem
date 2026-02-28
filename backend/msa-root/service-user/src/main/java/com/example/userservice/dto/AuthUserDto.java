@@ -7,9 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * DTO returned after successful authentication containing basic user info.
+ */
 public class AuthUserDto {
-	private Long id;
-	private String email;
-	private String name;
-	private String roles;
+
+  private String id;
+  private String email;
+  private String name;
+  private String roles;
 }

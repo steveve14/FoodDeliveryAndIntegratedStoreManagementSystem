@@ -19,12 +19,17 @@ public class EventService {
 
     @Transactional
     public EventDto createEvent(String type, String payload) {
-        Event e = new Event(null, type, payload, Instant.now());
+        Event e = Event.builder()
+                .id(java.util.UUID.randomUUID().toString())
+                .type(type)
+                .payload(payload)
+                .createdAt(Instant.now())
+                .build();
         Event saved = eventRepository.save(e);
         return new EventDto(saved.getId(), saved.getType(), saved.getPayload(), saved.getCreatedAt());
     }
 
-    public Optional<EventDto> findById(Long id) {
+    public Optional<EventDto> findById(String id) {
         return eventRepository.findById(id).map(e -> new EventDto(e.getId(), e.getType(), e.getPayload(), e.getCreatedAt()));
     }
 }
