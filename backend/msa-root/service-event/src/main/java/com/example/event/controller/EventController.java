@@ -3,6 +3,7 @@ package com.example.event.controller;
 import com.example.event.dto.ApiResponse;
 import com.example.event.dto.EventDto;
 import com.example.event.service.EventService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,14 +24,16 @@ public class EventController {
 
   @PostMapping
   public ResponseEntity<ApiResponse<EventDto>> create(
-      @RequestBody com.example.event.dto.CreateEventRequest req) {
+      @RequestBody @Valid com.example.event.dto.CreateEventRequest req) {
     EventDto dto = eventService.createEvent(req.getType(), req.getPayload());
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<EventDto>> get(@PathVariable String id) {
-    return eventService.findById(id).map(dto -> ResponseEntity.ok(ApiResponse.ok(dto)))
+    return eventService
+        .findById(id)
+        .map(dto -> ResponseEntity.ok(ApiResponse.ok(dto)))
         .orElseGet(() -> ResponseEntity.ok(ApiResponse.error("Not found")));
   }
 }

@@ -6,6 +6,7 @@ import com.example.auth.dto.LogoutRequest;
 import com.example.auth.dto.RefreshRequest;
 import com.example.auth.dto.TokenResponse;
 import com.example.auth.service.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,24 +23,24 @@ class AuthController {
   private final AuthenticationService authService;
 
   @PostMapping("/social")
-  ResponseEntity<ApiResponse<TokenResponse>> socialLogin(@RequestParam String provider,
-      @RequestParam String token) {
+  ResponseEntity<ApiResponse<TokenResponse>> socialLogin(
+      @RequestParam String provider, @RequestParam String token) {
     return ResponseEntity.ok(ApiResponse.ok(authService.socialLogin(provider, token)));
   }
 
   @PostMapping("/login")
-  ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody LoginRequest request) {
+  ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody @Valid LoginRequest request) {
     return ResponseEntity.ok(
         ApiResponse.ok(authService.login(request.getEmail(), request.getPassword())));
   }
 
   @PostMapping("/refresh")
-  ResponseEntity<ApiResponse<TokenResponse>> refresh(@RequestBody RefreshRequest req) {
+  ResponseEntity<ApiResponse<TokenResponse>> refresh(@RequestBody @Valid RefreshRequest req) {
     return ResponseEntity.ok(ApiResponse.ok(authService.refresh(req.getRefreshToken())));
   }
 
   @PostMapping("/logout")
-  ResponseEntity<ApiResponse<Object>> logout(@RequestBody LogoutRequest req) {
+  ResponseEntity<ApiResponse<Object>> logout(@RequestBody @Valid LogoutRequest req) {
     authService.logout(req.getRefreshToken());
     return ResponseEntity.ok(ApiResponse.ok(null));
   }

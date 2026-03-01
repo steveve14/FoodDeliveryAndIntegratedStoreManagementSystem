@@ -12,7 +12,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 public class DeliveryService {
 
@@ -20,10 +19,10 @@ public class DeliveryService {
   private final OrderGrpcClient orderGrpcClient;
 
   // 상태 전이 규칙: SCHEDULED → PICKED_UP → COMPLETED
-  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS = Map.of(
-      "SCHEDULED", Set.of("PICKED_UP"),
-      "PICKED_UP", Set.of("COMPLETED")
-  );
+  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS =
+      Map.of(
+          "SCHEDULED", Set.of("PICKED_UP"),
+          "PICKED_UP", Set.of("COMPLETED"));
 
   // MVP: 고정 배달비 3,000원
   private static final int FIXED_DELIVERY_FEE = 3000;
@@ -36,20 +35,21 @@ public class DeliveryService {
   @Transactional
   public DeliveryDto createDelivery(String orderId, String courier, String status) {
     var resp = orderGrpcClient.getOrderById(orderId);
-      if (!resp.getFound()) {
-          throw new IllegalArgumentException("Order not found: " + orderId);
-      }
+    if (!resp.getFound()) {
+      throw new IllegalArgumentException("Order not found: " + orderId);
+    }
 
     String assigned = (courier != null && !courier.isBlank()) ? courier : "unassigned";
 
-    Delivery d = Delivery.builder()
-        .id(UUID.randomUUID().toString())
-        .orderId(orderId)
-        .courier(assigned)
-        .status(status)
-        .deliveryFee(FIXED_DELIVERY_FEE)
-        .scheduledAt(Instant.now())
-        .build();
+    Delivery d =
+        Delivery.builder()
+            .id(UUID.randomUUID().toString())
+            .orderId(orderId)
+            .courier(assigned)
+            .status(status)
+            .deliveryFee(FIXED_DELIVERY_FEE)
+            .scheduledAt(Instant.now())
+            .build();
     Delivery saved = deliveryRepository.save(d);
     return toDto(saved);
   }
@@ -60,8 +60,10 @@ public class DeliveryService {
 
   @Transactional
   public DeliveryDto updateStatus(String deliveryId, String newStatus) {
-    Delivery d = deliveryRepository.findById(deliveryId)
-        .orElseThrow(() -> new IllegalArgumentException("Delivery not found: " + deliveryId));
+    Delivery d =
+        deliveryRepository
+            .findById(deliveryId)
+            .orElseThrow(() -> new IllegalArgumentException("Delivery not found: " + deliveryId));
 
     Set<String> allowed = ALLOWED_TRANSITIONS.getOrDefault(d.getStatus(), Set.of());
     if (!allowed.contains(newStatus)) {
@@ -75,7 +77,12 @@ public class DeliveryService {
   }
 
   private DeliveryDto toDto(Delivery d) {
-    return new DeliveryDto(d.getId(), d.getOrderId(), d.getCourier(),
-        d.getStatus(), d.getDeliveryFee(), d.getScheduledAt());
+    return new DeliveryDto(
+        d.getId(),
+        d.getOrderId(),
+        d.getCourier(),
+        d.getStatus(),
+        d.getDeliveryFee(),
+        d.getScheduledAt());
   }
 }

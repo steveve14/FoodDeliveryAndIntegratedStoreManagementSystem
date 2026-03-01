@@ -18,16 +18,17 @@ public class AuthGrpcServiceImpl extends AuthGrpcServiceGrpc.AuthGrpcServiceImpl
   }
 
   @Override
-  public void validateToken(ValidateTokenRequest request,
-      StreamObserver<ValidateTokenResponse> responseObserver) {
+  public void validateToken(
+      ValidateTokenRequest request, StreamObserver<ValidateTokenResponse> responseObserver) {
     try {
       String token = request.getToken();
 
       if (!jwtProvider.validateToken(token)) {
-        responseObserver.onNext(ValidateTokenResponse.newBuilder()
-            .setValid(false)
-            .setErrorMessage("Invalid or expired token")
-            .build());
+        responseObserver.onNext(
+            ValidateTokenResponse.newBuilder()
+                .setValid(false)
+                .setErrorMessage("Invalid or expired token")
+                .build());
         responseObserver.onCompleted();
         return;
       }
@@ -35,32 +36,35 @@ public class AuthGrpcServiceImpl extends AuthGrpcServiceGrpc.AuthGrpcServiceImpl
       String userId = jwtProvider.getUserIdFromToken(token);
       String roles = jwtProvider.getRolesFromToken(token);
 
-      responseObserver.onNext(ValidateTokenResponse.newBuilder()
-          .setValid(true)
-          .setUserId(userId)
-          .setRoles(roles != null ? roles : "")
-          .build());
+      responseObserver.onNext(
+          ValidateTokenResponse.newBuilder()
+              .setValid(true)
+              .setUserId(userId)
+              .setRoles(roles != null ? roles : "")
+              .build());
       responseObserver.onCompleted();
     } catch (Exception e) {
-      responseObserver.onNext(ValidateTokenResponse.newBuilder()
-          .setValid(false)
-          .setErrorMessage(e.getMessage())
-          .build());
+      responseObserver.onNext(
+          ValidateTokenResponse.newBuilder()
+              .setValid(false)
+              .setErrorMessage(e.getMessage())
+              .build());
       responseObserver.onCompleted();
     }
   }
 
   @Override
-  public void refreshToken(RefreshTokenRequest request,
-      StreamObserver<TokenPairResponse> responseObserver) {
+  public void refreshToken(
+      RefreshTokenRequest request, StreamObserver<TokenPairResponse> responseObserver) {
     try {
       String refreshToken = request.getRefreshToken();
 
       if (!jwtProvider.validateToken(refreshToken)) {
-        responseObserver.onNext(TokenPairResponse.newBuilder()
-            .setSuccess(false)
-            .setErrorMessage("Invalid or expired refresh token")
-            .build());
+        responseObserver.onNext(
+            TokenPairResponse.newBuilder()
+                .setSuccess(false)
+                .setErrorMessage("Invalid or expired refresh token")
+                .build());
         responseObserver.onCompleted();
         return;
       }
@@ -69,19 +73,18 @@ public class AuthGrpcServiceImpl extends AuthGrpcServiceGrpc.AuthGrpcServiceImpl
       String roles = jwtProvider.getRolesFromToken(refreshToken);
 
       String newAccessToken = jwtProvider.createAccessToken(userId, roles);
-      String newRefreshToken = jwtProvider.createRefreshToken(userId);
+      String newRefreshToken = jwtProvider.createRefreshToken(userId, roles);
 
-      responseObserver.onNext(TokenPairResponse.newBuilder()
-          .setSuccess(true)
-          .setAccessToken(newAccessToken)
-          .setRefreshToken(newRefreshToken)
-          .build());
+      responseObserver.onNext(
+          TokenPairResponse.newBuilder()
+              .setSuccess(true)
+              .setAccessToken(newAccessToken)
+              .setRefreshToken(newRefreshToken)
+              .build());
       responseObserver.onCompleted();
     } catch (Exception e) {
-      responseObserver.onNext(TokenPairResponse.newBuilder()
-          .setSuccess(false)
-          .setErrorMessage(e.getMessage())
-          .build());
+      responseObserver.onNext(
+          TokenPairResponse.newBuilder().setSuccess(false).setErrorMessage(e.getMessage()).build());
       responseObserver.onCompleted();
     }
   }

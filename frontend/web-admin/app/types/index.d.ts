@@ -57,3 +57,55 @@ export interface Range {
   start: Date
   end: Date
 }
+
+// ─── Backend API 타입 ────────────────────────────────
+
+/** Backend 공통 응답 래퍼 */
+export interface ApiResponse<T = unknown> {
+  success: boolean
+  data: T
+  error: string | null
+}
+
+/** Backend StoreDto */
+export interface StoreDto {
+  id: string
+  name: string
+  address: string
+  phone: string
+  category: string
+  status: string
+  latitude: number
+  longitude: number
+  minOrderAmount: number
+  ratingAvg: number
+  description: string
+  openingHours: string
+  ownerId: string
+}
+
+/** Backend MenuDto */
+export interface MenuDto {
+  id: string
+  storeId: string
+  name: string
+  description: string
+  price: number
+  available: boolean
+  createdAt: string
+}
+
+/** Backend UserDto */
+export interface UserDto {
+  id: string
+  email: string
+  name: string
+  roles: string
+  createdAt: string
+}
+
+/** Backend TokenResponse */
+export interface TokenResponse {
+  accessToken: string
+  refreshToken: string
+}

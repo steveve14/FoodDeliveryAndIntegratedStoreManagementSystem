@@ -12,6 +12,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
     return navigateTo('/')
   }
 
+  // 인증되지 않은 사용자는 여기서 통과 (로그인 페이지)
+  if (!user.value) return
+
   const userRole = user.value.role
 
   // 3. 시스템 경로는 ADMIN만 접근 가능

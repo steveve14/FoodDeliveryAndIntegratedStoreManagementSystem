@@ -4,6 +4,7 @@ import com.example.userservice.dto.ApiResponse;
 import com.example.userservice.dto.CreateUserRequest;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/users")
-/**
- * REST controller exposing user management endpoints.
- */
+/** REST controller exposing user management endpoints. */
 public class UserController {
 
   private final UserService userService;
@@ -29,7 +28,7 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<ApiResponse<UserDto>> register(@RequestBody CreateUserRequest req) {
+  public ResponseEntity<ApiResponse<UserDto>> register(@RequestBody @Valid CreateUserRequest req) {
     UserDto dto = userService.register(req);
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }

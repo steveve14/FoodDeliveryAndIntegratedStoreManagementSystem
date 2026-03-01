@@ -1,5 +1,7 @@
 package com.example.userservice.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,10 +9,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/**
- * DTO for authentication requests (email + password).
- */
+/** DTO for authentication requests (email + password). */
 public class AuthRequest {
-    private String email;
-    private String password;
+  @NotBlank(message = "이메일을 입력해주세요.")
+  @Email(message = "유효한 이메일 형식이 아닙니다.")
+  private String email;
+
+  @NotBlank(message = "비밀번호를 입력해주세요.")
+  private String password;
 }

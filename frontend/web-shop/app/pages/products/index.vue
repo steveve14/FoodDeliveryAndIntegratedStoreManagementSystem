@@ -2,51 +2,53 @@
 import type { TableColumn } from "@nuxt/ui";
 import { z } from "zod";
 
-// 1. 데이터 타입 정의
+// 1. 데이터 타입 정의 — Backend MenuDto 기반
 type ProductStatus = "sale" | "soldout" | "hidden";
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
+  description: string;
   category: string;
   price: number;
   status: ProductStatus;
   image?: string;
 }
 
-// 2. 더미 데이터 (초기 메뉴 목록)
-const products = ref<Product[]>([
-  {
-    id: 1,
-    name: "황금 올리브 치킨",
-    category: "치킨",
-    price: 24000,
-    status: "sale",
-    image: "https://placehold.co/100x100/orange/white?text=Chicken",
-  },
-  {
-    id: 2,
-    name: "양념 반 후라이드 반",
-    category: "치킨",
-    price: 25000,
-    status: "sale",
-    image: "https://placehold.co/100x100/red/white?text=BanBan",
-  },
-  {
-    id: 3,
-    name: "치즈볼 (5개)",
-    category: "사이드",
-    price: 5000,
-    status: "sale",
-  },
-  {
-    id: 4,
-    name: "콜라 1.25L",
-    category: "음료",
-    price: 3000,
-    status: "soldout", // 품절 상태 예시
-  },
-]);
+// 2. Backend API에서 메뉴 목록 조회
+const { $api } = useApi();
+const { user } = useAuth();
+const products = ref<Product[]>([]);
+
+async function fetchMenus() {
+  // 점주의 가게 ID (실제로는 로그인 시 가게 정보를 받아와야 함)
+  const storeId = user.value?.id || "default";
+  try {
+    const res = await $api<
+      Array<{
+        id: string;
+        name: string;
+        description: string;
+        price: number;
+        available: boolean;
+      }>
+    >(`/api/v1/stores/${storeId}/menus`);
+    if (res.success && res.data) {
+      products.value = res.data.map((menu) => ({
+        id: menu.id,
+        name: menu.name,
+        description: menu.description || "",
+        category: "-",
+        price: menu.price,
+        status: menu.available ? ("sale" as const) : ("soldout" as const),
+      }));
+    }
+  } catch {
+    // API 실패 시 빈 목록 유지
+    products.value = [];
+  }
+}
+await fetchMenus();
 
 // 3. 검색 및 필터 상태
 const q = ref("");
@@ -68,7 +70,7 @@ const filteredProducts = computed(() => {
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const state = reactive({
-  id: 0,
+  id: "" as string,
   name: "",
   category: "치킨",
   price: 0,
@@ -88,7 +90,7 @@ const statuses = [
 // 모달 열기 (등록)
 const openCreateModal = () => {
   isEditMode.value = false;
-  state.id = 0;
+  state.id = "";
   state.name = "";
   state.category = "치킨";
   state.price = 0;
@@ -107,32 +109,57 @@ const openEditModal = (product: Product) => {
   isModalOpen.value = true;
 };
 
-// 저장 (등록/수정 처리)
-const saveProduct = () => {
-  if (!state.name || state.price < 0) return; // 간단 유효성 검사
+// 저장 (등록/수정 처리) — Backend API 호출
+const saveProduct = async () => {
+  if (!state.name || state.price < 0) return;
+  const storeId = user.value?.id || "default";
 
   if (isEditMode.value) {
-    // 수정 로직
-    const index = products.value.findIndex((p) => p.id === state.id);
-    if (index !== -1) {
-      products.value[index] = { ...products.value[index], ...state };
+    // 메뉴 수정 API
+    try {
+      await $api(`/api/v1/stores/${storeId}/menus/${state.id}`, {
+        method: "PUT",
+        body: {
+          name: state.name,
+          description: "",
+          price: state.price,
+          available: state.status === "sale",
+        },
+      });
+      await fetchMenus();
+    } catch {
+      /* 에러 시 무시 */
     }
   } else {
-    // 등록 로직
-    const newId = Math.max(...products.value.map((p) => p.id), 0) + 1;
-    products.value.push({
-      ...state,
-      id: newId,
-      image: "https://placehold.co/100x100/gray/white?text=New",
-    });
+    // 메뉴 등록 API
+    try {
+      await $api(`/api/v1/stores/${storeId}/menus`, {
+        method: "POST",
+        body: {
+          name: state.name,
+          description: "",
+          price: state.price,
+          available: true,
+        },
+      });
+      await fetchMenus();
+    } catch {
+      /* 에러 시 무시 */
+    }
   }
   isModalOpen.value = false;
 };
 
-// 삭제 로직
-const deleteProduct = (id: number) => {
+// 삭제 로직 — Backend API 호출
+const deleteProduct = async (id: string) => {
   if (confirm("정말 이 메뉴를 삭제하시겠습니까?")) {
-    products.value = products.value.filter((p) => p.id !== id);
+    const storeId = user.value?.id || "default";
+    try {
+      await $api(`/api/v1/stores/${storeId}/menus/${id}`, { method: "DELETE" });
+      await fetchMenus();
+    } catch {
+      /* 에러 시 무시 */
+    }
   }
 };
 

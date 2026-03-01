@@ -5,9 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-/**
- * Repository for Order entities.
- */
-public interface OrderRepository extends CrudRepository<Order, String> {
-  
-}
+/** Repository for Order entities. */
+public interface OrderRepository extends CrudRepository<Order, String> {}

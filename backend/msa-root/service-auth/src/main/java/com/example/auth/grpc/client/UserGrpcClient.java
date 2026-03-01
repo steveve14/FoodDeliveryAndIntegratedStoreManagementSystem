@@ -6,32 +6,27 @@ import com.example.userservice.grpc.UserGrpcServiceGrpc;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
-/**
- * service-user gRPC 클라이언트
- * service-auth에서 사용자 인증 시 호출
- */
+/** service-user gRPC 클라이언트 service-auth에서 사용자 인증 시 호출 */
 @Service
 public class UserGrpcClient {
 
-    @GrpcClient("service-user")
-    private UserGrpcServiceGrpc.UserGrpcServiceBlockingStub userStub;
+  @GrpcClient("service-user")
+  private UserGrpcServiceGrpc.UserGrpcServiceBlockingStub userStub;
 
-    /**
-     * 이메일/비밀번호로 사용자 인증
-     * @return AuthenticateResponse (success, userId, email, name, roles, errorMessage)
-     */
-    public AuthenticateResponse authenticate(String email, String password) {
-        AuthenticateRequest request = AuthenticateRequest.newBuilder()
-                .setEmail(email)
-                .setPassword(password)
-                .build();
-        return userStub.authenticate(request);
-    }
+  /**
+   * 이메일/비밀번호로 사용자 인증
+   *
+   * @return AuthenticateResponse (success, userId, email, name, roles, errorMessage)
+   */
+  public AuthenticateResponse authenticate(String email, String password) {
+    AuthenticateRequest request =
+        AuthenticateRequest.newBuilder().setEmail(email).setPassword(password).build();
+    return userStub.authenticate(request);
+  }
 
-    public com.example.userservice.grpc.UserResponse getUserByEmail(String email) {
-        com.example.userservice.grpc.GetUserByEmailRequest req = com.example.userservice.grpc.GetUserByEmailRequest.newBuilder()
-                .setEmail(email)
-                .build();
-        return userStub.getUserByEmail(req);
-    }
+  public com.example.userservice.grpc.UserResponse getUserByEmail(String email) {
+    com.example.userservice.grpc.GetUserByEmailRequest req =
+        com.example.userservice.grpc.GetUserByEmailRequest.newBuilder().setEmail(email).build();
+    return userStub.getUserByEmail(req);
+  }
 }

@@ -4,6 +4,7 @@ import com.example.store.dto.ApiResponse;
 import com.example.store.dto.CreateStoreRequest;
 import com.example.store.dto.StoreDto;
 import com.example.store.service.StoreService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,11 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/stores")
-/**
- * REST controller exposing store management endpoints.
- */
+/** REST controller exposing store management endpoints. */
 public class StoreController {
-    
+
   private final StoreService storeService;
 
   public StoreController(StoreService storeService) {
@@ -27,7 +26,7 @@ public class StoreController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<StoreDto>> create(@RequestBody CreateStoreRequest req) {
+  public ResponseEntity<ApiResponse<StoreDto>> create(@RequestBody @Valid CreateStoreRequest req) {
     StoreDto dto = storeService.createStore(req);
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
@@ -41,7 +40,9 @@ public class StoreController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<StoreDto>> get(@PathVariable String id) {
-    return storeService.findById(id).map(d -> ResponseEntity.ok(ApiResponse.ok(d)))
+    return storeService
+        .findById(id)
+        .map(d -> ResponseEntity.ok(ApiResponse.ok(d)))
         .orElseGet(() -> ResponseEntity.ok(ApiResponse.error("Not found")));
   }
 }

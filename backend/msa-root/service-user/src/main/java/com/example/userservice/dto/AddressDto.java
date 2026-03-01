@@ -8,11 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/**
- * DTO representing a user address.
- */
+/** DTO representing a user address. */
 public class AddressDto {
-    
+
   private String id;
   private String userId;
   private String label;

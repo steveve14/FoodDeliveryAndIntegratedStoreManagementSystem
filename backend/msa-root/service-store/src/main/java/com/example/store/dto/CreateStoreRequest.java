@@ -1,5 +1,6 @@
 package com.example.store.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,9 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateStoreRequest {
-	
+
+  @NotBlank(message = "가게 이름을 입력해주세요.")
   private String name;
+
+  @NotBlank(message = "주소를 입력해주세요.")
   private String address;
+
   private String phone;
   private String category;
   private String status;
@@ -20,5 +25,7 @@ public class CreateStoreRequest {
   private Double ratingAvg;
   private String description;
   private String openingHours;
+
+  @NotBlank(message = "소유자 ID를 입력해주세요.")
   private String ownerId;
 }

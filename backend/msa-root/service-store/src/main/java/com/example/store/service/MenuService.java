@@ -3,64 +3,92 @@ package com.example.store.service;
 import com.example.store.dto.MenuDto;
 import com.example.store.entity.Menu;
 import com.example.store.repository.MenuRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-/**
- * Service handling menu items for stores (list, create, update, delete).
- */
+/** Service handling menu items for stores (list, create, update, delete). */
 public class MenuService {
-    private final MenuRepository menuRepository;
+  private final MenuRepository menuRepository;
 
-    public MenuService(MenuRepository menuRepository) {
-        this.menuRepository = menuRepository;
-    }
+  public MenuService(MenuRepository menuRepository) {
+    this.menuRepository = menuRepository;
+  }
 
-    public List<MenuDto> listByStore(String storeId) {
-        return menuRepository.findByStoreId(storeId).stream()
-                .map(m -> new MenuDto(m.getId(), m.getStoreId(), m.getName(), m.getDescription(), m.getPrice(), m.isAvailable(), m.getCreatedAt()))
-                .collect(Collectors.toList());
-    }
+  public List<MenuDto> listByStore(String storeId) {
+    return menuRepository.findByStoreId(storeId).stream()
+        .map(
+            m ->
+                new MenuDto(
+                    m.getId(),
+                    m.getStoreId(),
+                    m.getName(),
+                    m.getDescription(),
+                    m.getPrice(),
+                    m.isAvailable(),
+                    m.getCreatedAt()))
+        .collect(Collectors.toList());
+  }
 
-    @Transactional
-    public MenuDto create(String storeId, MenuDto req) {
-        Menu m = Menu.builder()
-                .id(UUID.randomUUID().toString())
-                .storeId(storeId)
-                .name(req.getName())
-                .description(req.getDescription())
-                .price(req.getPrice())
-                .available(req.isAvailable())
-                .createdAt(Instant.now())
-                .build();
-        Menu saved = menuRepository.save(m);
-        return new MenuDto(saved.getId(), saved.getStoreId(), saved.getName(), saved.getDescription(), saved.getPrice(), saved.isAvailable(), saved.getCreatedAt());
-    }
+  @Transactional
+  public MenuDto create(String storeId, MenuDto req) {
+    Menu m =
+        Menu.builder()
+            .id(UUID.randomUUID().toString())
+            .storeId(storeId)
+            .name(req.getName())
+            .description(req.getDescription())
+            .price(req.getPrice())
+            .available(req.isAvailable())
+            .createdAt(Instant.now())
+            .build();
+    Menu saved = menuRepository.save(m);
+    return new MenuDto(
+        saved.getId(),
+        saved.getStoreId(),
+        saved.getName(),
+        saved.getDescription(),
+        saved.getPrice(),
+        saved.isAvailable(),
+        saved.getCreatedAt());
+  }
 
-    @Transactional
-    public MenuDto update(String storeId, String menuId, MenuDto req) {
-        Menu m = menuRepository.findById(menuId).orElseThrow(() -> new IllegalArgumentException("Menu not found"));
-        if (!m.getStoreId().equals(storeId)) throw new IllegalArgumentException("Forbidden");
-        Menu updated = m.toBuilder()
-                .name(req.getName())
-                .description(req.getDescription())
-                .price(req.getPrice())
-                .available(req.isAvailable())
-                .build();
-        Menu saved = menuRepository.save(updated);
-        return new MenuDto(saved.getId(), saved.getStoreId(), saved.getName(), saved.getDescription(), saved.getPrice(), saved.isAvailable(), saved.getCreatedAt());
-    }
+  @Transactional
+  public MenuDto update(String storeId, String menuId, MenuDto req) {
+    Menu m =
+        menuRepository
+            .findById(menuId)
+            .orElseThrow(() -> new IllegalArgumentException("Menu not found"));
+    if (!m.getStoreId().equals(storeId)) throw new IllegalArgumentException("Forbidden");
+    Menu updated =
+        m.toBuilder()
+            .name(req.getName())
+            .description(req.getDescription())
+            .price(req.getPrice())
+            .available(req.isAvailable())
+            .build();
+    Menu saved = menuRepository.save(updated);
+    return new MenuDto(
+        saved.getId(),
+        saved.getStoreId(),
+        saved.getName(),
+        saved.getDescription(),
+        saved.getPrice(),
+        saved.isAvailable(),
+        saved.getCreatedAt());
+  }
 
-    @Transactional
-    public void delete(String storeId, String menuId) {
-        Menu m = menuRepository.findById(menuId).orElseThrow(() -> new IllegalArgumentException("Menu not found"));
-        if (!m.getStoreId().equals(storeId)) throw new IllegalArgumentException("Forbidden");
-        menuRepository.deleteById(menuId);
-    }
+  @Transactional
+  public void delete(String storeId, String menuId) {
+    Menu m =
+        menuRepository
+            .findById(menuId)
+            .orElseThrow(() -> new IllegalArgumentException("Menu not found"));
+    if (!m.getStoreId().equals(storeId)) throw new IllegalArgumentException("Forbidden");
+    menuRepository.deleteById(menuId);
+  }
 }

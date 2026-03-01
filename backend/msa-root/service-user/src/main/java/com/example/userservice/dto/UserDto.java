@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/**
- * Simple DTO representing user identity and metadata.
- */
+/** Simple DTO representing user identity and metadata. */
 public class UserDto {
 
   private String id;

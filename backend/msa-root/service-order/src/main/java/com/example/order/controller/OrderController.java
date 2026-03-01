@@ -4,6 +4,7 @@ import com.example.order.dto.ApiResponse;
 import com.example.order.dto.CreateOrderRequest;
 import com.example.order.dto.OrderDto;
 import com.example.order.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,20 +25,22 @@ public class OrderController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<OrderDto>> create(@RequestBody CreateOrderRequest req) {
+  public ResponseEntity<ApiResponse<OrderDto>> create(@RequestBody @Valid CreateOrderRequest req) {
     OrderDto dto = orderService.createOrder(req.getUserId(), req.getItems(), "CREATED");
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<OrderDto>> get(@PathVariable String id) {
-    return orderService.findById(id).map(dto -> ResponseEntity.ok(ApiResponse.ok(dto)))
+    return orderService
+        .findById(id)
+        .map(dto -> ResponseEntity.ok(ApiResponse.ok(dto)))
         .orElseGet(() -> ResponseEntity.ok(ApiResponse.error("Not found")));
   }
 
   @PatchMapping("/{id}/status")
-  public ResponseEntity<ApiResponse<OrderDto>> updateStatus(@PathVariable String id,
-      @RequestBody java.util.Map<String, String> body) {
+  public ResponseEntity<ApiResponse<OrderDto>> updateStatus(
+      @PathVariable String id, @RequestBody java.util.Map<String, String> body) {
     String status = body.get("status");
     return ResponseEntity.ok(ApiResponse.ok(orderService.updateStatus(id, status)));
   }

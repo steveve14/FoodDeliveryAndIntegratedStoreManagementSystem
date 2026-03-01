@@ -42,10 +42,10 @@ public class AuthService implements AuthenticationService {
   @Transactional
   public TokenResponse verifyGoogleTokenAndLogin(String idTokenString) {
     try {
-      GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-          new NetHttpTransport(), new GsonFactory())
-          .setAudience(Collections.singletonList(googleClientId))
-          .build();
+      GoogleIdTokenVerifier verifier =
+          new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+              .setAudience(Collections.singletonList(googleClientId))
+              .build();
 
       // 1. 구글 토큰 검증
       GoogleIdToken idToken = verifier.verify(idTokenString);
@@ -81,17 +81,18 @@ public class AuthService implements AuthenticationService {
       }
 
       String accessToken = jwtProvider.createAccessToken(userId, role);
-      String refreshToken = jwtProvider.createRefreshToken(userId);
+      String refreshToken = jwtProvider.createRefreshToken(userId, role);
 
       // Persist refresh token
-      RefreshToken rt = RefreshToken.builder()
-          .id(java.util.UUID.randomUUID().toString())
-          .userId(userId)
-          .token(refreshToken)
-          .revoked(false)
-          .createdAt(java.time.Instant.now())
-          .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
-          .build();
+      RefreshToken rt =
+          RefreshToken.builder()
+              .id(java.util.UUID.randomUUID().toString())
+              .userId(userId)
+              .token(refreshToken)
+              .revoked(false)
+              .createdAt(java.time.Instant.now())
+              .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
+              .build();
       refreshTokenRepository.save(rt);
 
       return new TokenResponse(accessToken, refreshToken);
@@ -112,16 +113,14 @@ public class AuthService implements AuthenticationService {
     switch (provider.toLowerCase()) {
       case "google":
         return verifyGoogleTokenAndLogin(token);
-      // case "kakao":
-      //     return verifyKakaoTokenAndLogin(token);
+        // case "kakao":
+        //     return verifyKakaoTokenAndLogin(token);
       default:
         throw new IllegalArgumentException("지원하지 않는 소셜 로그인 제공자입니다: " + provider);
     }
   }
 
-  /**
-   * 이메일/비밀번호 로그인 - gRPC를 통해 service-user와 통신
-   */
+  /** 이메일/비밀번호 로그인 - gRPC를 통해 service-user와 통신 */
   @Transactional
   public TokenResponse login(String email, String password) {
     if (email == null || password == null) {
@@ -135,25 +134,25 @@ public class AuthService implements AuthenticationService {
       throw new IllegalArgumentException(
           response.getErrorMessage().isEmpty()
               ? "이메일 또는 비밀번호가 올바르지 않습니다."
-              : response.getErrorMessage()
-      );
+              : response.getErrorMessage());
     }
 
     String userId = response.getUserId();
     String role = response.getRoles();
 
     String accessToken = jwtProvider.createAccessToken(userId, role);
-    String refreshToken = jwtProvider.createRefreshToken(userId);
+    String refreshToken = jwtProvider.createRefreshToken(userId, role);
 
     // Persist refresh token
-    RefreshToken rt = RefreshToken.builder()
-        .id(java.util.UUID.randomUUID().toString())
-        .userId(userId)
-        .token(refreshToken)
-        .revoked(false)
-        .createdAt(java.time.Instant.now())
-        .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
-        .build();
+    RefreshToken rt =
+        RefreshToken.builder()
+            .id(java.util.UUID.randomUUID().toString())
+            .userId(userId)
+            .token(refreshToken)
+            .revoked(false)
+            .createdAt(java.time.Instant.now())
+            .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
+            .build();
     refreshTokenRepository.save(rt);
 
     return new TokenResponse(accessToken, refreshToken);
@@ -179,7 +178,7 @@ public class AuthService implements AuthenticationService {
     String roles = jwtProvider.getRolesFromToken(stored.getToken());
 
     String newAccess = jwtProvider.createAccessToken(userId, roles);
-    String newRefresh = jwtProvider.createRefreshToken(userId);
+    String newRefresh = jwtProvider.createRefreshToken(userId, roles);
 
     // update stored token (rotate)
     stored.setToken(newRefresh);
@@ -196,11 +195,12 @@ public class AuthService implements AuthenticationService {
       return;
     }
     Optional<RefreshToken> opt = refreshTokenRepository.findByToken(refreshToken);
-    opt.ifPresent(rt -> {
-      rt.setRevoked(true);
-      refreshTokenRepository.save(rt);
-      // optionally remove from DB
-      refreshTokenRepository.deleteByToken(refreshToken);
-    });
+    opt.ifPresent(
+        rt -> {
+          rt.setRevoked(true);
+          refreshTokenRepository.save(rt);
+          // optionally remove from DB
+          refreshTokenRepository.deleteByToken(refreshToken);
+        });
   }
 }

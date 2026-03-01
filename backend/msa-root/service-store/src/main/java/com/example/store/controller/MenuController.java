@@ -28,20 +28,20 @@ public class MenuController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<MenuDto>> create(@PathVariable String storeId,
-      @RequestBody MenuDto req) {
+  public ResponseEntity<ApiResponse<MenuDto>> create(
+      @PathVariable String storeId, @RequestBody MenuDto req) {
     return ResponseEntity.ok(ApiResponse.ok(menuService.create(storeId, req)));
   }
 
   @PutMapping("/{menuId}")
-  public ResponseEntity<ApiResponse<MenuDto>> update(@PathVariable String storeId,
-      @PathVariable String menuId, @RequestBody MenuDto req) {
+  public ResponseEntity<ApiResponse<MenuDto>> update(
+      @PathVariable String storeId, @PathVariable String menuId, @RequestBody MenuDto req) {
     return ResponseEntity.ok(ApiResponse.ok(menuService.update(storeId, menuId, req)));
   }
 
   @DeleteMapping("/{menuId}")
-  public ResponseEntity<ApiResponse<Object>> delete(@PathVariable String storeId,
-      @PathVariable String menuId) {
+  public ResponseEntity<ApiResponse<Object>> delete(
+      @PathVariable String storeId, @PathVariable String menuId) {
     menuService.delete(storeId, menuId);
     return ResponseEntity.ok(ApiResponse.ok(null));
   }

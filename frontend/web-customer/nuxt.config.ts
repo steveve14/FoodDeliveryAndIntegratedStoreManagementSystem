@@ -5,10 +5,10 @@ export default defineNuxtConfig({
     '@pinia/nuxt'   // Pinia (기존에 있었다면 유지)
   ],
 
-  // 개발 서버 프록시 설정 (기존 설정 유지)
+  // Backend Gateway 프록시 — /api/v1/** 요청을 Spring Cloud Gateway로 전달
   nitro: {
     routeRules: {
-      '/api/**': { proxy: 'http://localhost:8080/api/**' }
+      '/api/v1/**': { proxy: 'http://localhost:8000/api/v1/**' }
     }
   },
 

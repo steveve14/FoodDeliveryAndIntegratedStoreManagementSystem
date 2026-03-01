@@ -21,14 +21,26 @@ spring:
 
   cloud:
     gateway:
+      # CORS 설정 — 프론트엔드 개발 서버에서의 접근 허용
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://localhost:3001"
+              - "http://localhost:3002"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
       routes:
         # ==========================================
-        # 1. 인증/보안 서비스 (로그인, 토큰발급)
+        # 1. 인증/보안 서비스 (로그인, 토큰발급) — 인증 필터 미적용
         # ==========================================
         - id: service-auth
           uri: lb://SERVICE-AUTH
           predicates:
-            - Path=/auth/**, /login/**, /oauth2/**
+            - Path=/api/v1/auth/**
 
         # ==========================================
         # 2. 회원 서비스 (사용자 정보, 주소)
@@ -36,7 +48,9 @@ spring:
         - id: service-user
           uri: lb://SERVICE-USER
           predicates:
-            - Path=/users/**, /addresses/**
+            - Path=/api/v1/users/**
+          filters:
+            - AuthorizationHeaderFilter
 
         # ==========================================
         # 3. 가게 서비스 (가게정보, 메뉴, 광고, 등급)
@@ -44,7 +58,9 @@ spring:
         - id: service-store
           uri: lb://SERVICE-STORE
           predicates:
-            - Path=/stores/**, /menus/**, /reviews/**
+            - Path=/api/v1/stores/**
+          filters:
+            - AuthorizationHeaderFilter
 
         # ==========================================
         # 4. 주문 서비스 (주문생성, 결제)
@@ -52,7 +68,9 @@ spring:
         - id: service-order
           uri: lb://SERVICE-ORDER
           predicates:
-            - Path=/orders/**, /payments/**
+            - Path=/api/v1/orders/**
+          filters:
+            - AuthorizationHeaderFilter
 
         # ==========================================
         # 5. 배달 서비스 (라이더 배차, 위치추적)
@@ -60,7 +78,9 @@ spring:
         - id: service-delivery
           uri: lb://SERVICE-DELIVERY
           predicates:
-            - Path=/deliveries/**
+            - Path=/api/v1/deliveries/**
+          filters:
+            - AuthorizationHeaderFilter
 
         # ==========================================
         # 6. 이벤트 서비스 (쿠폰, 선착순)
@@ -68,7 +88,9 @@ spring:
         - id: service-event
           uri: lb://SERVICE-EVENT
           predicates:
-            - Path=/events/**, /coupons/**
+            - Path=/api/v1/events/**
+          filters:
+            - AuthorizationHeaderFilter
 
 # gRPC 클라이언트 설정
 grpc:

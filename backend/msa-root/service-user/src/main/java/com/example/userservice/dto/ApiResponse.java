@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/**
- * Generic API response wrapper with success flag, data and optional error.
- */
+/** Generic API response wrapper with success flag, data and optional error. */
 public class ApiResponse<T> {
 
   private boolean success;

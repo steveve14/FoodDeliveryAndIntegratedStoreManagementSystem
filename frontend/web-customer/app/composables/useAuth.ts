@@ -1,4 +1,3 @@
-// app/composables/useAuth.ts
 export type UserRole = 'USER' | 'STORE' | 'ADMIN'
 
 export interface AuthUser {
@@ -40,13 +39,12 @@ export const useAuth = () => {
     accessToken.value = res.data.accessToken
     refreshToken.value = res.data.refreshToken
 
-    // JWT 디코드 → 사용자 정보 저장
     const payload = parseJwt(res.data.accessToken)
     if (payload) {
       user.value = {
         id: payload.sub,
         email,
-        name: email.split('@')[0]!, // 프로필 API 연동 전 임시 이름
+        name: email.split('@')[0]!,
         role: payload.role as UserRole
       }
     }
@@ -69,38 +67,12 @@ export const useAuth = () => {
     }
   }
 
-  /** 토큰 갱신 */
-  const refresh = async (): Promise<boolean> => {
-    if (!refreshToken.value) return false
-    try {
-      const res = await $api<{ accessToken: string, refreshToken: string }>('/api/v1/auth/refresh', {
-        method: 'POST',
-        body: { refreshToken: refreshToken.value }
-      })
-      if (res.success) {
-        accessToken.value = res.data.accessToken
-        refreshToken.value = res.data.refreshToken
-        return true
-      }
-    } catch {
-      // refresh 실패 시 무시
-    }
-    return false
-  }
-
   const isLoggedIn = computed(() => !!user.value)
-  const isAdmin = computed(() => user.value?.role === 'ADMIN')
-  const isStore = computed(() => user.value?.role === 'STORE')
-  const isGeneral = computed(() => user.value?.role === 'USER')
 
   return {
     user,
     login,
     logout,
-    refresh,
-    isLoggedIn,
-    isAdmin,
-    isStore,
-    isGeneral
+    isLoggedIn
   }
 }

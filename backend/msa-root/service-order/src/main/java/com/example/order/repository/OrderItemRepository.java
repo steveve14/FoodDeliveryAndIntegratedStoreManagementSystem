@@ -6,10 +6,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-/**
- * Repository for OrderItem entities.
- */
+/** Repository for OrderItem entities. */
 public interface OrderItemRepository extends CrudRepository<OrderItem, String> {
-    
+
   List<OrderItem> findByOrderId(String orderId);
 }

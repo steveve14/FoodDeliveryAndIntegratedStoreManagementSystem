@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegistryEntry {
-	private String serviceId;
-	private String host;
-	private int port;
-	private String status;
+  private String serviceId;
+  private String host;
+  private int port;
+  private String status;
 }

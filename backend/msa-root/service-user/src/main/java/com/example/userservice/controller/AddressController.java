@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users/me/addresses")
 @RequiredArgsConstructor
 public class AddressController {
-  
+
   private final AddressService addressService;
 
   @GetMapping
@@ -29,20 +29,22 @@ public class AddressController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<AddressDto>> create(@RequestHeader("X-User-Id") String userId,
-      @RequestBody AddressDto req) {
+  public ResponseEntity<ApiResponse<AddressDto>> create(
+      @RequestHeader("X-User-Id") String userId, @RequestBody AddressDto req) {
     return ResponseEntity.ok(ApiResponse.ok(addressService.create(userId, req)));
   }
 
   @PutMapping("/{addressId}")
-  public ResponseEntity<ApiResponse<AddressDto>> update(@RequestHeader("X-User-Id") String userId,
-      @PathVariable String addressId, @RequestBody AddressDto req) {
+  public ResponseEntity<ApiResponse<AddressDto>> update(
+      @RequestHeader("X-User-Id") String userId,
+      @PathVariable String addressId,
+      @RequestBody AddressDto req) {
     return ResponseEntity.ok(ApiResponse.ok(addressService.update(userId, addressId, req)));
   }
 
   @DeleteMapping("/{addressId}")
-  public ResponseEntity<ApiResponse<Object>> delete(@RequestHeader("X-User-Id") String userId,
-      @PathVariable String addressId) {
+  public ResponseEntity<ApiResponse<Object>> delete(
+      @RequestHeader("X-User-Id") String userId, @PathVariable String addressId) {
     addressService.delete(userId, addressId);
     return ResponseEntity.ok(ApiResponse.ok(null));
   }

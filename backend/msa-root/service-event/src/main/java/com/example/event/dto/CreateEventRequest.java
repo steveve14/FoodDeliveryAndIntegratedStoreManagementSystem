@@ -1,5 +1,6 @@
 package com.example.event.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateEventRequest {
-	private String type;
-	private String payload;
+  @NotBlank(message = "이벤트 타입을 입력해주세요.")
+  private String type;
+
+  private String payload;
 }

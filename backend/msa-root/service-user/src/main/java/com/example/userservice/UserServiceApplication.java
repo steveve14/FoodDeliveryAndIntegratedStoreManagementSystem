@@ -6,11 +6,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-/**
- * Entry point for the user service Spring Boot application.
- */
+/** Entry point for the user service Spring Boot application. */
 public class UserServiceApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(UserServiceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(UserServiceApplication.class, args);
+  }
 }

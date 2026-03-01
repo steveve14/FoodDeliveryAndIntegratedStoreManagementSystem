@@ -5,11 +5,8 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-/**
- * Repository for Menu entities.
- */
+/** Repository for Menu entities. */
 public interface MenuRepository extends CrudRepository<Menu, String> {
 
   List<Menu> findByStoreId(String storeId);

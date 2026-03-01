@@ -6,12 +6,10 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 @SpringBootApplication
 @EnableEurekaServer
-/**
- * Entry point for the discovery (Eureka) service application.
- */
+/** Entry point for the discovery (Eureka) service application. */
 public class DiscoveryServiceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(DiscoveryServiceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(DiscoveryServiceApplication.class, args);
+  }
 }

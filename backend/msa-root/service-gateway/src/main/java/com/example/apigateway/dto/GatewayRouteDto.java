@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GatewayRouteDto {
-	private String id;
-	private String uri;
-	private String predicate;
-	private String filter;
+  private String id;
+  private String uri;
+  private String predicate;
+  private String filter;
 }

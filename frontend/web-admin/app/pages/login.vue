@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as z from "zod";
 import type { FormSubmitEvent, AuthFormField } from "#ui/types";
-const { loginWithGoogle } = useAuth(); // composable 가져오기
+const { login } = useAuth();
 const toast = useToast();
 
 definePageMeta({
@@ -10,21 +10,20 @@ definePageMeta({
 
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
   try {
-    // 실제 로그인 로직 호출
-    await $fetch("/api/auth/login", {
-      method: "POST",
-      body: payload.data,
-    });
+    await login(payload.data.email, payload.data.password);
 
     toast.add({
       title: "성공",
       description: "로그인되었습니다.",
       color: "success",
     });
-  } catch (error) {
+
+    // 로그인 성공 → 대시보드로 이동
+    await navigateTo("/");
+  } catch (error: any) {
     toast.add({
       title: "오류",
-      description: "로그인에 실패했습니다.",
+      description: error?.message || "로그인에 실패했습니다.",
       color: "error",
     });
   }
@@ -70,20 +69,7 @@ type Schema = z.output<typeof schema>;
         icon="i-lucide-user"
         :fields="fields"
         @submit="onSubmit"
-      >
-        <template #footer>
-          <div class="flex flex-col gap-4">
-            <UDivider label="또는" />
-            <UButton
-              color="info"
-              label="구글로 로그인"
-              icon="i-simple-icons-google"
-              block
-              @click="loginWithGoogle"
-            />
-          </div>
-        </template>
-      </UAuthForm>
+      />
     </UPageCard>
   </div>
 </template>

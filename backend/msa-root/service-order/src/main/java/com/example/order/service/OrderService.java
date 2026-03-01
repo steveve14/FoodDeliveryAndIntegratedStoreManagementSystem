@@ -19,7 +19,9 @@ public class OrderService {
   private final OrderItemRepository orderItemRepository;
   private final StoreGrpcClient storeGrpcClient;
 
-  public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
+  public OrderService(
+      OrderRepository orderRepository,
+      OrderItemRepository orderItemRepository,
       StoreGrpcClient storeGrpcClient) {
     this.orderRepository = orderRepository;
     this.orderItemRepository = orderItemRepository;
@@ -50,24 +52,26 @@ public class OrderService {
       total += (int) (p.getPrice() * it.getQuantity());
     }
 
-    Order o = Order.builder()
-        .id(java.util.UUID.randomUUID().toString())
-        .userId(userId)
-        .storeId(storeId)
-        .totalAmount(total)
-        .status(status)
-        .createdAt(Instant.now())
-        .build();
+    Order o =
+        Order.builder()
+            .id(java.util.UUID.randomUUID().toString())
+            .userId(userId)
+            .storeId(storeId)
+            .totalAmount(total)
+            .status(status)
+            .createdAt(Instant.now())
+            .build();
     Order saved = orderRepository.save(o);
 
     for (OrderItemDto it : items) {
-      OrderItem oi = OrderItem.builder()
-          .id(java.util.UUID.randomUUID().toString())
-          .orderId(saved.getId())
-          .menuId(it.getProductId())
-          .quantity(it.getQuantity())
-          .priceSnapshot(it.getPrice())
-          .build();
+      OrderItem oi =
+          OrderItem.builder()
+              .id(java.util.UUID.randomUUID().toString())
+              .orderId(saved.getId())
+              .menuId(it.getProductId())
+              .quantity(it.getQuantity())
+              .priceSnapshot(it.getPrice())
+              .build();
       orderItemRepository.save(oi);
     }
 
@@ -80,8 +84,10 @@ public class OrderService {
 
   @Transactional
   public OrderDto updateStatus(String orderId, String newStatus) {
-    Order o = orderRepository.findById(orderId)
-        .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+    Order o =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(() -> new IllegalArgumentException("Order not found"));
     Order updated = o.toBuilder().status(newStatus).build();
     Order saved = orderRepository.save(updated);
     return toDto(saved, loadItems(saved.getId()));
@@ -94,7 +100,13 @@ public class OrderService {
   }
 
   private OrderDto toDto(Order o, java.util.List<OrderItemDto> items) {
-    return new OrderDto(o.getId(), o.getUserId(), o.getStoreId(), o.getTotalAmount(), items,
-        o.getStatus(), o.getCreatedAt());
+    return new OrderDto(
+        o.getId(),
+        o.getUserId(),
+        o.getStoreId(),
+        o.getTotalAmount(),
+        items,
+        o.getStatus(),
+        o.getCreatedAt());
   }
 }

@@ -4,6 +4,7 @@ import com.example.delivery.dto.ApiResponse;
 import com.example.delivery.dto.CreateDeliveryRequest;
 import com.example.delivery.dto.DeliveryDto;
 import com.example.delivery.service.DeliveryService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/deliveries")
 public class DeliveryController {
-    
+
   private final DeliveryService deliveryService;
 
   public DeliveryController(DeliveryService deliveryService) {
@@ -24,21 +25,24 @@ public class DeliveryController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<DeliveryDto>> create(@RequestBody CreateDeliveryRequest req) {
-    DeliveryDto dto = deliveryService.createDelivery(req.getOrderId(), req.getCourier(),
-        "SCHEDULED");
+  public ResponseEntity<ApiResponse<DeliveryDto>> create(
+      @RequestBody @Valid CreateDeliveryRequest req) {
+    DeliveryDto dto =
+        deliveryService.createDelivery(req.getOrderId(), req.getCourier(), "SCHEDULED");
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<DeliveryDto>> get(@PathVariable String id) {
-    return deliveryService.findById(id).map(dto -> ResponseEntity.ok(ApiResponse.ok(dto)))
+    return deliveryService
+        .findById(id)
+        .map(dto -> ResponseEntity.ok(ApiResponse.ok(dto)))
         .orElseGet(() -> ResponseEntity.ok(ApiResponse.error("Not found")));
   }
 
   @PatchMapping("/{id}/status")
-  public ResponseEntity<ApiResponse<DeliveryDto>> updateStatus(@PathVariable String id,
-      @RequestBody java.util.Map<String, String> body) {
+  public ResponseEntity<ApiResponse<DeliveryDto>> updateStatus(
+      @PathVariable String id, @RequestBody java.util.Map<String, String> body) {
     String status = body.get("status");
     DeliveryDto dto = deliveryService.updateStatus(id, status);
     return ResponseEntity.ok(ApiResponse.ok(dto));
