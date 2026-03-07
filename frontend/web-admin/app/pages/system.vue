@@ -18,6 +18,11 @@ const links = [
       to: "/system/versions",
       icon: "i-lucide-smartphone",
     },
+    {
+      label: "이벤트 관리",
+      to: "/system/events",
+      icon: "i-lucide-activity",
+    },
   ],
 ] satisfies NavigationMenuItem[][];
 </script>

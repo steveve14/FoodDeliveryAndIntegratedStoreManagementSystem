@@ -90,6 +90,22 @@ const links = computed(
                 open.value = false;
               },
             },
+            {
+              label: "주문 관리",
+              to: "/operation/orders",
+              icon: "i-lucide-shopping-bag",
+              onSelect: () => {
+                open.value = false;
+              },
+            },
+            {
+              label: "배달 관리",
+              to: "/operation/deliveries",
+              icon: "i-lucide-bike",
+              onSelect: () => {
+                open.value = false;
+              },
+            },
           ],
         },
         {
@@ -158,6 +174,14 @@ const links = computed(
               label: "앱 버전 관리",
               to: "/system/versions",
               icon: "i-lucide-smartphone",
+              onSelect: () => {
+                open.value = false;
+              },
+            },
+            {
+              label: "이벤트 관리",
+              to: "/system/events",
+              icon: "i-lucide-activity",
               onSelect: () => {
                 open.value = false;
               },

@@ -29,13 +29,15 @@ const colors = [
 ];
 const neutrals = ["slate", "gray", "zinc", "neutral", "stone"];
 
-const user = ref({
-  name: "Benjamin Canac",
+const { user: authUser, logout } = useAuth();
+
+const user = computed(() => ({
+  name: authUser.value?.name ?? "사용자",
   avatar: {
-    src: "https://github.com/benjamincanac.png",
-    alt: "Benjamin Canac",
+    src: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(authUser.value?.name ?? "U")}`,
+    alt: authUser.value?.name ?? "사용자",
   },
-});
+}));
 
 const items = computed<DropdownMenuItem[][]>(() => [
   [
@@ -138,7 +140,6 @@ const items = computed<DropdownMenuItem[][]>(() => [
       label: "로그아웃",
       icon: "i-lucide-log-out",
       onSelect: () => {
-        const { logout } = useAuth();
         logout();
       },
     },

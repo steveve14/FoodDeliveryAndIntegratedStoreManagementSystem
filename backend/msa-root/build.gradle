@@ -8,17 +8,23 @@ plugins {
 
 ext {
     set('springCloudVersion', "2025.1.0")
-    set('grpcVersion', "1.62.2")
-    set('protobufVersion', "3.25.3")
-    set('grpcSpringBootStarterVersion', "3.1.0.RELEASE")
+    set('springGrpcVersion', "1.0.2")  // RC1 → 1.0.2 GA (Maven Central, Spring Boot 4.0.2 정식 지원)
+    // protoc / protoc-gen-grpc-java 빌드 도구 버전 (Spring gRPC 1.0.2 BOM과 정렬: grpc-bom 1.77.1, protobuf 4.33.2)
+    set('protocVersion', "4.33.2")
+    set('grpcCodegenVersion', "1.77.1")
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 description = 'msa-root'
 
+// 루트 프로젝트는 Main 클래스가 없으므로 bootJar 비활성화
+bootJar { enabled = false }
+jar { enabled = false }
+
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
 }
 
 // 하위 모듈(Microservices) 공통 설정
@@ -40,6 +46,7 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven { url 'https://repo.spring.io/milestone' }
     }
 
     dependencies {
@@ -54,13 +61,11 @@ subprojects {
         // Bean Validation
         implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-        // gRPC dependencies
-        implementation "net.devh:grpc-spring-boot-starter:${grpcSpringBootStarterVersion}"
-        implementation "io.grpc:grpc-protobuf:${grpcVersion}"
-        implementation "io.grpc:grpc-stub:${grpcVersion}"
-        implementation "io.grpc:grpc-netty:${grpcVersion}"
-        implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
-        compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+        // Spring gRPC (공식 Spring 프로젝트 — net.devh 서드파티 스타터 대체)
+        implementation 'org.springframework.grpc:spring-grpc-spring-boot-starter'
+
+        // gRPC Netty transport — 독립적인 Netty gRPC 서버 구동 (HTTP 포트와 완전히 분리된 별도 gRPC 포트)
+        implementation 'io.grpc:grpc-netty-shaded'
 
         runtimeOnly 'com.h2database:h2'
     }
@@ -68,11 +73,11 @@ subprojects {
     // Protobuf 코드 생성 설정
     protobuf {
         protoc {
-            artifact = "com.google.protobuf:protoc:${protobufVersion}"
+            artifact = "com.google.protobuf:protoc:${protocVersion}"
         }
         plugins {
             grpc {
-                artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+                artifact = "io.grpc:protoc-gen-grpc-java:${grpcCodegenVersion}"
             }
         }
         generateProtoTasks {
@@ -86,6 +91,7 @@ subprojects {
     dependencyManagement {
         imports {
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom "org.springframework.grpc:spring-grpc-dependencies:${springGrpcVersion}"
         }
     }
 

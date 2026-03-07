@@ -18,11 +18,11 @@ public class DeliveryService {
   private final DeliveryRepository deliveryRepository;
   private final OrderGrpcClient orderGrpcClient;
 
-  // 상태 전이 규칙: SCHEDULED → PICKED_UP → COMPLETED
+  // 상태 전이 규칙: SCHEDULED → IN_PROGRESS → DELIVERED | FAILED
   private static final Map<String, Set<String>> ALLOWED_TRANSITIONS =
       Map.of(
-          "SCHEDULED", Set.of("PICKED_UP"),
-          "PICKED_UP", Set.of("COMPLETED"));
+          "SCHEDULED", Set.of("IN_PROGRESS"),
+          "IN_PROGRESS", Set.of("DELIVERED", "FAILED"));
 
   // MVP: 고정 배달비 3,000원
   private static final int FIXED_DELIVERY_FEE = 3000;

@@ -1,55 +1,68 @@
-# 10. 현재 진행 상황 정리 (2026-02-25)
+﻿# 10. 현재 진행 상황 정리 (2026-03-04)
 
 ## 1) 요약
-- 현재 저장소는 **MSA 인프라 골격 + 일부 인증/회원 기능 + 프론트 템플릿 기반 화면**까지 진행된 상태입니다.
-- `docs`의 목표 아키텍처/기능 명세 대비, 핵심 도메인 기능(주문/매장/POS/결제/라이더) 구현은 대부분 초기 단계입니다.
+현재 저장소는 **MSA 인프라 골격 + 인증/회원 기능 + 서비스 간 gRPC 통신 + 프론트 템플릿 기반 화면**까지 진행된 상태입니다.
+
+**2026-03-04 마이그레이션 완료**: net.devh gRPC → Spring gRPC 1.0.0-RC1, jjwt 0.11.5 → 0.12.6, 전체 `BUILD SUCCESSFUL` 확인.
 
 ## 2) 완료/구축된 항목
 
-### 백엔드
-- 멀티모듈 기반 서비스 구조 구성
+### 백엔드 인프라
+- 멀티모듈 Gradle 9.2.1 (Groovy DSL) 기반 서비스 구조
   - `service-gateway`, `service-discovery`, `service-auth`, `service-user`, `service-store`, `service-order`, `service-delivery`, `service-event`
-- Eureka 기반 서비스 등록/조회 설정 존재
-- Gateway 라우팅 설정 존재
-- Auth 서비스 로그인/소셜 로그인 엔드포인트 일부 구현
-- User 서비스 회원 등록/조회 API 일부 구현
+- Eureka 기반 서비스 등록/조회 설정
+- Spring Cloud Gateway 라우팅 + JWT 필터(`AuthorizationHeaderFilter`) 적용
+- **Spring gRPC 1.0.0-RC1** (공식 Spring 프로젝트) 기반 서비스 간 통신 구현
+  - gateway→auth (JWT ValidateToken)
+  - auth→user (Authenticate / GetUserByEmail)
+  - order→store (GetProductById)
+  - delivery→order (GetOrderById)
+- **jjwt 0.12.6** (Jakarta EE 호환) JWT 생성/검증
+- Bean Validation (`@Valid`, `@NotBlank`, etc.) 전 서비스 DTO 적용
+- 전역 예외 처리기(`RestExceptionHandler`) 전 서비스 적용
+- Spotless + google-java-format 코드 포맷 강제
+
+### 백엔드 비즈니스 기능
+- Auth 서비스: 로그인, 소셜 로그인(Google OAuth2), 토큰 갱신, 로그아웃 구현
+- User 서비스: 회원 등록/조회 API 구현
+- Store/Order/Delivery: 기본 CRUD 구조 및 gRPC 엔드포인트 구현
 
 ### 프론트엔드
-- Nuxt 기반 3개 앱 구조 존재
-  - `web-admin`, `web-shop`, `web-customer`
-- `web-admin`, `web-shop`은 Nuxt Dashboard 템플릿 기반 UI 구성
-- `web-customer`는 메인 페이지 중심의 초기 UI 구성
+- Nuxt.js 4.2.2 기반 3개 앱 구조 (`web-admin`, `web-shop`, `web-customer`)
+- `web-admin`, `web-shop`: @nuxt/ui 4.3.0 기반 대시보드 템플릿 UI
+- `web-customer`: 메인 페이지 중심 초기 UI (Pinia 상태 관리)
+- pnpm 10.26.1 워크스페이스 기반 패키지 관리
 
 ## 3) 진행 중/초기 상태 항목
-- 서비스별 실제 비즈니스 API(주문 상태 전이, 매장/메뉴/재고, POS 정산 등)는 본격 구현 전 단계
-- 서비스 간 내부 통신 표준(Feign + timeout/fallback) 적용 코드 미확인
-- 공통 응답 포맷(ApiResponse) 및 API 버저닝(`/api/v1`) 규칙 적용 미흡
+- 서비스별 실제 비즈니스 API(주문 상태 전이, 매장/메뉴 재고, POS 정산 등)는 본격 구현 전 단계
+- 공통 응답 포맷(`ApiResponse`) 및 API 버저닝(`/api/v1`) 규칙 일부 미적용
+- 프론트엔드 백엔드 API 실제 연동 미완성 (템플릿/정적 데이터 단계)
 
-## 4) 문서 대비 주요 차이점
+## 4) 현재 기술 스택 (실제 코드 기준)
 
-### 아키텍처/서비스 구성
-- 문서 상 `Config`, `Payment`, `Rider` 축이 중요하게 정의되어 있으나 현재 백엔드 디렉토리(`service-auth`, `service-user`, `service-store`, `service-order`, `service-delivery`, `service-event`, `service-gateway`, `service-discovery`)에 직접 대응 모듈이 없음
-- `service-event`, `service-delivery`는 존재하나 문서의 서비스 명/역할 체계와 1:1 대응이 불명확
+| 항목 | 실제 사용 기술 |
+|---|---|
+| Spring Boot | 4.0.2 |
+| Build | Gradle 9.2.1 (Groovy DSL) |
+| gRPC | Spring gRPC 1.0.0-RC1 / io.grpc 1.76.0 |
+| Protobuf | 4.32.1 |
+| JWT | jjwt 0.12.6 |
+| DB (local) | H2 in-memory |
+| DB (prod) | PostgreSQL 5432 |
+| ORM | Spring Data JDBC (JPA 미사용) |
+| Frontend | Nuxt.js 4.2.2 / @nuxt/ui 4.3.0 |
+| 패키지 관리 | pnpm 10.26.1 |
 
-### API 표준
-- 문서 표준: `/api/v1/{resource}` + `ApiResponse<T>` 래퍼
-- 현재 코드: `/api/users`, `/api/auth`, `/api/info` 등 혼재 및 래퍼 일관성 미적용
-
-### DB/기술스택
-- 문서: Local SQLite / Prod MySQL 중심 전략
-- 현재: PostgreSQL 중심 datasource 설정
-- 루트 빌드 설정에서 Spring Boot 버전이 문서 기술스택과 차이
-
-### 프론트 제품 구조
-- 문서: `web-dashboard`, `tablet-pos` 등 역할 기반 구조
-- 현재 디렉토리: `web-admin`, `web-shop`, `web-customer` 구조(템플릿 성격이 강함)
-
-## 5) 리스크
-- 문서와 코드 간 불일치 누적으로 신규 인력 온보딩/개발 우선순위 혼선 위험
-- API 규약 미통일 시 프론트-백엔드 연동 비용 증가
-- 서비스 간 통신 표준 부재 시 장애 전파/지연 대응 취약
+## 5) 리스크 및 남은 항목
+- API 규약(`/api/v1`, `ApiResponse<T>`) 미통일 → 프론트-백엔드 연동 비용
+- 프론트엔드 백엔드 실연동 미완성
+- Dockerfile / docker-compose / K8s 매니페스트 부재
+- PostgreSQL 포트 일부 설정 불일치 (5432 vs 6000) — 점검 필요
 
 ## 6) 다음 액션(권장)
-1. "문서를 코드에 맞출지" 또는 "코드를 문서 목표로 끌어올릴지" 기준 먼저 확정
-2. API 표준(버전/응답 포맷/에러 모델) 선적용
-3. 서비스 경계와 책임 재정의 후 P0 백로그 실행
+1. API 표준(버전/응답 포맷/에러 모델) 전 서비스 적용
+2. 고객 주문 E2E MVP (주문 생성→상태변경→조회) 구현
+3. 프론트엔드 API 실연동 (web-customer 우선)
+4. Dockerfile 작성 및 docker-compose로 로컬 통합 실행 환경 구성
+
+---

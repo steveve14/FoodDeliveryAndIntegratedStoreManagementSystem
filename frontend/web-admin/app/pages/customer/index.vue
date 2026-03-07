@@ -1,238 +1,206 @@
-<script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui'
-import { upperFirst } from 'scule'
-import { getPaginationRowModel } from '@tanstack/table-core'
-import type { Row } from '@tanstack/table-core'
-import type { User } from '~/types'
+﻿<script setup lang="ts">
+import { h, ref, resolveComponent } from "vue";
+import type { TableColumn } from "@nuxt/ui";
+import { getPaginationRowModel } from "@tanstack/table-core";
+import type { Row } from "@tanstack/table-core";
+import type { UserDto, UserProfileDto } from "~/types/api";
 
-// 컴포넌트 수동 리졸브
-const UAvatar = resolveComponent('UAvatar')
-const UButton = resolveComponent('UButton')
-const UBadge = resolveComponent('UBadge')
-const UDropdownMenu = resolveComponent('UDropdownMenu')
-const UCheckbox = resolveComponent('UCheckbox')
+// ── 컴포넌트 ─────────────────────────────────────────────────
+const UButton = resolveComponent("UButton");
+const UBadge = resolveComponent("UBadge");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+const UCheckbox = resolveComponent("UCheckbox");
+const UAvatar = resolveComponent("UAvatar");
 
-const toast = useToast()
-const table = useTemplateRef('table')
+const toast = useToast();
+const table = useTemplateRef<any>("table");
+const { getUserByEmail, getProfile, deleteUser } = useUserApi();
 
-const columnFilters = ref([{
-  id: 'email',
-  value: ''
-}])
+// ── 상태 ─────────────────────────────────────────────────────
+const searchEmail = ref("");
+const searchLoading = ref(false);
+const data = ref<UserDto[]>([]);
+const columnFilters = ref([{ id: "email", value: "" }]);
+const columnVisibility = ref({});
+const rowSelection = ref({});
+const pagination = ref({ pageIndex: 0, pageSize: 10 });
+const profileModal = ref(false);
+const selectedProfile = ref<UserProfileDto | null>(null);
+const profileLoading = ref(false);
+const deletingId = ref<string | null>(null);
+
 const columnLabels: Record<string, string> = {
-  select: '선택',
-  id: 'ID',
-  name: '이름',
-  email: '이메일',
-  location: '지역',
-  status: '상태',
-  amount: '금액', // 다른 테이블용
-  actions: '관리'
-}
-const columnVisibility = ref()
-const rowSelection = ref({ 1: true })
+  select: "선택",
+  name: "이름",
+  email: "이메일",
+  roles: "권한",
+  createdAt: "가입일",
+  actions: "관리",
+};
 
-const { data, status } = await useFetch<User[]>('/api/customers', {
-  lazy: true
-})
-
-// 행(Row) 액션 메뉴 한글화
-function getRowItems(row: Row<User>) {
-  return [
-    {
-      type: 'label',
-      label: '관리'
-    },
-    {
-      label: '고객 ID 복사',
-      icon: 'i-lucide-copy',
-      onSelect() {
-        navigator.clipboard.writeText(row.original.id.toString())
-        toast.add({
-          title: '복사 완료',
-          description: '고객 ID가 클립보드에 복사되었습니다.'
-        })
+// ── 이메일 검색 ───────────────────────────────────────────────
+async function searchUser() {
+  if (!searchEmail.value.trim()) {
+    toast.add({ title: "이메일을 입력해주세요.", color: "warning" });
+    return;
+  }
+  searchLoading.value = true;
+  try {
+    const res = await getUserByEmail(searchEmail.value.trim());
+    if (res.success && res.data) {
+      const exists = data.value.find((u) => u.id === res.data.id);
+      if (!exists) {
+        data.value = [res.data, ...data.value];
+        toast.add({ title: "고객 추가됨", description: res.data.email, color: "success" });
+      } else {
+        toast.add({ title: "이미 목록에 있습니다.", color: "neutral" });
       }
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: '상세 정보 보기',
-      icon: 'i-lucide-list'
-    },
-    {
-      label: '결제 내역 보기',
-      icon: 'i-lucide-wallet'
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: '고객 삭제',
-      icon: 'i-lucide-trash',
-      color: 'error',
-      onSelect() {
-        toast.add({
-          title: '삭제 완료',
-          description: '고객 정보가 삭제되었습니다.'
-        })
-      }
+    } else {
+      toast.add({ title: "해당 이메일의 고객을 찾을 수 없습니다.", color: "error" });
     }
-  ]
+  } catch {
+    toast.add({ title: "조회 실패", color: "error" });
+  } finally {
+    searchLoading.value = false;
+    searchEmail.value = "";
+  }
 }
 
-const columns: TableColumn<User>[] = [
+// ── 프로필 보기 ───────────────────────────────────────────────
+async function viewProfile(userId: string) {
+  profileLoading.value = true;
+  profileModal.value = true;
+  selectedProfile.value = null;
+  try {
+    const res = await getProfile(userId);
+    if (res.success) selectedProfile.value = res.data;
+  } finally {
+    profileLoading.value = false;
+  }
+}
+
+// ── 고객 삭제 ─────────────────────────────────────────────────
+async function onDelete(userId: string, name: string) {
+  if (!confirm(`"${name}" 고객을 삭제하시겠습니까?`)) return;
+  deletingId.value = userId;
+  try {
+    await deleteUser(userId);
+    data.value = data.value.filter((u) => u.id !== userId);
+    toast.add({ title: "삭제 완료", description: `${name} 님이 삭제되었습니다.`, color: "success" });
+  } catch {
+    toast.add({ title: "삭제 실패", color: "error" });
+  } finally {
+    deletingId.value = null;
+  }
+}
+
+// ── 행 액션 ───────────────────────────────────────────────────
+function getRowItems(row: Row<UserDto>) {
+  return [
+    { type: "label", label: "고객 관리" },
+    {
+      label: "ID 복사",
+      icon: "i-lucide-copy",
+      onSelect() {
+        navigator.clipboard.writeText(row.original.id);
+        toast.add({ title: "복사 완료", description: "고객 ID가 복사되었습니다." });
+      },
+    },
+    { type: "separator" },
+    {
+      label: "프로필 상세 보기",
+      icon: "i-lucide-user",
+      onSelect() { viewProfile(row.original.id); },
+    },
+    { type: "separator" },
+    {
+      label: "고객 삭제",
+      icon: "i-lucide-trash",
+      color: "error",
+      onSelect() { onDelete(row.original.id, row.original.name); },
+    },
+  ];
+}
+
+// ── 테이블 컬럼 ───────────────────────────────────────────────
+const columns: TableColumn<UserDto>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) =>
       h(UCheckbox, {
-        'modelValue': table.getIsSomePageRowsSelected()
-          ? 'indeterminate'
-          : table.getIsAllPageRowsSelected(),
-        'onUpdate:modelValue': (value: boolean | 'indeterminate') =>
-          table.toggleAllPageRowsSelected(!!value),
-        'ariaLabel': '전체 선택'
+        modelValue: table.getIsSomePageRowsSelected() ? "indeterminate" : table.getIsAllPageRowsSelected(),
+        "onUpdate:modelValue": (v: boolean) => table.toggleAllPageRowsSelected(!!v),
+        ariaLabel: "전체 선택",
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
-        'modelValue': row.getIsSelected(),
-        'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
-        'ariaLabel': '행 선택'
-      })
+        modelValue: row.getIsSelected(),
+        "onUpdate:modelValue": (v: boolean) => row.toggleSelected(!!v),
+        ariaLabel: "행 선택",
+      }),
   },
   {
-    accessorKey: 'id',
-    header: 'ID'
+    accessorKey: "name",
+    header: "이름",
+    cell: ({ row }) =>
+      h("div", { class: "flex items-center gap-3" }, [
+        h(UAvatar, { alt: row.original.name, size: "sm" }),
+        h("div", {}, [
+          h("p", { class: "font-medium text-highlighted" }, row.original.name),
+          h("p", { class: "text-xs text-muted" }, row.original.id.slice(0, 8) + "..."),
+        ]),
+      ]),
   },
   {
-    accessorKey: 'name',
-    header: '이름',
+    accessorKey: "email",
+    header: "이메일",
+    filterFn: "includesString",
+  },
+  {
+    accessorKey: "roles",
+    header: "권한",
     cell: ({ row }) => {
-      return h('div', { class: 'flex items-center gap-3' }, [
-        h(UAvatar, {
-          ...row.original.avatar,
-          size: 'lg'
-        }),
-        h('div', undefined, [
-          h('p', { class: 'font-medium text-highlighted' }, row.original.name),
-          h('p', { class: '' }, `@${row.original.name}`)
-        ])
-      ])
-    }
+      const role = row.original.roles;
+      const color = role?.includes("ADMIN") ? "error" : role?.includes("STORE") ? "warning" : "neutral";
+      return h(UBadge, { color, variant: "subtle" }, () => role || "USER");
+    },
   },
   {
-    accessorKey: 'email',
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted()
-
-      return h(UButton, {
-        color: 'neutral',
-        variant: 'ghost',
-        label: '이메일',
-        icon: isSorted
-          ? isSorted === 'asc'
-            ? 'i-lucide-arrow-up-narrow-wide'
-            : 'i-lucide-arrow-down-wide-narrow'
-          : 'i-lucide-arrow-up-down',
-        class: '-mx-2.5',
-        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-      })
-    }
+    accessorKey: "createdAt",
+    header: "가입일",
+    cell: ({ row }) =>
+      row.original.createdAt
+        ? new Date(row.original.createdAt).toLocaleDateString("ko-KR")
+        : "-",
   },
   {
-    accessorKey: 'location',
-    header: '지역',
-    cell: ({ row }) => row.original.location
-  },
-  {
-    accessorKey: 'status',
-    header: '상태',
-    filterFn: 'equals',
-    cell: ({ row }) => {
-      const color = {
-        subscribed: 'success' as const,
-        unsubscribed: 'error' as const,
-        bounced: 'warning' as const
-      }[row.original.status]
-
-      // 상태 값 한글 변환
-      const statusLabel = {
-        subscribed: '구독 중',
-        unsubscribed: '구독 해지',
-        bounced: '발송 실패'
-      }[row.original.status] || row.original.status
-
-      return h(UBadge, { class: 'capitalize', variant: 'subtle', color }, () =>
-        statusLabel
-      )
-    }
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => {
-      return h(
-        'div',
-        { class: 'text-right' },
-        h(
-          UDropdownMenu,
-          {
-            content: {
-              align: 'end'
-            },
-            items: getRowItems(row)
-          },
-          () =>
-            h(UButton, {
-              icon: 'i-lucide-ellipsis-vertical',
-              color: 'neutral',
-              variant: 'ghost',
-              class: 'ml-auto'
-            })
+    id: "actions",
+    cell: ({ row }) =>
+      h(
+        "div",
+        { class: "text-right" },
+        h(UDropdownMenu, {
+          content: { align: "end" },
+          items: getRowItems(row),
+        }, () =>
+          h(UButton, {
+            icon: "i-lucide-ellipsis-vertical",
+            color: "neutral",
+            variant: "ghost",
+          })
         )
-      )
-    }
-  }
-]
-
-const statusFilter = ref('all')
-
-watch(() => statusFilter.value, (newVal) => {
-  if (!table?.value?.tableApi) return
-
-  const statusColumn = table.value.tableApi.getColumn('status')
-  if (!statusColumn) return
-
-  if (newVal === 'all') {
-    statusColumn.setFilterValue(undefined)
-  } else {
-    statusColumn.setFilterValue(newVal)
-  }
-})
-
-const email = computed({
-  get: (): string => {
-    return (table.value?.tableApi?.getColumn('email')?.getFilterValue() as string) || ''
+      ),
   },
-  set: (value: string) => {
-    table.value?.tableApi?.getColumn('email')?.setFilterValue(value || undefined)
-  }
-})
-
-const pagination = ref({
-  pageIndex: 0,
-  pageSize: 10
-})
+];
 </script>
 
 <template>
-  <UDashboardPanel id="users">
+  <UDashboardPanel id="customers">
     <template #header>
       <UDashboardNavbar title="고객 목록">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
-
         <template #right>
           <UsersAddModal />
         </template>
@@ -240,85 +208,64 @@ const pagination = ref({
     </template>
 
     <template #body>
+      <!-- 이메일 검색 -->
       <div class="flex flex-wrap items-center justify-between gap-1.5">
-        <UInput
-          v-model="email"
-          class="max-w-sm"
-          icon="i-lucide-search"
-          placeholder="이메일 검색..."
-        />
+        <div class="flex gap-2">
+          <UInput
+            v-model="searchEmail"
+            placeholder="이메일로 고객 검색..."
+            icon="i-lucide-search"
+            class="w-72"
+            @keydown.enter="searchUser"
+          />
+          <UButton
+            label="검색"
+            :loading="searchLoading"
+            @click="searchUser"
+          />
+        </div>
 
         <div class="flex flex-wrap items-center gap-1.5">
-          <UsersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
-            <UButton
-              v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-              label="선택 삭제"
-              color="error"
-              variant="subtle"
-              icon="i-lucide-trash"
-            >
-              <template #trailing>
-                <UKbd>
-                  {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length }}
-                </UKbd>
-              </template>
-            </UButton>
-          </UsersDeleteModal>
-
-          <USelect
-            v-model="statusFilter"
-            :items="[
-              { label: '전체 상태', value: 'all' },
-              { label: '구독 중', value: 'subscribed' },
-              { label: '구독 해지', value: 'unsubscribed' },
-              { label: '발송 실패', value: 'bounced' }
-            ]"
-            :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
-            placeholder="상태 필터"
-            class="min-w-32"
-          />
           <UDropdownMenu
             :items="
               table?.tableApi
                 ?.getAllColumns()
-                .filter((column: any) => column.getCanHide())
-                .map((column: any) => ({
-                  label: columnLabels[column.id] || column.id,
+                .filter((col: any) => col.getCanHide())
+                .map((col: any) => ({
+                  label: columnLabels[col.id] || col.id,
                   type: 'checkbox' as const,
-                  checked: column.getIsVisible(),
+                  checked: col.getIsVisible(),
                   onUpdateChecked(checked: boolean) {
-                    table?.tableApi?.getColumn(column.id)?.toggleVisibility(!!checked)
+                    table?.tableApi?.getColumn(col.id)?.toggleVisibility(!!checked)
                   },
-                  onSelect(e?: Event) {
-                    e?.preventDefault()
-                  }
+                  onSelect(e?: Event) { e?.preventDefault() }
                 }))
             "
             :content="{ align: 'end' }"
           >
-            <UButton
-              label="컬럼 설정"
-              color="neutral"
-              variant="outline"
-              trailing-icon="i-lucide-settings-2"
-            />
+            <UButton label="컬럼 설정" color="neutral" variant="outline" trailing-icon="i-lucide-settings-2" />
           </UDropdownMenu>
         </div>
       </div>
 
+      <!-- 검색 안내 -->
+      <div v-if="data.length === 0" class="text-center text-muted text-sm py-16">
+        <UIcon name="i-lucide-users" class="text-4xl mb-3 block mx-auto" />
+        이메일로 고객을 검색하면 목록에 추가됩니다.
+      </div>
+
+      <!-- 테이블 -->
       <UTable
+        v-else
         ref="table"
         v-model:column-filters="columnFilters"
         v-model:column-visibility="columnVisibility"
         v-model:row-selection="rowSelection"
         v-model:pagination="pagination"
-        :pagination-options="{
-          getPaginationRowModel: getPaginationRowModel()
-        }"
+        :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
         class="shrink-0"
         :data="data"
         :columns="columns"
-        :loading="status === 'pending'"
         :ui="{
           base: 'table-fixed border-separate border-spacing-0',
           thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
@@ -329,22 +276,48 @@ const pagination = ref({
         }"
       />
 
-      <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto">
+      <!-- 페이지네이션 -->
+      <div v-if="data.length > 0" class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto">
         <div class="text-sm text-muted">
-          총
-          {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}명 중
-          {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}명 선택됨.
+          총 {{ data.length }}명
         </div>
-
-        <div class="flex items-center gap-1.5">
-          <UPagination
-            :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-            :items-per-page="table?.tableApi?.getState().pagination.pageSize"
-            :total="table?.tableApi?.getFilteredRowModel().rows.length"
-            @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)"
-          />
-        </div>
+        <UPagination
+          :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+          :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+          :total="data.length"
+          @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)"
+        />
       </div>
+
+      <!-- 프로필 상세 모달 -->
+      <UModal v-model:open="profileModal" title="고객 프로필" description="고객의 상세 프로필 정보입니다.">
+        <template #body>
+          <div v-if="profileLoading" class="flex justify-center py-8">
+            <UIcon name="i-lucide-loader-circle" class="text-2xl animate-spin text-muted" />
+          </div>
+          <div v-else-if="selectedProfile" class="space-y-3 text-sm">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-muted mb-0.5">이름</p>
+                <p class="font-medium">{{ selectedProfile.name }}</p>
+              </div>
+              <div>
+                <p class="text-muted mb-0.5">이메일</p>
+                <p>{{ selectedProfile.email }}</p>
+              </div>
+              <div>
+                <p class="text-muted mb-0.5">전화번호</p>
+                <p>{{ selectedProfile.phone || '-' }}</p>
+              </div>
+              <div>
+                <p class="text-muted mb-0.5">ID</p>
+                <p class="font-mono text-xs">{{ selectedProfile.id }}</p>
+              </div>
+            </div>
+          </div>
+          <div v-else class="text-center text-muted py-6">프로필 정보를 불러올 수 없습니다.</div>
+        </template>
+      </UModal>
     </template>
   </UDashboardPanel>
 </template>

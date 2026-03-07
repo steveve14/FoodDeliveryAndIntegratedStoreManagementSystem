@@ -4,7 +4,7 @@ import com.example.userservice.dto.AuthUserDto;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.service.UserService;
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.grpc.server.service.GrpcService;
 
 /** gRPC service implementation for user operations used by internal MSA communication. */
 @GrpcService

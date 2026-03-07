@@ -1,4 +1,6 @@
-# 06. API 설계 및 통신 표준 (API Design Standards)
+﻿# 06. API 설계 및 통신 표준 (API Design Standards)
+
+> **최종 수정**: 2026-03-04
 
 마이크로서비스 간, 그리고 클라이언트(웹/앱)와의 일관된 통신을 위해 아래 표준을 준수합니다.
 
@@ -46,7 +48,40 @@
 }
 ```
 
-## 4. 내부 통신 (Feign Client)
-서비스 간 통신(예: 주문 서비스 -> 가게 서비스)은 Spring Cloud OpenFeign을 사용합니다.
-*   **Timeout 설정**: 기본 3초, 최대 5초로 설정하여 연쇄 지연(Cascading Failure) 방지.
-*   **Fallback**: 호출 실패 시 기본값을 반환하거나 에러를 던지는 Fallback Factory 구현.
+## 4. 내부 통신 (Spring gRPC)
+서비스 간 동기 통신(예: 주문 서비스 → 가게 서비스)은 **Spring gRPC (Protobuf 스키마 기반)**을 사용합니다.
+
+> **이전 전략(Feign Client)에서 변경**: OpenFeign 의존성은 제거되었으며, 모든 서비스 간 동기 호출은 gRPC로 수행합니다.
+
+### 서비스 간 gRPC 호출 구조
+| 호출자 | 대상 | Proto RPC | 용도 |
+|---|---|---|---|
+| service-gateway | service-auth | `ValidateToken` | JWT 토큰 검증 |
+| service-auth | service-user | `Authenticate` / `GetUserByEmail` | 사용자 조회 |
+| service-order | service-store | `GetProductById` | 상품 정보 조회 |
+| service-delivery | service-order | `GetOrderById` | 주문 정보 조회 |
+
+### 클라이언트 구현 방식
+각 gRPC 클라이언트 서비스는 `GrpcClientConfig.java`에서 `GrpcChannelFactory`를 이용해 `BlockingStub` 빈을 등록합니다.
+
+```java
+@Configuration
+public class GrpcClientConfig {
+    @Bean
+    StoreGrpcServiceGrpc.StoreGrpcServiceBlockingStub storeGrpcStub(GrpcChannelFactory channels) {
+        return StoreGrpcServiceGrpc.newBlockingStub(channels.createChannel("service-store"));
+    }
+}
+```
+
+채널 주소는 `application.yml`에서 설정합니다:
+```yaml
+spring:
+  grpc:
+    client:
+      channels:
+        service-store:
+          address: static://localhost:9020
+```
+
+---

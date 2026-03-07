@@ -2,7 +2,7 @@ package com.example.auth.grpc;
 
 import com.example.auth.security.JwtProvider;
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.grpc.server.service.GrpcService;
 
 /*
  * Auth 서비스 gRPC 서버 구현

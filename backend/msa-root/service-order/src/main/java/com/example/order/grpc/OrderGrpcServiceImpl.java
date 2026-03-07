@@ -3,7 +3,7 @@ package com.example.order.grpc;
 import com.example.order.dto.OrderDto;
 import com.example.order.service.OrderService;
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.grpc.server.service.GrpcService;
 
 /*
  * Order 서비스 gRPC 서버 구현

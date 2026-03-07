@@ -3,686 +3,674 @@ import { sub } from 'date-fns'
 const mails = [{
   id: 1,
   from: {
-    name: 'Alex Smith',
-    email: 'alex.smith@example.com',
+    name: '김민수',
+    email: 'minsu.kim@example.com',
     avatar: {
       src: 'https://i.pravatar.cc/128?u=1'
     }
   },
-  subject: 'Meeting Schedule: Q1 Marketing Strategy Review',
-  body: `Dear Team,
+  subject: '회의 일정: 1분기 마케팅 전략 검토',
+  body: `팀원 여러분께,
 
-I hope this email finds you well. Just a quick reminder about our Q1 Marketing Strategy meeting scheduled for tomorrow at 10 AM EST in Conference Room A.
+안녕하세요. 내일 오전 10시 회의실 A에서 예정된 1분기 마케팅 전략 회의에 대해 다시 한번 안내드립니다.
 
-Agenda:
-- Q4 Performance Review
-- New Campaign Proposals
-- Budget Allocation for Q2
-- Team Resource Planning
+안건:
+- 4분기 실적 리뷰
+- 신규 캠페인 제안
+- 2분기 예산 배분
+- 팀 인력 계획
 
-Please come prepared with your department updates. I've attached the preliminary deck for your review.
+각 부서 업데이트 사항을 준비해 주시기 바랍니다. 사전 검토용 발표 자료를 첨부합니다.
 
-Best regards,
-Alex Smith
-Senior Marketing Director
-Tel: (555) 123-4567`,
+감사합니다.
+김민수
+마케팅 총괄 이사
+연락처: 02-1234-5678`,
   date: new Date().toISOString()
 }, {
   id: 2,
   unread: true,
   from: {
-    name: 'Jordan Brown',
-    email: 'jordan.brown@example.com',
+    name: '이서연',
+    email: 'seoyeon.lee@example.com',
     avatar: {
       src: 'https://i.pravatar.cc/128?u=2'
     }
   },
-  subject: 'RE: Project Phoenix - Sprint 3 Update',
-  body: `Hi team,
+  subject: 'RE: 프로젝트 피닉스 - 스프린트 3 진행 현황',
+  body: `팀원 여러분께,
 
-Quick update on Sprint 3 deliverables:
+스프린트 3 진행 상황을 공유합니다:
 
-✅ User authentication module completed
-🏗️ Payment integration at 80%
-⏳ API documentation pending review
+✅ 사용자 인증 모듈 완료
+🏗️ 결제 연동 80% 진행 중
+⏳ API 문서 검토 대기 중
 
-Key metrics:
-- Code coverage: 94%
-- Sprint velocity: 45 points
-- Bug resolution rate: 98%
+주요 지표:
+- 코드 커버리지: 94%
+- 스프린트 속도: 45포인트
+- 버그 해결률: 98%
 
-Please review the attached report for detailed analysis. Let's discuss any blockers in tomorrow's stand-up.
+첨부된 리포트에서 상세 분석을 확인해 주세요. 내일 스탠드업 미팅에서 블로커 이슈를 논의하겠습니다.
 
-Regards,
-Jordan
+이서연 드림
 
 --
-Jordan Brown
-Lead Developer | Tech Solutions
-Mobile: +1 (555) 234-5678`,
+이서연
+리드 개발자 | 기술솔루션팀
+연락처: 010-2345-6789`,
   date: sub(new Date(), { minutes: 7 }).toISOString()
 }, {
   id: 3,
   unread: true,
   from: {
-    name: 'Taylor Green',
-    email: 'taylor.green@example.com',
+    name: '박지훈',
+    email: 'jihoon.park@example.com',
     avatar: {
       src: 'https://i.pravatar.cc/128?u=3'
     }
   },
-  subject: 'Lunch Plans',
-  body: `Hi there!
+  subject: '점심 약속',
+  body: `안녕하세요!
 
-I was wondering if you'd like to grab lunch this Friday? There's this amazing new Mexican restaurant downtown called "La Casa" that I've been wanting to try. They're known for their authentic tacos and house-made guacamole.
+이번 금요일에 점심 같이 하실래요? 시내에 새로 오픈한 한식당 '맛고을'이 있는데, 한번 가보고 싶었거든요. 수제 비빔밥과 갈비탕으로 유명하다고 합니다.
 
-Would 12:30 PM work for you? It would be great to catch up and discuss the upcoming team building event while we're there.
+12시 30분 괜찮으신가요? 오랜만에 이야기도 나누고, 다가오는 팀빌딩 행사에 대해서도 같이 논의해요.
 
-Let me know what you think!
+의견 알려주세요!
 
-Best,
-Taylor`,
+박지훈 드림`,
   date: sub(new Date(), { hours: 3 }).toISOString()
 }, {
   id: 4,
   from: {
-    name: 'Morgan White',
-    email: 'morgan.white@example.com',
+    name: '최유진',
+    email: 'yujin.choi@example.com',
     avatar: {
       src: 'https://i.pravatar.cc/128?u=4'
     }
   },
-  subject: 'New Proposal: Project Horizon',
-  body: `Hi team,
+  subject: '신규 제안서: 프로젝트 호라이즌',
+  body: `팀원 여러분께,
 
-I've just uploaded the comprehensive proposal for Project Horizon to our shared drive. The document includes:
+프로젝트 호라이즌에 대한 종합 제안서를 공유 드라이브에 업로드했습니다. 문서 내용:
 
-• Detailed project objectives and success metrics
-• Resource allocation and team structure
-• Timeline with key milestones
-• Budget breakdown
-• Risk assessment and mitigation strategies
+• 상세 프로젝트 목표 및 성공 지표
+• 리소스 배분 및 팀 구성
+• 주요 마일스톤 포함 일정
+• 예산 상세 내역
+• 리스크 평가 및 완화 전략
 
-I'm particularly excited about our innovative approach to the user engagement component, which could set a new standard for our industry.
+특히 사용자 참여도 부분의 혁신적인 접근 방식이 업계 새로운 기준이 될 수 있을 것으로 기대합니다.
 
-Could you please review and provide feedback by EOD Friday? I'd like to present this to the steering committee next week.
+금요일까지 검토 후 피드백 부탁드립니다. 다음 주 운영위원회에 발표할 예정입니다.
 
-Thanks in advance,
+감사합니다.
 
-Morgan White
-Senior Project Manager
-Tel: (555) 234-5678`,
+최유진
+시니어 프로젝트 매니저
+연락처: 02-2345-6789`,
   date: sub(new Date(), { days: 1 }).toISOString()
 }, {
   id: 5,
   from: {
-    name: 'Casey Gray',
-    email: 'casey.gray@example.com'
+    name: '정하늘',
+    email: 'haneul.jung@example.com'
   },
-  subject: 'Updated: San Francisco Conference Trip Itinerary',
-  body: `Dear [Name],
+  subject: '출장 일정 업데이트: 부산 컨퍼런스',
+  body: `안녕하세요,
 
-Please find your confirmed travel itinerary below:
+확정된 출장 일정을 안내드립니다:
 
-FLIGHT DETAILS:
-Outbound: AA 1234
-Date: March 15, 2024
-DEP: JFK 09:30 AM
-ARR: SFO 12:45 PM
+항공편:
+출발: KE 1234
+일시: 3월 15일
+출발: 김포공항 09:30
+도착: 김해공항 10:40
 
-HOTEL:
-Marriott San Francisco
-Check-in: March 15
-Check-out: March 18
-Confirmation #: MR123456
+숙소:
+부산 해운대 호텔
+체크인: 3월 15일
+체크아웃: 3월 18일
+예약번호: BH123456
 
-SCHEDULE:
-March 15 - Evening: Welcome Reception (6 PM)
-March 16 - Conference Day 1 (9 AM - 5 PM)
-March 17 - Conference Day 2 (9 AM - 4 PM)
+일정:
+3월 15일 - 저녁: 환영 리셉션 (18:00)
+3월 16일 - 컨퍼런스 1일차 (09:00 - 17:00)
+3월 17일 - 컨퍼런스 2일차 (09:00 - 16:00)
 
-Please let me know if you need any modifications.
+변경 사항이 있으면 알려주세요.
 
-Best regards,
-Casey Gray
-Travel Coordinator
-Office: (555) 345-6789`,
+정하늘 드림
+출장 관리 담당
+총무팀`,
   date: sub(new Date(), { days: 1 }).toISOString()
 }, {
   id: 6,
   from: {
-    name: 'Jamie Johnson',
-    email: 'jamie.johnson@example.com'
+    name: '강수빈',
+    email: 'subin.kang@example.com'
   },
-  subject: 'Q1 2024 Financial Performance Review',
-  body: `Dear Leadership Team,
+  subject: '1분기 재무 실적 보고',
+  body: `경영진 여러분께,
 
-Please find attached our Q1 2024 financial analysis report. Key highlights:
+1분기 재무 분석 보고서를 첨부합니다. 주요 내용:
 
-PERFORMANCE METRICS:
-• Revenue: $12.4M (+15% YoY)
-• Operating Expenses: $8.2M (-3% vs. budget)
-• Net Profit Margin: 18.5% (+2.5% vs. Q4 2023)
+실적 지표:
+• 매출: 148억 원 (전년 대비 +15%)
+• 영업비용: 98억 원 (예산 대비 -3%)
+• 순이익률: 18.5% (전분기 대비 +2.5%)
 
-AREAS OF OPTIMIZATION:
-1. Cloud infrastructure costs (+22% over budget)
-2. Marketing spend efficiency (-8% ROI vs. target)
-3. Office operational costs (+5% vs. forecast)
+개선 필요 영역:
+1. 클라우드 인프라 비용 (예산 대비 +22%)
+2. 마케팅 효율성 (목표 ROI 대비 -8%)
+3. 사무실 운영비용 (예상 대비 +5%)
 
-I've scheduled a detailed review for Thursday at 2 PM EST. Calendar invite to follow.
+목요일 오후 2시에 상세 검토 미팅을 잡았습니다. 캘린더 초대를 곧 보내드리겠습니다.
 
-Best regards,
-Jamie Johnson
-Chief Financial Officer
-Ext: 4567`,
+강수빈 드림
+재무 총괄
+내선: 4567`,
   date: sub(new Date(), { days: 2 }).toISOString()
 }, {
   id: 7,
   from: {
-    name: 'Riley Davis',
-    email: 'riley.davis@example.com',
+    name: '윤도현',
+    email: 'dohyun.yoon@example.com',
     avatar: {
       src: 'https://i.pravatar.cc/128?u=7'
     }
   },
-  subject: '[Mandatory] New DevOps Tools Training Session',
-  body: `Hello Development Team,
+  subject: '[필수] 신규 DevOps 도구 교육 안내',
+  body: `개발팀 여러분께,
 
-This is a reminder about next week's mandatory training session on our updated DevOps toolkit.
+다음 주 예정된 DevOps 도구 업데이트 교육에 대해 안내드립니다.
 
-📅 Date: Tuesday, March 19
-⏰ Time: 10:00 AM - 12:30 PM EST
-📍 Location: Virtual (Zoom link below)
+📅 일시: 화요일, 3월 19일
+⏰ 시간: 오전 10:00 - 오후 12:30
+📍 장소: 온라인 (Zoom 링크 아래)
 
-We'll be covering:
-• GitLab CI/CD pipeline improvements
-• Docker container optimization
-• Kubernetes cluster management
-• New monitoring tools integration
+교육 내용:
+• GitLab CI/CD 파이프라인 개선
+• Docker 컨테이너 최적화
+• Kubernetes 클러스터 관리
+• 신규 모니터링 도구 연동
 
-Prerequisites:
-1. Install Docker Desktop 4.25
-2. Update VS Code to latest version
-3. Complete pre-training survey (link attached)
+사전 준비사항:
+1. Docker Desktop 4.25 설치
+2. VS Code 최신 버전 업데이트
+3. 사전 설문 작성 (첨부 링크)
 
-Zoom Link: https://zoom.us/j/123456789
-Password: DevOps2024
+Zoom 링크: https://zoom.us/j/123456789
+비밀번호: DevOps2024
 
 --
-Riley Davis
-DevOps Lead
-Technical Operations
-M: (555) 777-8888`,
+윤도현
+DevOps 리드
+기술운영팀
+연락처: 010-7778-8888`,
   date: sub(new Date(), { days: 2 }).toISOString()
 }, {
   id: 8,
   unread: true,
   from: {
-    name: 'Kelly Wilson',
-    email: 'kelly.wilson@example.com',
+    name: '한소희',
+    email: 'sohee.han@example.com',
     avatar: {
       src: 'https://i.pravatar.cc/128?u=8'
     }
   },
-  subject: '🎉 Happy Birthday!',
-  body: `Dear [Name],
+  subject: '🎉 생일 축하합니다!',
+  body: `안녕하세요,
 
-On behalf of the entire team, wishing you a fantastic birthday! 🎂
+팀 전체를 대표하여 생일을 진심으로 축하드립니다! 🎂
 
-We've organized a small celebration in the break room at 3 PM today. Cake and refreshments will be served!
+오늘 오후 3시에 휴게실에서 작은 축하 자리를 마련했습니다. 케이크와 음료가 준비되어 있습니다!
 
-Your dedication and positive energy make our workplace better every day. Here's to another great year ahead!
+항상 헌신적이고 긍정적인 에너지로 우리 업무 환경을 더 좋게 만들어 주셔서 감사합니다. 올해도 멋진 한 해가 되시길 바랍니다!
 
-Best wishes,
-Kelly & The HR Team
+축하드리며,
+한소희 & 인사팀 일동
 
-P.S. Don't forget to check your email for a special birthday surprise from the company! 🎁
+추신: 회사에서 준비한 특별한 생일 선물이 이메일로 발송되었으니 확인해 주세요! 🎁
 
 --
-Kelly Wilson
-HR Director
-Human Resources Department
-Tel: (555) 999-0000`,
+한소희
+인사 총괄
+인사관리팀
+연락처: 02-9990-0000`,
   date: sub(new Date(), { days: 2 }).toISOString()
 }, {
   id: 9,
   from: {
-    name: 'Drew Moore',
-    email: 'drew.moore@example.com'
+    name: '송태윤',
+    email: 'taeyun.song@example.com'
   },
-  subject: 'Website Redesign Feedback Request - Phase 2',
-  body: `Hi there,
+  subject: '웹사이트 리디자인 피드백 요청 - 2단계',
+  body: `안녕하세요,
 
-We're entering Phase 2 of our website redesign project and would value your input on the latest iterations.
+웹사이트 리디자인 2단계에 진입하여 최신 버전에 대한 피드백을 요청드립니다.
 
-New Features Implementation:
-1. Dynamic product catalog
-2. Enhanced search functionality
-3. Personalized user dashboard
-4. Mobile-responsive navigation
+신규 기능 구현 항목:
+1. 동적 상품 카탈로그
+2. 강화된 검색 기능
+3. 개인화 사용자 대시보드
+4. 모바일 반응형 내비게이션
 
-Review Links:
-• Staging Environment: https://staging.example.com
-• Design Specs: [Figma Link]
-• User Flow Documentation: [Confluence Link]
+검토 링크:
+• 스테이징 환경: https://staging.example.com
+• 디자인 스펙: [Figma 링크]
+• 사용자 플로우 문서: [Confluence 링크]
 
-Please provide feedback by EOD Friday. Key areas to focus on:
-- User experience
-- Navigation flow
-- Content hierarchy
-- Mobile responsiveness
+금요일까지 피드백 부탁드립니다. 주요 검토 영역:
+- 사용자 경험
+- 내비게이션 흐름
+- 콘텐츠 구조
+- 모바일 반응성
 
-Your insights will be crucial for our final implementation decisions.
+최종 구현 결정에 큰 도움이 됩니다.
 
-Thanks in advance,
-Drew Moore
-UX Design Lead
-Product Design Team`,
+감사합니다.
+송태윤
+UX 디자인 리드
+프로덕트 디자인팀`,
   date: sub(new Date(), { days: 5 }).toISOString()
 }, {
   id: 10,
   from: {
-    name: 'Jordan Taylor',
-    email: 'jordan.taylor@example.com'
+    name: '임채원',
+    email: 'chaewon.lim@example.com'
   },
-  subject: 'Corporate Wellness Program - Membership Renewal',
-  body: `Dear Valued Member,
+  subject: '사내 건강관리 프로그램 - 멤버십 갱신 안내',
+  body: `안녕하세요,
 
-Your corporate wellness program membership is due for renewal on April 1st, 2024.
+사내 건강관리 프로그램 멤버십이 4월 1일 갱신 예정입니다.
 
-NEW AMENITIES:
-✨ Expanded yoga studio
-🏋️ State-of-the-art cardio equipment
-🧘 Meditation room
-👥 Additional group fitness classes
+신규 시설 안내:
+✨ 확장된 요가 스튜디오
+🏋️ 최신 유산소 운동 장비
+🧘 명상실
+👥 추가 그룹 피트니스 수업
 
-RENEWAL BENEFITS:
-• 15% early bird discount
-• 3 complimentary personal training sessions
-• Free wellness assessment
-• Access to new mobile app
+갱신 혜택:
+• 얼리버드 15% 할인
+• 무료 개인 트레이닝 3회
+• 무료 건강 진단
+• 신규 모바일 앱 이용
 
-To schedule a tour or discuss renewal options, please book a time here: [Booking Link]
+투어 예약 또는 갱신 상담: [예약 링크]
 
-Stay healthy!
+건강하세요!
 
-Best regards,
-Jordan Taylor
-Corporate Wellness Coordinator
-Downtown Fitness Center
-Tel: (555) 123-7890`,
+임채원 드림
+사내 건강관리 코디네이터
+복지팀`,
   date: sub(new Date(), { days: 5 }).toISOString()
 }, {
   id: 11,
   unread: true,
   from: {
-    name: 'Morgan Anderson',
-    email: 'morgan.anderson@example.com'
+    name: '오승우',
+    email: 'seungwoo.oh@example.com'
   },
-  subject: 'Important: Updates to Your Corporate Insurance Policy',
-  body: `Dear [Employee Name],
+  subject: '중요: 사내 보험 정책 변경 안내',
+  body: `직원 여러분께,
 
-This email contains important information about changes to your corporate insurance coverage effective April 1, 2024.
+4월 1일부터 적용되는 사내 보험 변경 사항을 안내드립니다.
 
-KEY UPDATES:
-1. Health Insurance
-   • Reduced co-pay for specialist visits ($35 → $25)
-   • Extended telehealth coverage
-   • New mental health benefits
+주요 변경 내용:
+1. 건강보험
+   • 전문의 진료 본인부담금 인하 (35,000원 → 25,000원)
+   • 원격 진료 보장 확대
+   • 정신건강 혜택 신설
 
-2. Dental Coverage
-   • Increased annual maximum ($1,500 → $2,000)
-   • Added orthodontic coverage for dependents
+2. 치과보험
+   • 연간 보장 한도 상향 (150만원 → 200만원)
+   • 피부양자 교정 보장 추가
 
-3. Vision Benefits
-   • Enhanced frame allowance
-   • New LASIK discount program
+3. 안과보험
+   • 안경테 지원금 상향
+   • 라식 할인 프로그램 신설
 
-Please review the attached documentation carefully and complete the acknowledgment form by March 25th.
+첨부 문서를 확인하시고 3월 25일까지 동의서를 작성해 주세요.
 
-Questions? Join our virtual info session:
-📅 March 20th, 2024
-⏰ 11:00 AM EST
-🔗 [Teams Link]
+문의사항은 온라인 설명회에 참석해 주세요:
+📅 3월 20일
+⏰ 오전 11시
+🔗 [Teams 링크]
 
-Regards,
-Morgan Anderson
-Benefits Coordinator
-HR Department`,
+오승우 드림
+복리후생 담당
+인사팀`,
   date: sub(new Date(), { days: 12 }).toISOString()
 }, {
   id: 12,
   from: {
-    name: 'Casey Thomas',
-    email: 'casey.thomas@example.com'
+    name: '배지현',
+    email: 'jihyun.bae@example.com'
   },
-  subject: '📚 March Book Club Meeting: "The Great Gatsby"',
-  body: `Hello Book Lovers!
+  subject: '📚 3월 독서 모임: "82년생 김지영"',
+  body: `독서 모임 회원 여러분께,
 
-I hope you're enjoying F. Scott Fitzgerald's masterpiece! Our next meeting details:
+이번 달 독서 모임 일정을 안내합니다!
 
-📅 Thursday, March 21st
-⏰ 5:30 PM - 7:00 PM
-📍 Main Conference Room (or Zoom)
+📅 목요일, 3월 21일
+⏰ 오후 5:30 - 7:00
+📍 대회의실 (또는 Zoom)
 
-Discussion Topics:
-1. Symbolism of the green light
-2. The American Dream theme
-3. Character development
-4. Social commentary
+토론 주제:
+1. 현대 사회의 성 역할
+2. 세대 간 가치관 차이
+3. 인물 분석
+4. 사회적 메시지
 
-Please bring your suggestions for April's book selection!
+4월 도서 후보도 추천해 주세요!
 
-Refreshments will be provided 🍪
+간식이 준비되어 있습니다 🍪
 
-RSVP by replying to this email.
+이 메일에 답장으로 참석 여부를 알려주세요.
 
-Happy reading!
-Casey
+즐거운 독서 되세요!
+배지현
 
 --
-Casey Thomas
-Book Club Coordinator
-Internal Culture Committee`,
+배지현
+독서 모임 운영자
+사내 문화위원회`,
   date: sub(new Date(), { months: 1 }).toISOString()
 }, {
   id: 13,
   from: {
-    name: 'Jamie Jackson',
-    email: 'jamie.jackson@example.com'
+    name: '권혁준',
+    email: 'hyukjun.kwon@example.com'
   },
-  subject: '🍳 Company Cookbook Project - Recipe Submission Reminder',
-  body: `Dear Colleagues,
+  subject: '🍳 사내 요리책 프로젝트 - 레시피 제출 마감 안내',
+  body: `직원 여러분께,
 
-Final call for our company cookbook project submissions!
+사내 요리책 프로젝트 레시피 마감 안내드립니다!
 
-Guidelines for Recipe Submission:
-1. Include ingredients list with measurements
-2. Step-by-step instructions
-3. Cooking time and servings
-4. Photo of the finished dish (optional)
-5. Any cultural or personal significance
+레시피 제출 가이드:
+1. 재료 목록 (계량 포함)
+2. 단계별 조리법
+3. 조리 시간 및 인분 수
+4. 완성 사진 (선택사항)
+5. 문화적/개인적 의미 (선택사항)
 
-Submission Deadline: March 22nd, 2024
+제출 마감: 3월 22일
 
-We already have some amazing entries:
-• Sarah's Famous Chili
-• Mike's Mediterranean Pasta
-• Lisa's Vegan Brownies
-• Tom's Family Paella
+이미 접수된 멋진 레시피들:
+• 서연님의 특제 김치찌개
+• 민수님의 매콤 떡볶이
+• 유진님의 건강 샐러드
+• 하늘님의 할머니 잡채
 
-All proceeds from cookbook sales will support our local food bank.
+요리책 판매 수익금은 지역 푸드뱅크에 기부됩니다.
 
-Submit here: [Form Link]
+제출 링크: [폼 링크]
 
-Cooking together,
-Jamie Jackson
-Community Engagement Committee
-Ext. 5432`,
+함께 요리해요,
+권혁준
+사회공헌위원회
+내선: 5432`,
   date: sub(new Date(), { months: 1 }).toISOString()
 }, {
   id: 14,
   from: {
-    name: 'Riley White',
-    email: 'riley.white@example.com'
+    name: '신예린',
+    email: 'yerin.shin@example.com'
   },
-  subject: '🧘‍♀️ Updated Corporate Wellness Schedule - Spring 2024',
-  body: `Dear Wellness Program Participants,
+  subject: '🧘‍♀️ 사내 건강관리 스케줄 업데이트 - 2024년 봄',
+  body: `건강관리 프로그램 참가자 여러분께,
 
-Our Spring 2024 wellness schedule is now available!
+2024년 봄 건강관리 스케줄을 안내합니다!
 
-NEW CLASSES:
-Monday:
-• 7:30 AM - Morning Flow Yoga
-• 12:15 PM - HIIT Express
-• 5:30 PM - Meditation Basics
+신규 수업:
+월요일:
+• 오전 7:30 - 모닝 플로우 요가
+• 오후 12:15 - HIIT 익스프레스
+• 오후 5:30 - 명상 기초
 
-Wednesday:
-• 8:00 AM - Power Vinyasa
-• 12:00 PM - Desk Stretching
-• 4:30 PM - Mindfulness Workshop
+수요일:
+• 오전 8:00 - 파워 빈야사
+• 오후 12:00 - 사무실 스트레칭
+• 오후 4:30 - 마인드풀니스 워크숍
 
-Friday:
-• 7:45 AM - Gentle Yoga
-• 12:30 PM - Stress Management
-• 4:45 PM - Weekend Wind-Down
+금요일:
+• 오전 7:45 - 릴랙스 요가
+• 오후 12:30 - 스트레스 관리
+• 오후 4:45 - 주말 힐링 시간
 
-All classes available in-person and via Zoom.
-Download our app to reserve your spot!
+모든 수업은 대면/Zoom으로 참여 가능합니다.
+앱에서 예약하세요!
 
-Namaste,
-Riley White
-Corporate Wellness Instructor
-Wellness & Benefits Team`,
+감사합니다,
+신예린
+사내 웰니스 강사
+복지팀`,
   date: sub(new Date(), { months: 1 }).toISOString()
 }, {
   id: 15,
   from: {
-    name: 'Kelly Harris',
-    email: 'kelly.harris@example.com'
+    name: '조현우',
+    email: 'hyunwoo.jo@example.com'
   },
-  subject: '📚 Book Launch Event: "Digital Transformation in the Modern Age"',
-  body: `Dear [Name],
+  subject: '📚 출판 기념 행사: "디지털 시대의 변혁"',
+  body: `안녕하세요,
 
-You're cordially invited to the launch of my new book, "Digital Transformation in the Modern Age: A Leadership Guide"
+신간 "디지털 시대의 변혁: 리더십 가이드" 출판 기념 행사에 초대합니다.
 
-EVENT DETAILS:
-📅 Date: April 15th, 2024
-⏰ Time: 6:00 PM - 8:30 PM EST
-📍 Grand Hotel Downtown
-   123 Business Ave.
+행사 안내:
+📅 일시: 4월 15일
+⏰ 시간: 오후 6:00 - 8:30
+📍 장소: 그랜드 호텔
+   서울시 중구 비즈니스로 123
 
-AGENDA:
-6:00 PM - Welcome Reception
-6:30 PM - Keynote Presentation
-7:15 PM - Q&A Session
-7:45 PM - Book Signing
-8:00 PM - Networking
+프로그램:
+18:00 - 환영 리셉션
+18:30 - 기조 발표
+19:15 - Q&A 세션
+19:45 - 사인회
+20:00 - 네트워킹
 
-Light refreshments will be served.
-Each attendee will receive a signed copy of the book.
+다과가 준비되어 있습니다.
+참석자 전원에게 사인본 증정
 
-RSVP by April 1st: [Event Link]
+참석 확인 (4월 1일까지): [행사 링크]
 
-Looking forward to sharing this milestone with you!
+소중한 자리에 함께해 주세요!
 
-Best regards,
-Kelly Harris
-Digital Strategy Consultant
-Author, "Digital Transformation in the Modern Age"`,
+조현우 드림
+디지털 전략 컨설턴트`,
   date: sub(new Date(), { months: 1 }).toISOString()
 }, {
   id: 16,
   from: {
-    name: 'Drew Martin',
-    email: 'drew.martin@example.com'
+    name: '유서윤',
+    email: 'seoyun.yu@example.com'
   },
-  subject: '🚀 TechCon 2024: Early Bird Registration Now Open',
-  body: `Dear Tech Enthusiasts,
+  subject: '🚀 테크콘 2024: 얼리버드 등록 시작',
+  body: `기술 전문가 여러분께,
 
-Registration is now open for TechCon 2024: "Innovation at Scale"
+테크콘 2024: "스케일 업 이노베이션" 등록이 시작되었습니다!
 
-CONFERENCE HIGHLIGHTS:
-📅 May 15-17, 2024
-📍 Tech Convention Center
+컨퍼런스 개요:
+📅 5월 15-17일
+📍 테크 컨벤션 센터
 
-KEYNOTE SPEAKERS:
-• Sarah Johnson - CEO, Future Tech Inc.
-• Dr. Michael Chang - AI Research Director
-• Lisa Rodriguez - Cybersecurity Expert
+기조 연사:
+• 김영진 - 퓨처테크 대표이사
+• 이창호 박사 - AI 연구소장
+• 박혜진 - 사이버보안 전문가
 
-TRACKS:
-1. AI/ML Innovation
-2. Cloud Architecture
+트랙:
+1. AI/ML 혁신
+2. 클라우드 아키텍처
 3. DevSecOps
-4. Digital Transformation
-5. Emerging Technologies
+4. 디지털 트랜스포메이션
+5. 신기술 트렌드
 
-EARLY BIRD PRICING (ends April 1):
-Full Conference Pass: $899 (reg. $1,199)
-Team Discount (5+): 15% off
+얼리버드 가격 (4월 1일까지):
+전체 패스: 89만 원 (정가 119만 원)
+팀 할인 (5인 이상): 15% 추가 할인
 
-Register here: [Registration Link]
+등록: [등록 링크]
 
-Best regards,
-Drew Martin
-Conference Director
-TechCon 2024`,
+유서윤 드림
+컨퍼런스 디렉터
+테크콘 2024`,
   date: sub(new Date(), { months: 1, days: 4 }).toISOString()
 }, {
   id: 17,
   from: {
-    name: 'Alex Thompson',
-    email: 'alex.thompson@example.com'
+    name: '문준호',
+    email: 'junho.moon@example.com'
   },
-  subject: '🎨 Modern Perspectives: Contemporary Art Exhibition',
-  body: `Hi there,
+  subject: '🎨 현대 미술 전시회: 경계를 넘어서',
+  body: `안녕하세요,
 
-Hope you're well! I wanted to personally invite you to an extraordinary art exhibition this weekend.
+이번 주말 특별한 미술 전시회에 초대합니다.
 
-"Modern Perspectives: Breaking Boundaries"
-📅 Saturday & Sunday
-⏰ 10 AM - 6 PM
-📍 Metropolitan Art Gallery
+"현대의 시선: 경계를 넘어서"
+📅 토요일 & 일요일
+⏰ 오전 10시 - 오후 6시
+📍 서울시립미술관
 
-FEATURED ARTISTS:
-• Maria Chen - Mixed Media
-• James Wright - Digital Art
-• Sofia Patel - Installation
-• Robert Kim - Photography
+참여 작가:
+• 김미라 - 혼합 매체
+• 이준혁 - 디지털 아트
+• 박소피아 - 설치 미술
+• 정민기 - 사진
 
-SPECIAL EVENTS:
-• Artist Talk: Saturday, 2 PM
-• Workshop: Sunday, 11 AM
-• Wine Reception: Saturday, 5 PM
+특별 이벤트:
+• 작가 토크: 토요일 오후 2시
+• 워크숍: 일요일 오전 11시
+• 와인 리셉션: 토요일 오후 5시
 
-Would love to meet you there! Let me know if you'd like to go together.
+함께 가시면 좋겠습니다! 연락 주세요.
 
-Best,
-Alex Thompson
-Curator
-Metropolitan Art Gallery
-Tel: (555) 234-5678`,
+문준호 드림
+큐레이터
+서울시립미술관
+연락처: 02-2345-6789`,
   date: sub(new Date(), { months: 1, days: 15 }).toISOString()
 }, {
   id: 18,
   from: {
-    name: 'Jordan Garcia',
-    email: 'jordan.garcia@example.com'
+    name: '남지아',
+    email: 'jia.nam@example.com'
   },
-  subject: '🤝 Industry Networking Event: "Connect & Innovate 2024"',
-  body: `Dear Professional Network,
+  subject: '🤝 업계 네트워킹 행사: "커넥트 & 이노베이트 2024"',
+  body: `전문가 네트워크 여러분께,
 
-You're invited to our premier networking event!
+프리미엄 네트워킹 행사에 초대합니다!
 
-EVENT DETAILS:
-📅 March 28th, 2024
-⏰ 6:00 PM - 9:00 PM
-📍 Innovation Hub
-   456 Enterprise Street
+행사 안내:
+📅 3월 28일
+⏰ 오후 6:00 - 9:00
+📍 이노베이션 허브
+   서울시 강남구 테헤란로 456
 
-SPEAKERS:
-• Mark Thompson - "Future of Work"
-• Dr. Sarah Chen - "Innovation Trends"
-• Robert Mills - "Digital Leadership"
+발표자:
+• 김태현 - "미래의 업무 환경"
+• 이서진 박사 - "혁신 트렌드"
+• 박준영 - "디지털 리더십"
 
-SCHEDULE:
-6:00 - Registration & Welcome
-6:30 - Keynote Presentations
-7:30 - Networking Session
-8:30 - Panel Discussion
+프로그램:
+18:00 - 등록 및 환영
+18:30 - 기조 발표
+19:30 - 네트워킹 세션
+20:30 - 패널 토론
 
-Complimentary hors d'oeuvres and beverages will be served.
+핑거 푸드와 음료가 제공됩니다.
 
-RSVP Required: [Registration Link]
+참석 확인 필수: [등록 링크]
 
-Best regards,
-Jordan Garcia
-Event Coordinator
-Professional Networking Association`,
+남지아 드림
+행사 코디네이터
+전문가 네트워킹 협회`,
   date: sub(new Date(), { months: 1, days: 18 }).toISOString()
 }, {
   id: 19,
   from: {
-    name: 'Taylor Rodriguez',
-    email: 'taylor.rodriguez@example.com'
+    name: '서은호',
+    email: 'eunho.seo@example.com'
   },
-  subject: '🌟 Community Service Day - Volunteer Opportunities',
-  body: `Dear Colleagues,
+  subject: '🌟 사내 봉사활동의 날 - 자원봉사 모집',
+  body: `직원 여러분께,
 
-Join us for our annual Community Service Day!
+연례 사내 봉사활동의 날에 참여해 주세요!
 
-EVENT DETAILS:
-📅 Saturday, April 6th, 2024
-⏰ 9:00 AM - 3:00 PM
-📍 Multiple Locations
+행사 안내:
+📅 토요일, 4월 6일
+⏰ 오전 9:00 - 오후 3:00
+📍 여러 장소
 
-VOLUNTEER OPPORTUNITIES:
-1. City Park Cleanup
-   • Garden maintenance
-   • Trail restoration
-   • Playground repair
+봉사 활동:
+1. 시민공원 환경정화
+   • 정원 가꾸기
+   • 산책로 정비
+   • 놀이터 보수
 
-2. Food Bank
-   • Sorting donations
-   • Packing meals
-   • Distribution
+2. 푸드뱅크
+   • 기부물품 분류
+   • 도시락 포장
+   • 배분
 
-3. Animal Shelter
-   • Dog walking
-   • Facility cleaning
-   • Social media support
+3. 유기동물 보호센터
+   • 반려견 산책
+   • 시설 청소
+   • SNS 홍보 지원
 
-All volunteers receive:
-• Company volunteer t-shirt
-• Lunch and refreshments
-• Certificate of participation
-• 8 hours community service credit
+자원봉사자 혜택:
+• 사내 봉사 티셔츠 지급
+• 점심 및 음료 제공
+• 봉사활동 인증서
+• 8시간 봉사 크레딧 인정
 
-Sign up here: [Volunteer Portal]
+신청 링크: [봉사 포털]
 
-Making a difference together,
-Taylor Rodriguez
-Community Outreach Coordinator
-Corporate Social Responsibility Team`,
+함께 변화를 만들어요,
+서은호
+사회공헌 코디네이터
+CSR팀`,
   date: sub(new Date(), { months: 1, days: 25 }).toISOString()
 }, {
   id: 20,
   from: {
-    name: 'Morgan Lopez',
-    email: 'morgan.lopez@example.com'
+    name: '황다은',
+    email: 'daeun.hwang@example.com'
   },
-  subject: '🚗 Vehicle Maintenance Reminder: 30,000 Mile Service',
-  body: `Dear Valued Customer,
+  subject: '🚗 차량 정비 안내: 30,000km 정기 점검',
+  body: `고객님께,
 
-Your vehicle is due for its 30,000-mile maintenance service.
+차량이 30,000km 정기 점검 시기입니다.
 
-RECOMMENDED SERVICES:
-• Oil and filter change
-• Tire rotation and alignment
-• Brake system inspection
-• Multi-point safety inspection
-• Fluid level check and top-off
-• Battery performance test
+권장 점검 항목:
+• 엔진오일 및 필터 교체
+• 타이어 교환 및 얼라인먼트
+• 브레이크 시스템 점검
+• 다항목 안전 점검
+• 각종 오일 보충
+• 배터리 성능 테스트
 
-SERVICE CENTER DETAILS:
-📍 Downtown Auto Care
-   789 Service Road
+서비스센터 안내:
+📍 다운타운 오토케어
+   서울시 서초구 서비스로 789
 
-☎️ (555) 987-6543
+☎️ 02-9876-5432
 
-Available Appointments:
-• Monday-Friday: 7:30 AM - 6:00 PM
-• Saturday: 8:00 AM - 2:00 PM
+예약 가능 시간:
+• 월-금: 오전 7:30 - 오후 6:00
+• 토: 오전 8:00 - 오후 2:00
 
-Schedule online: [Booking Link]
-or call our service desk directly.
+온라인 예약: [예약 링크]
+또는 전화 예약 가능합니다.
 
-Drive safely,
-Morgan Lopez
-Service Coordinator
-Downtown Auto Care
-Emergency: (555) 987-6544`,
+안전운전 하세요,
+황다은
+서비스 코디네이터
+다운타운 오토케어
+긴급연락: 02-9876-5433`,
   date: sub(new Date(), { months: 2 }).toISOString()
 }]
 

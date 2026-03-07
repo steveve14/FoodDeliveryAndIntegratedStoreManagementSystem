@@ -1,9 +1,8 @@
 package com.example.delivery.dto;
 
 public enum DeliveryStatus {
-  PENDING,
-  PICKED_UP,
-  IN_TRANSIT,
+  SCHEDULED,
+  IN_PROGRESS,
   DELIVERED,
-  CANCELLED
+  FAILED
 }

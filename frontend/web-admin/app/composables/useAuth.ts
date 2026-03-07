@@ -1,5 +1,7 @@
 // app/composables/useAuth.ts
-export type UserRole = 'USER' | 'STORE' | 'ADMIN'
+import type { TokenResponse, UserRole } from '~/types/api'
+
+export type { UserRole } from '~/types/api'
 
 export interface AuthUser {
   id: string

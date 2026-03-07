@@ -8,7 +8,9 @@ import com.example.order.grpc.client.StoreGrpcClient;
 import com.example.order.repository.OrderItemRepository;
 import com.example.order.repository.OrderRepository;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,13 @@ public class OrderService {
   private final OrderRepository orderRepository;
   private final OrderItemRepository orderItemRepository;
   private final StoreGrpcClient storeGrpcClient;
+
+  // 주문 상태 전이 규칙: CREATED → COOKING → DELIVERING → DONE | CANCELLED
+  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS =
+      Map.of(
+          "CREATED", Set.of("COOKING", "CANCELLED"),
+          "COOKING", Set.of("DELIVERING", "CANCELLED"),
+          "DELIVERING", Set.of("DONE", "CANCELLED"));
 
   public OrderService(
       OrderRepository orderRepository,
@@ -88,6 +97,13 @@ public class OrderService {
         orderRepository
             .findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+    Set<String> allowed = ALLOWED_TRANSITIONS.getOrDefault(o.getStatus(), Set.of());
+    if (!allowed.contains(newStatus)) {
+      throw new IllegalStateException(
+          String.format("Cannot transition from %s to %s", o.getStatus(), newStatus));
+    }
+
     Order updated = o.toBuilder().status(newStatus).build();
     Order saved = orderRepository.save(updated);
     return toDto(saved, loadItems(saved.getId()));

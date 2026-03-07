@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * LoginRequest
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
  * AuthService로 전달됩니다.
  */
 @Getter
+@Setter
 @NoArgsConstructor
 public class LoginRequest {
   // 사용자의 이메일

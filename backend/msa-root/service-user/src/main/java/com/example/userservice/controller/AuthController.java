@@ -27,7 +27,7 @@ public class AuthController {
     com.example.userservice.dto.AuthUserDto dto =
         userService.authenticate(req.getEmail(), req.getPassword());
     if (dto == null) {
-      return ResponseEntity.status(401).body(ApiResponse.error("Unauthorized"));
+      return ResponseEntity.status(401).body(ApiResponse.error(401, "Unauthorized"));
     }
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }

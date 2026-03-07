@@ -1,38 +1,40 @@
-# 11. 우선순위 작업 목록 (실행 백로그)
+﻿# 11. 우선순위 작업 목록 (실행 백로그)
 
-기준일: 2026-02-25
+기준일: 2026-03-04
 
 ## 우선순위 기준
 - **P0**: 아키텍처/연동 기준선 확립 (없으면 전체 개발이 흔들리는 항목)
 - **P1**: 핵심 사용자 가치 기능 (사장님/고객 주문 플로우)
 - **P2**: 확장/운영 고도화 (배포, 관측성, 자동화)
 
-## P0 (즉시 착수)
+## P0 (완료 및 진행 중)
 
-### P0-1. 기준선 확정: 문서↔코드 정렬 정책
-- 목표: "문서 기준으로 구현" vs "코드 기준으로 문서 개정" 의사결정 확정
-- 산출물:
-  - 서비스 책임 매트릭스(서비스명, 담당 도메인, API 경계)
-  - 명칭 통일안(현재 디렉토리 기준: `web-admin`, `web-shop`, `web-customer` / `service-*`)
-- 완료조건: 팀 합의된 단일 기준 문서 1건 승인
+### ✅ P0-1. 기준선 확정: 문서↔코드 정렬 정책 (완료 — 2026-03-04)
+- 결정: **코드 기준으로 문서를 정렬** (현실을 반영한 문서 최신화)
+- 기준 디렉토리: `web-admin`, `web-shop`, `web-customer` / `service-*`
+- 기술스택 확정: Spring Boot 4.0.2 / Gradle Groovy DSL / H2+PostgreSQL / Spring Data JDBC / Spring gRPC 1.0.0-RC1 / pnpm
 
-### P0-2. API 표준 통일
-- 목표: `/api/v1` 버저닝 + 공통 응답 모델 + 표준 에러 포맷 적용
+### ⬜ P0-2. API 표준 통일 (진행 필요)
+- 목표: `/api/v1` 버저닝 + 공통 응답 모델 + 표준 에러 포맷 전 서비스 적용
 - 작업:
-  - 공통 `ApiResponse` 모델 도입
+  - 공통 `ApiResponse` 모델 전 서비스 일관 적용
   - 전 서비스 컨트롤러 응답 형식 통일
   - 글로벌 예외 처리기(에러 코드 정책 포함) 정비
 - 완료조건: Auth/User/Store/Order 서비스의 신규·기존 공개 API 100% 표준 준수
 
-### P0-3. 서비스 간 통신 표준 적용
-- 목표: OpenFeign + timeout + fallback 기준 적용
-- 작업:
-  - 서비스 호출 지점 식별
-  - Feign 클라이언트/설정(연결·읽기 타임아웃) 적용
-  - Fallback 또는 FallbackFactory 구현
-- 완료조건: 서비스 간 동기 호출 경로의 예외/지연 시나리오 테스트 통과
+### ✅ P0-3. 서비스 간 통신 표준 적용 (완료 — 2026-03-04)
+- **결정**: OpenFeign 폐기 → **Spring gRPC 1.0.0-RC1** (Protobuf 스키마 기반) 채택
+- **완료 내역**:
+  - `net.devh:grpc-spring-boot-starter:3.1.0.RELEASE` 제거
+  - `org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.0-RC1` 적용
+  - Spring gRPC BOM (`spring-grpc-dependencies:1.0.0-RC1`) → io.grpc 1.76.0, protobuf 4.32.1 관리
+  - 5개 gRPC 서버 `@GrpcService` import 마이그레이션 (`net.devh` → `org.springframework.grpc`)
+  - 4개 gRPC 클라이언트: `@GrpcClient` 필드 주입 → `GrpcChannelFactory` 생성자 주입 전환
+  - 4개 `GrpcClientConfig.java` 생성 (auth, gateway, order, delivery)
+  - 모든 서비스 `application.yml` `grpc.*` → `spring.grpc.*` 접두사 변경
+  - **전체 `BUILD SUCCESSFUL`** 확인 (8개 서비스, `clean compileJava`)
 
-### P0-4. 핵심 도메인 최소 기능(MVP) 정의 및 구현 시작
+### ⬜ P0-4. 핵심 도메인 최소 기능(MVP) 정의 및 구현 시작 (진행 필요)
 - 목표: "고객 주문 1건 생성→상태변경→조회"까지 E2E 최소 플로우 확보
 - 포함범위:
   - 주문 생성/조회
@@ -57,7 +59,7 @@
 ## P2 (안정화/확장)
 
 ### P2-1. 배포/운영 표준화
-- Dockerfile/K8s 매니페스트/환경변수 전략 정비
+- Dockerfile / K8s 매니페스트 / 환경변수 전략 정비
 - 완료조건: 스테이징 1회 배포 성공 + 롤백 절차 문서화
 
 ### P2-2. 테스트 체계 강화
@@ -68,15 +70,10 @@
 - 공통 로깅, 트레이싱, 헬스체크, 기본 알람 체계
 - 완료조건: 주요 장애 시나리오에 대한 탐지 가능 상태 확보
 
-## 제안 일정(2주 스프린트 기준)
-- **Sprint 1**: P0-1 ~ P0-3
-- **Sprint 2**: P0-4 + P1-1 일부
-- **Sprint 3**: P1-2 ~ P1-3
-- **Sprint 4**: P2 항목 단계적 반영
-
 ## 실행 순서 권장
-1. 정책/표준 고정(P0-1, P0-2)
-2. 내부통신 안정화(P0-3)
-3. MVP 플로우 구현(P0-4)
-4. 사용자 기능 확장(P1)
-5. 운영 고도화(P2)
+1. API 표준 고정 (P0-2)
+2. MVP 플로우 구현 (P0-4)
+3. 사용자 기능 확장 (P1)
+4. 운영 고도화 (P2)
+
+---

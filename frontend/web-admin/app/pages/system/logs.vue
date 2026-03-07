@@ -86,11 +86,11 @@ const { data, status: loadingStatus } = await useAsyncData<ErrorLogItem[]>(
         status: status,
         message:
           i % 10 === 0
-            ? "Database connection failed"
-            : `Unexpected token in JSON at position ${i}`,
+            ? "데이터베이스 연결 실패"
+            : `JSON 위치 ${i}에서 예상하지 못한 토큰`,
         source: i % 2 === 0 ? "/api/auth/login" : "/components/Dashboard.vue",
         traceId: `trace-${Math.random().toString(36).substring(7)}`,
-        stackTrace: `Error: ${i % 10 === 0 ? "Database connection failed" : "Unexpected token"}\n    at /app/server/api.ts:45:12\n    at async /app/server/handler.ts:22:5`,
+        stackTrace: `Error: ${i % 10 === 0 ? "데이터베이스 연결 실패" : "예상하지 못한 토큰"}\n    at /app/server/api.ts:45:12\n    at async /app/server/handler.ts:22:5`,
       };
     });
   },

@@ -15,10 +15,12 @@ const profileSchema = z.object({
 
 type ProfileSchema = z.output<typeof profileSchema>;
 
+const { user: authUser } = useAuth();
+
 const profile = reactive<Partial<ProfileSchema>>({
-  name: "Benjamin Canac",
-  email: "ben@nuxtlabs.com",
-  username: "benjamincanac",
+  name: authUser.value?.name ?? "",
+  email: authUser.value?.email ?? "",
+  username: authUser.value?.email?.split("@")[0] ?? "",
   avatar: undefined,
   bio: undefined,
 });

@@ -3,6 +3,7 @@ package com.example.auth.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * GoogleLoginRequest
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
  * 컨트롤러에서 @RequestBody로 바인딩하여 소셜 로그인을 처리할 때 사용됩니다.
  */
 @Getter
+@Setter
 @NoArgsConstructor
 public class GoogleLoginRequest {
   // 클라이언트가 구글로부터 받아온 ID 토큰 문자열

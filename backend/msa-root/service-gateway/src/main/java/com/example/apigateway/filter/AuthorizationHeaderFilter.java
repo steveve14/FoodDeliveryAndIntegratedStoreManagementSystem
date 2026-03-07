@@ -67,11 +67,11 @@ public class AuthorizationHeaderFilter
 
   private String getUserIdFromToken(String jwt) {
     try {
-      return Jwts.parserBuilder()
-          .setSigningKey(secretKey)
+      return Jwts.parser()
+          .verifyWith(secretKey)
           .build()
-          .parseClaimsJws(jwt)
-          .getBody()
+          .parseSignedClaims(jwt)
+          .getPayload()
           .getSubject();
     } catch (Exception ex) {
       log.error("Token validation error: {}", ex.getMessage());

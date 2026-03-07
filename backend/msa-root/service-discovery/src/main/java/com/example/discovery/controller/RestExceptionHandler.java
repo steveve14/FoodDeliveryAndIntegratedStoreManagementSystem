@@ -11,17 +11,18 @@ public class RestExceptionHandler {
 
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ApiResponse<Object>> handleBadRequest(IllegalArgumentException ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(ApiResponse.error(400, ex.getMessage()));
   }
 
   @ExceptionHandler(IllegalStateException.class)
   public ResponseEntity<ApiResponse<Object>> handleConflict(IllegalStateException ex) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, ex.getMessage()));
   }
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiResponse<Object>> handleGeneric(Exception ex) {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(ApiResponse.error(ex.getMessage()));
+        .body(ApiResponse.error(500, ex.getMessage()));
   }
 }

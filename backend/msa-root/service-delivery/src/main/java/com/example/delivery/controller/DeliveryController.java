@@ -37,7 +37,7 @@ public class DeliveryController {
     return deliveryService
         .findById(id)
         .map(dto -> ResponseEntity.ok(ApiResponse.ok(dto)))
-        .orElseGet(() -> ResponseEntity.ok(ApiResponse.error("Not found")));
+        .orElseGet(() -> ResponseEntity.status(404).body(ApiResponse.error(404, "Not found")));
   }
 
   @PatchMapping("/{id}/status")

@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from '@nuxt/ui'
-import type { Member } from '~/types'
+import type { DropdownMenuItem } from "@nuxt/ui";
+import type { Member } from "~/types";
 
 defineProps<{
-  members: Member[]
-}>()
+  members: Member[];
+}>();
 
-const items = [{
-  label: '맴버 수정',
-  onSelect: () => console.log('Edit member')
-}, {
-  label: '맴버 삭제',
-  color: 'error' as const,
-  onSelect: () => console.log('Remove member')
-}] satisfies DropdownMenuItem[]
+const items = [
+  {
+    label: "멤버 수정",
+    onSelect: () => console.log("Edit member"),
+  },
+  {
+    label: "멤버 삭제",
+    color: "error" as const,
+    onSelect: () => console.log("Remove member"),
+  },
+] satisfies DropdownMenuItem[];
 </script>
 
 <template>
@@ -24,10 +27,7 @@ const items = [{
       class="flex items-center justify-between gap-3 py-3 px-4 sm:px-6"
     >
       <div class="flex items-center gap-3 min-w-0">
-        <UAvatar
-          v-bind="member.avatar"
-          size="md"
-        />
+        <UAvatar v-bind="member.avatar" size="md" />
 
         <div class="text-sm min-w-0">
           <p class="text-highlighted font-medium truncate">
@@ -42,9 +42,11 @@ const items = [{
       <div class="flex items-center gap-3">
         <USelect
           :model-value="member.role"
-          :items="['member', 'owner']"
+          :items="[
+            { label: '멤버', value: 'member' },
+            { label: '소유자', value: 'owner' },
+          ]"
           color="neutral"
-          :ui="{ value: 'capitalize', item: 'capitalize' }"
         />
 
         <UDropdownMenu :items="items" :content="{ align: 'end' }">

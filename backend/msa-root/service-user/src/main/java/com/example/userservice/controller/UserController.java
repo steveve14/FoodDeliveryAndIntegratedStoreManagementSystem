@@ -37,7 +37,7 @@ public class UserController {
   public ResponseEntity<ApiResponse<UserDto>> getByEmail(@RequestParam String email) {
     UserDto dto = userService.findByEmail(email);
     if (dto == null) {
-      return ResponseEntity.ok(ApiResponse.error("Not found"));
+      return ResponseEntity.status(404).body(ApiResponse.error(404, "Not found"));
     }
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }

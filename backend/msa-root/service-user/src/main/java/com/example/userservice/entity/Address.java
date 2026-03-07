@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("addresses")
@@ -17,16 +18,38 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder(toBuilder = true)
 /** Represents a user address stored in the addresses table. */
 public class Address implements Persistable<String> {
-  @Id private String id;
+  @Id
+  @Column("id")
+  private String id;
+
+  @Column("user_id")
   private String userId;
+
+  @Column("label")
   private String label; // e.g., "home", "work"
+
+  @Column("line1")
   private String line1;
+
+  @Column("line2")
   private String line2;
+
+  @Column("city")
   private String city;
+
+  @Column("state")
   private String state;
+
+  @Column("postal_code")
   private String postalCode;
+
+  @Column("country")
   private String country;
+
+  @Column("primary_address")
   private boolean primaryAddress;
+
+  @Column("created_at")
   private Instant createdAt;
 
   @Transient @Builder.Default private boolean isNewEntity = true;

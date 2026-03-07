@@ -206,10 +206,10 @@ const searchInput = computed({
           v-model="actionFilter"
           :items="[
             { label: '전체 활동', value: 'all' },
-            { label: '생성 (Create)', value: 'create' },
-            { label: '수정 (Update)', value: 'update' },
-            { label: '삭제 (Delete)', value: 'delete' },
-            { label: '로그인 (Login)', value: 'login' },
+            { label: '생성', value: 'create' },
+            { label: '수정', value: 'update' },
+            { label: '삭제', value: 'delete' },
+            { label: '로그인', value: 'login' },
           ]"
           class="min-w-40"
         />

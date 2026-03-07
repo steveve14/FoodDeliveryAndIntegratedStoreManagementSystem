@@ -10,14 +10,15 @@ import lombok.NoArgsConstructor;
 public class ApiResponse<T> {
 
   private boolean success;
+  private int code;
+  private String message;
   private T data;
-  private String error;
 
   public static <T> ApiResponse<T> ok(T data) {
-    return new ApiResponse<>(true, data, null);
+    return new ApiResponse<>(true, 200, "요청이 성공했습니다.", data);
   }
 
-  public static <T> ApiResponse<T> error(String errorMessage) {
-    return new ApiResponse<>(false, null, errorMessage);
+  public static <T> ApiResponse<T> error(int code, String message) {
+    return new ApiResponse<>(false, code, message, null);
   }
 }

@@ -43,6 +43,6 @@ public class StoreController {
     return storeService
         .findById(id)
         .map(d -> ResponseEntity.ok(ApiResponse.ok(d)))
-        .orElseGet(() -> ResponseEntity.ok(ApiResponse.error("Not found")));
+        .orElseGet(() -> ResponseEntity.status(404).body(ApiResponse.error(404, "Not found")));
   }
 }

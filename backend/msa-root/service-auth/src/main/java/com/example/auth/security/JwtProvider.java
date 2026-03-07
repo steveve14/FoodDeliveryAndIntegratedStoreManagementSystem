@@ -2,7 +2,6 @@ package com.example.auth.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import java.time.Instant;
@@ -72,15 +71,15 @@ public class JwtProvider {
     Instant now = Instant.now();
     return Jwts.builder()
         // JWT 표준 클레임 subject에 사용자 ID를 문자열로 저장
-        .setSubject(userId)
+        .subject(userId)
         // 커스텀 클레임으로 권한(role) 정보를 추가
         .claim("role", role)
         // 발행 시간(iat)
-        .setIssuedAt(Date.from(now))
+        .issuedAt(Date.from(now))
         // 만료 시간(exp)
-        .setExpiration(Date.from(now.plusMillis(accessTokenValidityMs)))
-        // 키와 알고리즘으로 서명
-        .signWith(key, SignatureAlgorithm.HS256)
+        .expiration(Date.from(now.plusMillis(accessTokenValidityMs)))
+        // 키로 서명 (알고리즘은 키 길이에서 자동 추론)
+        .signWith(key)
         // compact()로 최종 토큰 문자열 생성
         .compact();
   }
@@ -95,17 +94,17 @@ public class JwtProvider {
     Instant now = Instant.now();
     return Jwts.builder()
         // JWT 표준 클레임 subject에 사용자 ID를 문자열로 저장
-        .setSubject(userId)
+        .subject(userId)
         // 리프레시 토큰임을 명시하는 커스텀 클레임
         .claim("type", "refresh")
         // 갱신 시 role 복원을 위해 포함
         .claim("role", role)
         // 발행 시간(iat)
-        .setIssuedAt(Date.from(now))
+        .issuedAt(Date.from(now))
         // 만료 시간(exp)
-        .setExpiration(Date.from(now.plusMillis(refreshTokenValidityMs)))
-        // 키와 알고리즘으로 서명
-        .signWith(key, SignatureAlgorithm.HS256)
+        .expiration(Date.from(now.plusMillis(refreshTokenValidityMs)))
+        // 키로 서명
+        .signWith(key)
         // compact()로 최종 토큰 문자열 생성
         .compact();
   }
@@ -118,7 +117,7 @@ public class JwtProvider {
    */
   public boolean validateToken(String token) {
     try {
-      Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+      Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
       // parsing succeeded -> token is valid
       return true;
     } catch (Exception e) {
@@ -134,7 +133,7 @@ public class JwtProvider {
    * @return 사용자 ID
    */
   public String getUserIdFromToken(String token) {
-    Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     return claims.getSubject();
   }
 
@@ -145,7 +144,7 @@ public class JwtProvider {
    * @return 권한 문자열 (없으면 빈 문자열)
    */
   public String getRolesFromToken(String token) {
-    Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     Object role = claims.get("role");
     return role != null ? role.toString() : "";
   }

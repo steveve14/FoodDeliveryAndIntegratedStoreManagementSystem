@@ -85,6 +85,11 @@ function getRowItems(row: Row<Store>) {
   return [
     { type: "label", label: "매장 관리" },
     {
+      label: "메뉴 관리",
+      icon: "i-lucide-utensils",
+      onSelect: () => navigateTo(`/stores/${row.original.id}/menus`),
+    },
+    {
       label: "매장 상세 정보",
       icon: "i-lucide-store",
       onSelect: () => console.log("View", row.original.id),
@@ -98,12 +103,12 @@ function getRowItems(row: Row<Store>) {
       label: "영업 상태 변경",
       children: [
         {
-          label: "영업중 (Active)",
+          label: "영업중",
           click: () =>
             toast.add({ title: "상태 변경", description: "영업중으로 변경됨" }),
         },
-        { label: "휴업 (Closed)", click: () => {} },
-        { label: "승인 대기 (Pending)", click: () => {} },
+        { label: "휴업", click: () => {} },
+        { label: "승인 대기", click: () => {} },
       ],
     },
     { type: "separator" },

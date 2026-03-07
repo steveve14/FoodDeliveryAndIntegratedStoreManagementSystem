@@ -1,6 +1,7 @@
-# 보안 감사 보고서
+﻿# 보안 감사 보고서
 
 > **작성일**: 2026-03-01  
+> **최종 수정**: 2026-03-04  
 > **대상**: 전체 백엔드(MSA) + 프론트엔드(3개 앱)  
 > **프로젝트 성격**: 토이 프로젝트 (소스 공개 허용, 금전 관련 없음)
 
@@ -120,11 +121,20 @@
 
 ---
 
-## 5. 의존성 현황
+## 5. 의존성 현황 (2026-03-04 기준)
 
 | 라이브러리 | 현재 버전 | 비고 |
 |------------|-----------|------|
 | Spring Boot | 4.0.2 | 최신 |
-| JJWT | 0.11.5 | 최신 0.12.x (deprecated API 사용 중이나 동작에 문제 없음) |
-| gRPC | 1.62.2 | 최신 1.66.x+ |
+| JJWT | **0.12.6** | ✅ 최신 (Jakarta EE 호환, deprecated API 완전 제거) |
+| Spring gRPC | **1.0.0-RC1** | ✅ 공식 Spring 프로젝트 (net.devh 대체) |
+| io.grpc | **1.76.0** | Spring gRPC BOM 관리 |
+| Protobuf | **4.32.1** | Spring gRPC BOM 관리 |
 | Nuxt | ^4.2.2 | 최신 |
+
+> **2026-03-04 변경사항**:  
+> - jjwt `0.11.5` → **`0.12.6`** 업그레이드 (javax 네임스페이스 → jakarta, deprecated API 완전 제거)  
+> - gRPC `net.devh:grpc-spring-boot-starter:3.1.0.RELEASE` → **`org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.0-RC1`** 교체  
+> - gRPC 코어 `1.62.2` → **`1.76.0`** (Spring gRPC BOM 관리)
+
+---

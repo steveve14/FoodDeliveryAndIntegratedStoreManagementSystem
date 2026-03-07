@@ -5,7 +5,7 @@ import com.example.store.entity.Menu;
 import com.example.store.repository.MenuRepository;
 import com.example.store.service.StoreService;
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.grpc.server.service.GrpcService;
 
 /** Store 서비스 gRPC 서버 구현 내부 MSA 통신용 */
 @GrpcService

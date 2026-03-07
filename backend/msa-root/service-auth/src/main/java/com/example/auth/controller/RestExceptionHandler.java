@@ -19,23 +19,24 @@ class RestExceptionHandler {
             .map(e -> e.getField() + ": " + e.getDefaultMessage())
             .reduce((a, b) -> a + ", " + b)
             .orElse("입력값이 올바르지 않습니다.");
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(message));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, message));
   }
 
   @ExceptionHandler(IllegalArgumentException.class)
   ResponseEntity<ApiResponse<Object>> handleBadRequest(IllegalArgumentException ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(ApiResponse.error(400, ex.getMessage()));
   }
 
   @ExceptionHandler(IllegalStateException.class)
   ResponseEntity<ApiResponse<Object>> handleConflict(IllegalStateException ex) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, ex.getMessage()));
   }
 
   @ExceptionHandler(Exception.class)
   ResponseEntity<ApiResponse<Object>> handleGeneric(Exception ex) {
     log.error("예상치 못한 오류 발생", ex);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(ApiResponse.error("서버 오류가 발생했습니다."));
+        .body(ApiResponse.error(500, "서버 오류가 발생했습니다."));
   }
 }

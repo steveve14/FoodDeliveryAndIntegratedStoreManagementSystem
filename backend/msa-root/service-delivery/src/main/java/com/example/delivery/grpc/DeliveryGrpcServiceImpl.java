@@ -3,7 +3,7 @@ package com.example.delivery.grpc;
 import com.example.delivery.dto.DeliveryDto;
 import com.example.delivery.service.DeliveryService;
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.grpc.server.service.GrpcService;
 
 /*
  * Delivery 서비스 gRPC 서버 구현

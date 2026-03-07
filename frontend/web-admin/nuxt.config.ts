@@ -12,10 +12,17 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // 런타임 환경 변수 — .env 파일에서 오버라이드 가능
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+    }
+  },
+
   // Backend Gateway 프록시 — /api/v1/** 요청을 Spring Cloud Gateway로 전달
   nitro: {
     routeRules: {
-      '/api/v1/**': { proxy: 'http://localhost:8000/api/v1/**' }
+      '/api/v1/**': { proxy: `${process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/api/v1/**` }
     }
   },
 

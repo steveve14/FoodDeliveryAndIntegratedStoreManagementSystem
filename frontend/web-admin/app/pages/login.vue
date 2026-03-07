@@ -68,6 +68,7 @@ type Schema = z.output<typeof schema>;
         description="서비스를 이용하려면 로그인이 필요합니다."
         icon="i-lucide-user"
         :fields="fields"
+        :providers="[]"
         @submit="onSubmit"
       />
     </UPageCard>

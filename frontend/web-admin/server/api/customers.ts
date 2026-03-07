@@ -2,184 +2,184 @@ import type { User } from '~/types'
 
 const customers: User[] = [{
   id: 1,
-  name: 'Alex Smith',
-  email: 'alex.smith@example.com',
+  name: '김민수',
+  email: 'minsu.kim@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=1'
   },
   status: 'subscribed',
-  location: 'New York, USA'
+  location: '서울특별시 강남구'
 }, {
   id: 2,
-  name: 'Jordan Brown',
-  email: 'jordan.brown@example.com',
+  name: '이서연',
+  email: 'seoyeon.lee@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=2'
   },
   status: 'unsubscribed',
-  location: 'London, UK'
+  location: '부산광역시 해운대구'
 }, {
   id: 3,
-  name: 'Taylor Green',
-  email: 'taylor.green@example.com',
+  name: '박지훈',
+  email: 'jihoon.park@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=3'
   },
   status: 'bounced',
-  location: 'Paris, France'
+  location: '대구광역시 수성구'
 }, {
   id: 4,
-  name: 'Morgan White',
-  email: 'morgan.white@example.com',
+  name: '최유진',
+  email: 'yujin.choi@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=4'
   },
   status: 'subscribed',
-  location: 'Berlin, Germany'
+  location: '인천광역시 연수구'
 }, {
   id: 5,
-  name: 'Casey Gray',
-  email: 'casey.gray@example.com',
+  name: '정하늘',
+  email: 'haneul.jung@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=5'
   },
   status: 'subscribed',
-  location: 'Tokyo, Japan'
+  location: '대전광역시 유성구'
 }, {
   id: 6,
-  name: 'Jamie Johnson',
-  email: 'jamie.johnson@example.com',
+  name: '강수빈',
+  email: 'subin.kang@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=6'
   },
   status: 'subscribed',
-  location: 'Sydney, Australia'
+  location: '광주광역시 서구'
 }, {
   id: 7,
-  name: 'Riley Davis',
-  email: 'riley.davis@example.com',
+  name: '윤도현',
+  email: 'dohyun.yoon@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=7'
   },
   status: 'subscribed',
-  location: 'New York, USA'
+  location: '서울특별시 마포구'
 }, {
   id: 8,
-  name: 'Kelly Wilson',
-  email: 'kelly.wilson@example.com',
+  name: '한소희',
+  email: 'sohee.han@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=8'
   },
   status: 'subscribed',
-  location: 'London, UK'
+  location: '경기도 성남시'
 }, {
   id: 9,
-  name: 'Drew Moore',
-  email: 'drew.moore@example.com',
+  name: '송태윤',
+  email: 'taeyun.song@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=9'
   },
   status: 'bounced',
-  location: 'Paris, France'
+  location: '울산광역시 남구'
 }, {
   id: 10,
-  name: 'Jordan Taylor',
-  email: 'jordan.taylor@example.com',
+  name: '임채원',
+  email: 'chaewon.lim@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=10'
   },
   status: 'subscribed',
-  location: 'Berlin, Germany'
+  location: '세종특별자치시'
 }, {
   id: 11,
-  name: 'Morgan Anderson',
-  email: 'morgan.anderson@example.com',
+  name: '오승우',
+  email: 'seungwoo.oh@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=11'
   },
   status: 'subscribed',
-  location: 'Tokyo, Japan'
+  location: '경기도 수원시'
 }, {
   id: 12,
-  name: 'Casey Thomas',
-  email: 'casey.thomas@example.com',
+  name: '배지현',
+  email: 'jihyun.bae@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=12'
   },
   status: 'unsubscribed',
-  location: 'Sydney, Australia'
+  location: '제주특별자치도 제주시'
 }, {
   id: 13,
-  name: 'Jamie Jackson',
-  email: 'jamie.jackson@example.com',
+  name: '권혁준',
+  email: 'hyukjun.kwon@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=13'
   },
   status: 'unsubscribed',
-  location: 'New York, USA'
+  location: '서울특별시 송파구'
 }, {
   id: 14,
-  name: 'Riley White',
-  email: 'riley.white@example.com',
+  name: '신예린',
+  email: 'yerin.shin@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=14'
   },
   status: 'unsubscribed',
-  location: 'London, UK'
+  location: '경기도 고양시'
 }, {
   id: 15,
-  name: 'Kelly Harris',
-  email: 'kelly.harris@example.com',
+  name: '조현우',
+  email: 'hyunwoo.jo@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=15'
   },
   status: 'subscribed',
-  location: 'Paris, France'
+  location: '충청북도 청주시'
 }, {
   id: 16,
-  name: 'Drew Martin',
-  email: 'drew.martin@example.com',
+  name: '유서윤',
+  email: 'seoyun.yu@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=16'
   },
   status: 'subscribed',
-  location: 'Berlin, Germany'
+  location: '전라북도 전주시'
 }, {
   id: 17,
-  name: 'Alex Thompson',
-  email: 'alex.thompson@example.com',
+  name: '문준호',
+  email: 'junho.moon@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=17'
   },
   status: 'unsubscribed',
-  location: 'Tokyo, Japan'
+  location: '강원도 춘천시'
 }, {
   id: 18,
-  name: 'Jordan Garcia',
-  email: 'jordan.garcia@example.com',
+  name: '남지아',
+  email: 'jia.nam@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=18'
   },
   status: 'subscribed',
-  location: 'Sydney, Australia'
+  location: '경상남도 창원시'
 }, {
   id: 19,
-  name: 'Taylor Rodriguez',
-  email: 'taylor.rodriguez@example.com',
+  name: '서은호',
+  email: 'eunho.seo@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=19'
   },
   status: 'bounced',
-  location: 'New York, USA'
+  location: '서울특별시 종로구'
 }, {
   id: 20,
-  name: 'Morgan Lopez',
-  email: 'morgan.lopez@example.com',
+  name: '황다은',
+  email: 'daeun.hwang@example.com',
   avatar: {
     src: 'https://i.pravatar.cc/128?u=20'
   },
   status: 'subscribed',
-  location: 'London, UK'
+  location: '경기도 용인시'
 }]
 
 export default eventHandler(async () => {
