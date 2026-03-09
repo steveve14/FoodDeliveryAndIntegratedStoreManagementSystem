@@ -22,11 +22,10 @@ public class OrderService {
   private final StoreGrpcClient storeGrpcClient;
 
   // 주문 상태 전이 규칙: CREATED → COOKING → DELIVERING → DONE | CANCELLED
-  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS =
-      Map.of(
-          "CREATED", Set.of("COOKING", "CANCELLED"),
-          "COOKING", Set.of("DELIVERING", "CANCELLED"),
-          "DELIVERING", Set.of("DONE", "CANCELLED"));
+  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS = Map.of(
+      "CREATED", Set.of("COOKING", "CANCELLED"),
+      "COOKING", Set.of("DELIVERING", "CANCELLED"),
+      "DELIVERING", Set.of("DONE", "CANCELLED"));
 
   public OrderService(
       OrderRepository orderRepository,
@@ -61,26 +60,26 @@ public class OrderService {
       total += (int) (p.getPrice() * it.getQuantity());
     }
 
-    Order o =
-        Order.builder()
-            .id(java.util.UUID.randomUUID().toString())
-            .userId(userId)
-            .storeId(storeId)
-            .totalAmount(total)
-            .status(status)
-            .createdAt(Instant.now())
-            .build();
+    Order o = Order.builder()
+        .id(java.util.UUID.randomUUID().toString())
+        .userId(userId)
+        .storeId(storeId)
+        .totalAmount(total)
+        .status(status)
+        .createdAt(Instant.now())
+        .isNewEntity(true)
+        .build();
     Order saved = orderRepository.save(o);
 
     for (OrderItemDto it : items) {
-      OrderItem oi =
-          OrderItem.builder()
-              .id(java.util.UUID.randomUUID().toString())
-              .orderId(saved.getId())
-              .menuId(it.getProductId())
-              .quantity(it.getQuantity())
-              .priceSnapshot(it.getPrice())
-              .build();
+      OrderItem oi = OrderItem.builder()
+          .id(java.util.UUID.randomUUID().toString())
+          .orderId(saved.getId())
+          .menuId(it.getProductId())
+          .quantity(it.getQuantity())
+          .priceSnapshot(it.getPrice())
+          .isNewEntity(true)
+          .build();
       orderItemRepository.save(oi);
     }
 
@@ -91,12 +90,25 @@ public class OrderService {
     return orderRepository.findById(id).map(o -> toDto(o, loadItems(o.getId())));
   }
 
+  public java.util.List<OrderDto> findByUserId(String userId) {
+    return orderRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+        .map(order -> toDto(order, loadItems(order.getId())))
+        .toList();
+  }
+
+  public java.util.List<OrderDto> findByStoreId(
+      String storeId, String currentUserId, String currentUserRole) {
+    validateStoreAccess(storeId, currentUserId, currentUserRole);
+    return orderRepository.findByStoreIdOrderByCreatedAtDesc(storeId).stream()
+        .map(order -> toDto(order, loadItems(order.getId())))
+        .toList();
+  }
+
   @Transactional
   public OrderDto updateStatus(String orderId, String newStatus) {
-    Order o =
-        orderRepository
-            .findById(orderId)
-            .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+    Order o = orderRepository
+        .findById(orderId)
+        .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
     Set<String> allowed = ALLOWED_TRANSITIONS.getOrDefault(o.getStatus(), Set.of());
     if (!allowed.contains(newStatus)) {
@@ -113,6 +125,21 @@ public class OrderService {
     return orderItemRepository.findByOrderId(orderId).stream()
         .map(it -> new OrderItemDto(it.getMenuId(), it.getQuantity(), it.getPriceSnapshot()))
         .toList();
+  }
+
+  private void validateStoreAccess(String storeId, String currentUserId, String currentUserRole) {
+    if ("ADMIN".equals(currentUserRole)) {
+      return;
+    }
+
+    var storeResponse = storeGrpcClient.getStoreById(storeId);
+    if (!storeResponse.getFound()) {
+      throw new IllegalArgumentException("Store not found");
+    }
+
+    if (!"STORE".equals(currentUserRole) || !currentUserId.equals(storeResponse.getOwnerId())) {
+      throw new IllegalStateException("해당 매장의 주문을 조회할 권한이 없습니다.");
+    }
   }
 
   private OrderDto toDto(Order o, java.util.List<OrderItemDto> items) {

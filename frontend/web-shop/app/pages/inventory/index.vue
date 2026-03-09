@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { TableColumn } from "@nuxt/ui";
-import { format } from "date-fns";
+import type { TableColumn } from '@nuxt/ui';
+import { format } from 'date-fns';
 
 // 1. 데이터 타입 정의
-type StockStatus = "safe" | "warning" | "danger"; // 여유 | 주의 | 부족
+type StockStatus = 'safe' | 'warning' | 'danger'; // 여유 | 주의 | 부족
 
 interface InventoryItem {
   id: number;
@@ -19,95 +19,99 @@ interface InventoryItem {
 const inventory = ref<InventoryItem[]>([
   {
     id: 1,
-    name: "신선육 11호 (염지)",
-    category: "주재료",
+    name: '신선육 11호 (염지)',
+    category: '주재료',
     currentStock: 45,
     minThreshold: 20,
-    unit: "마리",
+    unit: '마리',
     lastUpdated: new Date().toISOString(),
   },
   {
     id: 2,
-    name: "전용 튀김유 (18L)",
-    category: "주재료",
+    name: '전용 튀김유 (18L)',
+    category: '주재료',
     currentStock: 3,
     minThreshold: 5,
-    unit: "캔",
+    unit: '캔',
     lastUpdated: new Date(Date.now() - 86400000 * 2).toISOString(),
   },
   {
     id: 3,
-    name: "치킨무 (박스)",
-    category: "부재료",
+    name: '치킨무 (박스)',
+    category: '부재료',
     currentStock: 8,
     minThreshold: 10,
-    unit: "박스",
+    unit: '박스',
     lastUpdated: new Date().toISOString(),
   },
   {
     id: 4,
-    name: "양념 소스 (10kg)",
-    category: "소스류",
+    name: '양념 소스 (10kg)',
+    category: '소스류',
     currentStock: 12,
     minThreshold: 3,
-    unit: "통",
+    unit: '통',
     lastUpdated: new Date(Date.now() - 86400000 * 5).toISOString(),
   },
   {
     id: 5,
-    name: "포장 박스 (본품)",
-    category: "포장재",
+    name: '포장 박스 (본품)',
+    category: '포장재',
     currentStock: 150,
     minThreshold: 50,
-    unit: "개",
+    unit: '개',
     lastUpdated: new Date().toISOString(),
   },
   {
     id: 6,
-    name: "콜라 1.25L",
-    category: "음료",
+    name: '콜라 1.25L',
+    category: '음료',
     currentStock: 2,
     minThreshold: 12,
-    unit: "ea",
+    unit: 'ea',
     lastUpdated: new Date(Date.now() - 86400000).toISOString(),
   },
 ]);
 
 // 3. 상태 계산 로직
 const getStatus = (current: number, min: number): StockStatus => {
-  if (current <= 0) return "danger"; // 품절
-  if (current <= min) return "warning"; // 부족 (발주 필요)
-  return "safe"; // 여유
+  if (current <= 0) {
+    return 'danger';
+  } // 품절
+  if (current <= min) {
+    return 'warning';
+  } // 부족 (발주 필요)
+  return 'safe'; // 여유
 };
 
 const getStatusLabel = (status: StockStatus) => {
   switch (status) {
-    case "safe":
-      return "양호";
-    case "warning":
-      return "부족(발주필요)";
-    case "danger":
-      return "품절";
+    case 'safe':
+      return '양호';
+    case 'warning':
+      return '부족(발주필요)';
+    case 'danger':
+      return '품절';
   }
 };
 
 const getStatusColor = (status: StockStatus) => {
   switch (status) {
-    case "safe":
-      return "success";
-    case "warning":
-      return "warning";
-    case "danger":
-      return "error";
+    case 'safe':
+      return 'success';
+    case 'warning':
+      return 'warning';
+    case 'danger':
+      return 'error';
   }
 };
 
 // 4. 필터 및 검색
-const q = ref("");
-const selectedCategory = ref("all");
+const q = ref('');
+const selectedCategory = ref('all');
 const hideSafeItems = ref(false); // '부족한 재료만 보기' 필터
 
-const categories = ["주재료", "부재료", "소스류", "포장재", "음료"];
+const categories = ['주재료', '부재료', '소스류', '포장재', '음료'];
 
 const filteredInventory = computed(() => {
   return inventory.value.filter((item) => {
@@ -115,12 +119,12 @@ const filteredInventory = computed(() => {
       .toLowerCase()
       .includes(q.value.toLowerCase());
     const matchesCategory =
-      selectedCategory.value === "all" ||
+      selectedCategory.value === 'all' ||
       item.category === selectedCategory.value;
 
     // 부족한 재료만 보기 필터
     const status = getStatus(item.currentStock, item.minThreshold);
-    const matchesSafeFilter = hideSafeItems.value ? status !== "safe" : true;
+    const matchesSafeFilter = hideSafeItems.value ? status !== 'safe' : true;
 
     return matchesSearch && matchesCategory && matchesSafeFilter;
   });
@@ -130,8 +134,8 @@ const filteredInventory = computed(() => {
 const isStockModalOpen = ref(false);
 const stockForm = reactive({
   id: 0,
-  name: "",
-  type: "in" as "in" | "out", // 입고 | 출고
+  name: '',
+  type: 'in' as 'in' | 'out', // 입고 | 출고
   amount: 0,
   current: 0,
 });
@@ -140,16 +144,16 @@ const openStockModal = (item: InventoryItem) => {
   stockForm.id = item.id;
   stockForm.name = item.name;
   stockForm.current = item.currentStock;
-  stockForm.type = "in";
+  stockForm.type = 'in';
   stockForm.amount = 0;
   isStockModalOpen.value = true;
 };
 
 const updateStock = () => {
-  const index = inventory.value.findIndex((i) => i.id === stockForm.id);
+  const index = inventory.value.findIndex(i => i.id === stockForm.id);
   if (index !== -1 && inventory.value[index]) {
     const change =
-      stockForm.type === "in" ? stockForm.amount : -stockForm.amount;
+      stockForm.type === 'in' ? stockForm.amount : -stockForm.amount;
     inventory.value[index].currentStock += change;
     inventory.value[index].lastUpdated = new Date().toISOString();
   }
@@ -158,26 +162,26 @@ const updateStock = () => {
 
 // 6. 테이블 컬럼
 const columns: TableColumn<InventoryItem>[] = [
-  { accessorKey: "name", header: "품목명" },
-  { accessorKey: "category", header: "분류" },
-  { accessorKey: "status", header: "상태" }, // 계산된 상태
-  { accessorKey: "stock", header: "재고 현황" }, // 프로그레스 바 포함
-  { accessorKey: "lastUpdated", header: "최근 입출고" },
-  { id: "actions", header: "" },
+  { accessorKey: 'name', header: '품목명' },
+  { accessorKey: 'category', header: '분류' },
+  { accessorKey: 'status', header: '상태' }, // 계산된 상태
+  { accessorKey: 'stock', header: '재고 현황' }, // 프로그레스 바 포함
+  { accessorKey: 'lastUpdated', header: '최근 입출고' },
+  { id: 'actions', header: '' },
 ];
 
 const items = (row: InventoryItem) => [
   [
     {
-      label: "입/출고 등록",
-      icon: "i-lucide-arrow-left-right",
+      label: '입/출고 등록',
+      icon: 'i-lucide-arrow-left-right',
       click: () => openStockModal(row),
     },
   ],
   [
     {
-      label: "정보 수정",
-      icon: "i-lucide-settings-2",
+      label: '정보 수정',
+      icon: 'i-lucide-settings-2',
     },
   ],
 ];
@@ -244,9 +248,11 @@ const items = (row: InventoryItem) => [
       </template>
 
       <template #category-cell="{ row }">
-        <UBadge color="neutral" variant="subtle">{{
+        <UBadge color="neutral" variant="subtle">
+{{
           row.original.category
-        }}</UBadge>
+        }}
+</UBadge>
       </template>
 
       <template #status-cell="{ row }">
@@ -279,8 +285,8 @@ const items = (row: InventoryItem) => [
           </div>
           <UProgress
             :value="
-              (row.original.currentStock / (row.original.minThreshold * 2)) *
-              100
+              (row.original.currentStock / (row.original.minThreshold * 2))
+              * 100
             "
             :color="
               getStatusColor(

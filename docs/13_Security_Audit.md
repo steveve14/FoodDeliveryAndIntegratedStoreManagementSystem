@@ -1,7 +1,7 @@
 ﻿# 보안 감사 보고서
 
 > **작성일**: 2026-03-01  
-> **최종 수정**: 2026-03-04  
+> **최종 수정**: 2026-03-10  
 > **대상**: 전체 백엔드(MSA) + 프론트엔드(3개 앱)  
 > **프로젝트 성격**: 토이 프로젝트 (소스 공개 허용, 금전 관련 없음)
 
@@ -11,7 +11,7 @@
 
 | 심각도 | 건수 | 조치 상태 |
 |--------|------|-----------|
-| 🔴 기능 버그(치명적) | 4건 | ✅ 수정 완료 |
+| 🔴 기능 버그(치명적) | 5건 | ✅ 수정 완료 |
 | 🟡 권장 개선사항 | 6건 | 📋 문서화 |
 | 🟢 양호 | 6건 | — |
 
@@ -75,6 +75,18 @@
 
 **파일**: 5개 서비스의 `RestExceptionHandler.java` (auth, order, delivery, store, event) + gateway
 
+### 2.5 Gateway 죽은 경로 분기 제거
+
+**문제**: Gateway가 실제 컨트롤러에 존재하지 않는 `/api/v1/admin/users/**`, `/api/v1/stores/manage/**` 경로를 별도 RBAC 라우트로 유지하고 있어, 문서와 구현이 어긋나고 라우팅 정책 해석을 복잡하게 만듦.
+
+**수정**:
+- 실제 컨트롤러 경로만 Gateway에 유지
+- 보호 경로를 `/api/v1/users/**`, `/api/v1/stores/**`, `/api/v1/orders/**`, `/api/v1/deliveries/**`, `/api/v1/events/**`로 단순화
+- 세부 권한 검증은 각 서비스의 `@RequireRole`, 인터셉터, 소유권 검증 로직으로 위임
+- 미사용 `RoleAuthorizationFilter` 제거
+
+**파일**: `service-gateway/src/main/java/com/example/apigateway/config/GatewayRouteConfig.java`
+
 ---
 
 ## 3. 권장 개선사항 (미수정 — 토이 프로젝트 기준 허용)
@@ -88,10 +100,10 @@
 - `.env.example`에 `DB_PASSWORD=1234` 포함
 - 토이 프로젝트이므로 허용. 실무에서는 기본값 제거
 
-### 3.3 RBAC(역할 기반 접근 제어) 미구현
-- `@PreAuthorize`, `@Secured` 등 미사용
-- Gateway가 `X-User-Id`만 전달, role 미전달
-- 추후 기능 개발 시 구현 권장
+### 3.3 메서드 단위 RBAC 고도화 여지
+- 현재는 서비스별 `@RequireRole` + 인터셉터 기반으로 기본 RBAC 적용
+- Gateway도 `X-User-Id`, `X-User-Role`를 전달함
+- 향후 Spring Security의 `@PreAuthorize`까지 통합하면 정책 가시성과 테스트성이 더 좋아짐
 
 ### 3.4 CORS 설정
 - 백엔드: CORS 설정 전무

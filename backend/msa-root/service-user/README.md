@@ -3,7 +3,7 @@
 이 모듈은 사용자 관리(MSA)의 기본 기능을 제공합니다. PostgreSQL과 Spring Data JDBC를 사용하며 Flyway로 마이그레이션을 관리합니다.
 
 설정 (환경 변수 권장)
-- DB_URL: JDBC URL (예: jdbc:postgresql://localhost:5432/db_user)
+- DB_URL: JDBC URL (예: jdbc:postgresql://localhost:6000/db_user)
 - DB_USERNAME: 데이터베이스 사용자
 - DB_PASSWORD: 데이터베이스 비밀번호
 

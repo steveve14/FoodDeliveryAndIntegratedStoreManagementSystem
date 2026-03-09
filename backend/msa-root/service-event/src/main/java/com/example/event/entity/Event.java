@@ -16,12 +16,14 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Event implements Persistable<String> {
-  @Id private String id;
+  @Id
+  private String id;
   private String type;
   private String payload;
   private Instant createdAt;
 
-  @Transient @Builder.Default private boolean isNewEntity = true;
+  @Transient
+  private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

@@ -38,7 +38,8 @@ public class RefreshToken implements Persistable<String> {
   @Column("expires_at")
   private Instant expiresAt;
 
-  @Transient @Builder.Default private boolean isNewEntity = true;
+  @Transient
+  private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

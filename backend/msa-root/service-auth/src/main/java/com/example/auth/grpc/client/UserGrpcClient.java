@@ -18,17 +18,33 @@ public class UserGrpcClient {
   /**
    * 이메일/비밀번호로 사용자 인증
    *
-   * @return AuthenticateResponse (success, userId, email, name, roles, errorMessage)
+   * @return AuthenticateResponse (success, userId, email, name, roles,
+   *         errorMessage)
    */
   public AuthenticateResponse authenticate(String email, String password) {
-    AuthenticateRequest request =
-        AuthenticateRequest.newBuilder().setEmail(email).setPassword(password).build();
+    AuthenticateRequest request = AuthenticateRequest.newBuilder().setEmail(email).setPassword(password).build();
     return userStub.authenticate(request);
   }
 
   public com.example.userservice.grpc.UserResponse getUserByEmail(String email) {
-    com.example.userservice.grpc.GetUserByEmailRequest req =
-        com.example.userservice.grpc.GetUserByEmailRequest.newBuilder().setEmail(email).build();
+    com.example.userservice.grpc.GetUserByEmailRequest req = com.example.userservice.grpc.GetUserByEmailRequest
+        .newBuilder().setEmail(email).build();
     return userStub.getUserByEmail(req);
+  }
+
+  public com.example.userservice.grpc.UserResponse getUserById(String userId) {
+    com.example.userservice.grpc.GetUserByIdRequest req = com.example.userservice.grpc.GetUserByIdRequest.newBuilder()
+        .setUserId(userId).build();
+    return userStub.getUserById(req);
+  }
+
+  public com.example.userservice.grpc.CreateUserResponse createUser(
+      String email, String password, String name) {
+    com.example.userservice.grpc.CreateUserRequest req = com.example.userservice.grpc.CreateUserRequest.newBuilder()
+        .setEmail(email)
+        .setPassword(password)
+        .setName(name)
+        .build();
+    return userStub.createUser(req);
   }
 }

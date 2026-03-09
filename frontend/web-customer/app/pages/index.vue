@@ -1,282 +1,546 @@
 <script setup lang="ts">
-// --- Types ---
-interface StoreDto {
-  id: string;
-  name: string;
-  address: string;
-  phone: string;
-  category: string;
-  status: string;
-  minOrderAmount: number;
-  ratingAvg: number;
-  description: string;
-}
+import type { DropdownMenuItem } from '@nuxt/ui';
+import type { CategoryItem, StoreItem } from '~/composables/useOrdering';
+import { useOrdering } from '~/composables/useOrdering';
 
-interface Restaurant {
-  id: string;
-  name: string;
-  category: string;
-  rating: number;
-  reviews: number;
-  deliveryTime: string;
-  deliveryFee: string;
-  image: string;
-  minOrder: string;
-}
+const { isNotificationsSlideoverOpen } = useDashboard();
+const toast = useToast();
+const {
+  quickActions,
+  categories,
+  stores,
+  reorderItems,
+  loadStores,
+  loadReorderItems,
+  addBestSellerToCart,
+} = useOrdering();
 
-// --- Data ---
-const categories = [
-  { id: 1, name: '전체', icon: '🍽️' },
-  { id: 2, name: '한식', icon: '🍚' },
-  { id: 3, name: '치킨', icon: '🍗' },
-  { id: 4, name: '피자', icon: '🍕' },
-  { id: 5, name: '중식', icon: '🥟' },
-  { id: 6, name: '카페', icon: '☕' },
-];
+await loadStores();
+await loadReorderItems();
 
-const categoryIcons: Record<string, string> = {
-  한식: '🍚',
-  치킨: '🍗',
-  피자: '🍕',
-  중식: '🥟',
-  카페: '☕',
-  일식: '🍣',
-  양식: '🍝',
-  패스트푸드: '🍔',
+const menuItems = [
+  [
+    {
+      label: '주문 내역',
+      icon: 'i-lucide-receipt',
+      to: '/orders',
+    },
+    {
+      label: '찜한 가게',
+      icon: 'i-lucide-heart',
+      to: '/favorites',
+    },
+    {
+      label: '쿠폰함',
+      icon: 'i-lucide-ticket-percent',
+      to: '/benefits/coupons',
+    },
+  ],
+] satisfies DropdownMenuItem[][];
+
+const selectedCategory = ref<string>('all');
+const searchQuery = ref('');
+
+const orderNow = async (storeId: string) => {
+  const added = await addBestSellerToCart(storeId);
+
+  if (!added) {
+    toast.add({
+      title: '주문 가능한 메뉴가 없습니다.',
+      icon: 'i-lucide-alert-circle',
+      color: 'error',
+    });
+    return;
+  }
+
+  toast.add({
+    title: `${added.store.name}의 ${added.menu.name}을(를) 장바구니에 담았습니다.`,
+    icon: 'i-lucide-shopping-cart',
+    color: 'success',
+  });
+
+  await navigateTo('/checkout');
 };
 
-// --- Backend API 조회 ---
-const { $api } = useApi();
-const restaurants = ref<Restaurant[]>([]);
-const selectedCategory = ref('전체');
-const loading = ref(false);
+const startSearch = () => {
+  const firstMatch = filteredStores.value[0];
 
-/** 가게 목록 조회 */
-async function fetchStores(category?: string) {
-  loading.value = true;
-  try {
-    const params: Record<string, string> = {};
-    if (category && category !== '전체') params.category = category;
-
-    const res = await $api<StoreDto[]>('/api/v1/stores', { params });
-    if (res.success && res.data) {
-      restaurants.value = res.data.map((store) => ({
-        id: store.id,
-        name: store.name,
-        category: store.category || '-',
-        rating: store.ratingAvg || 0,
-        reviews: 0,
-        deliveryTime: '25-40분',
-        deliveryFee: store.minOrderAmount >= 20000 ? '무료' : '2,000원',
-        image: categoryIcons[store.category] || '🍽️',
-        minOrder: store.minOrderAmount
-          ? new Intl.NumberFormat('ko-KR').format(store.minOrderAmount) + '원'
-          : '-',
-      }));
-    }
-  } catch {
-    restaurants.value = [];
-  } finally {
-    loading.value = false;
+  if (!firstMatch) {
+    toast.add({
+      title: '검색 결과가 없습니다.',
+      description: '다른 키워드나 카테고리로 다시 찾아보세요.',
+      icon: 'i-lucide-search-x',
+      color: 'warning',
+    });
+    return;
   }
-}
 
-// 카테고리 선택 시 필터링
-function selectCategory(name: string) {
-  selectedCategory.value = name;
-  fetchStores(name);
-}
-
-await fetchStores();
-
-// --- State ---
-const favorites = ref<string[]>([]);
-
-// --- Actions ---
-const toggleFavorite = (id: string) => {
-  if (favorites.value.includes(id)) {
-    favorites.value = favorites.value.filter((fId) => fId !== id);
-  } else {
-    favorites.value.push(id);
-  }
+  navigateTo(`/stores/${firstMatch.id}`);
 };
 
-// 숫자 포맷팅 (리뷰 수 등)
-const formatNumber = (num: number) => num.toLocaleString();
+const filteredStores = computed(() => {
+  const keyword = searchQuery.value.trim().toLowerCase();
+
+  return stores.value.filter((store: StoreItem) => {
+    const matchesCategory =
+      selectedCategory.value === 'all' ||
+      store.category ===
+      categories.find(
+        (category: CategoryItem) => category.id === selectedCategory.value,
+      )?.label;
+
+    const matchesKeyword =
+      keyword.length === 0 ||
+      store.name.toLowerCase().includes(keyword) ||
+      store.category.toLowerCase().includes(keyword) ||
+      store.bestseller.toLowerCase().includes(keyword) ||
+      store.tags.some((tag: string) => tag.toLowerCase().includes(keyword));
+
+    return matchesCategory && matchesKeyword;
+  });
+});
 </script>
 
 <template>
-  <div class="max-w-md mx-auto">
-    <!-- Header -->
-    <div class="bg-white shadow-sm sticky top-0 z-40">
-      <div class="px-4 py-4">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center space-x-2">
-            <UIcon name="i-heroicons-map-pin" class="w-5 h-5 text-green-600" />
-            <div>
-              <div class="font-semibold text-gray-900">서울시 강남구</div>
-              <div class="text-xs text-gray-500">역삼동 123-45</div>
-            </div>
-          </div>
-          <UIcon
-            name="i-heroicons-shopping-bag"
-            class="w-6 h-6 text-gray-700"
-          />
-        </div>
+  <UDashboardPanel
+    id="home"
+    grow
+  >
+    <template #header>
+      <UDashboardNavbar
+        title="지금 바로 주문"
+        :ui="{ right: 'gap-3' }"
+      >
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
 
-        <!-- Search Bar (Nuxt UI Input 사용) -->
-        <UInput
-          icon="i-heroicons-magnifying-glass"
-          placeholder="음식점 또는 메뉴 검색"
-          size="lg"
-          :ui="{ icon: { trailing: { pointer: '' } } }"
-          class="w-full"
-        />
-      </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="pb-4">
-      <!-- Categories -->
-      <div class="bg-white px-4 py-4 mb-2">
-        <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-2">
-          <button
-            v-for="cat in categories"
-            :key="cat.id"
-            class="flex flex-col items-center min-w-[56px] group"
-            @click="selectCategory(cat.name)"
+        <template #right>
+          <UTooltip
+            text="알림"
+            :shortcuts="['N']"
           >
-            <div
-              class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-1 transition-colors"
-              :class="
-                selectedCategory === cat.name
-                  ? 'bg-green-100 ring-2 ring-green-500'
-                  : 'bg-gray-100 group-hover:bg-gray-200'
-              "
+            <UButton
+              color="neutral"
+              variant="ghost"
+              square
+              @click="isNotificationsSlideoverOpen = true"
             >
-              {{ cat.icon }}
-            </div>
-            <span
-              class="text-xs"
-              :class="
-                selectedCategory === cat.name
-                  ? 'text-green-600 font-semibold'
-                  : 'text-gray-700'
-              "
-              >{{ cat.name }}</span
-            >
-          </button>
-        </div>
-      </div>
-
-      <!-- Banner -->
-      <div class="px-4 py-4">
-        <div
-          class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 text-white shadow-lg"
-        >
-          <div class="text-sm font-medium mb-1">🎉 첫 주문 특별 할인</div>
-          <div class="text-xl font-bold mb-2">최대 10,000원 할인</div>
-          <div class="text-sm opacity-90">지금 바로 주문하고 혜택 받으세요</div>
-        </div>
-      </div>
-
-      <!-- Restaurant List -->
-      <div class="px-4">
-        <h2 class="text-lg font-bold text-gray-900 mb-4">인기 음식점</h2>
-
-        <!-- 로딩 상태 -->
-        <div v-if="loading" class="flex justify-center py-8">
-          <div
-            class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"
-          ></div>
-        </div>
-
-        <!-- 빈 상태 -->
-        <div
-          v-else-if="restaurants.length === 0"
-          class="text-center py-8 text-gray-400"
-        >
-          등록된 음식점이 없습니다.
-        </div>
-
-        <div v-else class="space-y-4">
-          <div
-            v-for="restaurant in restaurants"
-            :key="restaurant.id"
-            class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow border border-gray-100"
-          >
-            <div class="flex p-4">
-              <!-- Image Area -->
-              <div
-                class="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center text-5xl mr-4 flex-shrink-0"
+              <UChip
+                color="error"
+                inset
               >
-                {{ restaurant.image }}
+                <UIcon
+                  name="i-lucide-bell"
+                  class="size-5 shrink-0"
+                />
+              </UChip>
+            </UButton>
+          </UTooltip>
+
+          <UDropdownMenu :items="menuItems">
+            <UButton
+              icon="i-lucide-ellipsis"
+              color="neutral"
+              variant="ghost"
+            />
+          </UDropdownMenu>
+        </template>
+      </UDashboardNavbar>
+    </template>
+
+    <template #body>
+      <div class="flex flex-col gap-6 p-4 sm:p-6">
+        <section
+          class="overflow-hidden rounded-3xl border border-primary/15 bg-[radial-gradient(circle_at_top_left,rgba(0,193,106,0.22),transparent_42%),linear-gradient(135deg,rgba(255,255,255,0.96),rgba(244,252,248,0.92))] p-5 shadow-sm ring-1 ring-inset ring-white/60 dark:border-primary/20 dark:bg-[radial-gradient(circle_at_top_left,rgba(0,193,106,0.18),transparent_35%),linear-gradient(135deg,rgba(10,14,12,0.96),rgba(9,24,17,0.9))] sm:p-7"
+        >
+          <div
+            class="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.9fr)] xl:items-start"
+          >
+            <div class="space-y-5">
+              <div
+                class="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-xs font-medium text-primary-700 ring-1 ring-primary/10 dark:bg-white/10 dark:text-primary-200"
+              >
+                <UIcon
+                  name="i-lucide-map-pinned"
+                  class="size-4"
+                />
+                서울시 강남구 역삼동 735-11
               </div>
 
-              <!-- Content Area -->
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between mb-1">
-                  <h3 class="font-semibold text-gray-900 truncate">
-                    {{ restaurant.name }}
-                  </h3>
-                  <button
-                    @click="toggleFavorite(restaurant.id)"
-                    class="ml-2 flex-shrink-0 focus:outline-none"
-                  >
-                    <!-- 하트 아이콘 -->
-                    <UIcon
-                      :name="
-                        favorites.includes(restaurant.id)
-                          ? 'i-heroicons-heart-solid'
-                          : 'i-heroicons-heart'
-                      "
-                      class="w-5 h-5 transition-colors"
-                      :class="
-                        favorites.includes(restaurant.id)
-                          ? 'text-red-500'
-                          : 'text-gray-300'
-                      "
-                    />
-                  </button>
-                </div>
+              <div class="space-y-3">
+                <h1
+                  class="text-3xl font-semibold tracking-tight text-highlighted sm:text-4xl"
+                >
+                  10초 안에 메뉴 찾고 바로 주문하세요
+                </h1>
+                <p class="max-w-2xl text-sm leading-6 text-muted sm:text-base">
+                  자주 먹는 메뉴, 빠른 배달 매장, 오늘 할인 중인 가게를 한
+                  화면에서 고르고 결제까지 이어지는 주문 중심 홈이다.
+                </p>
+              </div>
 
-                <div class="flex items-center text-sm text-gray-600 mb-2">
-                  <UIcon
-                    name="i-heroicons-star-solid"
-                    class="w-4 h-4 text-yellow-400 mr-1"
-                  />
-                  <span class="font-medium">{{ restaurant.rating }}</span>
-                  <span class="mx-1">•</span>
-                  <span>리뷰 {{ formatNumber(restaurant.reviews) }}</span>
-                </div>
+              <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+                <UInput
+                  v-model="searchQuery"
+                  icon="i-lucide-search"
+                  size="xl"
+                  placeholder="메뉴명, 매장명, 카테고리를 검색하세요"
+                />
+                <UButton
+                  size="xl"
+                  icon="i-lucide-search"
+                  class="justify-center px-6"
+                  @click="startSearch"
+                >
+                  주문 시작
+                </UButton>
+              </div>
 
-                <div class="flex items-center text-xs text-gray-500 space-x-2">
-                  <div class="flex items-center">
-                    <UIcon name="i-heroicons-clock" class="w-3 h-3 mr-1" />
-                    {{ restaurant.deliveryTime }}
-                  </div>
-                  <span>•</span>
-                  <span>배달비 {{ restaurant.deliveryFee }}</span>
-                </div>
-
-                <div class="mt-2 text-xs text-gray-400">
-                  최소주문 {{ restaurant.minOrder }}
-                </div>
+              <div class="flex flex-wrap gap-2">
+                <UButton
+                  v-for="action in quickActions"
+                  :key="action"
+                  color="neutral"
+                  variant="soft"
+                  size="sm"
+                  class="rounded-full"
+                >
+                  {{ action }}
+                </UButton>
               </div>
             </div>
+
+            <UCard
+              class="border-white/60 bg-white/80 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5"
+            >
+              <div class="space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-muted">
+                      현재 가장 빠른 주문
+                    </p>
+                    <h2 class="mt-1 text-xl font-semibold text-highlighted">
+                      역삼 덮밥연구소
+                    </h2>
+                  </div>
+                  <UBadge
+                    color="primary"
+                    variant="soft"
+                  >
+                    18~25분
+                  </UBadge>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                  <div class="rounded-2xl bg-primary/6 p-3">
+                    <p class="text-xs text-muted">
+                      대표 메뉴
+                    </p>
+                    <p class="mt-1 text-sm font-semibold text-highlighted">
+                      직화 제육
+                    </p>
+                  </div>
+                  <div class="rounded-2xl bg-primary/6 p-3">
+                    <p class="text-xs text-muted">
+                      배달비
+                    </p>
+                    <p class="mt-1 text-sm font-semibold text-highlighted">
+                      2,000원
+                    </p>
+                  </div>
+                  <div class="rounded-2xl bg-primary/6 p-3">
+                    <p class="text-xs text-muted">
+                      최소 주문
+                    </p>
+                    <p class="mt-1 text-sm font-semibold text-highlighted">
+                      9,900원
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  class="rounded-2xl border border-dashed border-primary/20 p-4"
+                >
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="text-muted">오늘 적용 가능한 쿠폰</span>
+                    <span class="font-semibold text-primary-600">3장</span>
+                  </div>
+                  <p class="mt-2 text-sm text-highlighted">
+                    첫 주문 4,000원 할인과 점심 타임 무료배달 쿠폰을 바로 적용할
+                    수 있습니다.
+                  </p>
+                </div>
+
+                <UButton
+                  to="/benefits/coupons"
+                  block
+                  size="lg"
+                  icon="i-lucide-ticket-percent"
+                >
+                  쿠폰 확인하고 주문하기
+                </UButton>
+              </div>
+            </UCard>
           </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-semibold text-highlighted">
+                카테고리별 바로 주문
+              </h2>
+              <p class="text-sm text-muted">
+                가장 많이 찾는 메뉴를 한 번에 고를 수 있습니다.
+              </p>
+            </div>
+            <UButton
+              color="neutral"
+              variant="ghost"
+              to="/favorites"
+              icon="i-lucide-heart"
+            >
+              찜한 가게 보기
+            </UButton>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+            <button
+              v-for="category in categories"
+              :key="category.id"
+              type="button"
+              class="flex items-center gap-3 rounded-2xl border p-4 text-left transition hover:border-primary/50 hover:bg-primary/5"
+              :class="
+                selectedCategory === category.id
+                  ? 'border-primary/60 bg-primary/8 shadow-sm'
+                  : 'border-default'
+              "
+              @click="selectedCategory = category.id"
+            >
+              <div
+                class="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary-600"
+              >
+                <UIcon
+                  :name="category.icon"
+                  class="size-5"
+                />
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-highlighted">
+                  {{ category.label }}
+                </p>
+                <p class="text-xs text-muted">
+                  즉시 주문
+                </p>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <div
+          class="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_360px] xl:items-start"
+        >
+          <section class="space-y-4">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <h2 class="text-lg font-semibold text-highlighted">
+                  지금 주문하기 좋은 매장
+                </h2>
+                <p class="text-sm text-muted">
+                  배달 속도, 재주문율, 할인 여부를 기준으로 정렬했습니다.
+                </p>
+              </div>
+              <UBadge
+                color="neutral"
+                variant="soft"
+              >
+                {{ filteredStores.length }}개 매장
+              </UBadge>
+            </div>
+
+            <div class="grid gap-4 lg:grid-cols-2">
+              <UPageCard
+                v-for="store in filteredStores"
+                :key="store.id"
+                :title="store.name"
+                :description="`${store.category} · 대표메뉴 ${store.bestseller}`"
+                variant="subtle"
+                class="overflow-hidden"
+              >
+                <div class="space-y-4">
+                  <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary-600"
+                      >
+                        <UIcon
+                          :name="store.heroIcon"
+                          class="size-6"
+                        />
+                      </div>
+                      <div class="space-y-1 text-sm text-muted">
+                        <p class="flex items-center gap-1.5 text-highlighted">
+                          <UIcon
+                            name="i-lucide-star"
+                            class="size-4 text-amber-400"
+                          />
+                          <span class="font-semibold">{{ store.rating }}</span>
+                          <span>리뷰 {{ store.reviewCount.toLocaleString() }}</span>
+                        </p>
+                        <p>
+                          {{ store.eta }} · {{ store.deliveryFee }} · 최소
+                          {{ store.minOrder }}
+                        </p>
+                      </div>
+                    </div>
+                    <UBadge
+                      color="primary"
+                      variant="soft"
+                    >
+                      추천
+                    </UBadge>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2">
+                    <UBadge
+                      v-for="tag in store.tags"
+                      :key="tag"
+                      color="neutral"
+                      variant="subtle"
+                    >
+                      {{ tag }}
+                    </UBadge>
+                  </div>
+
+                  <div class="flex gap-2">
+                    <UButton
+                      :to="`/stores/${store.id}`"
+                      color="neutral"
+                      variant="soft"
+                      block
+                    >
+                      메뉴 보기
+                    </UButton>
+                    <UButton
+                      block
+                      @click="orderNow(store.id)"
+                    >
+                      바로 주문
+                    </UButton>
+                  </div>
+                </div>
+              </UPageCard>
+            </div>
+
+            <div
+              v-if="filteredStores.length === 0"
+              class="rounded-3xl border border-dashed border-default px-6 py-12 text-center"
+            >
+              <UIcon
+                name="i-lucide-search-x"
+                class="mx-auto size-10 text-muted"
+              />
+              <p class="mt-3 text-sm font-medium text-highlighted">
+                검색 조건에 맞는 매장이 없습니다.
+              </p>
+              <p class="mt-1 text-sm text-muted">
+                카테고리를 바꾸거나 다른 메뉴명으로 다시 검색해 보세요.
+              </p>
+            </div>
+          </section>
+
+          <aside class="space-y-4 xl:sticky xl:top-6">
+            <UCard>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-medium text-muted">
+                      최근 주문 기반
+                    </p>
+                    <h2 class="text-lg font-semibold text-highlighted">
+                      빠른 재주문
+                    </h2>
+                  </div>
+                  <UButton
+                    color="neutral"
+                    variant="ghost"
+                    size="sm"
+                    to="/orders"
+                  >
+                    전체 보기
+                  </UButton>
+                </div>
+
+                <div class="space-y-3">
+                  <div
+                    v-for="item in reorderItems"
+                    :key="item.id"
+                    class="rounded-2xl border border-default p-4"
+                  >
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-semibold text-highlighted">
+                          {{ item.storeName }}
+                        </p>
+                        <p class="mt-1 text-sm text-muted">
+                          {{ item.menu }}
+                        </p>
+                      </div>
+                      <span class="text-sm font-semibold text-highlighted">{{
+                        item.totalPrice
+                      }}</span>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between gap-3">
+                      <span class="text-xs text-muted">{{
+                        item.orderedAt
+                      }}</span>
+                      <UButton
+                        size="sm"
+                        variant="soft"
+                        @click="orderNow(item.storeId)"
+                      >
+                        다시 담기
+                      </UButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </UCard>
+
+            <UCard class="border-primary/15 bg-primary/5">
+              <div class="space-y-3">
+                <div
+                  class="flex items-center gap-2 text-primary-700 dark:text-primary-300"
+                >
+                  <UIcon
+                    name="i-lucide-badge-percent"
+                    class="size-5"
+                  />
+                  <p class="text-sm font-semibold">
+                    오늘의 주문 혜택
+                  </p>
+                </div>
+                <h3 class="text-lg font-semibold text-highlighted">
+                  점심시간 무료배달 + 첫 주문 4,000원 할인
+                </h3>
+                <p class="text-sm leading-6 text-muted">
+                  11시부터 14시까지 한식, 분식 카테고리 주문 시 무료배달이 자동
+                  적용됩니다.
+                </p>
+                <UButton
+                  to="/benefits/events"
+                  color="primary"
+                  variant="soft"
+                  block
+                >
+                  진행 중인 이벤트 보기
+                </UButton>
+              </div>
+            </UCard>
+          </aside>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </UDashboardPanel>
 </template>
-
-<style scoped>
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-</style>

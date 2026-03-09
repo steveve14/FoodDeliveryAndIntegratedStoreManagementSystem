@@ -4,6 +4,7 @@
 # Logs and build artifacts
 /build/
 **/build/
+**/bin/
 
 # IntelliJ
 *.iml

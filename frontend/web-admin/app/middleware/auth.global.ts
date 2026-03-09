@@ -1,8 +1,7 @@
 export default defineNuxtRouteMiddleware((to) => {
-  const user = useCookie('user-session')
-  const accessToken = useCookie('access-token')
+  const { user } = useAuth()
 
-  const isAuthenticated = !!user.value && !!accessToken.value
+  const isAuthenticated = !!user.value
 
   // 인증이 필요 없는 페이지 목록
   const publicPages = ['/login', '/unauthorized']
@@ -16,5 +15,12 @@ export default defineNuxtRouteMiddleware((to) => {
   // 2. 이미 로그인되어 있는데 로그인 페이지로 가려고 할 때 → 대시보드로 리다이렉트
   if (isAuthenticated && to.path === '/login') {
     return navigateTo('/')
+  }
+
+  // 3. 관리자 페이지는 ADMIN 역할만 접근 가능
+  if (isAuthenticated && !isPublicPage) {
+    if (user.value?.role !== 'ADMIN') {
+      return navigateTo('/unauthorized')
+    }
   }
 })

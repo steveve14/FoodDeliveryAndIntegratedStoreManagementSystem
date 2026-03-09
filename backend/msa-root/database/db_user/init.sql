@@ -1,0 +1,92 @@
+-- db_user 테이블 생성 (엔티티 aligned: 2026-03-07)
+-- 연결: jdbc:postgresql://localhost:6000/db_user
+-- 사용 서비스: service-user (8010), service-auth (7000)
+
+DROP TABLE IF EXISTS refresh_tokens CASCADE;
+DROP TABLE IF EXISTS favorite_stores CASCADE;
+DROP TABLE IF EXISTS cart_items CASCADE;
+DROP TABLE IF EXISTS addresses CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- users (엔티티: com.example.userservice.entity.User)
+CREATE TABLE users (
+    id            VARCHAR(100) PRIMARY KEY,
+    email         VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255),
+    name          VARCHAR(50)  NOT NULL,
+    phone         VARCHAR(20),
+    roles         VARCHAR(20)  NOT NULL,
+    provider      VARCHAR(20),
+    provider_id   VARCHAR(255),
+    created_at    TIMESTAMPTZ  DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_roles ON users(roles);
+
+-- addresses (엔티티: com.example.userservice.entity.Address)
+CREATE TABLE addresses (
+    id              VARCHAR(100) PRIMARY KEY,
+    user_id         VARCHAR(100) NOT NULL,
+    label           VARCHAR(100),
+    line1           VARCHAR(255) NOT NULL,
+    line2           VARCHAR(255),
+    city            VARCHAR(100),
+    state           VARCHAR(100),
+    postal_code     VARCHAR(10),
+    country         VARCHAR(100),
+    primary_address BOOLEAN      DEFAULT FALSE,
+    created_at      TIMESTAMPTZ  DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_address_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_addresses_user_id ON addresses(user_id);
+
+-- cart_items (엔티티: com.example.userservice.entity.CartItem)
+CREATE TABLE cart_items (
+    id         VARCHAR(100) PRIMARY KEY,
+    user_id    VARCHAR(100) NOT NULL,
+    store_id   VARCHAR(100) NOT NULL,
+    store_name VARCHAR(255) NOT NULL,
+    menu_id    VARCHAR(100) NOT NULL,
+    menu_name  VARCHAR(255) NOT NULL,
+    quantity   INTEGER      NOT NULL,
+    price      INTEGER      NOT NULL,
+    created_at TIMESTAMPTZ  DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_cart_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_cart_items_user_id ON cart_items(user_id);
+CREATE INDEX idx_cart_items_user_menu ON cart_items(user_id, store_id, menu_id);
+
+-- favorite_stores (엔티티: com.example.userservice.entity.FavoriteStore)
+CREATE TABLE favorite_stores (
+    id            VARCHAR(100) PRIMARY KEY,
+    user_id       VARCHAR(100) NOT NULL,
+    store_id      VARCHAR(100) NOT NULL,
+    name          VARCHAR(255) NOT NULL,
+    category      VARCHAR(100) NOT NULL,
+    rating        DOUBLE PRECISION DEFAULT 0,
+    delivery_time VARCHAR(100) NOT NULL,
+    min_order     VARCHAR(100) NOT NULL,
+    image_icon    VARCHAR(100) NOT NULL,
+    created_at    TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_favorite_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_favorite_stores_user_id ON favorite_stores(user_id);
+CREATE INDEX idx_favorite_stores_user_store ON favorite_stores(user_id, store_id);
+
+-- refresh_tokens (엔티티: com.example.auth.entity.RefreshToken)
+CREATE TABLE refresh_tokens (
+    id         VARCHAR(100) PRIMARY KEY,
+    user_id    VARCHAR(100) NOT NULL,
+    token      TEXT         NOT NULL,
+    revoked    BOOLEAN      DEFAULT FALSE,
+    created_at TIMESTAMPTZ  DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMPTZ  NOT NULL,
+    CONSTRAINT fk_refresh_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens(user_id);
+CREATE INDEX idx_refresh_tokens_token ON refresh_tokens(token);

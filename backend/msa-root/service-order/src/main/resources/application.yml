@@ -10,7 +10,7 @@ spring:
 
   datasource:
     driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/db_order}
+    url: ${DB_URL:jdbc:postgresql://localhost:6000/db_order}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:password}
     hikari:

@@ -1,5 +1,6 @@
 package com.example.apigateway.filter;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Base64;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -43,40 +45,52 @@ public class AuthorizationHeaderFilter
     return (exchange, chain) -> {
       ServerHttpRequest request = exchange.getRequest();
 
-      // 1. 헤더 확인
-      String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-      if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
-        return onError(exchange, "No authorization header or invalid format");
+      // 1. Authorization 헤더 또는 access-token 쿠키에서 JWT 추출
+      String jwt = resolveToken(request);
+      if (jwt == null) {
+        return onError(exchange, "No authorization header/cookie or invalid format");
       }
 
-      // 2. 토큰 추출
-      String jwt = authorizationHeader.replace("Bearer ", "");
-
-      // 3. 토큰 검증
-      String userId = getUserIdFromToken(jwt);
-      if (userId == null) {
+      // 2. 토큰 검증 및 클레임 추출
+      Claims claims = getClaimsFromToken(jwt);
+      if (claims == null) {
         return onError(exchange, "JWT token is not valid");
       }
 
-      // 4. 유저 ID 전달
-      ServerHttpRequest newRequest = request.mutate().header("X-User-Id", userId).build();
+      String userId = claims.getSubject();
+      Object role = claims.get("role");
+      String userRole = role != null ? role.toString() : "";
+
+      // 4. 유저 ID 및 역할 전달
+      ServerHttpRequest newRequest =
+          request.mutate().header("X-User-Id", userId).header("X-User-Role", userRole).build();
 
       return chain.filter(exchange.mutate().request(newRequest).build());
     };
   }
 
-  private String getUserIdFromToken(String jwt) {
+  private Claims getClaimsFromToken(String jwt) {
     try {
-      return Jwts.parser()
-          .verifyWith(secretKey)
-          .build()
-          .parseSignedClaims(jwt)
-          .getPayload()
-          .getSubject();
+      return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(jwt).getPayload();
     } catch (Exception ex) {
       log.error("Token validation error: {}", ex.getMessage());
       return null;
     }
+  }
+
+  /** Authorization 헤더 → access-token 쿠키 순으로 JWT를 추출 */
+  private String resolveToken(ServerHttpRequest request) {
+    // 1) Authorization: Bearer <token> 헤더 우선
+    String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+    if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+      return authHeader.substring(7);
+    }
+    // 2) httpOnly 쿠키 fallback
+    HttpCookie cookie = request.getCookies().getFirst("access-token");
+    if (cookie != null && StringUtils.hasText(cookie.getValue())) {
+      return cookie.getValue();
+    }
+    return null;
   }
 
   private Mono<Void> onError(ServerWebExchange exchange, String err) {

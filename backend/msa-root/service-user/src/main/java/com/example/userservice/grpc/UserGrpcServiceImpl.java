@@ -1,12 +1,16 @@
 package com.example.userservice.grpc;
 
 import com.example.userservice.dto.AuthUserDto;
+import com.example.userservice.dto.CreateUserRequest;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.service.UserService;
 import io.grpc.stub.StreamObserver;
 import org.springframework.grpc.server.service.GrpcService;
 
-/** gRPC service implementation for user operations used by internal MSA communication. */
+/**
+ * gRPC service implementation for user operations used by internal MSA
+ * communication.
+ */
 @GrpcService
 public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImplBase {
 
@@ -54,6 +58,7 @@ public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImpl
       GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) {
     try {
       var profile = userService.getProfile(request.getUserId());
+      UserDto user = userService.findById(request.getUserId());
 
       responseObserver.onNext(
           UserResponse.newBuilder()
@@ -62,6 +67,7 @@ public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImpl
               .setEmail(profile.getEmail())
               .setName(profile.getName())
               .setPhone(profile.getPhone() != null ? profile.getPhone() : "")
+              .setRoles(user != null ? user.getRoles() : "")
               .build());
       responseObserver.onCompleted();
     } catch (Exception e) {
@@ -92,6 +98,40 @@ public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImpl
       responseObserver.onCompleted();
     } catch (Exception e) {
       responseObserver.onNext(UserResponse.newBuilder().setFound(false).build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void createUser(
+      com.example.userservice.grpc.CreateUserRequest request,
+      StreamObserver<CreateUserResponse> responseObserver) {
+    try {
+      CreateUserRequest dto = new CreateUserRequest(request.getEmail(), request.getPassword(), request.getName());
+      UserDto created = userService.register(dto);
+
+      responseObserver.onNext(
+          CreateUserResponse.newBuilder()
+              .setSuccess(true)
+              .setUserId(created.getId())
+              .setEmail(created.getEmail())
+              .setName(created.getName())
+              .setRoles(created.getRoles())
+              .build());
+      responseObserver.onCompleted();
+    } catch (IllegalArgumentException e) {
+      responseObserver.onNext(
+          CreateUserResponse.newBuilder()
+              .setSuccess(false)
+              .setErrorMessage(e.getMessage())
+              .build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      responseObserver.onNext(
+          CreateUserResponse.newBuilder()
+              .setSuccess(false)
+              .setErrorMessage("회원가입 처리 중 오류가 발생했습니다.")
+              .build());
       responseObserver.onCompleted();
     }
   }

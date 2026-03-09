@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { TableColumn } from "@nuxt/ui";
-import { z } from "zod";
+import type { TableColumn } from '@nuxt/ui';
 
 // 1. 데이터 타입 정의 — Backend MenuDto 기반
-type ProductStatus = "sale" | "soldout" | "hidden";
+type ProductStatus = 'sale' | 'soldout' | 'hidden';
 
 interface Product {
   id: string;
@@ -15,14 +14,41 @@ interface Product {
   image?: string;
 }
 
+interface StoreSummary {
+  id: string;
+  ownerId: string;
+}
+
 // 2. Backend API에서 메뉴 목록 조회
 const { $api } = useApi();
-const { user } = useAuth();
+const toast = useToast();
 const products = ref<Product[]>([]);
+const storeId = ref<string | null>(null);
+const resolvingStore = ref(false);
 
-async function fetchMenus() {
-  // 점주의 가게 ID (실제로는 로그인 시 가게 정보를 받아와야 함)
-  const storeId = user.value?.id || "default";
+async function resolveStoreId () {
+  resolvingStore.value = true;
+  try {
+    const res = await $api<StoreSummary>('/api/v1/stores/me');
+    if (!res.success || !res.data) {
+      storeId.value = null;
+      return null;
+    }
+
+    storeId.value = res.data.id;
+    return storeId.value;
+  } finally {
+    resolvingStore.value = false;
+  }
+}
+
+async function fetchMenus () {
+  const resolvedStoreId = storeId.value ?? (await resolveStoreId());
+  if (!resolvedStoreId) {
+    products.value = [];
+    return;
+  }
+
   try {
     const res = await $api<
       Array<{
@@ -32,15 +58,15 @@ async function fetchMenus() {
         price: number;
         available: boolean;
       }>
-    >(`/api/v1/stores/${storeId}/menus`);
+    >(`/api/v1/stores/${resolvedStoreId}/menus`);
     if (res.success && res.data) {
-      products.value = res.data.map((menu) => ({
+      products.value = res.data.map(menu => ({
         id: menu.id,
         name: menu.name,
-        description: menu.description || "",
-        category: "-",
+        description: menu.description || '',
+        category: '-',
         price: menu.price,
-        status: menu.available ? ("sale" as const) : ("soldout" as const),
+        status: menu.available ? ('sale' as const) : ('soldout' as const),
       }));
     }
   } catch {
@@ -51,8 +77,8 @@ async function fetchMenus() {
 await fetchMenus();
 
 // 3. 검색 및 필터 상태
-const q = ref("");
-const selectedStatus = ref<ProductStatus | "all">("all");
+const q = ref('');
+const selectedStatus = ref<ProductStatus | 'all'>('all');
 
 // 필터링된 데이터 계산
 const filteredProducts = computed(() => {
@@ -61,7 +87,7 @@ const filteredProducts = computed(() => {
       .toLowerCase()
       .includes(q.value.toLowerCase());
     const matchesStatus =
-      selectedStatus.value === "all" || product.status === selectedStatus.value;
+      selectedStatus.value === 'all' || product.status === selectedStatus.value;
     return matchesSearch && matchesStatus;
   });
 });
@@ -70,19 +96,19 @@ const filteredProducts = computed(() => {
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const state = reactive({
-  id: "" as string,
-  name: "",
-  category: "치킨",
+  id: '' as string,
+  name: '',
+  category: '치킨',
   price: 0,
-  status: "sale" as ProductStatus,
+  status: 'sale' as ProductStatus,
 });
 
 // 카테고리 옵션
-const categories = ["치킨", "사이드", "음료", "소스/기타"];
+const categories = ['치킨', '사이드', '음료', '소스/기타'];
 const statuses = [
-  { label: "판매중", value: "sale" },
-  { label: "품절", value: "soldout" },
-  { label: "숨김", value: "hidden" },
+  { label: '판매중', value: 'sale' },
+  { label: '품절', value: 'soldout' },
+  { label: '숨김', value: 'hidden' },
 ];
 
 // 5. 액션 핸들러
@@ -90,11 +116,11 @@ const statuses = [
 // 모달 열기 (등록)
 const openCreateModal = () => {
   isEditMode.value = false;
-  state.id = "";
-  state.name = "";
-  state.category = "치킨";
+  state.id = '';
+  state.name = '';
+  state.category = '치킨';
   state.price = 0;
-  state.status = "sale";
+  state.status = 'sale';
   isModalOpen.value = true;
 };
 
@@ -111,19 +137,29 @@ const openEditModal = (product: Product) => {
 
 // 저장 (등록/수정 처리) — Backend API 호출
 const saveProduct = async () => {
-  if (!state.name || state.price < 0) return;
-  const storeId = user.value?.id || "default";
+  if (!state.name || state.price < 0) {
+    return;
+  }
+  const resolvedStoreId = storeId.value ?? (await resolveStoreId());
+  if (!resolvedStoreId) {
+    toast.add({
+      title: '매장을 찾을 수 없습니다.',
+      description: '현재 로그인한 점주 계정에 연결된 매장이 없습니다.',
+      color: 'error',
+    });
+    return;
+  }
 
   if (isEditMode.value) {
     // 메뉴 수정 API
     try {
-      await $api(`/api/v1/stores/${storeId}/menus/${state.id}`, {
-        method: "PUT",
+      await $api(`/api/v1/stores/${resolvedStoreId}/menus/${state.id}`, {
+        method: 'PUT',
         body: {
           name: state.name,
-          description: "",
+          description: '',
           price: state.price,
-          available: state.status === "sale",
+          available: state.status === 'sale',
         },
       });
       await fetchMenus();
@@ -133,11 +169,11 @@ const saveProduct = async () => {
   } else {
     // 메뉴 등록 API
     try {
-      await $api(`/api/v1/stores/${storeId}/menus`, {
-        method: "POST",
+      await $api(`/api/v1/stores/${resolvedStoreId}/menus`, {
+        method: 'POST',
         body: {
           name: state.name,
-          description: "",
+          description: '',
           price: state.price,
           available: true,
         },
@@ -152,10 +188,20 @@ const saveProduct = async () => {
 
 // 삭제 로직 — Backend API 호출
 const deleteProduct = async (id: string) => {
-  if (confirm("정말 이 메뉴를 삭제하시겠습니까?")) {
-    const storeId = user.value?.id || "default";
+  if (confirm('정말 이 메뉴를 삭제하시겠습니까?')) {
+    const resolvedStoreId = storeId.value ?? (await resolveStoreId());
+    if (!resolvedStoreId) {
+      toast.add({
+        title: '매장을 찾을 수 없습니다.',
+        description: '현재 로그인한 점주 계정에 연결된 매장이 없습니다.',
+        color: 'error',
+      });
+      return;
+    }
     try {
-      await $api(`/api/v1/stores/${storeId}/menus/${id}`, { method: "DELETE" });
+      await $api(`/api/v1/stores/${resolvedStoreId}/menus/${id}`, {
+        method: 'DELETE',
+      });
       await fetchMenus();
     } catch {
       /* 에러 시 무시 */
@@ -165,32 +211,32 @@ const deleteProduct = async (id: string) => {
 
 // 가격 포맷터
 const formatPrice = (price: number) =>
-  new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: "KRW",
+  new Intl.NumberFormat('ko-KR', {
+    style: 'currency',
+    currency: 'KRW',
   }).format(price);
 
 // 6. 테이블 컬럼 정의
 const columns: TableColumn<Product>[] = [
   {
-    accessorKey: "name",
-    header: "메뉴명",
+    accessorKey: 'name',
+    header: '메뉴명',
   },
   {
-    accessorKey: "category",
-    header: "카테고리",
+    accessorKey: 'category',
+    header: '카테고리',
   },
   {
-    accessorKey: "status",
-    header: "상태",
+    accessorKey: 'status',
+    header: '상태',
   },
   {
-    accessorKey: "price",
-    header: "가격",
+    accessorKey: 'price',
+    header: '가격',
   },
   {
-    id: "actions",
-    header: "",
+    id: 'actions',
+    header: '',
   },
 ];
 
@@ -198,21 +244,21 @@ const columns: TableColumn<Product>[] = [
 const getRowItems = (row: Product) => [
   [
     {
-      label: "수정하기",
-      icon: "i-lucide-edit",
+      label: '수정하기',
+      icon: 'i-lucide-edit',
       click: () => openEditModal(row),
     },
     {
-      label: "복제하기",
-      icon: "i-lucide-copy",
-      click: () => console.log("복제", row.id),
+      label: '복제하기',
+      icon: 'i-lucide-copy',
+      click: () => console.log('복제', row.id),
     },
   ],
   [
     {
-      label: "삭제하기",
-      icon: "i-lucide-trash-2",
-      color: "error" as const,
+      label: '삭제하기',
+      icon: 'i-lucide-trash-2',
+      color: 'error' as const,
       click: () => deleteProduct(row.id),
     },
   ],
@@ -234,6 +280,13 @@ const getRowItems = (row: Product) => [
 
     <UDashboardToolbar>
       <template #left>
+        <UBadge
+          v-if="!resolvingStore && !storeId"
+          color="warning"
+          variant="subtle"
+        >
+          점주 계정에 연결된 매장이 없습니다.
+        </UBadge>
         <UInput
           v-model="q"
           icon="i-lucide-search"
@@ -352,7 +405,7 @@ const getRowItems = (row: Product) => [
             </div>
           </template>
 
-          <form @submit.prevent="saveProduct" class="p-4 space-y-4">
+          <form class="p-4 space-y-4" @submit.prevent="saveProduct">
             <UFormGroup label="메뉴명" required>
               <UInput
                 v-model="state.name"

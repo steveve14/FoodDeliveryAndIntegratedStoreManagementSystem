@@ -3,30 +3,34 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
   ],
 
   devtools: {
-    enabled: true
+    enabled: true,
   },
 
   css: ['~/assets/css/main.css'],
 
-  // Backend Gateway 프록시 — /api/v1/** 요청을 Spring Cloud Gateway로 전달
-  nitro: {
-    routeRules: {
-      '/api/v1/**': { proxy: 'http://localhost:8000/api/v1/**' }
-    }
+  devServer: {
+    port: 3100,
   },
 
   compatibilityDate: '2024-07-11',
+
+  // Backend Gateway 프록시 — /api/v1/** 요청을 Spring Cloud Gateway로 전달
+  nitro: {
+    routeRules: {
+      '/api/v1/**': { proxy: 'http://localhost:8000/api/v1/**' },
+    },
+  },
 
   eslint: {
     config: {
       stylistic: {
         commaDangle: 'never',
-        braceStyle: '1tbs'
-      }
-    }
-  }
-})
+        braceStyle: '1tbs',
+      },
+    },
+  },
+});

@@ -37,18 +37,18 @@ public class UserService {
     // 비밀번호를 해시처리
     String hashed = passwordEncoder.encode(req.getPassword());
     // create entity using builder
-    User user =
-        User.builder()
-            .id(java.util.UUID.randomUUID().toString())
-            .email(req.getEmail())
-            .passwordHash(hashed)
-            .name(req.getName())
-            .phone(null)
-            .roles("USER")
-            .provider("local")
-            .providerId(null)
-            .createdAt(Instant.now())
-            .build();
+    User user = User.builder()
+        .id(java.util.UUID.randomUUID().toString())
+        .email(req.getEmail())
+        .passwordHash(hashed)
+        .name(req.getName())
+        .phone(null)
+        .roles("USER")
+        .provider("local")
+        .providerId(null)
+        .createdAt(Instant.now())
+        .isNewEntity(true)
+        .build();
 
     User saved = userRepository.save(user);
     return new UserDto(
@@ -62,20 +62,25 @@ public class UserService {
         .orElse(null);
   }
 
+  public UserDto findById(String id) {
+    return userRepository
+        .findById(id)
+        .map(u -> new UserDto(u.getId(), u.getEmail(), u.getName(), u.getRoles(), u.getCreatedAt()))
+        .orElse(null);
+  }
+
   public UserProfileDto getProfile(String id) {
-    User user =
-        userRepository
-            .findById(id)
-            .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+    User user = userRepository
+        .findById(id)
+        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
     return new UserProfileDto(user.getId(), user.getEmail(), user.getName(), user.getPhone());
   }
 
   @Transactional
   public UserProfileDto updateProfile(String id, UpdateProfileRequest req) {
-    User user =
-        userRepository
-            .findById(id)
-            .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+    User user = userRepository
+        .findById(id)
+        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
     // use toBuilder() to create a modified instance
     User updated = user.toBuilder().name(req.getName()).phone(req.getPhone()).build();
     User saved = userRepository.save(updated);
@@ -88,9 +93,8 @@ public class UserService {
         .findByEmail(email)
         .filter(u -> passwordEncoder.matches(rawPassword, u.getPasswordHash()))
         .map(
-            u ->
-                new com.example.userservice.dto.AuthUserDto(
-                    u.getId(), u.getEmail(), u.getName(), u.getRoles()))
+            u -> new com.example.userservice.dto.AuthUserDto(
+                u.getId(), u.getEmail(), u.getName(), u.getRoles()))
         .orElse(null);
   }
 

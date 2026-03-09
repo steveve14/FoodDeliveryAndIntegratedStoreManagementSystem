@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
+import * as z from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
 
 const fileRef = ref<HTMLInputElement>();
 
 // 1. 유효성 검사 메시지 한글화
 const profileSchema = z.object({
-  name: z.string().min(2, "이름은 최소 2글자 이상이어야 합니다."),
-  email: z.string().email("유효하지 않은 이메일 형식입니다."),
-  username: z.string().min(2, "사용자명은 최소 2글자 이상이어야 합니다."),
+  name: z.string().min(2, '이름은 최소 2글자 이상이어야 합니다.'),
+  email: z.string().email('유효하지 않은 이메일 형식입니다.'),
+  username: z.string().min(2, '사용자명은 최소 2글자 이상이어야 합니다.'),
   avatar: z.string().optional(),
   bio: z.string().optional(),
 });
@@ -16,27 +16,27 @@ const profileSchema = z.object({
 type ProfileSchema = z.output<typeof profileSchema>;
 
 const profile = reactive<Partial<ProfileSchema>>({
-  name: "Benjamin Canac",
-  email: "ben@nuxtlabs.com",
-  username: "benjamincanac",
+  name: 'Benjamin Canac',
+  email: 'ben@nuxtlabs.com',
+  username: 'benjamincanac',
   avatar: undefined,
   bio: undefined,
 });
 
 const toast = useToast();
 
-async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
+async function onSubmit (event: FormSubmitEvent<ProfileSchema>) {
   // 2. 토스트 알림 메시지 한글화
   toast.add({
-    title: "저장 완료",
-    description: "프로필 설정이 성공적으로 업데이트되었습니다.",
-    icon: "i-lucide-check",
-    color: "success",
+    title: '저장 완료',
+    description: '프로필 설정이 성공적으로 업데이트되었습니다.',
+    icon: 'i-lucide-check',
+    color: 'success',
   });
   console.log(event.data);
 }
 
-function onFileChange(e: Event) {
+function onFileChange (e: Event) {
   const input = e.target as HTMLInputElement;
 
   if (!input.files?.length) {
@@ -46,7 +46,7 @@ function onFileChange(e: Event) {
   profile.avatar = URL.createObjectURL(input.files[0]!);
 }
 
-function onFileClick() {
+function onFileClick () {
   fileRef.value?.click();
 }
 </script>
@@ -123,7 +123,7 @@ function onFileClick() {
             class="hidden"
             accept=".jpg, .jpeg, .png, .gif"
             @change="onFileChange"
-          />
+          >
         </div>
       </UFormField>
       <USeparator />

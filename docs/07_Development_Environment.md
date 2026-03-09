@@ -61,7 +61,7 @@ pnpm dev
 # 예: application-prod.yml (git 제외)
 spring:
   datasource:
-    url: jdbc:postgresql://db-server:5432/mydb
+    url: jdbc:postgresql://db-server:6000/mydb
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 ```

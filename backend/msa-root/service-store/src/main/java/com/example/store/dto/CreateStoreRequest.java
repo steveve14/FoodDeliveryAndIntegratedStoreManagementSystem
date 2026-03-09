@@ -26,6 +26,5 @@ public class CreateStoreRequest {
   private String description;
   private String openingHours;
 
-  @NotBlank(message = "소유자 ID를 입력해주세요.")
   private String ownerId;
 }

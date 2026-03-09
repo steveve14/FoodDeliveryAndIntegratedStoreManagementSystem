@@ -1,5 +1,6 @@
 package com.example.store.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,4 +23,11 @@ public class StoreDto {
   private String description;
   private String openingHours;
   private String ownerId;
+  private String eta;
+  private Integer reviewCount;
+  private String deliveryFee;
+  private String heroIcon;
+  private List<String> tags;
+  private String bestseller;
+  private String promo;
 }

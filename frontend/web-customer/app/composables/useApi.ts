@@ -1,36 +1,82 @@
 /**
  * Backend API 호출 유틸리티
  * Nitro 프록시를 통해 Gateway(localhost:8000)의 /api/v1/** 엔드포인트를 호출합니다.
+ * 인증 토큰은 httpOnly 쿠키로 브라우저가 자동 전송합니다.
  */
 
 /** Backend 공통 응답 래퍼 */
 export interface ApiResponse<T = unknown> {
-  success: boolean
-  data: T
-  error: string | null
+  success: boolean;
+  data: T;
+  error: string | null;
 }
+
+interface AuthSession {
+  id: string;
+  email: string;
+  name: string;
+  role: 'USER' | 'STORE' | 'ADMIN';
+}
+
+let refreshPromise: Promise<boolean> | null = null;
 
 export const useApi = () => {
-  const accessToken = useCookie('access-token')
+  const userSession = useCookie<AuthSession | null>('user-session', {
+    maxAge: 60 * 60 * 24 * 7,
+  });
 
-  /**
-   * $fetch 래퍼 — Authorization 헤더를 자동으로 첨부합니다.
-   */
-  async function $api<T>(url: string, options?: Parameters<typeof $fetch>[1]): Promise<ApiResponse<T>> {
-    return $fetch<ApiResponse<T>>(url, {
-      ...options,
-      headers: {
-        ...(options?.headers as Record<string, string>),
-        ...(accessToken.value ? { Authorization: `Bearer ${accessToken.value}` } : {})
-      },
-      onResponseError({ response }) {
-        if (response.status === 401) {
-          accessToken.value = null
-          navigateTo('/login')
+  async function tryRefreshToken (): Promise<boolean> {
+    if (refreshPromise) {
+      return refreshPromise;
+    }
+
+    refreshPromise = (async () => {
+      try {
+        const res = await $fetch<ApiResponse<AuthSession>>('/api/v1/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+        if (res.success && res.data) {
+          userSession.value = res.data;
+          return true;
         }
+        return false;
+      } catch {
+        return false;
+      } finally {
+        refreshPromise = null;
       }
-    })
+    })();
+
+    return refreshPromise;
   }
 
-  return { $api, accessToken }
-}
+  /**
+   * $fetch 래퍼 — httpOnly 쿠키가 자동으로 포함되며 401 시 refresh를 시도합니다.
+   */
+  async function $api<T> (url: string, options?: Parameters<typeof $fetch>[1]): Promise<ApiResponse<T>> {
+    const doFetch = () => {
+      return $fetch<ApiResponse<T>>(url, {
+        ...options,
+        credentials: 'include',
+      });
+    };
+
+    try {
+      return await doFetch();
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        const refreshed = await tryRefreshToken();
+        if (refreshed) {
+          return await doFetch();
+        }
+
+        userSession.value = null;
+        navigateTo('/login');
+      }
+      throw err;
+    }
+  }
+
+  return { $api };
+};

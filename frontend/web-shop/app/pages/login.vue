@@ -1,58 +1,58 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent, AuthFormField } from "#ui/types";
+import * as z from 'zod';
+import type { FormSubmitEvent, AuthFormField } from '#ui/types';
 
 const { login } = useAuth();
 const toast = useToast();
 
 definePageMeta({
-  layout: "auth",
+  layout: 'auth',
 });
 
 const fields: AuthFormField[] = [
   {
-    name: "email",
-    type: "email",
-    label: "이메일",
-    placeholder: "이메일을 입력해주세요",
+    name: 'email',
+    type: 'email',
+    label: '이메일',
+    placeholder: '이메일을 입력해주세요',
     required: true,
   },
   {
-    name: "password",
-    label: "비밀번호",
-    type: "password",
-    placeholder: "비밀번호를 입력해주세요",
+    name: 'password',
+    label: '비밀번호',
+    type: 'password',
+    placeholder: '비밀번호를 입력해주세요',
     required: true,
   },
   {
-    name: "remember",
-    label: "로그인 상태 유지",
-    type: "checkbox",
+    name: 'remember',
+    label: '로그인 상태 유지',
+    type: 'checkbox',
   },
 ];
 
 const schema = z.object({
-  email: z.string().email("유효하지 않은 이메일입니다"),
-  password: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다"),
+  email: z.string().email('유효하지 않은 이메일입니다'),
+  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
 });
 
 type Schema = z.output<typeof schema>;
 
-async function onSubmit(payload: FormSubmitEvent<Schema>) {
+async function onSubmit (payload: FormSubmitEvent<Schema>) {
   try {
     await login(payload.data.email, payload.data.password);
 
     toast.add({
-      title: "성공",
-      description: "로그인되었습니다.",
-      color: "success",
+      title: '성공',
+      description: '로그인되었습니다.',
+      color: 'success',
     });
-    await navigateTo("/");
+    await navigateTo('/');
   } catch (error: any) {
     toast.add({
-      title: "오류",
-      description: error?.message || "로그인에 실패했습니다.",
-      color: "error",
+      title: '오류',
+      description: error?.message || '로그인에 실패했습니다.',
+      color: 'error',
     });
   }
 }

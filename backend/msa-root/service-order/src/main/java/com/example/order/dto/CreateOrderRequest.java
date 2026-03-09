@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateOrderRequest {
 
-  @NotBlank(message = "사용자 ID를 입력해주세요.")
   private String userId;
 
   @NotEmpty(message = "주문 항목을 입력해주세요.")

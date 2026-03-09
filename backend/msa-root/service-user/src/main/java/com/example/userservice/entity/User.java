@@ -46,7 +46,8 @@ public class User implements Persistable<String> {
   @Column("created_at")
   private Instant createdAt;
 
-  @Transient @Builder.Default private boolean isNewEntity = true;
+  @Transient
+  private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

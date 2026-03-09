@@ -16,14 +16,16 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Delivery implements Persistable<String> {
-  @Id private String id;
+  @Id
+  private String id;
   private String orderId;
   private String courier;
   private String status;
   private int deliveryFee;
   private Instant scheduledAt;
 
-  @Transient @Builder.Default private boolean isNewEntity = true;
+  @Transient
+  private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

@@ -15,13 +15,15 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class OrderItem implements Persistable<String> {
-  @Id private String id;
+  @Id
+  private String id;
   private String orderId;
   private String menuId;
   private int quantity;
   private long priceSnapshot;
 
-  @Transient @Builder.Default private boolean isNewEntity = true;
+  @Transient
+  private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

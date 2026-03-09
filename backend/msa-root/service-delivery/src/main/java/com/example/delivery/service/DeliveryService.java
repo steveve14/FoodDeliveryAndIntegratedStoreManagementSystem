@@ -19,10 +19,9 @@ public class DeliveryService {
   private final OrderGrpcClient orderGrpcClient;
 
   // 상태 전이 규칙: SCHEDULED → IN_PROGRESS → DELIVERED | FAILED
-  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS =
-      Map.of(
-          "SCHEDULED", Set.of("IN_PROGRESS"),
-          "IN_PROGRESS", Set.of("DELIVERED", "FAILED"));
+  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS = Map.of(
+      "SCHEDULED", Set.of("IN_PROGRESS"),
+      "IN_PROGRESS", Set.of("DELIVERED", "FAILED"));
 
   // MVP: 고정 배달비 3,000원
   private static final int FIXED_DELIVERY_FEE = 3000;
@@ -41,15 +40,15 @@ public class DeliveryService {
 
     String assigned = (courier != null && !courier.isBlank()) ? courier : "unassigned";
 
-    Delivery d =
-        Delivery.builder()
-            .id(UUID.randomUUID().toString())
-            .orderId(orderId)
-            .courier(assigned)
-            .status(status)
-            .deliveryFee(FIXED_DELIVERY_FEE)
-            .scheduledAt(Instant.now())
-            .build();
+    Delivery d = Delivery.builder()
+        .id(UUID.randomUUID().toString())
+        .orderId(orderId)
+        .courier(assigned)
+        .status(status)
+        .deliveryFee(FIXED_DELIVERY_FEE)
+        .scheduledAt(Instant.now())
+        .isNewEntity(true)
+        .build();
     Delivery saved = deliveryRepository.save(d);
     return toDto(saved);
   }
@@ -60,10 +59,9 @@ public class DeliveryService {
 
   @Transactional
   public DeliveryDto updateStatus(String deliveryId, String newStatus) {
-    Delivery d =
-        deliveryRepository
-            .findById(deliveryId)
-            .orElseThrow(() -> new IllegalArgumentException("Delivery not found: " + deliveryId));
+    Delivery d = deliveryRepository
+        .findById(deliveryId)
+        .orElseThrow(() -> new IllegalArgumentException("Delivery not found: " + deliveryId));
 
     Set<String> allowed = ALLOWED_TRANSITIONS.getOrDefault(d.getStatus(), Set.of());
     if (!allowed.contains(newStatus)) {

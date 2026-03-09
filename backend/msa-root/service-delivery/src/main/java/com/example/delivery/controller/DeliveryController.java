@@ -3,6 +3,7 @@ package com.example.delivery.controller;
 import com.example.delivery.dto.ApiResponse;
 import com.example.delivery.dto.CreateDeliveryRequest;
 import com.example.delivery.dto.DeliveryDto;
+import com.example.delivery.security.RequireRole;
 import com.example.delivery.service.DeliveryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class DeliveryController {
   }
 
   @PostMapping
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<DeliveryDto>> create(
       @RequestBody @Valid CreateDeliveryRequest req) {
     DeliveryDto dto =
@@ -41,6 +43,7 @@ public class DeliveryController {
   }
 
   @PatchMapping("/{id}/status")
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<DeliveryDto>> updateStatus(
       @PathVariable String id, @RequestBody java.util.Map<String, String> body) {
     String status = body.get("status");

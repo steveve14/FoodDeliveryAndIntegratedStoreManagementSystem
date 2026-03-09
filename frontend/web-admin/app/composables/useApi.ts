@@ -10,31 +10,35 @@
 
 import type { ApiResponse } from '~/types/api'
 
+interface AuthSession {
+  id: string
+  email: string
+  name: string
+  role: 'USER' | 'STORE' | 'ADMIN'
+}
+
 /** 토큰 갱신 중복 방지를 위한 싱글턴 프로미스 */
 let refreshPromise: Promise<boolean> | null = null
 
 export const useApi = () => {
-  const accessToken = useCookie('access-token')
-  const refreshToken = useCookie('refresh-token')
+  const userSession = useCookie<AuthSession | null>('user-session', {
+    maxAge: 60 * 60 * 24 * 7
+  })
 
   /**
    * refreshToken으로 accessToken 갱신 (중복 방지)
    */
   async function tryRefreshToken(): Promise<boolean> {
-    if (!refreshToken.value) return false
-
-    // 이미 갱신 중이면 기존 프로미스를 대기
     if (refreshPromise) return refreshPromise
 
     refreshPromise = (async () => {
       try {
-        const res = await $fetch<ApiResponse<{ accessToken: string, refreshToken: string }>>('/api/v1/auth/refresh', {
+        const res = await $fetch<ApiResponse<AuthSession>>('/api/v1/auth/refresh', {
           method: 'POST',
-          body: { refreshToken: refreshToken.value }
+          credentials: 'include'
         })
-        if (res.success) {
-          accessToken.value = res.data.accessToken
-          refreshToken.value = res.data.refreshToken
+        if (res.success && res.data) {
+          userSession.value = res.data
           return true
         }
         return false
@@ -55,37 +59,31 @@ export const useApi = () => {
    * @returns ApiResponse<T> 형태의 응답
    */
   async function $api<T>(url: string, options?: Parameters<typeof $fetch>[1]): Promise<ApiResponse<T>> {
-    const doFetch = (token?: string | null) => {
+    const doFetch = () => {
       return $fetch<ApiResponse<T>>(url, {
         ...options,
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
-          ...(options?.headers as Record<string, string>),
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
+          ...(options?.headers as Record<string, string> | undefined)
         }
       })
     }
 
     try {
-      return await doFetch(accessToken.value)
+      return await doFetch()
     } catch (err: any) {
-      // 401 Unauthorized → 토큰 갱신 시도 후 재시도
       if (err?.response?.status === 401) {
         const refreshed = await tryRefreshToken()
         if (refreshed) {
-          // 새 토큰으로 원래 요청 재시도
-          return await doFetch(accessToken.value)
+          return await doFetch()
         }
 
-        // 갱신 실패 → 세션 정리 + 로그인 페이지 이동
-        accessToken.value = null
-        refreshToken.value = null
-        useCookie('user-session').value = null
+        userSession.value = null
         navigateTo('/login')
       }
       throw err
     }
   }
 
-  return { $api, accessToken, refreshToken }
+  return { $api }
 }

@@ -16,7 +16,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Store implements Persistable<String> {
-  @Id private String id;
+  @Id
+  private String id;
   private String name;
   private String address;
   private String phone;
@@ -31,7 +32,8 @@ public class Store implements Persistable<String> {
   private String ownerId;
   private Instant createdAt;
 
-  @Transient @Builder.Default private boolean isNewEntity = true;
+  @Transient
+  private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

@@ -16,6 +16,9 @@ service UserGrpcService {
     
     // 이메일로 사용자 조회
     rpc GetUserByEmail(GetUserByEmailRequest) returns (UserResponse);
+
+    // 회원가입 (사용자 생성)
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
 }
 
 message AuthenticateRequest {
@@ -48,4 +51,19 @@ message UserResponse {
     string phone = 5;
     string roles = 6;
     int64 created_at = 7;
+}
+
+message CreateUserRequest {
+    string email = 1;
+    string password = 2;
+    string name = 3;
+}
+
+message CreateUserResponse {
+    bool success = 1;
+    string user_id = 2;
+    string email = 3;
+    string name = 4;
+    string roles = 5;
+    string error_message = 6;
 }
