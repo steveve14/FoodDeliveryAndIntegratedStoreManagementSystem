@@ -10,5 +10,8 @@ import lombok.NoArgsConstructor;
 /** DTO for updating a user's profile information. */
 public class UpdateProfileRequest {
   private String name;
+  private String username;
   private String phone;
+  private String avatarUrl;
+  private String location;
 }

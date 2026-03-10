@@ -8,7 +8,7 @@ export interface Avatar {
 export type CustomerStatus = 'subscribed' | 'unsubscribed' | 'bounced';
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   avatar: Avatar;

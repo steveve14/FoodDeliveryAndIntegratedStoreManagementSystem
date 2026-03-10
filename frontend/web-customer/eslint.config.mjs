@@ -5,7 +5,7 @@ const googleStyleRules = {
   '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
   'semi': 'off',
   '@stylistic/semi': ['error', 'always'],
-  indent: 'off',
+  'indent': 'off',
   '@stylistic/indent': ['error', 2, { SwitchCase: 1 }],
   'comma-dangle': 'off',
   '@stylistic/comma-dangle': ['error', 'always-multiline'],

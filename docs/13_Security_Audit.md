@@ -18,6 +18,20 @@
 > 토이 프로젝트 특성상 **하드코딩된 시크릿, DB 비밀번호 기본값** 등은 허용하는 것으로 판단.  
 > **기능이 깨진 버그**와 **포트폴리오 품질에 영향을 주는 항목**만 수정 대상으로 분류.
 
+### 1.1 2026-03-10 하드코딩 점검 추가 결과
+- 점검 범위: backend/service-*, frontend/web-* (빌드 산출물 제외)
+- 고위험 하드코딩 추가 식별
+	- JWT secret 직접값 (`service-gateway/application.yml`)
+	- 배달비 고정 상수 `3000` (`service-delivery/DeliveryService`)
+	- 고객 등급 임계치 고정값 `10` (`service-order/OrderService`)
+	- gRPC static localhost 주소 다수 (`service-auth`, `service-order`, `service-gateway` 등)
+- 중위험 하드코딩 추가 식별
+	- Eureka 기본 주소 `http://localhost:8100/eureka/`
+	- CORS 허용 오리진 localhost 고정 목록
+- 조치 상태
+	- 기능 버그 우선 수정 정책 유지
+	- 고위험 하드코딩은 `docs/11_Priority_Worklist.md`의 `P0-5`로 이관해 순차 처리
+
 ---
 
 ## 2. 수정 완료 항목

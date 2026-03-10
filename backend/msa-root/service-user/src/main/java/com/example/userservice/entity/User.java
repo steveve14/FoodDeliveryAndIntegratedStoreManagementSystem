@@ -43,6 +43,21 @@ public class User implements Persistable<String> {
   @Column("provider_id")
   private String providerId; // external provider user id
 
+  @Column("username")
+  private String username;
+
+  @Column("avatar_url")
+  private String avatarUrl;
+
+  @Column("marketing_status")
+  private String marketingStatus;
+
+  @Column("location")
+  private String location;
+
+  @Column("team_role")
+  private String teamRole;
+
   @Column("created_at")
   private Instant createdAt;
 

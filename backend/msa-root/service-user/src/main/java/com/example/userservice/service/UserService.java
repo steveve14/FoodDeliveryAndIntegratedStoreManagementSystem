@@ -73,7 +73,14 @@ public class UserService {
     User user = userRepository
         .findById(id)
         .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
-    return new UserProfileDto(user.getId(), user.getEmail(), user.getName(), user.getPhone());
+    return new UserProfileDto(
+        user.getId(),
+        user.getEmail(),
+        user.getName(),
+        user.getUsername(),
+        user.getPhone(),
+        user.getAvatarUrl(),
+        user.getLocation());
   }
 
   @Transactional
@@ -82,9 +89,22 @@ public class UserService {
         .findById(id)
         .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
     // use toBuilder() to create a modified instance
-    User updated = user.toBuilder().name(req.getName()).phone(req.getPhone()).build();
+    User updated = user.toBuilder()
+      .name(req.getName())
+      .username(req.getUsername())
+      .phone(req.getPhone())
+      .avatarUrl(req.getAvatarUrl())
+      .location(req.getLocation())
+      .build();
     User saved = userRepository.save(updated);
-    return new UserProfileDto(saved.getId(), saved.getEmail(), saved.getName(), saved.getPhone());
+    return new UserProfileDto(
+      saved.getId(),
+      saved.getEmail(),
+      saved.getName(),
+      saved.getUsername(),
+      saved.getPhone(),
+      saved.getAvatarUrl(),
+      saved.getLocation());
   }
 
   // 이메일/비밀번호 인증 (service-auth에서 호출 가능)

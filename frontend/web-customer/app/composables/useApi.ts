@@ -59,6 +59,11 @@ export const useApi = () => {
       return $fetch<ApiResponse<T>>(url, {
         ...options,
         credentials: 'include',
+        headers: {
+          ...(userSession.value?.id ? { 'X-User-Id': userSession.value.id } : {}),
+          ...(userSession.value?.role ? { 'X-User-Role': userSession.value.role } : {}),
+          ...(options?.headers as Record<string, string> | undefined),
+        },
       });
     };
 

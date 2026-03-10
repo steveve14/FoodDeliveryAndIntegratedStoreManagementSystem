@@ -67,10 +67,78 @@ const categories: CategoryItem[] = [
   { id: 'all', label: '전체', icon: 'i-lucide-layout-grid' },
   { id: 'chicken', label: '치킨', icon: 'i-lucide-drumstick' },
   { id: 'korean', label: '한식', icon: 'i-lucide-soup' },
+  { id: 'chinese', label: '중식', icon: 'i-lucide-utensils-crossed' },
   { id: 'snack', label: '분식', icon: 'i-lucide-flame' },
   { id: 'japanese', label: '일식', icon: 'i-lucide-fish' },
+  { id: 'western', label: '양식', icon: 'i-lucide-cooking-pot' },
+  { id: 'pizza', label: '피자', icon: 'i-lucide-pizza' },
+  { id: 'burger', label: '버거', icon: 'i-lucide-sandwich' },
+  { id: 'bossam', label: '족발/보쌈', icon: 'i-lucide-beef' },
+  { id: 'night', label: '야식', icon: 'i-lucide-moon-star' },
+  { id: 'asian', label: '아시안', icon: 'i-lucide-chef-hat' },
+  { id: 'salad', label: '샐러드', icon: 'i-lucide-leaf' },
+  { id: 'lunchbox', label: '도시락', icon: 'i-lucide-package' },
+  { id: 'cafe', label: '카페', icon: 'i-lucide-coffee' },
   { id: 'dessert', label: '디저트', icon: 'i-lucide-ice-cream-cone' },
 ];
+
+const CATEGORY_CODE_TO_LABEL: Record<string, string> = {
+  KOREAN: '한식',
+  CHINESE: '중식',
+  JAPANESE: '일식',
+  WESTERN: '양식',
+  CHICKEN: '치킨',
+  PIZZA: '피자',
+  BURGER: '버거',
+  CAFE: '카페',
+  DESSERT: '디저트',
+  SNACK: '분식',
+  NIGHT: '야식',
+  BOSSAM: '족발/보쌈',
+  ASIAN: '아시안',
+  SALAD: '샐러드',
+  LUNCHBOX: '도시락',
+  OTHER: '기타',
+};
+
+const KOREAN_LABEL_TO_CODE: Record<string, string> = {
+  '한식': 'KOREAN',
+  '중식': 'CHINESE',
+  '일식': 'JAPANESE',
+  '양식': 'WESTERN',
+  '치킨': 'CHICKEN',
+  '피자': 'PIZZA',
+  '버거': 'BURGER',
+  '카페': 'CAFE',
+  '디저트': 'DESSERT',
+  '분식': 'SNACK',
+  '야식': 'NIGHT',
+  '족발/보쌈': 'BOSSAM',
+  '족발': 'BOSSAM',
+  '보쌈': 'BOSSAM',
+  '아시안': 'ASIAN',
+  '샐러드': 'SALAD',
+  '도시락': 'LUNCHBOX',
+  '기타': 'OTHER',
+};
+
+const normalizeCategoryCode = (rawCategory: string | null | undefined) => {
+  if (!rawCategory) {
+    return 'OTHER';
+  }
+
+  const trimmed = rawCategory.trim();
+  if (!trimmed) {
+    return 'OTHER';
+  }
+
+  return KOREAN_LABEL_TO_CODE[trimmed] || trimmed.toUpperCase();
+};
+
+const resolveCategoryLabel = (rawCategory: string | null | undefined) => {
+  const code = normalizeCategoryCode(rawCategory);
+  return CATEGORY_CODE_TO_LABEL[code] || '기타';
+};
 
 interface BackendStoreItem {
   id: string;
@@ -147,7 +215,7 @@ export const useOrdering = () => {
 
   const normalizeStore = (store: BackendStoreItem, menus: BackendMenuItem[]): StoreItem => {
     const mappedMenus = menus.map(normalizeMenu);
-    const category = store.category || '기타';
+    const category = resolveCategoryLabel(store.category);
 
     return {
       id: store.id,

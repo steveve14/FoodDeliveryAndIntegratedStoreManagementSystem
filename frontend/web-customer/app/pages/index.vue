@@ -172,11 +172,11 @@ const filteredStores = computed(() => {
                 <h1
                   class="text-3xl font-semibold tracking-tight text-highlighted sm:text-4xl"
                 >
-                  10초 안에 메뉴 찾고 바로 주문하세요
+                  메뉴 찾고 바로 주문하세요.
                 </h1>
                 <p class="max-w-2xl text-sm leading-6 text-muted sm:text-base">
                   자주 먹는 메뉴, 빠른 배달 매장, 오늘 할인 중인 가게를 한
-                  화면에서 고르고 결제까지 이어지는 주문 중심 홈이다.
+                  화면에서 고르고 결제까지 빠르게 할 수 있습니다.
                 </p>
               </div>
 

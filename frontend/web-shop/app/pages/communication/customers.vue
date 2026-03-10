@@ -1,17 +1,40 @@
 <script setup lang="ts">
+import { formatTimeAgo } from '@vueuse/core';
+import type { UseTimeAgoMessages } from '@vueuse/core';
+
 interface Customer {
-  id: number;
+  id: string;
   name: string;
   orders: number;
-  lastOrderAt: string;
+  lastOrderAt: string | null;
   grade: 'vip' | 'regular';
 }
 
-const customers = ref<Customer[]>([
-  { id: 1, name: '김단골', orders: 42, lastOrderAt: '오늘', grade: 'vip' },
-  { id: 2, name: '이손님', orders: 7, lastOrderAt: '2일 전', grade: 'regular' },
-  { id: 3, name: '박고객', orders: 19, lastOrderAt: '어제', grade: 'regular' },
-]);
+const { data: customers } = await useFetch<Customer[]>('/api/customers', {
+  default: () => []
+});
+
+const koMessages: UseTimeAgoMessages = {
+  justNow: '방금 전',
+  past: n => (n.match(/\d/) ? `${n} 전` : n),
+  future: n => (n.match(/\d/) ? `${n} 후` : n),
+  month: n => `${n}개월`,
+  year: n => `${n}년`,
+  day: n => `${n}일`,
+  week: n => `${n}주`,
+  hour: n => `${n}시간`,
+  minute: n => `${n}분`,
+  second: n => `${n}초`,
+  invalid: '유효하지 않은 날짜'
+};
+
+function formatLastOrderAt (value: string | null) {
+  if (!value) {
+    return '주문 없음';
+  }
+
+  return formatTimeAgo(new Date(value), { messages: koMessages });
+}
 </script>
 
 <template>
@@ -22,6 +45,10 @@ const customers = ref<Customer[]>([
       <UTable :data="customers">
         <template #name-cell="{ row }">
           <span class="font-medium">{{ row.original.name }}</span>
+        </template>
+
+        <template #lastOrderAt-cell="{ row }">
+          <span class="text-sm text-muted">{{ formatLastOrderAt(row.original.lastOrderAt) }}</span>
         </template>
 
         <template #grade-cell="{ row }">

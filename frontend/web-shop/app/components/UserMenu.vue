@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui';
 
+interface UserProfileDto {
+  id: string;
+  email: string;
+  name: string;
+  username?: string | null;
+  phone?: string | null;
+  avatarUrl?: string | null;
+  location?: string | null;
+}
+
 defineProps<{
   collapsed?: boolean;
 }>();
 
 const colorMode = useColorMode();
 const appConfig = useAppConfig();
+const { user: sessionUser } = useAuth();
+const { $api } = useApi();
 
 const colors = [
   'red',
@@ -29,12 +41,33 @@ const colors = [
 ];
 const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone'];
 
-const user = ref({
-  name: 'Benjamin Canac',
-  avatar: {
-    src: 'https://github.com/benjamincanac.png',
-    alt: 'Benjamin Canac',
+const { data: profileResponse } = await useAsyncData(
+  () => `shop-user-profile-${sessionUser.value?.id ?? 'guest'}`,
+  async () => {
+    if (!sessionUser.value?.id) {
+      return null;
+    }
+
+    const response = await $api<UserProfileDto>(`/api/v1/users/${sessionUser.value.id}/profile`);
+    return response.data;
   },
+  {
+    watch: [() => sessionUser.value?.id],
+    default: () => null,
+  },
+);
+
+const user = computed(() => {
+  const name = profileResponse.value?.name || sessionUser.value?.name || '사용자';
+  const email = profileResponse.value?.email || sessionUser.value?.email;
+
+  return {
+    name,
+    avatar: {
+      src: profileResponse.value?.avatarUrl || (email ? `https://i.pravatar.cc/128?u=${encodeURIComponent(email)}` : undefined),
+      alt: name,
+    },
+  };
 });
 
 const items = computed<DropdownMenuItem[][]>(() => [
@@ -54,11 +87,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
   ],
   [
     {
-      label: '테마 색상', // 오타 수정: 태마 -> 테마
+      label: '테마 색상',
       icon: 'i-lucide-palette',
       children: [
         {
-          label: '메인 색상', // Primary -> 메인 색상
+          label: '메인 색상',
           slot: 'chip',
           chip: appConfig.ui.colors.primary,
           content: {
@@ -66,7 +99,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
             collisionPadding: 16,
           },
           children: colors.map(color => ({
-            label: color, // 색상 이름(Red 등)은 보통 그대로 두거나, 필요하면 변환 함수 사용
+            label: color,
             chip: color,
             slot: 'chip',
             checked: appConfig.ui.colors.primary === color,
@@ -78,7 +111,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
           })),
         },
         {
-          label: '회색 계열', // Neutral -> 회색 계열 (또는 베이스 색상)
+          label: '회색 계열',
           slot: 'chip',
           chip:
             appConfig.ui.colors.neutral === 'neutral' ?
@@ -103,11 +136,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
       ],
     },
     {
-      label: '화면 모드', // Appearance -> 화면 모드
+      label: '화면 모드',
       icon: 'i-lucide-sun-moon',
       children: [
         {
-          label: '라이트 모드', // Light
+          label: '라이트 모드',
           icon: 'i-lucide-sun',
           type: 'checkbox',
           checked: colorMode.value === 'light',
@@ -117,7 +150,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
           },
         },
         {
-          label: '다크 모드', // Dark
+          label: '다크 모드',
           icon: 'i-lucide-moon',
           type: 'checkbox',
           checked: colorMode.value === 'dark',

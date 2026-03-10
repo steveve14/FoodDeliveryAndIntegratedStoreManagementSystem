@@ -2,6 +2,7 @@ package com.example.order.controller;
 
 import com.example.order.dto.ApiResponse;
 import com.example.order.dto.CreateOrderRequest;
+import com.example.order.dto.FrontendCustomerOrderSummaryDto;
 import com.example.order.dto.OrderDto;
 import com.example.order.security.RequireRole;
 import com.example.order.service.OrderService;
@@ -47,6 +48,11 @@ public class OrderController {
   public ResponseEntity<ApiResponse<java.util.List<OrderDto>>> getMyOrders(
       @RequestHeader("X-User-Id") String userId) {
     return ResponseEntity.ok(ApiResponse.ok(orderService.findByUserId(userId)));
+  }
+
+  @GetMapping("/frontend/customer-summaries")
+  public ResponseEntity<ApiResponse<java.util.List<FrontendCustomerOrderSummaryDto>>> getFrontendCustomerSummaries() {
+    return ResponseEntity.ok(ApiResponse.ok(orderService.getFrontendCustomerSummaries()));
   }
 
   @GetMapping("/store/{storeId}")

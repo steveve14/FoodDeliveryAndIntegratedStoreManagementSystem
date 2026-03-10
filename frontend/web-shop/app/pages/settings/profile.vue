@@ -2,52 +2,107 @@
 import * as z from 'zod';
 import type { FormSubmitEvent } from '@nuxt/ui';
 
-const fileRef = ref<HTMLInputElement>();
+interface UserProfileDto {
+  id: string;
+  email: string;
+  name: string;
+  username?: string | null;
+  phone?: string | null;
+  avatarUrl?: string | null;
+  location?: string | null;
+}
 
-// 1. 유효성 검사 메시지 한글화
+const { user: sessionUser } = useAuth();
+const { $api } = useApi();
+const toast = useToast();
+
 const profileSchema = z.object({
   name: z.string().min(2, '이름은 최소 2글자 이상이어야 합니다.'),
   email: z.string().email('유효하지 않은 이메일 형식입니다.'),
   username: z.string().min(2, '사용자명은 최소 2글자 이상이어야 합니다.'),
-  avatar: z.string().optional(),
-  bio: z.string().optional(),
+  phone: z.string().optional(),
+  avatarUrl: z.string().url('유효한 이미지 URL을 입력해 주세요.').or(z.literal('')),
+  location: z.string().optional(),
 });
 
 type ProfileSchema = z.output<typeof profileSchema>;
 
 const profile = reactive<Partial<ProfileSchema>>({
-  name: 'Benjamin Canac',
-  email: 'ben@nuxtlabs.com',
-  username: 'benjamincanac',
-  avatar: undefined,
-  bio: undefined,
+  name: '',
+  email: '',
+  username: '',
+  phone: '',
+  avatarUrl: '',
+  location: '',
 });
 
-const toast = useToast();
+const isSubmitting = ref(false);
+
+const { data: profileResponse, refresh: refreshProfile } = await useAsyncData(
+  () => `shop-settings-profile-${sessionUser.value?.id ?? 'guest'}`,
+  async () => {
+    if (!sessionUser.value?.id) {
+      return null;
+    }
+
+    const response = await $api<UserProfileDto>(`/api/v1/users/${sessionUser.value.id}/profile`);
+    return response.data;
+  },
+  {
+    watch: [() => sessionUser.value?.id],
+    default: () => null,
+  },
+);
+
+watchEffect(() => {
+  const currentProfile = profileResponse.value;
+  const sessionEmail = sessionUser.value?.email || '';
+
+  profile.name = currentProfile?.name || sessionUser.value?.name || '';
+  profile.email = currentProfile?.email || sessionEmail;
+  profile.username = currentProfile?.username || (sessionEmail ? sessionEmail.split('@')[0] : '');
+  profile.phone = currentProfile?.phone || '';
+  profile.avatarUrl = currentProfile?.avatarUrl || '';
+  profile.location = currentProfile?.location || '';
+});
 
 async function onSubmit (event: FormSubmitEvent<ProfileSchema>) {
-  // 2. 토스트 알림 메시지 한글화
-  toast.add({
-    title: '저장 완료',
-    description: '프로필 설정이 성공적으로 업데이트되었습니다.',
-    icon: 'i-lucide-check',
-    color: 'success',
-  });
-  console.log(event.data);
-}
-
-function onFileChange (e: Event) {
-  const input = e.target as HTMLInputElement;
-
-  if (!input.files?.length) {
+  if (!sessionUser.value?.id) {
     return;
   }
 
-  profile.avatar = URL.createObjectURL(input.files[0]!);
-}
+  isSubmitting.value = true;
 
-function onFileClick () {
-  fileRef.value?.click();
+  try {
+    await $api<UserProfileDto>(`/api/v1/users/${sessionUser.value.id}/profile`, {
+      method: 'PUT',
+      body: {
+        name: event.data.name,
+        username: event.data.username,
+        phone: event.data.phone || undefined,
+        avatarUrl: event.data.avatarUrl || undefined,
+        location: event.data.location || undefined,
+      },
+    });
+
+    await refreshProfile();
+
+    toast.add({
+      title: '저장 완료',
+      description: '프로필 설정이 DB 기준으로 업데이트되었습니다.',
+      icon: 'i-lucide-check',
+      color: 'success',
+    });
+  } catch {
+    toast.add({
+      title: '저장 실패',
+      description: '프로필 저장 중 오류가 발생했습니다.',
+      icon: 'i-lucide-circle-alert',
+      color: 'error',
+    });
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 </script>
 
@@ -71,6 +126,7 @@ function onFileClick () {
         color="neutral"
         type="submit"
         class="w-fit lg:ms-auto"
+        :loading="isSubmitting"
       />
     </UPageCard>
 
@@ -93,7 +149,7 @@ function onFileClick () {
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
-        <UInput v-model="profile.email" type="email" autocomplete="off" />
+        <UInput v-model="profile.email" type="email" autocomplete="off" disabled />
       </UFormField>
       <USeparator />
 
@@ -109,33 +165,36 @@ function onFileClick () {
       <USeparator />
 
       <UFormField
-        name="avatar"
-        label="프로필 사진"
-        description="JPG, GIF 또는 PNG 형식. 최대 1MB."
-        class="flex max-sm:flex-col justify-between sm:items-center gap-4"
+        name="phone"
+        label="연락처"
+        description="주문 관련 연락과 고객 지원에 사용할 번호입니다."
+        class="flex max-sm:flex-col justify-between items-start gap-4"
       >
-        <div class="flex flex-wrap items-center gap-3">
-          <UAvatar :src="profile.avatar" :alt="profile.name" size="lg" />
-          <UButton label="파일 선택" color="neutral" @click="onFileClick" />
-          <input
-            ref="fileRef"
-            type="file"
-            class="hidden"
-            accept=".jpg, .jpeg, .png, .gif"
-            @change="onFileChange"
-          >
+        <UInput v-model="profile.phone" autocomplete="off" />
+      </UFormField>
+      <USeparator />
+
+      <UFormField
+        name="avatarUrl"
+        label="아바타 URL"
+        description="DB에 저장된 프로필 이미지 URL입니다."
+        class="flex max-sm:flex-col justify-between items-start gap-4"
+        :ui="{ container: 'w-full' }"
+      >
+        <div class="w-full space-y-3">
+          <UInput v-model="profile.avatarUrl" autocomplete="off" class="w-full" />
+          <UAvatar :src="profile.avatarUrl || undefined" :alt="profile.name" size="lg" />
         </div>
       </UFormField>
       <USeparator />
 
       <UFormField
-        name="bio"
-        label="자기소개"
-        description="프로필에 표시될 간략한 소개글입니다. URL은 자동으로 링크됩니다."
+        name="location"
+        label="위치"
+        description="매장 운영 또는 사용자 프로필에 노출할 지역 정보입니다."
         class="flex max-sm:flex-col justify-between items-start gap-4"
-        :ui="{ container: 'w-full' }"
       >
-        <UTextarea v-model="profile.bio" :rows="5" autoresize class="w-full" />
+        <UInput v-model="profile.location" autocomplete="off" />
       </UFormField>
     </UPageCard>
   </UForm>

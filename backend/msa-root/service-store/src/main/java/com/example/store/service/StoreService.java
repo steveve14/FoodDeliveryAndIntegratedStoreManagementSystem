@@ -7,6 +7,7 @@ import com.example.store.repository.MenuRepository;
 import com.example.store.repository.StoreRepository;
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 /** Service handling store management operations (create, find, list). */
 public class StoreService {
+  private record CategoryProfile(String eta, String heroIcon, List<String> tags) {}
+
+  private static final CategoryProfile DEFAULT_PROFILE =
+      new CategoryProfile("30~40분", "i-lucide-store", List.of("주문 가능"));
+
+  private static final java.util.Map<String, CategoryProfile> CATEGORY_PROFILES =
+      java.util.Map.ofEntries(
+          java.util.Map.entry("KOREAN", new CategoryProfile("18~25분", "i-lucide-soup", List.of("혼밥", "점심추천", "가성비"))),
+          java.util.Map.entry("CHINESE", new CategoryProfile("25~35분", "i-lucide-utensils-crossed", List.of("면요리", "든든한", "불맛"))),
+          java.util.Map.entry("JAPANESE", new CategoryProfile("30~40분", "i-lucide-fish", List.of("신선", "정갈함", "저녁추천"))),
+          java.util.Map.entry("WESTERN", new CategoryProfile("25~35분", "i-lucide-cooking-pot", List.of("파스타", "브런치", "데이트"))),
+          java.util.Map.entry("CHICKEN", new CategoryProfile("26~33분", "i-lucide-drumstick", List.of("인기", "바삭", "야식"))),
+          java.util.Map.entry("PIZZA", new CategoryProfile("28~38분", "i-lucide-pizza", List.of("파티", "치즈", "세트할인"))),
+          java.util.Map.entry("BURGER", new CategoryProfile("20~30분", "i-lucide-sandwich", List.of("한끼", "감튀추가", "빠른조리"))),
+          java.util.Map.entry("CAFE", new CategoryProfile("15~25분", "i-lucide-coffee", List.of("브런치", "커피", "여유"))),
+          java.util.Map.entry("DESSERT", new CategoryProfile("15~25분", "i-lucide-ice-cream-cone", List.of("달콤함", "간식", "커피와 함께"))),
+          java.util.Map.entry("SNACK", new CategoryProfile("20~30분", "i-lucide-flame", List.of("매운맛", "분식", "야식"))),
+          java.util.Map.entry("NIGHT", new CategoryProfile("30~45분", "i-lucide-moon-star", List.of("늦은밤", "안주", "야식"))),
+          java.util.Map.entry("BOSSAM", new CategoryProfile("32~45분", "i-lucide-beef", List.of("족발", "보쌈", "푸짐함"))),
+          java.util.Map.entry("ASIAN", new CategoryProfile("25~35분", "i-lucide-chef-hat", List.of("쌀국수", "커리", "이국적"))),
+          java.util.Map.entry("SALAD", new CategoryProfile("18~25분", "i-lucide-leaf", List.of("가벼운", "건강식", "다이어트"))),
+          java.util.Map.entry("LUNCHBOX", new CategoryProfile("20~30분", "i-lucide-package", List.of("도시락", "간편식", "점심추천"))),
+          java.util.Map.entry("OTHER", DEFAULT_PROFILE));
+
   private final StoreRepository storeRepository;
   private final MenuRepository menuRepository;
 
@@ -40,7 +65,7 @@ public class StoreService {
         .name(req.getName())
         .address(req.getAddress())
         .phone(req.getPhone())
-        .category(req.getCategory())
+      .category(normalizeCategoryCode(req.getCategory()))
         .status(req.getStatus())
         .latitude(req.getLatitude())
         .longitude(req.getLongitude())
@@ -65,11 +90,13 @@ public class StoreService {
   }
 
   public java.util.List<StoreDto> list(String category, String status) {
+    String normalizedCategory = normalizeCategoryCode(category);
     java.util.List<com.example.store.entity.Store> all = new java.util.ArrayList<>();
     storeRepository.findAll().forEach(all::add);
     java.util.stream.Stream<com.example.store.entity.Store> stream = all.stream();
-    if (category != null && !category.isEmpty())
-      stream = stream.filter(s -> category.equals(s.getCategory()));
+    if (category != null && !category.isBlank()) {
+      stream = stream.filter(s -> normalizedCategory.equals(normalizeCategoryCode(s.getCategory())));
+    }
     if (status != null && !status.isEmpty())
       stream = stream.filter(s -> status.equals(s.getStatus()));
     return stream
@@ -79,9 +106,7 @@ public class StoreService {
 
   private StoreDto toDto(Store store) {
     List<Menu> menus = menuRepository.findByStoreId(store.getId());
-    String category = store.getCategory() != null && !store.getCategory().isBlank()
-      ? store.getCategory()
-      : "기타";
+    String categoryCode = normalizeCategoryCode(store.getCategory());
     String bestseller = menus.stream()
       .filter(Menu::isAvailable)
       .map(Menu::getName)
@@ -93,7 +118,7 @@ public class StoreService {
         store.getName(),
         store.getAddress(),
         store.getPhone(),
-        store.getCategory(),
+        categoryCode,
         store.getStatus(),
         store.getLatitude(),
         store.getLongitude(),
@@ -102,24 +127,17 @@ public class StoreService {
         store.getDescription(),
         store.getOpeningHours(),
         store.getOwnerId(),
-        resolveEta(category),
+        resolveEta(categoryCode),
         0,
         resolveDeliveryFee(menus),
-        resolveHeroIcon(category),
-        resolveTags(category, menus),
+        resolveHeroIcon(categoryCode),
+        resolveTags(categoryCode, menus),
         bestseller,
         resolvePromo(store, menus, bestseller));
   }
 
   private String resolveEta(String category) {
-    return switch (category) {
-      case "치킨" -> "26~33분";
-      case "한식" -> "18~25분";
-      case "분식" -> "20~30분";
-      case "일식" -> "35~45분";
-      case "디저트" -> "15~25분";
-      default -> "30~40분";
-    };
+    return CATEGORY_PROFILES.getOrDefault(normalizeCategoryCode(category), DEFAULT_PROFILE).eta();
   }
 
   private String resolveDeliveryFee(List<Menu> menus) {
@@ -127,27 +145,43 @@ public class StoreService {
   }
 
   private String resolveHeroIcon(String category) {
-    return switch (category) {
-      case "치킨" -> "i-lucide-drumstick";
-      case "한식" -> "i-lucide-soup";
-      case "분식" -> "i-lucide-flame";
-      case "일식" -> "i-lucide-fish";
-      case "디저트" -> "i-lucide-ice-cream-cone";
-      default -> "i-lucide-store";
-    };
+    return CATEGORY_PROFILES.getOrDefault(normalizeCategoryCode(category), DEFAULT_PROFILE).heroIcon();
   }
 
   private List<String> resolveTags(String category, List<Menu> menus) {
-    List<String> tags = switch (category) {
-      case "치킨" -> List.of("인기", "바삭", "야식");
-      case "한식" -> List.of("혼밥", "점심추천", "가성비");
-      case "분식" -> List.of("매운맛", "세트할인", "야식");
-      case "일식" -> List.of("프리미엄", "신선", "저녁추천");
-      case "디저트" -> List.of("달콤함", "간식", "커피와 함께");
-      default -> List.of("주문 가능");
-    };
+    List<String> tags = CATEGORY_PROFILES
+      .getOrDefault(normalizeCategoryCode(category), DEFAULT_PROFILE)
+      .tags();
 
     return menus.isEmpty() ? List.of("메뉴 준비 중") : tags;
+  }
+
+  private String normalizeCategoryCode(String category) {
+    if (category == null || category.isBlank()) {
+      return "OTHER";
+    }
+
+    String normalized = category.trim().toUpperCase(Locale.ROOT);
+
+    return switch (normalized) {
+      case "한식" -> "KOREAN";
+      case "중식" -> "CHINESE";
+      case "일식" -> "JAPANESE";
+      case "양식" -> "WESTERN";
+      case "치킨" -> "CHICKEN";
+      case "피자" -> "PIZZA";
+      case "버거" -> "BURGER";
+      case "카페" -> "CAFE";
+      case "디저트" -> "DESSERT";
+      case "분식" -> "SNACK";
+      case "야식" -> "NIGHT";
+      case "족발/보쌈", "족발", "보쌈" -> "BOSSAM";
+      case "아시안" -> "ASIAN";
+      case "샐러드" -> "SALAD";
+      case "도시락" -> "LUNCHBOX";
+      case "기타" -> "OTHER";
+      default -> CATEGORY_PROFILES.containsKey(normalized) ? normalized : "OTHER";
+    };
   }
 
   private String resolvePromo(Store store, List<Menu> menus, String bestseller) {

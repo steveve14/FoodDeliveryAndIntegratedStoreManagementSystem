@@ -1,6 +1,7 @@
 package com.example.order.service;
 
 import com.example.order.dto.OrderDto;
+import com.example.order.dto.FrontendCustomerOrderSummaryDto;
 import com.example.order.dto.OrderItemDto;
 import com.example.order.entity.Order;
 import com.example.order.entity.OrderItem;
@@ -11,6 +12,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ public class OrderService {
   private final OrderRepository orderRepository;
   private final OrderItemRepository orderItemRepository;
   private final StoreGrpcClient storeGrpcClient;
+  private final JdbcTemplate jdbcTemplate;
 
   // 주문 상태 전이 규칙: CREATED → COOKING → DELIVERING → DONE | CANCELLED
   private static final Map<String, Set<String>> ALLOWED_TRANSITIONS = Map.of(
@@ -30,10 +33,29 @@ public class OrderService {
   public OrderService(
       OrderRepository orderRepository,
       OrderItemRepository orderItemRepository,
-      StoreGrpcClient storeGrpcClient) {
+      StoreGrpcClient storeGrpcClient,
+      JdbcTemplate jdbcTemplate) {
     this.orderRepository = orderRepository;
     this.orderItemRepository = orderItemRepository;
     this.storeGrpcClient = storeGrpcClient;
+    this.jdbcTemplate = jdbcTemplate;
+  }
+
+  public java.util.List<FrontendCustomerOrderSummaryDto> getFrontendCustomerSummaries() {
+    return jdbcTemplate.query(
+        """
+        SELECT user_id, COUNT(*) AS orders_count, MAX(created_at) AS last_order_at
+        FROM orders
+        WHERE user_id IS NOT NULL
+        GROUP BY user_id
+        ORDER BY last_order_at DESC
+        """,
+        (rs, rowNum) ->
+            new FrontendCustomerOrderSummaryDto(
+                rs.getString("user_id"),
+                rs.getLong("orders_count"),
+                rs.getTimestamp("last_order_at").toInstant(),
+                rs.getLong("orders_count") >= 10 ? "vip" : "regular"));
   }
 
   @Transactional

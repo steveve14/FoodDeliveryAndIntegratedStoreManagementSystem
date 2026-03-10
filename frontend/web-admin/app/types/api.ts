@@ -45,7 +45,10 @@ export interface UserProfileDto {
   id: string
   email: string
   name: string
-  phone: string
+  username?: string | null
+  phone?: string | null
+  avatarUrl?: string | null
+  location?: string | null
 }
 
 export interface RegisterRequest {
@@ -56,7 +59,10 @@ export interface RegisterRequest {
 
 export interface UpdateProfileRequest {
   name: string
+  username?: string
   phone?: string
+  avatarUrl?: string
+  location?: string
 }
 
 /* ───── Address ───── */
@@ -91,7 +97,23 @@ export type UpdateAddressRequest = CreateAddressRequest
 /* ───── Store ───── */
 
 export type StoreStatus = 'OPEN' | 'CLOSED'
-export type StoreCategory = 'KOREAN' | 'CHINESE' | 'JAPANESE' | 'WESTERN' | 'CHICKEN' | 'PIZZA' | 'BURGER' | 'CAFE' | 'DESSERT' | 'OTHER'
+export type StoreCategory =
+  | 'KOREAN'
+  | 'CHINESE'
+  | 'JAPANESE'
+  | 'WESTERN'
+  | 'CHICKEN'
+  | 'PIZZA'
+  | 'BURGER'
+  | 'CAFE'
+  | 'DESSERT'
+  | 'SNACK'
+  | 'NIGHT'
+  | 'BOSSAM'
+  | 'ASIAN'
+  | 'SALAD'
+  | 'LUNCHBOX'
+  | 'OTHER'
 
 export interface StoreDto {
   id: string
