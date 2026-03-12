@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui';
+import {
+  DEFAULT_STORE_CATEGORY_LABEL,
+  STORE_CATEGORY_LABELS,
+} from '~/utils/storeCategories';
 
 // 1. 데이터 타입 정의 — Backend MenuDto 기반
 type ProductStatus = 'sale' | 'soldout' | 'hidden';
@@ -98,13 +102,13 @@ const isEditMode = ref(false);
 const state = reactive({
   id: '' as string,
   name: '',
-  category: '치킨',
+  category: DEFAULT_STORE_CATEGORY_LABEL,
   price: 0,
   status: 'sale' as ProductStatus,
 });
 
 // 카테고리 옵션
-const categories = ['치킨', '사이드', '음료', '소스/기타'];
+const categories = STORE_CATEGORY_LABELS;
 const statuses = [
   { label: '판매중', value: 'sale' },
   { label: '품절', value: 'soldout' },
@@ -118,7 +122,7 @@ const openCreateModal = () => {
   isEditMode.value = false;
   state.id = '';
   state.name = '';
-  state.category = '치킨';
+  state.category = DEFAULT_STORE_CATEGORY_LABEL;
   state.price = 0;
   state.status = 'sale';
   isModalOpen.value = true;
@@ -129,7 +133,9 @@ const openEditModal = (product: Product) => {
   isEditMode.value = true;
   state.id = product.id;
   state.name = product.name;
-  state.category = product.category;
+  state.category = categories.includes(product.category)
+    ? product.category
+    : DEFAULT_STORE_CATEGORY_LABEL;
   state.price = product.price;
   state.status = product.status;
   isModalOpen.value = true;

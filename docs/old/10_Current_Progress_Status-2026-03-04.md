@@ -16,9 +16,9 @@
 
 ### 프론트엔드
 - Nuxt 기반 3개 앱 구조 존재
-  - `web-admin`, `web-shop`, `web-customer`
+  - `web-admin`, `web-shop`, `web-user`
 - `web-admin`, `web-shop`은 Nuxt Dashboard 템플릿 기반 UI 구성
-- `web-customer`는 메인 페이지 중심의 초기 UI 구성
+- `web-user`는 메인 페이지 중심의 초기 UI 구성
 
 ## 3) 진행 중/초기 상태 항목
 - 서비스별 실제 비즈니스 API(주문 상태 전이, 매장/메뉴/재고, POS 정산 등)는 본격 구현 전 단계
@@ -42,7 +42,7 @@
 
 ### 프론트 제품 구조
 - 문서: `web-dashboard`, `tablet-pos` 등 역할 기반 구조
-- 현재 디렉토리: `web-admin`, `web-shop`, `web-customer` 구조(템플릿 성격이 강함)
+- 현재 디렉토리: `web-admin`, `web-shop`, `web-user` 구조(템플릿 성격이 강함)
 
 ## 5) 리스크
 - 문서와 코드 간 불일치 누적으로 신규 인력 온보딩/개발 우선순위 혼선 위험

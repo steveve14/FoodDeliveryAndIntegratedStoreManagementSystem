@@ -1,16 +1,16 @@
-﻿# 10. 현재 진행 상황 정리 (2026-03-10)
+# 10. 현재 진행 상황 정리 (2026-03-10)
 
 ## 0) 2026-03-10 추가 반영 (금일)
 - `service-store` 카테고리 처리 로직을 코드 정규화 기반으로 확장
   - 입력값 한글/영문 혼용(`치킨`, `CHICKEN`) 모두 표준 코드로 변환
   - 카테고리 프로필(ETA/아이콘/태그) 확장: `SNACK`, `NIGHT`, `BOSSAM`, `ASIAN`, `SALAD`, `LUNCHBOX` 포함
-- `web-customer` 사용자 카테고리를 음식앱 기준으로 확장
+- `web-user` 사용자 카테고리를 음식앱 기준으로 확장
   - 기존: 치킨/한식/분식/일식/디저트
   - 확장: 중식/양식/피자/버거/족발보쌈/야식/아시안/샐러드/도시락/카페 추가
   - 백엔드 카테고리 코드(`KOREAN`, `CHICKEN` 등)를 사용자 라벨로 매핑해 필터 일관성 확보
 - 백엔드-프론트 연동 점검
   - `service-store` 컴파일 성공 (`:service-store:compileJava`)
-  - `web-customer` 서버 기동 확인 (`http://localhost:3010` → 200)
+  - `web-user` 서버 기동 확인 (`http://localhost:3010` → 200)
   - `/api/v1/stores`는 gateway 인증 정책으로 현재 401 확인 (프론트 경유 동일)
 - 하드코딩 전수 점검(우선순위 중심) 수행
   - 보안/운영성 영향 하드코딩 항목 식별 (JWT secret, 고정 수수료, 고정 VIP 기준, 정적 gRPC 주소 등)
@@ -49,9 +49,9 @@
 - 주문/가게/프로필 API에 호출자 식별 및 소유권 검증 반영
 
 ### 프론트엔드
-- Nuxt.js 4.2.2 기반 3개 앱 구조 (`web-admin`, `web-shop`, `web-customer`)
+- Nuxt.js 4.2.2 기반 3개 앱 구조 (`web-admin`, `web-shop`, `web-user`)
 - `web-admin`, `web-shop`: @nuxt/ui 4.3.0 기반 대시보드 템플릿 UI
-- `web-customer`: 메인 페이지 중심 초기 UI (cookie 기반 세션 유지)
+- `web-user`: 메인 페이지 중심 초기 UI (cookie 기반 세션 유지)
 - pnpm 10.26.1 워크스페이스 기반 패키지 관리
 
 ## 3) 진행 중/초기 상태 항목
@@ -83,7 +83,7 @@
 ## 6) 다음 액션(권장)
 1. API 표준(버전/응답 포맷/에러 모델) 전 서비스 적용
 2. 고객 주문 E2E MVP (주문 생성→상태변경→조회) 구현
-3. 프론트엔드 API 실연동 (web-customer 우선)
+3. 프론트엔드 API 실연동 (web-user 우선)
 4. Dockerfile 작성 및 docker-compose로 로컬 통합 실행 환경 구성
 
 ---

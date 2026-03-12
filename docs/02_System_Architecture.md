@@ -1,4 +1,4 @@
-﻿# 02. 시스템 아키텍처 (System Architecture)
+# 02. 시스템 아키텍처 (System Architecture)
 
 > **최종 수정**: 2026-03-10
 
@@ -53,7 +53,7 @@ graph TD
 | **Framework** | Nuxt.js 4.2.2 | Vue 3 기반의 SSR 프레임워크 |
 | **UI 컴포넌트** | @nuxt/ui 4.3.0 | Tailwind CSS 포함 |
 | **상태 관리** | composable (useApi, useAuth) | web-admin / web-shop 기반 |
-| **상태 관리 (customer)** | composable + cookie session | web-customer에서 사용 |
+| **상태 관리 (customer)** | composable + cookie session | web-user에서 사용 |
 | **Style** | Tailwind CSS (@nuxt/ui 포함) | 유틸리티 퍼스트 CSS |
 | **HTTP Client** | Ofetch (Nuxt 내장) | API 통신 |
 | **패키지 관리자** | pnpm 10.26.1 | 워크스페이스 기반 |

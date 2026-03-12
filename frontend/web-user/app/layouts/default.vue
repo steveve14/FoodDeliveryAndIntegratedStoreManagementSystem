@@ -4,9 +4,18 @@ import { formatWon, useOrdering } from '~/composables/useOrdering';
 
 type NavigationMenuItem = DropdownMenuItem;
 
+interface UserProfileDto {
+  id: string;
+  email: string;
+  name: string;
+  location?: string | null;
+}
+
 const route = useRoute();
 const open = ref(false);
 const toast = useToast();
+const { user: sessionUser } = useAuth();
+const { $api } = useApi();
 const { cartItems, cartTotal, loadCart, removeCartItem } = useOrdering();
 
 await loadCart();
@@ -158,6 +167,25 @@ const groups = computed(() => [
     ],
   },
 ]);
+
+const { data: profileResponse } = await useAsyncData(
+  () => `customer-user-profile-${sessionUser.value?.id ?? 'guest'}`,
+  async () => {
+    if (!sessionUser.value?.id) {
+      return null;
+    }
+
+    const response = await $api<UserProfileDto>(`/api/v1/users/${sessionUser.value.id}/profile`);
+    return response.data;
+  },
+  {
+    watch: [() => sessionUser.value?.id],
+    default: () => null,
+  },
+);
+
+const displayName = computed(() => profileResponse.value?.name || sessionUser.value?.name || '사용자');
+const displayAddress = computed(() => profileResponse.value?.location?.trim() || '기본 배달 주소를 설정해 주세요');
 </script>
 
 <template>
@@ -177,12 +205,10 @@ const groups = computed(() => [
             <UIcon name="i-lucide-user" class="w-5 h-5" />
           </div>
           <div v-if="!collapsed" class="flex flex-col leading-tight min-w-0">
-            <span class="font-bold truncate text-sm">김회원 님</span>
+            <span class="font-bold truncate text-sm">{{ displayName }} 님</span>
             <div class="flex items-center gap-1 mt-0.5">
               <UIcon name="i-lucide-map-pin" class="w-3 h-3 text-gray-500" />
-              <span class="text-[11px] text-gray-500 truncate"
-                >서울시 강남구 역삼동...</span
-              >
+              <span class="text-[11px] text-gray-500 truncate">{{ displayAddress }}</span>
             </div>
           </div>
         </div>

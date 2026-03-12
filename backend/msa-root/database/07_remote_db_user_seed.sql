@@ -3,6 +3,7 @@
 DELETE FROM refresh_tokens WHERE user_id IN (
   'admin-main', 'admin-cs', 'admin-finance', 'admin-store-ops', 'admin-audit', 'admin-marketing', 'admin-devops',
   'store-owner-1', 'store-owner-2', 'store-owner-3', 'store-owner-4', 'store-owner-5', 'store-owner-6', 'store-owner-7', 'store-owner-8',
+  'store-owner-9', 'store-owner-10', 'store-owner-11', 'store-owner-12', 'store-owner-13', 'store-owner-14',
   'user-minsu', 'user-seoyeon', 'user-jihoon', 'user-yujin', 'user-haneul', 'user-subin', 'user-dohyun', 'user-sohee',
   'user-taehyun', 'user-jisoo', 'user-minho', 'user-naeun', 'user-junho', 'user-hyerin',
   'user-sangjun', 'user-yoona', 'user-dongwook', 'user-chaeyeon', 'user-hyunwoo', 'user-sojung'
@@ -16,6 +17,7 @@ DELETE FROM addresses WHERE id IN ('addr-001', 'addr-002', 'addr-003', 'addr-004
 DELETE FROM users WHERE id IN (
   'admin-main', 'admin-cs', 'admin-finance', 'admin-store-ops', 'admin-audit', 'admin-marketing', 'admin-devops',
   'store-owner-1', 'store-owner-2', 'store-owner-3', 'store-owner-4', 'store-owner-5', 'store-owner-6', 'store-owner-7', 'store-owner-8',
+  'store-owner-9', 'store-owner-10', 'store-owner-11', 'store-owner-12', 'store-owner-13', 'store-owner-14',
   'user-minsu', 'user-seoyeon', 'user-jihoon', 'user-yujin', 'user-haneul', 'user-subin', 'user-dohyun', 'user-sohee',
   'user-taehyun', 'user-jisoo', 'user-minho', 'user-naeun', 'user-junho', 'user-hyerin',
   'user-sangjun', 'user-yoona', 'user-dongwook', 'user-chaeyeon', 'user-hyunwoo', 'user-sojung'
@@ -50,6 +52,12 @@ INSERT INTO users (
   ('store-owner-6', 'owner6@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '오준혁', '010-2000-0006', 'STORE', 'local', NULL, 'suwon_sushi_owner', 'https://i.pravatar.cc/128?u=fdms-store-6', 'internal', '경기도 수원시', 'member', NOW() - INTERVAL '13 day'),
   ('store-owner-7', 'owner7@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '임소영', '010-2000-0007', 'STORE', 'local', NULL, 'daegu_chinese_owner', 'https://i.pravatar.cc/128?u=fdms-store-7', 'internal', '대구광역시 중구', 'member', NOW() - INTERVAL '12 day'),
   ('store-owner-8', 'owner8@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '정유나', '010-2000-0008', 'STORE', 'local', NULL, 'mapo_dessert_owner', 'https://i.pravatar.cc/128?u=fdms-store-8', 'internal', '서울특별시 마포구', 'member', NOW() - INTERVAL '11 day'),
+  ('store-owner-9', 'owner9@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '한지우', '010-2000-0009', 'STORE', 'local', NULL, 'hongdae_snack_owner', 'https://i.pravatar.cc/128?u=fdms-store-9', 'internal', '서울특별시 마포구', 'member', NOW() - INTERVAL '10 day'),
+  ('store-owner-10', 'owner10@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '문서준', '010-2000-0010', 'STORE', 'local', NULL, 'gangseo_night_owner', 'https://i.pravatar.cc/128?u=fdms-store-10', 'internal', '서울특별시 강서구', 'member', NOW() - INTERVAL '10 day'),
+  ('store-owner-11', 'owner11@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '배하린', '010-2000-0011', 'STORE', 'local', NULL, 'suwon_bossam_owner', 'https://i.pravatar.cc/128?u=fdms-store-11', 'internal', '경기도 수원시', 'member', NOW() - INTERVAL '9 day'),
+  ('store-owner-12', 'owner12@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '서도윤', '010-2000-0012', 'STORE', 'local', NULL, 'seongnam_asian_owner', 'https://i.pravatar.cc/128?u=fdms-store-12', 'internal', '경기도 성남시', 'member', NOW() - INTERVAL '9 day'),
+  ('store-owner-13', 'owner13@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '유가은', '010-2000-0013', 'STORE', 'local', NULL, 'bundang_salad_owner', 'https://i.pravatar.cc/128?u=fdms-store-13', 'internal', '경기도 성남시', 'member', NOW() - INTERVAL '8 day'),
+  ('store-owner-14', 'owner14@foodplatform.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '차민준', '010-2000-0014', 'STORE', 'local', NULL, 'yongsan_lunchbox_owner', 'https://i.pravatar.cc/128?u=fdms-store-14', 'internal', '서울특별시 용산구', 'member', NOW() - INTERVAL '8 day'),
   -- 추가 일반 사용자 계정
   ('user-taehyun', 'taehyun.kim@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '김태현', '010-3000-0009', 'USER', 'local', NULL, 'taehyun_kim', 'https://i.pravatar.cc/128?u=fdms-user-9', 'subscribed', '서울특별시 마포구', NULL, NOW() - INTERVAL '7 day'),
   ('user-jisoo', 'jisoo.park@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '박지수', '010-3000-0010', 'USER', 'local', NULL, 'jisoo_park', 'https://i.pravatar.cc/128?u=fdms-user-10', 'subscribed', '서울특별시 용산구', NULL, NOW() - INTERVAL '7 day'),

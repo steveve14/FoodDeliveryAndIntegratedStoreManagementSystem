@@ -8,7 +8,7 @@ const { $api } = useApi();
 await loadCart();
 
 const customer = reactive({
-  address: '서울시 강남구 역삼동 123-45',
+  address: '',
   request: '문 앞에 두고 벨 눌러주세요.',
   payment: 'card',
 });

@@ -1,4 +1,4 @@
-﻿# 프론트엔드 API 목록
+# 프론트엔드 API 목록
 
 > **기준일**: 2026-03-10
 > **Base URL**: `http://localhost:8000` (Gateway → 각 서비스로 프록시)
@@ -698,7 +698,7 @@ POST /api/v1/users/authenticate
 
 ## 부록 B. 앱별 주요 사용 API
 
-| API | web-customer | web-shop (사장님) | web-admin |
+| API | web-user | web-shop (사장님) | web-admin |
 | --- | :---: | :---: | :---: |
 | 로그인/소셜로그인/토큰갱신 | ✅ | ✅ | ✅ |
 | 회원가입 | ✅ | ✅ | — |

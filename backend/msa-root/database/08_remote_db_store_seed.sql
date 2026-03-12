@@ -2,8 +2,10 @@
 
 DELETE FROM menu WHERE id IN ('menu-001', 'menu-002', 'menu-003', 'menu-004', 'menu-005', 'menu-006', 'menu-007', 'menu-008', 'menu-009',
   'menu-010', 'menu-011', 'menu-012', 'menu-013', 'menu-014', 'menu-015', 'menu-016', 'menu-017', 'menu-018',
-  'menu-019', 'menu-020', 'menu-021', 'menu-022', 'menu-023', 'menu-024', 'menu-025');
-DELETE FROM store WHERE id IN ('store-seoul-1', 'store-seoul-2', 'store-incheon-1', 'store-busan-1', 'store-daejeon-1', 'store-suwon-1', 'store-daegu-1', 'store-seoul-3');
+  'menu-019', 'menu-020', 'menu-021', 'menu-022', 'menu-023', 'menu-024', 'menu-025', 'menu-026', 'menu-027', 'menu-028',
+  'menu-029', 'menu-030', 'menu-031', 'menu-032', 'menu-033', 'menu-034', 'menu-035', 'menu-036', 'menu-037');
+DELETE FROM store WHERE id IN ('store-seoul-1', 'store-seoul-2', 'store-incheon-1', 'store-busan-1', 'store-daejeon-1', 'store-suwon-1', 'store-daegu-1', 'store-seoul-3',
+  'store-seoul-4', 'store-seoul-5', 'store-suwon-2', 'store-seongnam-1', 'store-seongnam-2', 'store-seoul-6');
 
 INSERT INTO store (id, owner_id, name, address, phone, category, status, latitude, longitude, min_order_amount, rating_avg, description, opening_hours, created_at) VALUES
   ('store-seoul-1', 'store-owner-1', '강남 한식당', '서울특별시 강남구 강남대로 100', '02-555-1001', 'KOREAN', 'OPEN', 37.4979, 127.0276, 15000, 4.7, '직장인 점심 수요가 많은 한식 배달 전문점', '10:00-21:00', NOW() - INTERVAL '15 day'),
@@ -13,7 +15,13 @@ INSERT INTO store (id, owner_id, name, address, phone, category, status, latitud
   ('store-daejeon-1', 'store-owner-5', '유성 스매시버거', '대전광역시 유성구 엑스포로 100', '042-555-1005', 'BURGER', 'OPEN', 36.3742, 127.3669, 13000, 4.4, '신선한 마비로 마다 눈암에서 눏는 스매시버거', '10:30-22:00', NOW() - INTERVAL '11 day'),
   ('store-suwon-1', 'store-owner-6', '수원 스시 오마카세', '경기도 수원시 영통구 경수대로 888', '031-555-1006', 'JAPANESE', 'OPEN', 37.2636, 127.0286, 25000, 4.9, '어심 작싼부터 선별한 신선한 재료로 선보이는 스시 오마카세', '11:30-22:00', NOW() - INTERVAL '10 day'),
   ('store-daegu-1', 'store-owner-7', '대구 짬뽕나라', '대구광역시 연케구 동대구로 5', '053-555-1007', 'CHINESE', 'OPEN', 35.8714, 128.6014, 10000, 4.3, '먹켜야 늘 생각나는 주문자 선정 짬뽕 맛집', '10:00-21:30', NOW() - INTERVAL '9 day'),
-  ('store-seoul-3', 'store-owner-8', '마포 디저트카페', '서울특별시 마포구 어쉰새로 47', '02-555-1008', 'DESSERT', 'OPEN', 37.5547, 126.9223, 8000, 4.7, '브런치 디저트와 시즈널 핑케이크를 전문으로 하는 감각적인 카페', '09:00-21:00', NOW() - INTERVAL '8 day');
+  ('store-seoul-3', 'store-owner-8', '마포 디저트카페', '서울특별시 마포구 어쉰새로 47', '02-555-1008', 'DESSERT', 'OPEN', 37.5547, 126.9223, 8000, 4.7, '브런치 디저트와 시즈널 핑케이크를 전문으로 하는 감각적인 카페', '09:00-21:00', NOW() - INTERVAL '8 day'),
+  ('store-seoul-4', 'store-owner-9', '홍대 분식연구소', '서울특별시 마포구 와우산로 29', '02-555-1009', 'SNACK', 'OPEN', 37.5559, 126.9236, 9000, 4.5, '떡볶이와 튀김, 라볶이를 빠르게 배달하는 분식 전문점', '10:30-22:30', NOW() - INTERVAL '7 day'),
+  ('store-seoul-5', 'store-owner-10', '강서 심야포차', '서울특별시 강서구 공항대로 247', '02-555-1010', 'NIGHT', 'OPEN', 37.5586, 126.8351, 18000, 4.4, '곱도리탕과 국물 안주가 강한 야식 전문 포차', '18:00-03:00', NOW() - INTERVAL '7 day'),
+  ('store-suwon-2', 'store-owner-11', '수원 장충보쌈', '경기도 수원시 팔달구 정조로 812', '031-555-1011', 'BOSSAM', 'OPEN', 37.2803, 127.0155, 22000, 4.6, '앞다리 수육과 막국수를 함께 즐기는 족발·보쌈 전문점', '11:00-23:30', NOW() - INTERVAL '6 day'),
+  ('store-seongnam-1', 'store-owner-12', '판교 아시안키친', '경기도 성남시 분당구 판교역로 152', '031-555-1012', 'ASIAN', 'OPEN', 37.3947, 127.1112, 15000, 4.5, '팟타이와 나시고렝을 중심으로 한 아시안 푸드 전문점', '11:00-21:30', NOW() - INTERVAL '6 day'),
+  ('store-seongnam-2', 'store-owner-13', '분당 그린볼', '경기도 성남시 분당구 정자일로 135', '031-555-1013', 'SALAD', 'OPEN', 37.3676, 127.1079, 13000, 4.7, '프로틴 볼과 샐러드를 판매하는 건강식 전문 매장', '09:00-20:30', NOW() - INTERVAL '5 day'),
+  ('store-seoul-6', 'store-owner-14', '용산 한끼도시락', '서울특별시 용산구 한강대로 40', '02-555-1014', 'LUNCHBOX', 'OPEN', 37.5296, 126.9648, 11000, 4.6, '직장인 점심 수요에 맞춘 수제 도시락 전문점', '08:00-19:30', NOW() - INTERVAL '5 day');
 
 INSERT INTO menu (id, store_id, name, description, price, available, created_at) VALUES
   ('menu-001', 'store-seoul-1', '직화 제육덮밥', '매콤한 제육과 반숙 계란이 올라간 덮밥', 9500, TRUE, NOW() - INTERVAL '12 day'),
@@ -45,4 +53,17 @@ INSERT INTO menu (id, store_id, name, description, price, available, created_at)
   ('menu-022', 'store-seoul-3', '크로플', '버터를 저어 구운 바트킵크래커 + 시즈널 크림', 8500, TRUE, NOW() - INTERVAL '6 day'),
   ('menu-023', 'store-seoul-3', '티라미수', '마스카르폰에 식취븀레 치즈를 업은 이탈리아동 디저트', 7500, TRUE, NOW() - INTERVAL '6 day'),
   ('menu-024', 'store-seoul-3', '아이스크림 와플', '편속한 와플 반죽에 바닐라 아이스크림을 없은 홉보 디저트', 9000, TRUE, NOW() - INTERVAL '5 day'),
-  ('menu-025', 'store-seoul-3', '시즈널 단호박 케이크', '국내산 단호박과 문어설탕이 어우러진 뉴알코먼리스트 케이크 1조각', 11000, TRUE, NOW() - INTERVAL '5 day');
+  ('menu-025', 'store-seoul-3', '시즈널 단호박 케이크', '국내산 단호박과 문어설탕이 어우러진 뉴알코먼리스트 케이크 1조각', 11000, TRUE, NOW() - INTERVAL '5 day'),
+  -- 신규 카테고리 샘플 메뉴
+  ('menu-026', 'store-seoul-4', '즉석 떡볶이', '쫄깃한 밀떡과 어묵이 들어간 대표 분식 메뉴', 9500, TRUE, NOW() - INTERVAL '5 day'),
+  ('menu-027', 'store-seoul-4', '모둠 튀김', '김말이, 야채, 새우튀김을 한 번에 즐기는 사이드', 7000, TRUE, NOW() - INTERVAL '5 day'),
+  ('menu-028', 'store-seoul-5', '곱도리탕', '곱창과 닭볶음탕을 매콤하게 끓여낸 심야 인기 메뉴', 28000, TRUE, NOW() - INTERVAL '4 day'),
+  ('menu-029', 'store-seoul-5', '해물짬뽕탕', '칼칼한 국물과 해산물이 푸짐한 야식 안주', 24000, TRUE, NOW() - INTERVAL '4 day'),
+  ('menu-030', 'store-suwon-2', '보쌈 중', '촉촉한 앞다리 수육과 무김치를 곁들인 보쌈', 32000, TRUE, NOW() - INTERVAL '4 day'),
+  ('menu-031', 'store-suwon-2', '족발 소', '쫀득한 식감이 살아 있는 미니 족발', 29000, TRUE, NOW() - INTERVAL '4 day'),
+  ('menu-032', 'store-seongnam-1', '팟타이', '새우와 숙주를 볶아낸 태국식 볶음면', 14500, TRUE, NOW() - INTERVAL '3 day'),
+  ('menu-033', 'store-seongnam-1', '나시고렝', '인도네시아식 볶음밥에 계란프라이를 곁들인 메뉴', 15000, TRUE, NOW() - INTERVAL '3 day'),
+  ('menu-034', 'store-seongnam-2', '치킨 시저 샐러드', '닭가슴살과 로메인, 파르메산 치즈가 들어간 샐러드', 12900, TRUE, NOW() - INTERVAL '3 day'),
+  ('menu-035', 'store-seongnam-2', '연어 포케볼', '훈제 연어와 현미밥, 채소를 담은 포케볼', 14900, TRUE, NOW() - INTERVAL '3 day'),
+  ('menu-036', 'store-seoul-6', '직화 제육 도시락', '직화 제육과 계란말이, 밑반찬이 포함된 도시락', 11000, TRUE, NOW() - INTERVAL '2 day'),
+  ('menu-037', 'store-seoul-6', '소불고기 도시락', '소불고기와 계절 반찬을 담은 프리미엄 도시락', 12500, TRUE, NOW() - INTERVAL '2 day');

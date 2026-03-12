@@ -1,4 +1,4 @@
-﻿# 07. 로컬 개발 환경 설정 (Development Setup)
+# 07. 로컬 개발 환경 설정 (Development Setup)
 
 > **최종 수정**: 2026-03-04
 
@@ -47,8 +47,8 @@ cd frontend/web-shop
 pnpm install
 pnpm dev
 
-# web-customer
-cd frontend/web-customer
+# web-user
+cd frontend/web-user
 pnpm install
 pnpm dev
 ```

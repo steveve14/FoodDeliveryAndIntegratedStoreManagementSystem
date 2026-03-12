@@ -26,7 +26,7 @@ ProjectRoot/
 ## 3. Frontend 구조 (`/frontend`)
 Nuxt.js 기반의 웹 애플리케이션들입니다.
 
-*   `web-customer/`: 일반 고객이 웹 브라우저로 접속하는 배달 사이트
+*   `web-user/`: 일반 고객이 웹 브라우저로 접속하는 배달 사이트
 *   `web-shop/`: 사장님/매장 운영용 웹 앱
 *   `web-admin/`: 관리자 운영 웹 앱
 

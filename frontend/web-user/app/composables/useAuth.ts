@@ -32,8 +32,8 @@ export const useAuth = () => {
       await $api('/api/v1/auth/logout', { method: 'POST' });
     } finally {
       user.value = null;
-      return navigateTo('/login');
     }
+    return navigateTo('/login');
   };
 
   /** 토큰 갱신 — refresh-token 쿠키가 자동 전송됨 */

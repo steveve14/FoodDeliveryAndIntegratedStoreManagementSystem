@@ -1,5 +1,5 @@
 -- 2026-03-10 프론트 더미 화면 연동용 시드 데이터
--- 목적: web-admin, web-shop, web-customer에서 사용하던 더미 데이터를
+-- 목적: web-admin, web-shop, web-user에서 사용하던 더미 데이터를
 --       현재 MSA 스키마 + 확장 사용자 프로필/메일/알림 테이블에 적재한다.
 
 \c db_user

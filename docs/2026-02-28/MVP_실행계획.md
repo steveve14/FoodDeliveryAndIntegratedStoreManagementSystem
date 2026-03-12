@@ -77,7 +77,7 @@
 
 ## Phase 3 — 프론트엔드 API 연동: ~5% ← **최대 잔여 작업 영역**
 
-### web-customer: ❌ 미구현 (페이지 1개, API 0건)
+### web-user: ❌ 미구현 (페이지 1개, API 0건)
 - [ ] 로그인/회원가입 페이지 미존재 + `useAuth` composable 없음
 - [ ] 매장 목록 — 하드코딩 4개 식당, `useFetch`/`$fetch` 호출 0건
 - [ ] 매장 상세 + 메뉴 목록 페이지 미존재
@@ -116,7 +116,7 @@
 2. **service-order 주문 목록 API** — `GET /api/v1/orders?userId=xxx` + `OrderRepository.findByUserId()`
 
 ### 이후 — 프론트엔드 연동 (MVP 핵심 경로)
-3. **web-customer** 로그인 → 매장 목록 → 매장 상세/메뉴 → 장바구니 → 주문
+3. **web-user** 로그인 → 매장 목록 → 매장 상세/메뉴 → 장바구니 → 주문
 4. **web-shop** 주문 접수 화면 → 상태 업데이트
 5. **web-admin** 매장·주문 실데이터 연동
 
@@ -127,7 +127,7 @@
 - [ ] `POST /api/v1/orders` → `order_items` 포함 DB 저장 확인
 - [ ] `PATCH /api/v1/orders/{id}/status` 체인 정상 동작 확인
 - [ ] `GET /api/v1/deliveries/{id}` 배달 상태 확인
-- [ ] web-customer 주문 생성 화면이 실제 백엔드와 통신 확인
+- [ ] web-user 주문 생성 화면이 실제 백엔드와 통신 확인
 - [ ] Gateway 통과 후 `X-User-Id` 헤더가 각 서비스에 정상 전달 확인
 
 ---

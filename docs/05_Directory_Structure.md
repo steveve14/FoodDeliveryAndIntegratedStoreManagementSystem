@@ -1,4 +1,4 @@
-﻿# 05. 프로젝트 폴더 구조 (Directory Structure)
+# 05. 프로젝트 폴더 구조 (Directory Structure)
 
 > **최종 수정**: 2026-03-04
 
@@ -53,7 +53,7 @@ service-auth/src/main/java/com/example/auth/
 ## 3. Frontend 구조 (`/frontend`)
 Nuxt.js 4.x 기반의 웹 애플리케이션들입니다. 패키지 관리자는 **pnpm**을 사용합니다.
 
-*   `web-customer/`: 일반 고객이 웹 브라우저로 접속하는 배달 사이트
+*   `web-user/`: 일반 고객이 웹 브라우저로 접속하는 배달 사이트
 *   `web-shop/`: 사장님/매장 운영용 웹 앱 (POS 겸용)
 *   `web-admin/`: 시스템 관리자 운영 웹 앱
 
@@ -69,7 +69,7 @@ frontend/
 │   └── package.json
 ├── web-shop/
 │   └── (web-admin과 유사 구조)
-└── web-customer/
+└── web-user/
     └── (Pinia 상태 관리 포함)
 ```
 

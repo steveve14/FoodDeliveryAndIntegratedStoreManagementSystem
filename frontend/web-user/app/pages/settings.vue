@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const toast = useToast();
+const { user: sessionUser } = useAuth();
 
 const profile = ref({
-  name: '김회원',
-  email: 'kim@example.com',
-  phone: '010-1234-5678',
-  address: '서울시 강남구 역삼동 123-45',
+  name: sessionUser.value?.name || '',
+  email: sessionUser.value?.email || '',
+  phone: '',
+  address: '',
 });
 
 const notifications = ref({

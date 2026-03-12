@@ -53,6 +53,7 @@ watch(
       }));
     } catch (e) {
       data.value = []; // 날짜 범위 오류 방지
+      console.error('기간 범위가 유효하지 않습니다:', e);
     }
   },
   { immediate: true },

@@ -68,7 +68,7 @@ const { data } = await useAsyncData(
   },
 );
 
-const columns: TableColumn<any>[] = [
+const columns: TableColumn<Order>[] = [
   {
     accessorKey: 'id',
     header: '주문번호',
@@ -105,7 +105,7 @@ const columns: TableColumn<any>[] = [
         배달중: 'primary',
         완료: 'success',
         취소: 'neutral',
-      }[status] as any;
+      }[status] as string;
 
       return h(
         UBadge,

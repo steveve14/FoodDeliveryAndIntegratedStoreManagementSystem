@@ -13,6 +13,7 @@ const days = computed(() => {
   try {
     return eachDayOfInterval(props.range);
   } catch (e) {
+    console.error('기간 범위가 유효하지 않습니다:', e);
     return []; // 날짜 계산 실패 시 빈 배열 반환
   }
 });
@@ -21,7 +22,9 @@ const days = computed(() => {
 const periods = computed(() => {
   const options = [];
 
-  if (days.value.length === 0) { return []; } // 날짜가 없으면 빈 옵션 반환
+  if (days.value.length === 0) {
+    return [];
+  } // 날짜가 없으면 빈 옵션 반환
 
   if (days.value.length <= 8) {
     options.push({ label: '일간', value: 'daily' });

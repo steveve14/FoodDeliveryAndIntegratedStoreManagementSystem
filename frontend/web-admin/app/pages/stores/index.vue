@@ -4,6 +4,10 @@ import { upperFirst } from "scule";
 import { getPaginationRowModel } from "@tanstack/table-core";
 import type { Row } from "@tanstack/table-core";
 import { format } from "date-fns";
+import {
+  STORE_CATEGORY_FILTER_OPTIONS,
+  getStoreCategoryLabel,
+} from "~/utils/storeCategories";
 
 // 1. 데이터 타입 정의 — Backend StoreDto 기반
 type Store = {
@@ -34,6 +38,7 @@ const table = useTemplateRef<any>("table"); // 순환 참조 방지용 any 타�
 const searchFilter = ref("");
 const statusFilter = ref("all");
 const locationFilter = ref("all");
+const categoryFilter = ref("all");
 
 const columnFilters = ref([{ id: "name", value: "" }]);
 const columnVisibility = ref();
@@ -153,7 +158,11 @@ const columns: TableColumn<Store>[] = [
             { class: "font-medium text-highlighted" },
             row.original.name,
           ),
-          h("span", { class: "text-xs text-muted" }, row.original.category),
+          h(
+            "span",
+            { class: "text-xs text-muted" },
+            getStoreCategoryLabel(row.original.category),
+          ),
         ]),
       ]),
   },
@@ -161,6 +170,17 @@ const columns: TableColumn<Store>[] = [
     accessorKey: "ownerId",
     header: "점주",
     cell: ({ row }) => row.original.ownerId || "-",
+  },
+  {
+    accessorKey: "category",
+    header: "업종",
+    filterFn: "equals",
+    cell: ({ row }) =>
+      h(
+        CompBadge,
+        { variant: "subtle", color: "neutral" },
+        () => getStoreCategoryLabel(row.original.category),
+      ),
   },
   {
     accessorKey: "address",
@@ -265,6 +285,12 @@ watch(locationFilter, (val) => {
     ?.getColumn("address")
     ?.setFilterValue(val === "all" ? undefined : val);
 });
+
+watch(categoryFilter, (val) => {
+  table.value?.tableApi
+    ?.getColumn("category")
+    ?.setFilterValue(val === "all" ? undefined : val);
+});
 </script>
 
 <template>
@@ -290,6 +316,12 @@ watch(locationFilter, (val) => {
         />
 
         <div class="flex flex-wrap items-center gap-1.5">
+          <USelect
+            v-model="categoryFilter"
+            :items="STORE_CATEGORY_FILTER_OPTIONS"
+            class="min-w-36"
+          />
+
           <USelect
             v-model="locationFilter"
             :items="[

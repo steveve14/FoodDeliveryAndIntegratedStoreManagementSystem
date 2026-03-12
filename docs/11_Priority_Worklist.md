@@ -1,4 +1,4 @@
-﻿# 11. 우선순위 작업 목록 (실행 백로그)
+# 11. 우선순위 작업 목록 (실행 백로그)
 
 기준일: 2026-03-04
 
@@ -12,7 +12,7 @@
 ## P0 (완료 및 진행 중)
 
 ### ⬜ P0-0. 프론트 실연동 차단요소 해소 (신규)
-- 현상: `web-customer`에서 `/api/v1/stores` 호출 시 401 (백엔드/프론트 경유 동일)
+- 현상: `web-user`에서 `/api/v1/stores` 호출 시 401 (백엔드/프론트 경유 동일)
 - 작업:
   - 공개 조회 API와 보호 API 경계 재정의 (`stores list/detail` 공개 여부 확정)
   - 공개 정책 유지 시 gateway 필터 예외 경로 명시
@@ -21,7 +21,7 @@
 
 ### ✅ P0-1. 기준선 확정: 문서↔코드 정렬 정책 (완료 — 2026-03-04)
 - 결정: **코드 기준으로 문서를 정렬** (현실을 반영한 문서 최신화)
-- 기준 디렉토리: `web-admin`, `web-shop`, `web-customer` / `service-*`
+- 기준 디렉토리: `web-admin`, `web-shop`, `web-user` / `service-*`
 - 기술스택 확정: Spring Boot 4.0.2 / Gradle Groovy DSL / H2+PostgreSQL / Spring Data JDBC / Spring gRPC 1.0.0-RC1 / pnpm
 
 ### ⬜ P0-2. API 표준 통일 (진행 필요)

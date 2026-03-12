@@ -14,7 +14,7 @@
 - [x] 프로젝트 기획/문서화 (`docs/01~11`)
 - [x] 백엔드 인프라 골격 (`service-discovery`, `service-gateway`, `service-*` 모듈)
 - [~] 인증/회원 기능 일부 구현 (`service-auth`, `service-user`)
-- [~] 프론트 초기 화면 구성 (`web-admin`, `web-shop`, `web-customer`)
+- [~] 프론트 초기 화면 구성 (`web-admin`, `web-shop`, `web-user`)
 - [ ] 핵심 도메인 E2E 플로우(주문 생성→상태전이→조회) 완성
 - [ ] 모바일 앱 디렉토리/구현
 
@@ -36,7 +36,7 @@ FoodDeliveryAndIntegratedStoreManagementSystem/
 │       └── service-user/
 ├── frontend/
 │   ├── web-admin/
-│   ├── web-customer/
+│   ├── web-user/
 │   └── web-shop/
 ├── docs/
 └── README.md
@@ -57,7 +57,7 @@ FoodDeliveryAndIntegratedStoreManagementSystem/
 ### Frontend
 - Framework: Nuxt 3
 - UI: Nuxt UI / Tailwind 기반 스타일
-- Apps: `web-admin`, `web-shop`, `web-customer`
+- Apps: `web-admin`, `web-shop`, `web-user`
 
 ### 추후 추가 예정 (Planned)
 - Backend

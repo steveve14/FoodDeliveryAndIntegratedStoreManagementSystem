@@ -1,7 +1,7 @@
 # 2026-03-10 customer 주문 E2E / 매장 DTO 보강
 
 > 작성일: 2026-03-10
-> 목적: web-customer의 실제 주문 흐름 연결 상태와 고객용 매장 응답 보강 내용을 기록한다.
+> 목적: web-user의 실제 주문 흐름 연결 상태와 고객용 매장 응답 보강 내용을 기록한다.
 
 ## 1. 이번 작업 요약
 
@@ -14,20 +14,20 @@
   - bestseller
   - promo
 - service-store가 메뉴/카테고리 기반으로 위 표시 필드를 계산해 반환하도록 수정
-- web-customer의 useOrdering가 프론트 내부 임시 map 대신 백엔드 StoreDto 확장 필드를 우선 사용하도록 변경
+- web-user의 useOrdering가 프론트 내부 임시 map 대신 백엔드 StoreDto 확장 필드를 우선 사용하도록 변경
 - customer checkout, orders, stores 상세 흐름은 기존 실제 API 연동 상태 유지
 
 ## 2. 반영 파일
 
 - backend/msa-root/service-store/src/main/java/com/example/store/dto/StoreDto.java
 - backend/msa-root/service-store/src/main/java/com/example/store/service/StoreService.java
-- frontend/web-customer/app/composables/useOrdering.ts
+- frontend/web-user/app/composables/useOrdering.ts
 - docs/FRONTEND_API_LIST.md
 
 ## 3. 검증 결과
 
 - service-store compileJava: 성공
-- web-customer nuxi typecheck: 성공
+- web-user nuxi typecheck: 성공
 
 ## 4. 브라우저 E2E 확인 상태
 
@@ -37,7 +37,7 @@
 ## 5. 서버 기동 후 확인 절차
 
 1. Gateway와 auth, user, store, order 서비스를 기동한다.
-2. web-customer를 실행한다.
+2. web-user를 실행한다.
 3. 고객 계정으로 로그인한다.
 4. 홈에서 매장 진입 후 메뉴를 장바구니에 담는다.
 5. checkout에서 주문 확정을 수행한다.
