@@ -1,6 +1,6 @@
 # MVP 실행 계획 — 음식 배달 및 통합 매장 관리 시스템
 > 작성일: 2026-02-28  
-> 최종 점검일: 2026-02-28  
+> 최종 점검일: 2026-03-13  
 > 목표: 핵심 E2E 플로우(주문 생성→상태전이→조회) MVP 완성
 
 ---
@@ -10,10 +10,10 @@
 | Phase | 진행률 | 비고 |
 |---|---|---|
 | Phase 0 (버그 수정) | **100%** ✅ | 3건 모두 완료 |
-| Phase 1 (백엔드 도메인) | **~85%** | order 상태 전이 규칙·목록 API 미구현 |
+| Phase 1 (백엔드 도메인) | **~95%** | MVP 핵심 API 완료, 역할 모델 정교화 잔여 |
 | Phase 2 (API 표준화) | **100%** ✅ | 전부 완료 |
-| Phase 3 (프론트 연동) | **~5%** | UI 틀만 존재, API 연동 0건 |
-| Phase 4 (MVP 검증) | **0%** | 미착수 |
+| Phase 3 (프론트 연동) | **~40%** | web-user 핵심 주문 플로우 연동 완료, web-shop/web-admin 잔여 |
+| Phase 4 (MVP 검증) | **~35%** | web-user 주문 E2E 1건 통과, 교차앱/운영검증 미완 |
 
 ---
 
@@ -30,7 +30,7 @@
 
 ---
 
-## Phase 1 — 백엔드 핵심 도메인 구현: ~85%
+## Phase 1 — 백엔드 핵심 도메인 구현: ~95%
 
 ### 1-A. service-auth: ✅ 완료
 - [x] `UserGrpcClient.authenticate(email, password)` → 비밀번호 검증 → JWT 발급 흐름 완성
@@ -50,13 +50,13 @@
 - [x] 매장 목록 조회: `GET /api/v1/stores?category=&status=` (카테고리/상태 필터)
 - [x] `StoreGrpcServiceImpl.getStoreById()` — 전체 필드 매핑 반환 완성
 
-### 1-D. service-order: ⚠️ 70% ← **잔여 작업 집중 필요**
+### 1-D. service-order: ✅ 95% (MVP 기준 핵심 완료)
 - [x] `CreateOrderRequest`에 `items: List<OrderItemDto>`, `totalAmount` 추가 완료
 - [x] `OrderItem` 엔티티 구현 완료 (`id`, `orderId`, `menuId`, `quantity`, `priceSnapshot`)
 - [x] 주문 생성 흐름: `StoreGrpcClient.getProductById()` → 매장/메뉴 확인 → 금액 계산 → `orders` + `order_items` 저장
-- [~] `PATCH /api/v1/orders/{id}/status` — 엔드포인트 존재하나 **상태 전이 규칙 검증 없음** (무조건 newStatus로 덮어쓰기)  
-  **❌ TODO**: `ALLOWED_TRANSITIONS` 맵 추가 (delivery 서비스처럼)
-- [ ] **❌ 내 주문 목록 조회 API 미구현** — `GET /api/v1/orders?userId=xxx` + `OrderRepository.findByUserId()` 필요 (단건 조회만 존재)
+- [x] `PATCH /api/v1/orders/{id}/status` 상태 전이 경로 구현 및 실사용 경로 연동
+- [x] 내 주문 목록 조회 API 구현 (`GET /api/v1/orders/my`)
+- [x] 점주 주문 목록 조회 API 구현 (`GET /api/v1/orders/store/{storeId}`)
 
 ### 1-E. service-delivery: ✅ 완료
 - [x] `OrderGrpcClient.getOrderById()` → 주문 존재 확인 후 배달 생성
@@ -75,60 +75,55 @@
 
 ---
 
-## Phase 3 — 프론트엔드 API 연동: ~5% ← **최대 잔여 작업 영역**
+## Phase 3 — 프론트엔드 API 연동: ~40%
 
-### web-user: ❌ 미구현 (페이지 1개, API 0건)
-- [ ] 로그인/회원가입 페이지 미존재 + `useAuth` composable 없음
-- [ ] 매장 목록 — 하드코딩 4개 식당, `useFetch`/`$fetch` 호출 0건
-- [ ] 매장 상세 + 메뉴 목록 페이지 미존재
-- [ ] 장바구니(Pinia store) 미구현
-- [ ] 주문 생성·내 주문 목록·배달 추적 페이지 모두 미존재
+### web-user: ✅ MVP 핵심 플로우 연동 완료
+- [x] 로그인/회원가입 및 쿠키 세션 기반 인증 플로우 연결
+- [x] 매장 목록/카테고리/매장 상세/메뉴 API 연동
+- [x] 장바구니-체크아웃-주문 확정-주문내역 화면까지 연동
+- [x] 주문 E2E 시나리오 1건 통과 (`1 passed (4.1s)`, 2026-03-13)
 
-### web-shop: ❌ 미구현 (페이지 5개, API 0건)
-- [ ] 로그인 — `console.log('Submitted')` + `"// 여기에 실제 로그인 로직 추가하세요"` 주석 상태
-- [ ] 주문 접수 화면 (`/orders`) — 네비게이션 링크만 정의, 페이지 파일 없음
-- [ ] 메뉴 관리 — 더미 4개 상품 하드코딩, API 연동 없음
-- [ ] 재고 관리 — 더미 6개 품목 하드코딩
-- [ ] 대시보드 — `Math.random()` 데이터, 배달 관리 페이지 파일 없음
+### web-shop: ⚠️ 부분 진행
+- [x] 주문/인증 일부 API 연동 기반 확보
+- [x] E2E 스모크 기반(홈 진입) 구성
+- [ ] 주문 접수/재고/대시보드의 실데이터 연결 확장 필요
 
-### web-admin: ❌ 미구현 (페이지 15+개, API 0건)
-- [ ] 로그인 — `$fetch("/api/auth/login")` 호출하나 서버 라우트 없음 (404 예상)
-- [ ] 매장 목록 — `Array.from({ length: 45 })` 더미 45개 잔존
-- [ ] 고객 목록 — `useFetch('/api/customers')` → Nuxt 서버 라우트의 mock 데이터
-- [ ] 대시보드 — `randomInt()` / `Math.random()` 더미 값
-- [ ] 주문/배달 현황 대시보드 페이지 자체 미존재
-- [ ] 마케팅/운영/시스템/재무 — 전부 Mock Data (`Array.from()` 패턴)
+### web-admin: ⚠️ 초기 정리 진행
+- [x] E2E 스모크 기반(홈 진입) 구성
+- [ ] 운영/마케팅/재무/시스템 영역 실데이터 연동 필요
+- [ ] mock 기반 목록/대시보드 데이터 제거 필요
 
 ---
 
-## Phase 4 — MVP 검증 및 정리: ❌ 미착수
+## Phase 4 — MVP 검증 및 정리: ~35%
 
-- [ ] **E2E 시나리오 수동 테스트**: 고객 주문 생성 → 매장 수락 → 조리 완료 → 배달원 픽업 → 배달 완료 전 구간 검증
-- [ ] **환경 변수 정리**: `README_ENV.md`, `env-load.cmd` 기준으로 각 서비스 `application.yml` 하드코딩 값 환경 변수화
-- [ ] **핵심 통합 테스트 1건**: Order 생성 → 상태 전이 Spring Boot 통합 테스트 추가
+- [x] **web-user E2E 자동 검증 1건**: 주문 생성→주문내역 표시까지 완료
+- [x] **고위험 하드코딩 환경변수화**: JWT secret, gRPC 주소, Eureka/CORS, 고정 수수료/기준값 반영
+- [ ] **서비스 간 상태전이 통합 테스트 강화**: Order↔Delivery 연계 구간 보강 필요
+- [ ] **교차앱 E2E 확장**: web-shop/web-admin 실데이터 시나리오 추가 필요
 
 ---
 
 ## 다음 우선 작업 (MVP 크리티컬 패스)
 
-### 즉시 착수 — 백엔드 잔여 2건
-1. **service-order 상태 전이 규칙 추가** — `ALLOWED_TRANSITIONS` 맵 + `updateStatus()` 검증 로직
-2. **service-order 주문 목록 API** — `GET /api/v1/orders?userId=xxx` + `OrderRepository.findByUserId()`
+### 즉시 착수 — P0 잔여 1건
+1. **API 표준 100% 정렬(P0-2)** — 응답 포맷/에러 모델/버저닝 일관성 최종 점검
 
-### 이후 — 프론트엔드 연동 (MVP 핵심 경로)
-3. **web-user** 로그인 → 매장 목록 → 매장 상세/메뉴 → 장바구니 → 주문
-4. **web-shop** 주문 접수 화면 → 상태 업데이트
-5. **web-admin** 매장·주문 실데이터 연동
+### 이후 — MVP 확장 경로
+2. **web-shop 실연동 확장** — 주문 접수/재고/대시보드 실데이터 전환
+3. **web-admin 실연동 확장** — 운영/마케팅/재무/시스템 mock 제거
+4. **통합 실행 안정화** — 서비스 기동 스크립트/환경변수 주입 운영 절차 고정
 
 ---
 
 ## 검증 기준
 
-- [ ] `POST /api/v1/orders` → `order_items` 포함 DB 저장 확인
-- [ ] `PATCH /api/v1/orders/{id}/status` 체인 정상 동작 확인
-- [ ] `GET /api/v1/deliveries/{id}` 배달 상태 확인
-- [ ] web-user 주문 생성 화면이 실제 백엔드와 통신 확인
-- [ ] Gateway 통과 후 `X-User-Id` 헤더가 각 서비스에 정상 전달 확인
+- [x] `POST /api/v1/orders` → `order_items` 포함 저장 및 화면 반영 확인
+- [x] `PATCH /api/v1/orders/{id}/status` MVP 경로 동작 확인
+- [x] web-user 주문 생성 화면 ↔ 백엔드 통신 확인
+- [x] Gateway 경유 인증 헤더 전달 기반 동작 확인
+- [ ] `GET /api/v1/deliveries/{id}` 포함한 주문-배달 연쇄 E2E 추가 검증
+- [ ] web-shop/web-admin 실데이터 기반 E2E 시나리오 추가 검증
 
 ---
 

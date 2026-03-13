@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { sub } from 'date-fns'
-import type { DropdownMenuItem } from '@nuxt/ui'
-import type { Period, Range } from '~/types'
+import { sub } from 'date-fns';
+import type { DropdownMenuItem } from '@nuxt/ui';
+import type { Period, Range } from '~/types';
 
-const { isNotificationsSlideoverOpen } = useDashboard()
+const { isNotificationsSlideoverOpen } = useDashboard();
 
 const items = [[{
   label: '메시지 전송',
   icon: 'i-lucide-send',
-  to: '/inbox'
+  to: '/inbox',
 }, {
   label: '고객 추가',
   icon: 'i-lucide-user-plus',
-  to: '/users'
-}]] satisfies DropdownMenuItem[][]
+  to: '/users',
+}]] satisfies DropdownMenuItem[][];
 
 const range = shallowRef<Range>({
   start: sub(new Date(), { days: 14 }),
-  end: new Date()
-})
-const period = ref<Period>('daily')
+  end: new Date(),
+});
+const period = ref<Period>('daily');
 </script>
 
 <template>

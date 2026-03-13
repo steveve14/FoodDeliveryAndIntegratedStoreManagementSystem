@@ -48,6 +48,14 @@
 }
 ```
 
+### 예외 정책 (Binary/File Response)
+
+파일/바이너리 전송 엔드포인트는 `ApiResponse<T>` 래퍼를 사용하지 않습니다.
+
+* 적용 대상: `GET /api/v1/users/avatars/{filename}`
+* 응답 방식: `ResponseEntity<Resource>` (콘텐츠 타입 + 캐시 헤더 포함)
+* 에러 방식: 파일 미존재 등 오류는 공통 예외 핸들러 정책에 따라 HTTP 상태코드로 반환
+
 ## 4. 내부 통신 (Spring gRPC)
 서비스 간 동기 통신(예: 주문 서비스 → 가게 서비스)은 **Spring gRPC (Protobuf 스키마 기반)**을 사용합니다.
 

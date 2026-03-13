@@ -8,48 +8,50 @@
  * - 갱신 실패 시 로그인 페이지로 리다이렉트
  */
 
-import type { ApiResponse } from '~/types/api'
+import type { ApiResponse } from '~/types/api';
 
 interface AuthSession {
-  id: string
-  email: string
-  name: string
-  role: 'USER' | 'STORE' | 'ADMIN'
+  id: string;
+  email: string;
+  name: string;
+  role: 'USER' | 'STORE' | 'ADMIN';
 }
 
 /** 토큰 갱신 중복 방지를 위한 싱글턴 프로미스 */
-let refreshPromise: Promise<boolean> | null = null
+let refreshPromise: Promise<boolean> | null = null;
 
 export const useApi = () => {
   const userSession = useCookie<AuthSession | null>('user-session', {
-    maxAge: 60 * 60 * 24 * 7
-  })
+    maxAge: 60 * 60 * 24 * 7,
+  });
 
   /**
    * refreshToken으로 accessToken 갱신 (중복 방지)
    */
-  async function tryRefreshToken(): Promise<boolean> {
-    if (refreshPromise) return refreshPromise
+  async function tryRefreshToken (): Promise<boolean> {
+    if (refreshPromise) {
+      return refreshPromise;
+    }
 
     refreshPromise = (async () => {
       try {
         const res = await $fetch<ApiResponse<AuthSession>>('/api/v1/auth/refresh', {
           method: 'POST',
-          credentials: 'include'
-        })
+          credentials: 'include',
+        });
         if (res.success && res.data) {
-          userSession.value = res.data
-          return true
+          userSession.value = res.data;
+          return true;
         }
-        return false
+        return false;
       } catch {
-        return false
+        return false;
       } finally {
-        refreshPromise = null
+        refreshPromise = null;
       }
-    })()
+    })();
 
-    return refreshPromise
+    return refreshPromise;
   }
 
   /**
@@ -58,7 +60,7 @@ export const useApi = () => {
    * @param options - $fetch 옵션
    * @returns ApiResponse<T> 형태의 응답
    */
-  async function $api<T>(url: string, options?: Parameters<typeof $fetch>[1]): Promise<ApiResponse<T>> {
+  async function $api<T> (url: string, options?: Parameters<typeof $fetch>[1]): Promise<ApiResponse<T>> {
     const doFetch = () => {
       return $fetch<ApiResponse<T>>(url, {
         ...options,
@@ -66,26 +68,32 @@ export const useApi = () => {
         headers: {
           ...(userSession.value?.id ? { 'X-User-Id': userSession.value.id } : {}),
           ...(userSession.value?.role ? { 'X-User-Role': userSession.value.role } : {}),
-          ...(options?.headers as Record<string, string> | undefined)
-        }
-      })
-    }
+          ...(options?.headers as Record<string, string> | undefined),
+        },
+      });
+    };
 
     try {
-      return await doFetch()
-    } catch (err: any) {
-      if (err?.response?.status === 401) {
-        const refreshed = await tryRefreshToken()
+      return await doFetch();
+    } catch (err: unknown) {
+      if (
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err &&
+        typeof (err as { response?: { status?: number } }).response?.status === 'number' &&
+        (err as { response?: { status?: number } }).response?.status === 401
+      ) {
+        const refreshed = await tryRefreshToken();
         if (refreshed) {
-          return await doFetch()
+          return await doFetch();
         }
 
-        userSession.value = null
-        navigateTo('/login')
+        userSession.value = null;
+        navigateTo('/login');
       }
-      throw err
+      throw err;
     }
   }
 
-  return { $api }
-}
+  return { $api };
+};

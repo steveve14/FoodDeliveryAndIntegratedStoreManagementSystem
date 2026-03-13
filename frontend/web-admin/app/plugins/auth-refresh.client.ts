@@ -1,21 +1,21 @@
 export default defineNuxtPlugin(() => {
-  const auth = useAuth()
-  const userSession = useCookie('user-session')
+  const auth = useAuth();
+  const userSession = useCookie('user-session');
 
   if (!userSession.value) {
-    return
+    return;
   }
 
   auth
     .refresh()
     .then((ok) => {
       if (!ok) {
-        userSession.value = null
-        navigateTo('/login')
+        userSession.value = null;
+        navigateTo('/login');
       }
     })
     .catch(() => {
-      userSession.value = null
-      navigateTo('/login')
-    })
-})
+      userSession.value = null;
+      navigateTo('/login');
+    });
+});

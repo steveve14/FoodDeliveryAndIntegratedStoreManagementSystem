@@ -1,0 +1,27 @@
+= Event Service API Docs
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== Event API
+
+=== POST `/api/v1/events`
+
+==== 성공 응답
+include::{snippets}/events-create-success/http-request.adoc[]
+include::{snippets}/events-create-success/request-fields.adoc[]
+include::{snippets}/events-create-success/http-response.adoc[]
+include::{snippets}/events-create-success/response-fields.adoc[]
+
+==== 요청 검증 실패
+include::{snippets}/events-create-validation-error/http-request.adoc[]
+include::{snippets}/events-create-validation-error/http-response.adoc[]
+include::{snippets}/events-create-validation-error/response-fields.adoc[]
+
+=== GET `/api/v1/events/{id}`
+
+==== 조회 실패
+include::{snippets}/events-get-not-found/http-request.adoc[]
+include::{snippets}/events-get-not-found/path-parameters.adoc[]
+include::{snippets}/events-get-not-found/http-response.adoc[]
+include::{snippets}/events-get-not-found/response-fields.adoc[]

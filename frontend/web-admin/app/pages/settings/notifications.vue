@@ -4,8 +4,8 @@ const state = reactive<{ [key: string]: boolean }>({
   desktop: false,
   product_updates: true,
   weekly_digest: false,
-  important_updates: true
-})
+  important_updates: true,
+});
 
 // UI 텍스트 한글화
 const sections = [{
@@ -14,17 +14,17 @@ const sections = [{
   fields: [{
     name: 'email',
     label: '이메일',
-    description: '일일 요약 리포트를 이메일로 수신합니다.'
+    description: '일일 요약 리포트를 이메일로 수신합니다.',
   }, {
     name: 'desktop',
     label: '데스크톱 알림',
-    description: '브라우저 데스크톱 푸시 알림을 수신합니다.'
-  }]
-}]
+    description: '브라우저 데스크톱 푸시 알림을 수신합니다.',
+  }],
+}];
 
-async function onChange() {
+async function onChange () {
   // 변경 사항 처리 로직 (API 호출 등)
-  console.log(state)
+  console.log(state);
 }
 </script>
 

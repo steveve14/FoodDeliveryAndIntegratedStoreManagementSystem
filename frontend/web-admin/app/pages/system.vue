@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from "@nuxt/ui";
+import type { NavigationMenuItem } from '@nuxt/ui';
 
 const links = [
   [
     {
-      label: "에러 로그 관리",
-      to: "/system/logs",
-      icon: "i-lucide-alert-triangle",
+      label: '에러 로그 관리',
+      to: '/system/logs',
+      icon: 'i-lucide-alert-triangle',
     },
     {
-      label: "관리자 활동",
-      to: "/system/audit",
-      icon: "i-lucide-file-clock",
+      label: '관리자 활동',
+      to: '/system/audit',
+      icon: 'i-lucide-file-clock',
     },
     {
-      label: "앱 버전 관리",
-      to: "/system/versions",
-      icon: "i-lucide-smartphone",
+      label: '앱 버전 관리',
+      to: '/system/versions',
+      icon: 'i-lucide-smartphone',
     },
     {
-      label: "이벤트 관리",
-      to: "/system/events",
-      icon: "i-lucide-activity",
+      label: '이벤트 관리',
+      to: '/system/events',
+      icon: 'i-lucide-activity',
     },
   ],
 ] satisfies NavigationMenuItem[][];

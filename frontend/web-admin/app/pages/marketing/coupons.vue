@@ -1,94 +1,95 @@
 <script setup lang="ts">
 /**
- * [마케팅 > 쿠폰 관리]
- * Base Code 아키텍처 기반 리팩토링
+ * [마�???> 쿠폰 관�?
+ * Base Code ?�키?�처 기반 리팩?�링
  */
-import { h, ref, reactive, resolveComponent, watch, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import * as z from "zod";
-import { format, addDays } from "date-fns";
-import { getPaginationRowModel, getSortedRowModel } from "@tanstack/table-core";
+import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
+import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
+
+import * as z from 'zod';
+import { format, addDays } from 'date-fns';
+import { getPaginationRowModel } from '@tanstack/table-core';
+import type { Row, Table } from '@tanstack/table-core';
 
 // ==========================================
-// 1. 컴포넌트 리졸브
+// 1. 컴포?�트 리졸�?
 // ==========================================
-const UButton = resolveComponent("UButton");
-const UBadge = resolveComponent("UBadge");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
-const UCheckbox = resolveComponent("UCheckbox");
-const UIcon = resolveComponent("UIcon");
-const UInput = resolveComponent("UInput");
+const UButton = resolveComponent('UButton');
+const UBadge = resolveComponent('UBadge');
+const UDropdownMenu = resolveComponent('UDropdownMenu');
+const UCheckbox = resolveComponent('UCheckbox');
+const UInput = resolveComponent('UInput');
 
 const toast = useToast();
-const table = ref<any>(null);
+type TableInstance<T> = { tableApi?: Table<T> } | null;
+type TableRow<T> = Row<T>;
+const table = ref<TableInstance<CouponItem>>(null);
 
 // ==========================================
-// 2. 설정 및 데이터 정의
+// 2. ?�정 �??�이???�의
 // ==========================================
-const PAGE_TITLE = "쿠폰 관리";
-const DATA_KEY = "coupons";
+const DATA_KEY = 'coupons';
 
 type CouponItem = {
   id: number;
   name: string;
   code: string;
-  discountType: "percent" | "amount"; // 퍼센트 할인 or 정액 할인
+  discountType: 'percent' | 'amount'; // ?�센???�인 or ?�액 ?�인
   discountValue: number;
-  totalLimit: number | null; // null이면 무제한
+  totalLimit: number | null; // null?�면 무제??
   usedCount: number;
   startDate: string;
   endDate: string;
-  status: "active" | "inactive" | "expired";
+  status: 'active' | 'inactive' | 'expired';
   createdAt: string;
 };
 
-// 폼 스키마
+// ???�키�?
 const formSchema = z.object({
-  name: z.string().min(2, "쿠폰명을 입력해주세요."),
+  name: z.string().min(2, '쿠폰명을 ?�력?�주?�요.'),
   code: z
     .string()
-    .min(3, "쿠폰 코드를 입력해주세요.")
-    .regex(/^[A-Z0-9]+$/, "영문 대문자와 숫자만 가능합니다."),
-  discountType: z.enum(["percent", "amount"]),
-  discountValue: z.number().min(1, "할인 값을 입력해주세요."),
-  totalLimit: z.number().nullable().optional(), // 선택사항
+    .min(3, '쿠폰 코드�??�력?�주?�요.')
+    .regex(/^[A-Z0-9]+$/, '?�문 ?�문자?� ?�자�?가?�합?�다.'),
+  discountType: z.enum(['percent', 'amount']),
+  discountValue: z.number().min(1, '?�인 값을 ?�력?�주?�요.'),
+  totalLimit: z.number().nullable().optional(), // ?�택?�항
   startDate: z.string(),
   endDate: z.string(),
-  status: z.enum(["active", "inactive"]),
+  status: z.enum(['active', 'inactive']),
 });
 
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. 상태 관리
+// 3. ?�태 관�?
 // ==========================================
-const columnFilters = ref([{ id: "name", value: "" }]);
+const columnFilters = ref([{ id: 'name', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
-const sorting = ref([{ id: "id", desc: true }]);
+const sorting = ref([{ id: 'id', desc: true }]);
 
-const statusFilter = ref("all");
+const statusFilter = ref('all');
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const selectedId = ref<number | null>(null);
 
-// 폼 상태
+// ???�태
 const initialFormState: FormSchema = {
-  name: "",
-  code: "",
-  discountType: "percent",
+  name: '',
+  code: '',
+  discountType: 'percent',
   discountValue: 10,
   totalLimit: 100,
-  startDate: format(new Date(), "yyyy-MM-dd"),
-  endDate: format(addDays(new Date(), 7), "yyyy-MM-dd"),
-  status: "active",
+  startDate: format(new Date(), 'yyyy-MM-dd'),
+  endDate: format(addDays(new Date(), 7), 'yyyy-MM-dd'),
+  status: 'active',
 };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. ?�이???�칭 (Mock Data)
 // ==========================================
 const { data, status: loadingStatus } = await useAsyncData<CouponItem[]>(
   DATA_KEY,
@@ -96,23 +97,23 @@ const { data, status: loadingStatus } = await useAsyncData<CouponItem[]>(
     return Array.from({ length: 50 }).map((_, i) => {
       const isPercent = Math.random() > 0.5;
       const limit = Math.random() > 0.8 ? null : 100 + i * 10;
-      const used = limit
-        ? Math.floor(Math.random() * limit)
-        : Math.floor(Math.random() * 500);
+      const used = limit ?
+        Math.floor(Math.random() * limit) :
+        Math.floor(Math.random() * 500);
 
       return {
         id: 50 - i,
-        name: i % 2 === 0 ? `신규 가입 환영 쿠폰 ${i}` : `주말 깜짝 할인 ${i}`,
+        name: i % 2 === 0 ? `?�규 가???�영 쿠폰 ${i}` : `주말 깜짝 ?�인 ${i}`,
         code: `WELCOME${50 - i}${String.fromCharCode(65 + (i % 26))}`,
-        discountType: isPercent ? "percent" : "amount",
-        discountValue: isPercent
-          ? (Math.floor(Math.random() * 5) + 1) * 10
-          : (Math.floor(Math.random() * 10) + 1) * 1000,
+        discountType: isPercent ? 'percent' : 'amount',
+        discountValue: isPercent ?
+          (Math.floor(Math.random() * 5) + 1) * 10 :
+          (Math.floor(Math.random() * 10) + 1) * 1000,
         totalLimit: limit,
         usedCount: used,
-        startDate: format(new Date(), "yyyy-MM-dd"),
-        endDate: format(addDays(new Date(), 30), "yyyy-MM-dd"),
-        status: i % 5 === 0 ? "inactive" : "active",
+        startDate: format(new Date(), 'yyyy-MM-dd'),
+        endDate: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
+        status: i % 5 === 0 ? 'inactive' : 'active',
         createdAt: new Date().toISOString(),
       };
     });
@@ -120,17 +121,17 @@ const { data, status: loadingStatus } = await useAsyncData<CouponItem[]>(
 );
 
 // ==========================================
-// 5. 액션 핸들러
+// 5. ?�션 ?�들??
 // ==========================================
-function openCreateModal() {
+function openCreateModal () {
   isEditMode.value = false;
   selectedId.value = null;
   Object.assign(formState, initialFormState);
-  generateRandomCode(); // 신규 등록 시 코드 자동 생성 편의성
+  generateRandomCode(); // ?�규 ?�록 ??코드 ?�동 ?�성 ?�의??
   isModalOpen.value = true;
 }
 
-function openEditModal(row: CouponItem) {
+function openEditModal (row: CouponItem) {
   isEditMode.value = true;
   selectedId.value = row.id;
   Object.assign(formState, {
@@ -141,207 +142,207 @@ function openEditModal(row: CouponItem) {
     totalLimit: row.totalLimit,
     startDate: row.startDate,
     endDate: row.endDate,
-    status: row.status === "expired" ? "inactive" : row.status,
+    status: row.status === 'expired' ? 'inactive' : row.status,
   });
   isModalOpen.value = true;
 }
 
-async function onSubmit(event: FormSubmitEvent<FormSchema>) {
-  const action = isEditMode.value ? "수정" : "생성";
+async function onSubmit (_event: FormSubmitEvent<FormSchema>) {
+  const action = isEditMode.value ? '수정' : '생성';
   toast.add({
     title: `${action} 완료`,
     description: `쿠폰이 성공적으로 ${action}되었습니다.`,
-    color: "success",
+    color: 'success',
   });
   isModalOpen.value = false;
 }
 
-function onDelete(ids: number[]) {
+function onDelete (ids: number[]) {
   toast.add({
-    title: "삭제 완료",
+    title: '삭제 완료',
     description: `${ids.length}개의 쿠폰이 삭제되었습니다.`,
-    color: "error",
+    color: 'error',
   });
   rowSelection.value = {};
 }
 
-// 랜덤 쿠폰 코드 생성기
-function generateRandomCode() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
+// ?�덤 쿠폰 코드 ?�성�?
+function generateRandomCode () {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
   for (let i = 0; i < 8; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   formState.code = result;
 }
 
-function getRowItems(row: CouponItem) {
+function getRowItems (row: CouponItem) {
   return [
-    { type: "label", label: "관리" },
+    { type: 'label', label: '관리' },
     {
-      label: "수정하기",
-      icon: "i-lucide-edit",
+      label: '수정하기',
+      icon: 'i-lucide-edit',
       onSelect: () => openEditModal(row),
     },
-    { type: "separator" },
+    { type: 'separator' },
     {
-      label: "삭제",
-      icon: "i-lucide-trash",
-      color: "error",
+      label: '삭제',
+      icon: 'i-lucide-trash',
+      color: 'error',
       onSelect: () => onDelete([row.id]),
     },
   ];
 }
 
 // ==========================================
-// 6. 테이블 컬럼 정의
+// 6. ?�이�?컬럼 ?�의
 // ==========================================
 const columnLabels: Record<string, string> = {
-  select: "선택",
-  id: "No.",
-  name: "쿠폰명",
-  code: "코드",
-  discount: "혜택",
-  usage: "사용량",
-  period: "유효기간",
-  status: "상태",
-  actions: "관리",
+  select: '선택',
+  id: 'No.',
+  name: '쿠폰명',
+  code: '코드',
+  discount: '혜택',
+  usage: '사용량',
+  period: '유효기간',
+  status: '상태',
+  actions: '관리',
 };
 
 const columns: TableColumn<CouponItem>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
-        modelValue: table.getIsSomePageRowsSelected()
-          ? "indeterminate"
-          : table.getIsAllPageRowsSelected(),
-        "onUpdate:modelValue": (v: boolean) =>
+        'modelValue': table.getIsSomePageRowsSelected() ?
+          'indeterminate' :
+          table.getIsAllPageRowsSelected(),
+        'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
-        ariaLabel: "전체 선택",
+        'ariaLabel': '?�체 ?�택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
-        modelValue: row.getIsSelected(),
-        "onUpdate:modelValue": (v: boolean) => row.toggleSelected(!!v),
-        ariaLabel: "행 선택",
+        'modelValue': row.getIsSelected(),
+        'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
+        'ariaLabel': '???�택',
       }),
     enableSorting: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: 'id',
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       return h(UButton, {
-        color: "neutral",
-        variant: "ghost",
-        label: "No.",
+        color: 'neutral',
+        variant: 'ghost',
+        label: 'No.',
         icon:
-          isSorted === "asc"
-            ? "i-lucide-arrow-up-narrow-wide"
-            : isSorted === "desc"
-              ? "i-lucide-arrow-down-wide-narrow"
-              : "i-lucide-arrow-up-down",
-        class: "-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800",
-        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+          isSorted === 'asc' ?
+            'i-lucide-arrow-up-narrow-wide' :
+            isSorted === 'desc' ?
+              'i-lucide-arrow-down-wide-narrow' :
+              'i-lucide-arrow-up-down',
+        class: '-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
       });
     },
   },
   {
-    accessorKey: "name",
-    header: "쿠폰명",
+    accessorKey: 'name',
+    header: '쿠폰명',
     cell: ({ row }) =>
-      h("div", { class: "flex flex-col" }, [
+      h('div', { class: 'flex flex-col' }, [
         h(
-          "span",
+          'span',
           {
             class:
-              "font-medium cursor-pointer hover:underline hover:text-primary",
+              'font-medium cursor-pointer hover:underline hover:text-primary',
             onClick: () => openEditModal(row.original),
           },
           row.original.name,
         ),
-        h("span", { class: "text-xs text-gray-500" }, row.original.code), // 코드 함께 표시
+        h('span', { class: 'text-xs text-gray-500' }, row.original.code), // 코드 ?�께 ?�시
       ]),
   },
   {
-    id: "discount",
-    header: "할인 혜택",
+    id: 'discount',
+    header: '할인 혜택',
     cell: ({ row }) => {
-      const isPercent = row.original.discountType === "percent";
+      const isPercent = row.original.discountType === 'percent';
       const value = row.original.discountValue;
       return h(
-        "span",
-        { class: "font-bold text-primary-600 dark:text-primary-400" },
+        'span',
+        { class: 'font-bold text-primary-600 dark:text-primary-400' },
         isPercent ? `${value}% 할인` : `${value.toLocaleString()}원 할인`,
       );
     },
   },
   {
-    id: "usage",
-    header: "사용 현황",
+    id: 'usage',
+    header: '사용 현황',
     cell: ({ row }) => {
       const { usedCount, totalLimit } = row.original;
-      const limitText = totalLimit ? `${totalLimit.toLocaleString()}` : "∞";
-      const percent = totalLimit
-        ? Math.round((usedCount / totalLimit) * 100)
-        : 0;
+      const limitText = totalLimit ? `${totalLimit.toLocaleString()}` : '∞';
+      const percent = totalLimit ?
+        Math.round((usedCount / totalLimit) * 100) :
+        0;
 
-      return h("div", { class: "flex items-center gap-2" }, [
+      return h('div', { class: 'flex items-center gap-2' }, [
         h(
-          "span",
-          { class: "text-sm" },
+          'span',
+          { class: 'text-sm' },
           `${usedCount.toLocaleString()} / ${limitText}`,
         ),
         totalLimit &&
-          h(UBadge, { color: "gray", variant: "subtle" }, () => `${percent}%`),
+        h(UBadge, { color: 'gray', variant: 'subtle' }, () => `${percent}%`),
       ]);
     },
   },
   {
-    accessorKey: "status",
-    header: "상태",
+    accessorKey: 'status',
+    header: '상태',
     cell: ({ row }) => {
-      const map: Record<string, any> = {
-        active: { label: "발급중", color: "success" },
-        inactive: { label: "중지됨", color: "neutral" },
-        expired: { label: "만료됨", color: "error" },
+      const map: Record<CouponItem['status'], { label: string; color: 'success' | 'neutral' | 'error' }> = {
+        active: { label: '발급중', color: 'success' },
+        inactive: { label: '중지됨', color: 'neutral' },
+        expired: { label: '만료됨', color: 'error' },
       };
       const status = map[row.original.status];
       return h(
         UBadge,
-        { color: status.color, variant: "subtle" },
+        { color: status.color, variant: 'subtle' },
         () => status.label,
       );
     },
   },
   {
-    id: "period",
-    header: "유효 기간",
+    id: 'period',
+    header: '유효 기간',
     cell: ({ row }) =>
-      h("div", { class: "text-xs text-gray-500 flex flex-col" }, [
-        h("span", `${row.original.startDate} ~`),
-        h("span", row.original.endDate),
+      h('div', { class: 'text-xs text-gray-500 flex flex-col' }, [
+        h('span', `${row.original.startDate} ~`),
+        h('span', row.original.endDate),
       ]),
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) =>
       h(
-        "div",
-        { class: "text-right" },
+        'div',
+        { class: 'text-right' },
         h(
           UDropdownMenu,
           {
-            content: { align: "end" },
+            content: { align: 'end' },
             items: getRowItems(row.original),
           },
           () =>
             h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-              class: "ml-auto",
+              icon: 'i-lucide-ellipsis-vertical',
+              color: 'neutral',
+              variant: 'ghost',
+              class: 'ml-auto',
             }),
         ),
       ),
@@ -353,18 +354,20 @@ const columns: TableColumn<CouponItem>[] = [
 // 7. Watchers & Computeds
 // ==========================================
 watch(statusFilter, (val) => {
-  if (!table.value?.tableApi) return;
+  if (!table.value?.tableApi) {
+    return;
+  }
   table.value.tableApi
-    .getColumn("status")
-    ?.setFilterValue(val === "all" ? undefined : val);
+    .getColumn('status')
+    ?.setFilterValue(val === 'all' ? undefined : val);
 });
 
 const nameSearch = computed({
   get: () =>
-    (table.value?.tableApi?.getColumn("name")?.getFilterValue() as string) ||
-    "",
-  set: (val) =>
-    table.value?.tableApi?.getColumn("name")?.setFilterValue(val || undefined),
+    (table.value?.tableApi?.getColumn('name')?.getFilterValue() as string) ||
+    '',
+  set: val =>
+    table.value?.tableApi?.getColumn('name')?.setFilterValue(val || undefined),
 });
 </script>
 
@@ -395,14 +398,18 @@ const nameSearch = computed({
             onDelete(
               table?.tableApi
                 ?.getFilteredSelectedRowModel()
-                .rows.map((r: any) => r.original.id),
+                .rows.map((r: TableRow<CouponItem>) => r.original.id),
             )
           "
         >
           <template #trailing
-            ><UKbd>{{
+            >
+<UKbd>
+{{
               table?.tableApi?.getFilteredSelectedRowModel().rows.length
-            }}</UKbd></template
+            }}
+</UKbd>
+</template
           >
         </UButton>
 
@@ -421,8 +428,8 @@ const nameSearch = computed({
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((c: any) => c.getCanHide())
-              .map((c: any) => ({
+              .filter(c => c.getCanHide())
+              .map(c => ({
                 label: columnLabels[c.id] || c.id,
                 type: 'checkbox',
                 checked: c.getIsVisible(),
@@ -451,7 +458,6 @@ const nameSearch = computed({
       v-model:pagination="pagination"
       v-model:sorting="sorting"
       :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-      :sorting-options="{ getSortedRowModel: getSortedRowModel() } as any"
       :data="data || []"
       :columns="columns"
       :loading="loadingStatus === 'pending'"

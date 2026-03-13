@@ -1,51 +1,51 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { breakpointsTailwind } from '@vueuse/core'
-import type { Mail } from '~/types'
+import { computed, ref, watch } from 'vue';
+import { breakpointsTailwind } from '@vueuse/core';
+import type { Mail } from '~/types';
 
 // 1. 탭 메뉴 한글화
 const tabItems = [{
   label: '전체', // All -> 전체
-  value: 'all'
+  value: 'all',
 }, {
   label: '안 읽음', // Unread -> 안 읽음
-  value: 'unread'
-}]
-const selectedTab = ref('all')
+  value: 'unread',
+}];
+const selectedTab = ref('all');
 
-const { data: mails } = await useFetch<Mail[]>('/api/mails', { default: () => [] })
+const { data: mails } = await useFetch<Mail[]>('/api/mails', { default: () => [] });
 
 // 선택된 탭에 따라 메일 필터링
 const filteredMails = computed(() => {
   if (selectedTab.value === 'unread') {
-    return mails.value.filter(mail => !!mail.unread)
+    return mails.value.filter(mail => !!mail.unread);
   }
 
-  return mails.value
-})
+  return mails.value;
+});
 
-const selectedMail = ref<Mail | null>()
+const selectedMail = ref<Mail | null>();
 
 const isMailPanelOpen = computed({
-  get() {
-    return !!selectedMail.value
+  get () {
+    return !!selectedMail.value;
   },
-  set(value: boolean) {
+  set (value: boolean) {
     if (!value) {
-      selectedMail.value = null
+      selectedMail.value = null;
     }
-  }
-})
+  },
+});
 
 // 필터링된 목록에 선택된 메일이 없으면 선택 해제
 watch(filteredMails, () => {
   if (!filteredMails.value.find(mail => mail.id === selectedMail.value?.id)) {
-    selectedMail.value = null
+    selectedMail.value = null;
   }
-})
+});
 
-const breakpoints = useBreakpoints(breakpointsTailwind)
-const isMobile = breakpoints.smaller('lg')
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller('lg');
 </script>
 
 <template>
@@ -73,7 +73,7 @@ const isMobile = breakpoints.smaller('lg')
         />
       </template>
     </UDashboardNavbar>
-    
+
     <InboxList v-model="selectedMail" :mails="filteredMails" />
   </UDashboardPanel>
 

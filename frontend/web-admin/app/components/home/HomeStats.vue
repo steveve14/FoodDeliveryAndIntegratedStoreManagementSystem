@@ -1,81 +1,90 @@
 <script setup lang="ts">
-import type { Period, Range, Stat } from "~/types";
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
+import type { Period, Range, Stat } from '~/types';
 
 const props = defineProps<{
   period: Period;
   range: Range;
 }>();
 
-function formatCurrency(value: number): string {
-  return value.toLocaleString("ko-kr", {
-    style: "currency",
-    currency: "KRW",
+function formatCurrency (value: number): string {
+  return value.toLocaleString('ko-kr', {
+    style: 'currency',
+    currency: 'KRW',
     maximumFractionDigits: 0,
   });
 }
 
-// 1. 각 항목별로 이동할 링크(link)를 정의합니다.
-const baseStats = [
-  {
-    title: "고객",
-    icon: "i-lucide-users",
-    minValue: 400,
-    maxValue: 1000,
-    minVariation: -15,
-    maxVariation: 25,
-    link: "/customer", // 사용자 목록 페이지
-  },
-  {
-    title: "등록 가게",
-    icon: "i-lucide-store",
-    minValue: 1000,
-    maxValue: 2000,
-    minVariation: -10,
-    maxVariation: 20,
-    link: "/stores", // (예시) 가게 목록 페이지
-  },
-  {
-    title: "총 수익",
-    icon: "i-lucide-coins",
-    minValue: 200000,
-    maxValue: 500000,
-    minVariation: -20,
-    maxVariation: 30,
-    formatter: formatCurrency,
-    link: "/finance/transactions",
-  },
-  {
-    title: "오류 내역",
-    icon: "i-lucide-alert-triangle",
-    minValue: 100,
-    maxValue: 300,
-    minVariation: -5,
-    maxVariation: 15,
-    link: "/system/logs",
-  },
-];
+const { data: source } = await useAdminHomeSource();
 
-const { data: stats } = await useAsyncData<Stat[]>(
-  "stats",
-  async () => {
-    return baseStats.map((stat) => {
-      const value = randomInt(stat.minValue, stat.maxValue);
-      const variation = randomInt(stat.minVariation, stat.maxVariation);
+const rangeMs = computed(() => {
+  return Math.max(0, props.range.end.getTime() - props.range.start.getTime());
+});
 
-      return {
-        title: stat.title,
-        icon: stat.icon,
-        value: stat.formatter ? stat.formatter(value) : value,
-        variation,
-        link: stat.link, // 2. 링크 정보를 반환 객체에 포함시킵니다.
-      };
-    });
-  },
-  {
-    watch: [() => props.period, () => props.range],
-    default: () => [],
-  },
-);
+const previousRange = computed(() => {
+  const prevEnd = new Date(props.range.start.getTime() - 1);
+  const prevStart = new Date(prevEnd.getTime() - rangeMs.value);
+  return { start: prevStart, end: prevEnd };
+});
+
+const currentOrders = computed(() => {
+  return (source.value?.orders ?? []).filter((order) => {
+    const createdAt = new Date(order.createdAt).getTime();
+    return createdAt >= props.range.start.getTime() && createdAt <= props.range.end.getTime();
+  });
+});
+
+const previousOrders = computed(() => {
+  return (source.value?.orders ?? []).filter((order) => {
+    const createdAt = new Date(order.createdAt).getTime();
+    return createdAt >= previousRange.value.start.getTime() && createdAt <= previousRange.value.end.getTime();
+  });
+});
+
+function variationPercent (current: number, previous: number): number {
+  if (previous <= 0) {
+    return current > 0 ? 100 : 0;
+  }
+  return Math.round(((current - previous) / previous) * 100);
+}
+
+const stats = computed<Stat[]>(() => {
+  const revenue = currentOrders.value.reduce((sum, order) => sum + order.totalAmount, 0);
+  const previousRevenue = previousOrders.value.reduce((sum, order) => sum + order.totalAmount, 0);
+  const pendingOrders = currentOrders.value.filter(order => order.status !== 'DONE' && order.status !== 'CANCELLED').length;
+  const previousPendingOrders = previousOrders.value.filter(order => order.status !== 'DONE' && order.status !== 'CANCELLED').length;
+
+  return [
+    {
+      title: '고객',
+      icon: 'i-lucide-users',
+      value: source.value?.customers.length ?? 0,
+      variation: variationPercent(source.value?.customers.length ?? 0, source.value?.customers.length ?? 0),
+      link: '/customer',
+    },
+    {
+      title: '등록 가게',
+      icon: 'i-lucide-store',
+      value: source.value?.stores.length ?? 0,
+      variation: variationPercent(source.value?.stores.length ?? 0, source.value?.stores.length ?? 0),
+      link: '/stores',
+    },
+    {
+      title: '총 수익',
+      icon: 'i-lucide-coins',
+      value: formatCurrency(revenue),
+      variation: variationPercent(revenue, previousRevenue),
+      link: '/finance/transactions',
+    },
+    {
+      title: '진행 중 주문',
+      icon: 'i-lucide-clipboard-list',
+      value: pendingOrders,
+      variation: variationPercent(pendingOrders, previousPendingOrders),
+      link: '/operation/orders',
+    },
+  ];
+});
 </script>
 
 <template>

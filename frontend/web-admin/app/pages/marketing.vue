@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from "@nuxt/ui";
+import type { NavigationMenuItem } from '@nuxt/ui';
 
 const links = [
   [
     {
-      label: "결제/정산",
-      icon: "i-lucide-receipt",
-      to: "/finance/transactions",
+      label: '결제/정산',
+      icon: 'i-lucide-receipt',
+      to: '/finance/transactions',
     },
     {
-      label: "쿠폰 관리",
-      icon: "i-lucide-ticket",
-      to: "/marketing/coupons",
+      label: '쿠폰 관리',
+      icon: 'i-lucide-ticket',
+      to: '/marketing/coupons',
     },
     {
-      label: "배너/광고",
-      to: "/marketing/banners",
-      icon: "i-lucide-monitor-play",
+      label: '배너/광고',
+      to: '/marketing/banners',
+      icon: 'i-lucide-monitor-play',
     },
   ],
 ] satisfies NavigationMenuItem[][];

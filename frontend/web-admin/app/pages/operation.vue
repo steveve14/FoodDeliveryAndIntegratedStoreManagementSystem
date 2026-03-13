@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from "@nuxt/ui";
+import type { NavigationMenuItem } from '@nuxt/ui';
 
 const links = [
   [
     {
-      label: "공지사항",
-      icon: "i-lucide-megaphone",
-      to: "/operation/notices",
+      label: '공지사항',
+      icon: 'i-lucide-megaphone',
+      to: '/operation/notices',
       exact: true,
     },
     {
-      label: "1:1 문의",
-      icon: "i-lucide-message-circle-question",
-      to: "/operation/inquiries",
+      label: '1:1 문의',
+      icon: 'i-lucide-message-circle-question',
+      to: '/operation/inquiries',
     },
     {
-      label: "신고/제재",
-      icon: "i-lucide-siren",
-      to: "/operation/reports",
+      label: '신고/제재',
+      icon: 'i-lucide-siren',
+      to: '/operation/reports',
     },
     {
-      label: "리뷰 관리",
-      icon: "i-lucide-star-half",
-      to: "/operation/reviews",
+      label: '리뷰 관리',
+      icon: 'i-lucide-star-half',
+      to: '/operation/reviews',
     },
     {
-      label: "FAQ 관리",
-      icon: "i-lucide-help-circle",
-      to: "/operation/faqs",
+      label: 'FAQ 관리',
+      icon: 'i-lucide-help-circle',
+      to: '/operation/faqs',
     },
     {
-      label: "주문 관리",
-      icon: "i-lucide-shopping-bag",
-      to: "/operation/orders",
+      label: '주문 관리',
+      icon: 'i-lucide-shopping-bag',
+      to: '/operation/orders',
     },
     {
-      label: "배달 관리",
-      icon: "i-lucide-bike",
-      to: "/operation/deliveries",
+      label: '배달 관리',
+      icon: 'i-lucide-bike',
+      to: '/operation/deliveries',
     },
   ],
 ] satisfies NavigationMenuItem[][];

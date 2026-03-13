@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import * as z from 'zod'
-import type { FormError } from '@nuxt/ui'
+import * as z from 'zod';
+import type { FormError } from '@nuxt/ui';
 
 const passwordSchema = z.object({
   current: z.string().min(8, '최소 8자 이상이어야 합니다'),
-  new: z.string().min(8, '최소 8자 이상이어야 합니다')
-})
+  new: z.string().min(8, '최소 8자 이상이어야 합니다'),
+});
 
-type PasswordSchema = z.output<typeof passwordSchema>
+type PasswordSchema = z.output<typeof passwordSchema>;
 
 const password = reactive<Partial<PasswordSchema>>({
   current: undefined,
-  new: undefined
-})
+  new: undefined,
+});
 
 const validate = (state: Partial<PasswordSchema>): FormError[] => {
-  const errors: FormError[] = []
+  const errors: FormError[] = [];
   if (state.current && state.new && state.current === state.new) {
-    errors.push({ name: 'new', message: '새 비밀번호는 현재 비밀번호와 달라야 합니다' })
+    errors.push({ name: 'new', message: '새 비밀번호는 현재 비밀번호와 달라야 합니다' });
   }
-  return errors
-}
+  return errors;
+};
 </script>
 
 <template>

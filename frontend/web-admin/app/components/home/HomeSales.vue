@@ -1,51 +1,63 @@
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
-import type { TableColumn } from '@nuxt/ui'
-import type { Period, Range, Sale } from '~/types'
+import { h, resolveComponent } from 'vue';
+import type { TableColumn } from '@nuxt/ui';
+import type { Period, Range } from '~/types';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 const props = defineProps<{
-  period: Period
-  range: Range
-}>()
+  period: Period;
+  range: Range;
+}>();
 
-const UBadge = resolveComponent('UBadge')
+const UBadge = resolveComponent('UBadge');
 
-const sampleEmails = [
-  'james.anderson@example.com',
-  'mia.white@example.com',
-  'william.brown@example.com',
-  'emma.davis@example.com',
-  'ethan.harris@example.com'
-]
+type AdminSaleStatus = '성공' | '실패' | '진행중';
 
-const { data } = await useAsyncData('sales', async () => {
-  const sales: Sale[] = []
-  const currentDate = new Date()
+type AdminSale = {
+  id: string;
+  date: string;
+  status: AdminSaleStatus;
+  email: string;
+  amount: number;
+};
 
-  for (let i = 0; i < 5; i++) {
-    const hoursAgo = randomInt(0, 48)
-    const date = new Date(currentDate.getTime() - hoursAgo * 3600000)
+const { data: source } = await useAdminHomeSource();
 
-    sales.push({
-      id: (4600 - i).toString(),
-      date: date.toISOString(),
-      status: randomFrom(['성공', '실패', '대기중']) as Sale['status'], 
-      email: randomFrom(sampleEmails),
-      amount: randomInt(100, 1000)
-    })
+const statusFromApi = (status: string): AdminSaleStatus => {
+  switch (status) {
+    case 'DONE':
+      return '성공';
+    case 'CANCELLED':
+      return '실패';
+    default:
+      return '진행중';
   }
+};
 
-  return sales.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-}, {
-  watch: [() => props.period, () => props.range],
-  default: () => []
-})
+const data = computed<AdminSale[]>(() => {
+  const customerEmailById = Object.fromEntries((source.value?.customers ?? []).map(customer => [customer.id, customer.email]));
 
-const columns: TableColumn<Sale>[] = [
+  return (source.value?.orders ?? [])
+    .filter((order) => {
+      const createdAt = new Date(order.createdAt).getTime();
+      return createdAt >= props.range.start.getTime() && createdAt <= props.range.end.getTime();
+    })
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5)
+    .map(order => ({
+      id: order.id,
+      date: order.createdAt,
+      status: statusFromApi(order.status),
+      email: customerEmailById[order.userId] ?? order.userId,
+      amount: order.totalAmount,
+    }));
+});
+
+const columns: TableColumn<AdminSale>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
-    cell: ({ row }) => `#${row.getValue('id')}`
+    cell: ({ row }) => `#${row.getValue('id')}`,
   },
   {
     accessorKey: 'date',
@@ -56,9 +68,9 @@ const columns: TableColumn<Sale>[] = [
         month: 'short',
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false
-      })
-    }
+        hour12: false,
+      });
+    },
   },
   {
     accessorKey: 'status',
@@ -67,33 +79,33 @@ const columns: TableColumn<Sale>[] = [
       const color = {
         성공: 'success' as const,
         실패: 'error' as const,
-        대기중: 'neutral' as const
-      }[row.getValue('status') as string]
+        진행중: 'warning' as const,
+      }[row.getValue('status') as string];
 
       return h(UBadge, { class: 'capitalize', variant: 'subtle', color }, () =>
-        row.getValue('status')
-      )
-    }
+        row.getValue('status'),
+      );
+    },
   },
   {
     accessorKey: 'email',
-    header: '이메일'
+    header: '이메일',
   },
   {
     accessorKey: 'amount',
     header: () => h('div', { class: 'text-right' }, '금액'),
     cell: ({ row }) => {
-      const amount = Number.parseFloat(row.getValue('amount'))
+      const amount = Number.parseFloat(row.getValue('amount'));
 
       const formatted = new Intl.NumberFormat('ko-KR', {
         style: 'currency',
-        currency: 'KRW'
-      }).format(amount)
+        currency: 'KRW',
+      }).format(amount);
 
-      return h('div', { class: 'text-right font-medium' }, formatted)
-    }
-  }
-]
+      return h('div', { class: 'text-right font-medium' }, formatted);
+    },
+  },
+];
 </script>
 
 <template>

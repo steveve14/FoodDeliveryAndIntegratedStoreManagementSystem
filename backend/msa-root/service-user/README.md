@@ -21,3 +21,13 @@
 cd /d C:\Users\User\WorkStation\FoodDeliveryAndIntegratedStoreManagementSystem\backend\msa-root
 .\gradlew.bat :service-user:bootRun
 ```
+
+Spring REST Docs 생성
+
+```bat
+cd /d C:\Users\User\WorkStation\FoodDeliveryAndIntegratedStoreManagementSystem\backend\msa-root
+.\gradlew.bat :service-user:test :service-user:asciidoctor
+```
+
+- 스니펫 출력 경로: `service-user\build\generated-snippets`
+- Asciidoc HTML 출력 경로(기본): `service-user\build\docs\asciidoc`

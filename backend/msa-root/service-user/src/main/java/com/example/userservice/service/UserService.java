@@ -6,11 +6,22 @@ import com.example.userservice.dto.UserDto;
 import com.example.userservice.dto.UserProfileDto;
 import com.example.userservice.entity.User;
 import com.example.userservice.repository.UserRepository;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.NoSuchElementException;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 /*
@@ -21,10 +32,20 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder passwordEncoder;
+  private final Path avatarUploadPath;
+  private final String avatarPublicBaseUrl;
 
-  public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+  public UserService(
+      UserRepository userRepository,
+      BCryptPasswordEncoder passwordEncoder,
+      @Value("${app.avatar.upload-dir:uploads/avatars}") String avatarUploadDir,
+      @Value("${app.avatar.public-base-url:/api/v1/users/avatars/}") String avatarPublicBaseUrl) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.avatarUploadPath = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+    this.avatarPublicBaseUrl = avatarPublicBaseUrl.endsWith("/")
+        ? avatarPublicBaseUrl
+        : avatarPublicBaseUrl + "/";
   }
 
   @Transactional
@@ -73,14 +94,7 @@ public class UserService {
     User user = userRepository
         .findById(id)
         .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
-    return new UserProfileDto(
-        user.getId(),
-        user.getEmail(),
-        user.getName(),
-        user.getUsername(),
-        user.getPhone(),
-        user.getAvatarUrl(),
-        user.getLocation());
+    return toUserProfileDto(user);
   }
 
   @Transactional
@@ -97,14 +111,57 @@ public class UserService {
       .location(req.getLocation())
       .build();
     User saved = userRepository.save(updated);
-    return new UserProfileDto(
-      saved.getId(),
-      saved.getEmail(),
-      saved.getName(),
-      saved.getUsername(),
-      saved.getPhone(),
-      saved.getAvatarUrl(),
-      saved.getLocation());
+    return toUserProfileDto(saved);
+  }
+
+  @Transactional
+  public UserProfileDto updateAvatar(String id, MultipartFile file) {
+    if (file == null || file.isEmpty()) {
+      throw new IllegalArgumentException("업로드할 이미지 파일이 필요합니다.");
+    }
+    String contentType = file.getContentType();
+    if (contentType == null || !contentType.startsWith("image/")) {
+      throw new IllegalArgumentException("이미지 파일만 업로드할 수 있습니다.");
+    }
+
+    String extension = resolveExtension(file.getOriginalFilename());
+    String fileName = UUID.randomUUID() + extension;
+    Path target = avatarUploadPath.resolve(fileName).normalize();
+    if (!target.startsWith(avatarUploadPath)) {
+      throw new IllegalArgumentException("잘못된 파일 경로입니다.");
+    }
+
+    try {
+      Files.createDirectories(avatarUploadPath);
+      try (InputStream inputStream = file.getInputStream()) {
+        Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException("아바타 파일 저장 중 오류가 발생했습니다.", e);
+    }
+
+    User user = userRepository
+        .findById(id)
+        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+
+    String previousAvatarUrl = user.getAvatarUrl();
+    User saved = userRepository.save(user.toBuilder().avatarUrl(avatarPublicBaseUrl + fileName).build());
+    deleteLocalAvatarIfManaged(previousAvatarUrl);
+    return toUserProfileDto(saved);
+  }
+
+  public Resource loadAvatar(String filename) {
+    String safeFilename = Paths.get(filename).getFileName().toString();
+    Path target = avatarUploadPath.resolve(safeFilename).normalize();
+    if (!target.startsWith(avatarUploadPath) || !Files.exists(target)) {
+      throw new NoSuchElementException("아바타 파일을 찾을 수 없습니다.");
+    }
+
+    try {
+      return new UrlResource(target.toUri());
+    } catch (IOException e) {
+      throw new RuntimeException("아바타 파일 조회 중 오류가 발생했습니다.", e);
+    }
   }
 
   // 이메일/비밀번호 인증 (service-auth에서 호출 가능)
@@ -122,5 +179,50 @@ public class UserService {
   public void withdraw(String id) {
     // Delete user and cascade addresses if needed
     userRepository.deleteById(id);
+  }
+
+  private UserProfileDto toUserProfileDto(User user) {
+    return new UserProfileDto(
+        user.getId(),
+        user.getEmail(),
+        user.getName(),
+        user.getUsername(),
+        user.getPhone(),
+        user.getAvatarUrl(),
+        user.getLocation());
+  }
+
+  private void deleteLocalAvatarIfManaged(String avatarUrl) {
+    if (avatarUrl == null || !avatarUrl.startsWith(avatarPublicBaseUrl)) {
+      return;
+    }
+    String filename = avatarUrl.substring(avatarPublicBaseUrl.length());
+    if (filename.isBlank()) {
+      return;
+    }
+    Path oldTarget = avatarUploadPath.resolve(Paths.get(filename).getFileName().toString()).normalize();
+    if (!oldTarget.startsWith(avatarUploadPath)) {
+      return;
+    }
+    try {
+      Files.deleteIfExists(oldTarget);
+    } catch (IOException ignored) {
+      // 이전 파일 삭제 실패는 사용자 플로우를 막지 않도록 무시
+    }
+  }
+
+  private String resolveExtension(String originalFilename) {
+    if (originalFilename == null) {
+      return "";
+    }
+    int dot = originalFilename.lastIndexOf('.');
+    if (dot < 0 || dot == originalFilename.length() - 1) {
+      return "";
+    }
+    String ext = originalFilename.substring(dot).toLowerCase();
+    if (ext.length() > 8) {
+      return "";
+    }
+    return ext;
   }
 }

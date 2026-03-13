@@ -36,7 +36,17 @@ public class GatewayRouteConfig {
                                 .uri("lb://SERVICE-USER"))
                 // 3. 가게 서비스 (인증 필요, 점주/관리자 검증은 서비스에서 처리)
                 .route(
-                        "service-store",
+                        "service-store-public",
+                        r -> r.method("GET")
+                                .and()
+                                .path(
+                                        "/api/v1/stores",
+                                        "/api/v1/stores/*",
+                                        "/api/v1/stores/*/menus")
+                                .uri("lb://SERVICE-STORE"))
+                // 3-b. 가게 관리 API는 인증 필요
+                .route(
+                        "service-store-protected",
                         r -> r.path("/api/v1/stores/**")
                                 .filters(f -> f.filter(authGatewayFilter))
                                 .uri("lb://SERVICE-STORE"))

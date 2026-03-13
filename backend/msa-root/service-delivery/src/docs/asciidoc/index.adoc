@@ -1,0 +1,34 @@
+= Delivery Service API Docs
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== Delivery API
+
+=== POST `/api/v1/deliveries`
+
+==== 성공 응답
+include::{snippets}/deliveries-create-success/http-request.adoc[]
+include::{snippets}/deliveries-create-success/request-headers.adoc[]
+include::{snippets}/deliveries-create-success/request-fields.adoc[]
+include::{snippets}/deliveries-create-success/http-response.adoc[]
+include::{snippets}/deliveries-create-success/response-fields.adoc[]
+
+==== 역할 헤더 누락
+include::{snippets}/deliveries-create-forbidden-missing-role/http-request.adoc[]
+include::{snippets}/deliveries-create-forbidden-missing-role/http-response.adoc[]
+include::{snippets}/deliveries-create-forbidden-missing-role/response-fields.adoc[]
+
+=== GET `/api/v1/deliveries/{id}`
+
+==== 성공 응답
+include::{snippets}/deliveries-get-success/http-request.adoc[]
+include::{snippets}/deliveries-get-success/path-parameters.adoc[]
+include::{snippets}/deliveries-get-success/http-response.adoc[]
+include::{snippets}/deliveries-get-success/response-fields.adoc[]
+
+==== 조회 실패
+include::{snippets}/deliveries-get-not-found/http-request.adoc[]
+include::{snippets}/deliveries-get-not-found/path-parameters.adoc[]
+include::{snippets}/deliveries-get-not-found/http-response.adoc[]
+include::{snippets}/deliveries-get-not-found/response-fields.adoc[]

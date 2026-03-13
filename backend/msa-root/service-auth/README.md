@@ -56,6 +56,16 @@
 - Google 소셜 로그인을 로컬에서 테스트하려면 `spring.security.oauth2.client.registration.google.client-id` 값을 application.yml 또는 환경변수로 설정하세요.
 - `JwtProvider`는 현재 HS256을 사용하며, 운영 환경에서는 키 길이 체크 및 비밀 저장소 사용을 권장합니다.
 
+Spring REST Docs 생성
+
+```bat
+cd /d C:\Users\User\WorkStation\FoodDeliveryAndIntegratedStoreManagementSystem\backend\msa-root
+.\gradlew.bat :service-auth:test :service-auth:asciidoctor
+```
+
+- 스니펫 출력 경로: `service-auth\build\generated-snippets`
+- Asciidoc HTML 출력 경로(기본): `service-auth\build\docs\asciidoc`
+
 디버깅
 
 - 애플리케이션 실행 시 `PostConstruct` 초기화에서 시크릿 관련 예외가 발생하면 `token.secret`이 비어있거나 길이가 부족한 경우가 대부분입니다. 예외 메시지를 확인하고 안전한 시크릿을 설정하세요.

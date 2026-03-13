@@ -1,62 +1,63 @@
 <script setup lang="ts">
 /**
- * [시스템 > 관리자 활동 로그]
- * - 읽기 전용 (수정/삭제 불가)
- * - 상세 JSON 보기 기능 포함
+ * [?�스??> 관리자 ?�동 로그]
+ * - ?�기 ?�용 (?�정/??�� 불�?)
+ * - ?�세 JSON 보기 기능 ?�함
  */
-import { h, ref, resolveComponent, watch, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import { format, subMinutes, subDays } from "date-fns";
-import { getPaginationRowModel, getSortedRowModel } from "@tanstack/table-core";
+import { h, ref, resolveComponent, watch, computed } from 'vue';
+import type { TableColumn } from '@nuxt/ui';
+import { format, subMinutes, subDays } from 'date-fns';
+import { getPaginationRowModel } from '@tanstack/table-core';
+import type { Table } from '@tanstack/table-core';
 
-// 1. 컴포넌트 리졸브
-const UButton = resolveComponent("UButton");
-const UBadge = resolveComponent("UBadge");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
-const UCheckbox = resolveComponent("UCheckbox");
-const UIcon = resolveComponent("UIcon");
+// 1. 컴포?�트 리졸�?
+const UButton = resolveComponent('UButton');
+const UBadge = resolveComponent('UBadge');
+const UDropdownMenu = resolveComponent('UDropdownMenu');
+const UCheckbox = resolveComponent('UCheckbox');
+const UIcon = resolveComponent('UIcon');
 
 const toast = useToast();
-const table = ref<any>(null);
+type TableInstance<T> = { tableApi?: Table<T> } | null;
+const table = ref<TableInstance<AuditLogItem>>(null);
 
-// 2. 설정 및 데이터 정의
-const PAGE_TITLE = "관리자 활동 로그";
-const DATA_KEY = "audit_logs";
+// 2. ?�정 �??�이???�의
+const DATA_KEY = 'audit_logs';
 
 type AuditLogItem = {
   id: number;
   adminName: string;
   adminIp: string;
-  action: "create" | "update" | "delete" | "login" | "export";
-  targetModule: string; // 예: User, Product, Banner
-  targetId?: string; // 예: #123
-  details: string; // 상세 변경 내용 (JSON string)
+  action: 'create' | 'update' | 'delete' | 'login' | 'export';
+  targetModule: string; // ?? User, Product, Banner
+  targetId?: string; // ?? #123
+  details: string; // ?�세 변�??�용 (JSON string)
   createdAt: string;
 };
 
-// 3. 상태 관리
-const columnFilters = ref([{ id: "adminName", value: "" }]);
+// 3. ?�태 관�?
+const columnFilters = ref([{ id: 'adminName', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
-const pagination = ref({ pageIndex: 0, pageSize: 10 }); // 로그는 많이 보므로 20개
-const sorting = ref([{ id: "id", desc: true }]);
+const pagination = ref({ pageIndex: 0, pageSize: 10 }); // 로그??많이 보�?�?20�?
+const sorting = ref([{ id: 'id', desc: true }]);
 
-const actionFilter = ref("all");
+const actionFilter = ref('all');
 const isModalOpen = ref(false);
 const currentLog = ref<AuditLogItem | null>(null);
 
-// 4. 데이터 페칭 (Mock Data)
+// 4. ?�이???�칭 (Mock Data)
 const { data, status: loadingStatus } = await useAsyncData<AuditLogItem[]>(
   DATA_KEY,
   async () => {
-    const actions: AuditLogItem["action"][] = [
-      "create",
-      "update",
-      "delete",
-      "login",
-      "export",
+    const actions: AuditLogItem['action'][] = [
+      'create',
+      'update',
+      'delete',
+      'login',
+      'export',
     ];
-    const modules = ["User", "Product", "Order", "Banner", "System"];
+    const modules = ['User', 'Product', 'Order', 'Banner', 'System'];
 
     return Array.from({ length: 50 }).map((_, i) => {
       const action = actions[i % actions.length];
@@ -66,9 +67,9 @@ const { data, status: loadingStatus } = await useAsyncData<AuditLogItem[]>(
         adminIp: `192.168.0.${i + 10}`,
         action: action,
         targetModule: modules[i % modules.length],
-        targetId: action === "login" ? undefined : `${100 + i}`,
+        targetId: action === 'login' ? undefined : `${100 + i}`,
         details: JSON.stringify(
-          { before: { status: "active" }, after: { status: "inactive" } },
+          { before: { status: 'active' }, after: { status: 'inactive' } },
           null,
           2,
         ),
@@ -78,87 +79,87 @@ const { data, status: loadingStatus } = await useAsyncData<AuditLogItem[]>(
   },
 );
 
-// 5. 액션 핸들러
-function openDetailModal(row: AuditLogItem) {
+// 5. ?�션 ?�들??
+function openDetailModal (row: AuditLogItem) {
   currentLog.value = row;
   isModalOpen.value = true;
 }
 
-function onExport() {
+function onExport () {
   toast.add({
-    title: "다운로드 시작",
-    description: "전체 로그를 엑셀 파일로 변환합니다.",
-    color: "primary",
+    title: '?�운로드 ?�작',
+    description: '?�체 로그�??��? ?�일�?변?�합?�다.',
+    color: 'primary',
   });
 }
 
-// 6. 테이블 컬럼 정의
+// 6. ?�이�?컬럼 ?�의
 const columnLabels: Record<string, string> = {
-  id: "Log ID",
-  adminName: "관리자",
-  action: "활동",
-  target: "대상",
-  adminIp: "IP 주소",
-  createdAt: "일시",
-  actions: "상세",
+  id: 'Log ID',
+  adminName: '관리자',
+  action: '행동',
+  target: '대상',
+  adminIp: 'IP 주소',
+  createdAt: '일시',
+  actions: '상세',
 };
 
 const columns: TableColumn<AuditLogItem>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
+    accessorKey: 'id',
+    header: 'ID',
     cell: ({ row }) =>
-      h("span", { class: "text-xs text-gray-500 font-mono" }, row.original.id),
+      h('span', { class: 'text-xs text-gray-500 font-mono' }, row.original.id),
   },
   {
-    accessorKey: "adminName",
-    header: "관리자",
+    accessorKey: 'adminName',
+    header: '관리자',
     cell: ({ row }) =>
-      h("div", { class: "flex flex-col" }, [
-        h("span", { class: "font-medium" }, row.original.adminName),
-        h("span", { class: "text-xs text-gray-400" }, row.original.adminIp),
+      h('div', { class: 'flex flex-col' }, [
+        h('span', { class: 'font-medium' }, row.original.adminName),
+        h('span', { class: 'text-xs text-gray-400' }, row.original.adminIp),
       ]),
   },
   {
-    accessorKey: "action",
-    header: "활동 유형",
+    accessorKey: 'action',
+    header: '행동 유형',
     cell: ({ row }) => {
-      const map: Record<string, any> = {
-        create: { label: "생성", color: "success" },
-        update: { label: "수정", color: "primary" },
-        delete: { label: "삭제", color: "error" },
-        login: { label: "로그인", color: "neutral" },
-        export: { label: "다운로드", color: "warning" },
+      const map: Record<AuditLogItem['action'], { label: string; color: 'success' | 'primary' | 'error' | 'neutral' | 'warning' }> = {
+        create: { label: '생성', color: 'success' },
+        update: { label: '수정', color: 'primary' },
+        delete: { label: '삭제', color: 'error' },
+        login: { label: '로그인', color: 'neutral' },
+        export: { label: '다운로드', color: 'warning' },
       };
       const info = map[row.original.action];
       return h(
         UBadge,
-        { color: info.color, variant: "subtle" },
+        { color: info.color, variant: 'subtle' },
         () => info.label,
       );
     },
   },
   {
-    id: "target",
-    header: "작업 대상",
+    id: 'target',
+    header: '작업 대상',
     cell: ({ row }) =>
-      row.original.targetId
-        ? h("span", `${row.original.targetModule} (#${row.original.targetId})`)
-        : h("span", { class: "text-gray-400" }, "-"),
+      row.original.targetId ?
+        h('span', `${row.original.targetModule} (#${row.original.targetId})`) :
+        h('span', { class: 'text-gray-400' }, '-'),
   },
   {
-    accessorKey: "createdAt",
-    header: "일시",
+    accessorKey: 'createdAt',
+    header: '일시',
     cell: ({ row }) =>
-      format(new Date(row.original.createdAt), "yyyy-MM-dd HH:mm:ss"),
+      format(new Date(row.original.createdAt), 'yyyy-MM-dd HH:mm:ss'),
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) =>
       h(UButton, {
-        icon: "i-lucide-search",
-        color: "neutral",
-        variant: "ghost",
+        icon: 'i-lucide-search',
+        color: 'neutral',
+        variant: 'ghost',
         onClick: () => openDetailModal(row.original),
       }),
   },
@@ -166,20 +167,22 @@ const columns: TableColumn<AuditLogItem>[] = [
 
 // 7. Watchers & Computeds
 watch(actionFilter, (val) => {
-  if (!table.value?.tableApi) return;
+  if (!table.value?.tableApi) {
+    return;
+  }
   table.value.tableApi
-    .getColumn("action")
-    ?.setFilterValue(val === "all" ? undefined : val);
+    .getColumn('action')
+    ?.setFilterValue(val === 'all' ? undefined : val);
 });
 
 const searchInput = computed({
   get: () =>
     (table.value?.tableApi
-      ?.getColumn("adminName")
-      ?.getFilterValue() as string) || "",
-  set: (val) =>
+      ?.getColumn('adminName')
+      ?.getFilterValue() as string) || '',
+  set: val =>
     table.value?.tableApi
-      ?.getColumn("adminName")
+      ?.getColumn('adminName')
       ?.setFilterValue(val || undefined),
 });
 </script>
@@ -190,13 +193,13 @@ const searchInput = computed({
       <UInput
         v-model="searchInput"
         icon="i-lucide-search"
-        placeholder="관리자명 검색..."
+        placeholder="관리자�?검??.."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
-          label="로그 다운로드"
+          label="로그 ?�운로드"
           icon="i-lucide-download"
           color="neutral"
           variant="outline"
@@ -205,7 +208,7 @@ const searchInput = computed({
         <USelect
           v-model="actionFilter"
           :items="[
-            { label: '전체 활동', value: 'all' },
+            { label: '전체 행동', value: 'all' },
             { label: '생성', value: 'create' },
             { label: '수정', value: 'update' },
             { label: '삭제', value: 'delete' },
@@ -218,8 +221,8 @@ const searchInput = computed({
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((c: any) => c.getCanHide())
-              .map((c: any) => ({
+              .filter(c => c.getCanHide())
+              .map(c => ({
                 label: columnLabels[c.id] || c.id,
                 type: 'checkbox',
                 checked: c.getIsVisible(),
@@ -231,7 +234,7 @@ const searchInput = computed({
           :content="{ align: 'end' }"
         >
           <UButton
-            label="컬럼 설정"
+            label="컬럼 ?�정"
             color="neutral"
             variant="outline"
             trailing-icon="i-lucide-settings-2"
@@ -247,7 +250,6 @@ const searchInput = computed({
       v-model:pagination="pagination"
       v-model:sorting="sorting"
       :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-      :sorting-options="{ getSortedRowModel: getSortedRowModel() } as any"
       :data="data || []"
       :columns="columns"
       :loading="loadingStatus === 'pending'"
@@ -266,8 +268,8 @@ const searchInput = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}건의
-        로그가 검색됨.
+        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}건의
+        로그가 검?�됨.
       </div>
       <UPagination
         :default-page="
@@ -282,7 +284,7 @@ const searchInput = computed({
 
   <UModal
     v-model:open="isModalOpen"
-    title="로그 상세 정보"
+    title="로그 ?�세 ?�보"
     :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
   >
     <template #body>
@@ -299,7 +301,7 @@ const searchInput = computed({
             <span class="font-medium">{{ currentLog.adminIp }}</span>
           </div>
           <div>
-            <span class="text-gray-500">활동:</span>
+            <span class="text-gray-500">행동:</span>
             <span class="uppercase font-bold">{{ currentLog.action }}</span>
           </div>
           <div>
@@ -321,7 +323,7 @@ const searchInput = computed({
 
         <div class="flex justify-end pt-2">
           <UButton
-            label="닫기"
+            label="?�기"
             color="neutral"
             variant="ghost"
             @click="isModalOpen = false"

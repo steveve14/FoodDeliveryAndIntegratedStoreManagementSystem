@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,9 @@ public class OrderService {
   private final OrderItemRepository orderItemRepository;
   private final StoreGrpcClient storeGrpcClient;
   private final JdbcTemplate jdbcTemplate;
+
+  @Value("${app.order.vip-threshold:10}")
+  private long vipThreshold = 10L;
 
   // 주문 상태 전이 규칙: CREATED → COOKING → DELIVERING → DONE | CANCELLED
   private static final Map<String, Set<String>> ALLOWED_TRANSITIONS = Map.of(
@@ -55,7 +59,7 @@ public class OrderService {
                 rs.getString("user_id"),
                 rs.getLong("orders_count"),
                 rs.getTimestamp("last_order_at").toInstant(),
-                rs.getLong("orders_count") >= 10 ? "vip" : "regular"));
+                rs.getLong("orders_count") >= vipThreshold ? "vip" : "regular"));
   }
 
   @Transactional

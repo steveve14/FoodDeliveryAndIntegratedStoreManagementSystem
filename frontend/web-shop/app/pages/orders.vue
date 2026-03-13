@@ -38,6 +38,7 @@ const { $api } = useApi();
 const q = ref('');
 const selectedStatus = ref<OrderStatus | 'all'>('all');
 const orders = ref<OrderItem[]>([]);
+const updatingOrderId = ref<string | null>(null);
 
 const statusFromApi = (status: string): OrderStatus => {
   switch (status) {
@@ -119,6 +120,58 @@ const statusMap: Record<
   cancelled: { label: '취소', color: 'error' },
 };
 
+const nextStatusMap: Record<OrderStatus, OrderStatus | null> = {
+  pending: 'cooking',
+  cooking: 'delivering',
+  delivering: 'completed',
+  completed: null,
+  cancelled: null,
+};
+
+const statusToApi = (status: OrderStatus): string => {
+  switch (status) {
+    case 'pending':
+      return 'CREATED';
+    case 'cooking':
+      return 'COOKING';
+    case 'delivering':
+      return 'DELIVERING';
+    case 'completed':
+      return 'DONE';
+    case 'cancelled':
+      return 'CANCELLED';
+    default:
+      return 'CREATED';
+  }
+};
+
+const updateOrderStatus = async (order: OrderItem, nextStatus: OrderStatus) => {
+  if (updatingOrderId.value) {
+    return;
+  }
+
+  updatingOrderId.value = order.id;
+  try {
+    const res = await $api<OrderApiItem>(`/api/v1/orders/${order.id}/status`, {
+      method: 'PATCH',
+      body: {
+        status: statusToApi(nextStatus),
+      },
+    });
+
+    if (!res.success || !res.data) {
+      return;
+    }
+
+    const target = orders.value.find(item => item.id === order.id);
+    if (target) {
+      target.status = statusFromApi(res.data.status);
+    }
+  } finally {
+    updatingOrderId.value = null;
+  }
+};
+
 const filteredOrders = computed(() => {
   return orders.value.filter((order) => {
     const matchesSearch =
@@ -192,6 +245,29 @@ const formatPrice = (price: number) =>
           >
             {{ statusMap[order.status].label }}
           </UBadge>
+
+          <div class="pt-2 flex items-center gap-2">
+            <UButton
+              v-if="nextStatusMap[order.status]"
+              size="xs"
+              color="primary"
+              variant="soft"
+              :loading="updatingOrderId === order.id"
+              @click="updateOrderStatus(order, nextStatusMap[order.status]!)"
+            >
+              다음 단계: {{ statusMap[nextStatusMap[order.status]!].label }}
+            </UButton>
+            <UButton
+              v-if="order.status === 'pending' || order.status === 'cooking'"
+              size="xs"
+              color="error"
+              variant="soft"
+              :loading="updatingOrderId === order.id"
+              @click="updateOrderStatus(order, 'cancelled')"
+            >
+              주문 취소
+            </UButton>
+          </div>
         </div>
       </UPageCard>
     </div>

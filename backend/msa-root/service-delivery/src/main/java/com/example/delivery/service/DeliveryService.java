@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +24,8 @@ public class DeliveryService {
       "SCHEDULED", Set.of("IN_PROGRESS"),
       "IN_PROGRESS", Set.of("DELIVERED", "FAILED"));
 
-  // MVP: 고정 배달비 3,000원
-  private static final int FIXED_DELIVERY_FEE = 3000;
+  @Value("${app.delivery.fixed-fee:3000}")
+  private int fixedDeliveryFee = 3000;
 
   public DeliveryService(DeliveryRepository deliveryRepository, OrderGrpcClient orderGrpcClient) {
     this.deliveryRepository = deliveryRepository;
@@ -45,7 +46,7 @@ public class DeliveryService {
         .orderId(orderId)
         .courier(assigned)
         .status(status)
-        .deliveryFee(FIXED_DELIVERY_FEE)
+      .deliveryFee(fixedDeliveryFee)
         .scheduledAt(Instant.now())
         .isNewEntity(true)
         .build();

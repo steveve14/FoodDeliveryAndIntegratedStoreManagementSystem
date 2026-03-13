@@ -1,30 +1,31 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import type { UpdateProfileRequest } from "~/types/api";
+import * as z from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import type { UpdateProfileRequest } from '~/types/api';
+import { useUserApi } from '~/composables/api/useUserApi';
 
 const { user: authUser } = useAuth();
 const { getProfile, updateProfile } = useUserApi();
 const toast = useToast();
 
 const profileSchema = z.object({
-  name: z.string().min(2, "이름은 최소 2글자 이상이어야 합니다."),
-  email: z.string().email("유효하지 않은 이메일 형식입니다."),
-  username: z.string().min(2, "사용자명은 최소 2글자 이상이어야 합니다."),
+  name: z.string().min(2, '이름은 최소 2글자 이상이어야 합니다.'),
+  email: z.string().email('유효하지 않은 이메일 형식입니다.'),
+  username: z.string().min(2, '사용자명은 최소 2글자 이상이어야 합니다.'),
   phone: z.string().optional(),
-  avatarUrl: z.string().url("유효한 이미지 URL을 입력해 주세요.").or(z.literal("")),
+  avatarUrl: z.string().url('유효한 이미지 URL을 입력해 주세요.').or(z.literal('')),
   location: z.string().optional(),
 });
 
 type ProfileSchema = z.output<typeof profileSchema>;
 
 const profile = reactive<Partial<ProfileSchema>>({
-  name: "",
-  email: "",
-  username: "",
-  phone: "",
-  avatarUrl: "",
-  location: "",
+  name: '',
+  email: '',
+  username: '',
+  phone: '',
+  avatarUrl: '',
+  location: '',
 });
 
 const isSubmitting = ref(false);
@@ -47,17 +48,17 @@ const { data: profileResponse, refresh: refreshProfile } = await useAsyncData(
 
 watchEffect(() => {
   const currentProfile = profileResponse.value;
-  const authEmail = authUser.value?.email ?? "";
+  const authEmail = authUser.value?.email ?? '';
 
-  profile.name = currentProfile?.name ?? authUser.value?.name ?? "";
+  profile.name = currentProfile?.name ?? authUser.value?.name ?? '';
   profile.email = currentProfile?.email ?? authEmail;
-  profile.username = currentProfile?.username ?? (authEmail ? authEmail.split("@")[0] : "");
-  profile.phone = currentProfile?.phone ?? "";
-  profile.avatarUrl = currentProfile?.avatarUrl ?? "";
-  profile.location = currentProfile?.location ?? "";
+  profile.username = currentProfile?.username ?? (authEmail ? authEmail.split('@')[0] : '');
+  profile.phone = currentProfile?.phone ?? '';
+  profile.avatarUrl = currentProfile?.avatarUrl ?? '';
+  profile.location = currentProfile?.location ?? '';
 });
 
-async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
+async function onSubmit (event: FormSubmitEvent<ProfileSchema>) {
   if (!authUser.value?.id) {
     return;
   }
@@ -76,17 +77,17 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
     await refreshProfile();
 
     toast.add({
-      title: "저장 완료",
-      description: "프로필 설정이 DB 기준으로 업데이트되었습니다.",
-      icon: "i-lucide-check",
-      color: "success",
+      title: '저장 완료',
+      description: '프로필 설정이 DB 기준으로 업데이트되었습니다.',
+      icon: 'i-lucide-check',
+      color: 'success',
     });
   } catch {
     toast.add({
-      title: "저장 실패",
-      description: "프로필 저장 중 오류가 발생했습니다.",
-      icon: "i-lucide-circle-alert",
-      color: "error",
+      title: '저장 실패',
+      description: '프로필 저장 중 오류가 발생했습니다.',
+      icon: 'i-lucide-circle-alert',
+      color: 'error',
     });
   } finally {
     isSubmitting.value = false;

@@ -1,3 +1,11 @@
+plugins {
+    id 'org.asciidoctor.jvm.convert' version '4.0.5'
+}
+
+ext {
+    snippetsDir = file("$buildDir/generated-snippets")
+}
+
 dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux'
@@ -12,4 +20,20 @@ dependencies {
 
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    testImplementation 'org.springframework.restdocs:spring-restdocs-webtestclient'
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    dependsOn test
+    inputs.dir snippetsDir
+    baseDirFollowsSourceFile()
+    sources {
+        include 'index.adoc'
+    }
+    attributes 'snippets': snippetsDir
 }

@@ -1,68 +1,68 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import type { EventDto } from "~/types/api";
-import { useEventApi } from "~/composables/api/useEventApi";
+import * as z from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import type { EventDto } from '~/types/api';
+import { useEventApi } from '~/composables/api/useEventApi';
 
 const toast = useToast();
 const { createEvent, getEvent } = useEventApi();
 
 // ── 상태 ──────────────────────────────────────────────────
-const activeTab = ref("publish");
+const activeTab = ref('publish');
 const publishLoading = ref(false);
 const searchLoading = ref(false);
-const searchId = ref("");
+const searchId = ref('');
 const foundEvent = ref<EventDto | null>(null);
 const searchError = ref<string | null>(null);
 const publishedEvent = ref<EventDto | null>(null);
 
 // ── 이벤트 발행 폼 ─────────────────────────────────────────
 const publishSchema = z.object({
-  type: z.string().min(1, "이벤트 타입을 입력해주세요"),
-  payload: z.string().optional().default(""),
+  type: z.string().min(1, '이벤트 타입을 입력해주세요'),
+  payload: z.string().optional().default(''),
 });
 type PublishSchema = z.output<typeof publishSchema>;
 
 const publishState = reactive<Partial<PublishSchema>>({
-  type: "",
-  payload: "",
+  type: '',
+  payload: '',
 });
 
 const EVENT_TYPES = [
-  "ORDER_CREATED",
-  "ORDER_CONFIRMED",
-  "ORDER_CANCELLED",
-  "DELIVERY_STARTED",
-  "DELIVERY_COMPLETED",
-  "USER_REGISTERED",
-  "STORE_CREATED",
+  'ORDER_CREATED',
+  'ORDER_CONFIRMED',
+  'ORDER_CANCELLED',
+  'DELIVERY_STARTED',
+  'DELIVERY_COMPLETED',
+  'USER_REGISTERED',
+  'STORE_CREATED',
 ];
 
-async function onPublish(e: FormSubmitEvent<PublishSchema>) {
+async function onPublish (e: FormSubmitEvent<PublishSchema>) {
   publishLoading.value = true;
   publishedEvent.value = null;
   try {
     const res = await createEvent({
       type: e.data.type,
-      payload: e.data.payload || "",
+      payload: e.data.payload || '',
     });
     if (res.success) {
       publishedEvent.value = res.data;
       toast.add({
-        title: "이벤트 발행 완료",
+        title: '이벤트 발행 완료',
         description: `타입: ${res.data.type}`,
-        color: "success",
+        color: 'success',
       });
-      publishState.type = "";
-      publishState.payload = "";
+      publishState.type = '';
+      publishState.payload = '';
     } else {
-      toast.add({ title: "발행 실패", color: "error" });
+      toast.add({ title: '발행 실패', color: 'error' });
     }
   } catch {
     toast.add({
-      title: "오류",
-      description: "이벤트 발행 중 오류가 발생했습니다.",
-      color: "error",
+      title: '오류',
+      description: '이벤트 발행 중 오류가 발생했습니다.',
+      color: 'error',
     });
   } finally {
     publishLoading.value = false;
@@ -71,10 +71,10 @@ async function onPublish(e: FormSubmitEvent<PublishSchema>) {
 
 // ── 이벤트 조회 폼 ─────────────────────────────────────────
 const searchSchema = z.object({
-  eventId: z.string().min(1, "이벤트 ID를 입력해주세요"),
+  eventId: z.string().min(1, '이벤트 ID를 입력해주세요'),
 });
 
-async function onSearch(e: FormSubmitEvent<{ eventId: string }>) {
+async function onSearch (e: FormSubmitEvent<{ eventId: string }>) {
   searchError.value = null;
   foundEvent.value = null;
   searchLoading.value = true;
@@ -83,10 +83,10 @@ async function onSearch(e: FormSubmitEvent<{ eventId: string }>) {
     if (res.success) {
       foundEvent.value = res.data;
     } else {
-      searchError.value = "이벤트를 찾을 수 없습니다.";
+      searchError.value = '이벤트를 찾을 수 없습니다.';
     }
   } catch {
-    searchError.value = "이벤트 조회 중 오류가 발생했습니다.";
+    searchError.value = '이벤트 조회 중 오류가 발생했습니다.';
   } finally {
     searchLoading.value = false;
   }
@@ -155,7 +155,7 @@ async function onSearch(e: FormSubmitEvent<{ eventId: string }>) {
               <UFormField label="페이로드 (JSON 직렬화 문자열)" name="payload">
                 <UTextarea
                   v-model="publishState.payload"
-                  placeholder='{"orderId":"uuid","amount":18000}'
+                  placeholder="{&quot;orderId&quot;:&quot;uuid&quot;,&quot;amount&quot;:18000}"
                   :rows="4"
                   class="w-full font-mono text-sm"
                 />
@@ -192,9 +192,11 @@ async function onSearch(e: FormSubmitEvent<{ eventId: string }>) {
               </div>
               <div>
                 <p class="text-muted mb-0.5">타입</p>
-                <UBadge variant="subtle" color="primary">{{
+                <UBadge variant="subtle" color="primary">
+{{
                   publishedEvent.type
-                }}</UBadge>
+                }}
+</UBadge>
               </div>
               <div class="col-span-2">
                 <p class="text-muted mb-0.5">페이로드</p>
@@ -253,9 +255,11 @@ async function onSearch(e: FormSubmitEvent<{ eventId: string }>) {
                   <UIcon name="i-lucide-activity" />
                   <span class="font-semibold">이벤트 상세</span>
                 </div>
-                <UBadge variant="subtle" color="primary">{{
+                <UBadge variant="subtle" color="primary">
+{{
                   foundEvent.type
-                }}</UBadge>
+                }}
+</UBadge>
               </div>
             </template>
             <div class="space-y-3 text-sm">

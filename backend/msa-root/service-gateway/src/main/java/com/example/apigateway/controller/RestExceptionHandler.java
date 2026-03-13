@@ -35,7 +35,7 @@ public class RestExceptionHandler {
     // /api/** 경로가 아닌 요청(favicon.ico 등)의 404는 무시
     if (ex.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND) && !path.startsWith("/api/")) {
       log.debug("404 무시 (비-API 요청): {} {}", method, path);
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(404, "Not Found"));
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(404, "요청한 리소스를 찾을 수 없습니다."));
     }
 
     int statusCode = ex.getStatusCode().value();
@@ -45,8 +45,9 @@ public class RestExceptionHandler {
         method,
         path,
         ex.getReason() != null ? ex.getReason() : ex.getMessage());
+    String message = ex.getReason() != null ? ex.getReason() : "요청 처리 중 오류가 발생했습니다.";
     return ResponseEntity.status(ex.getStatusCode())
-        .body(ApiResponse.error(statusCode, ex.getReason() != null ? ex.getReason() : "Not Found"));
+      .body(ApiResponse.error(statusCode, message));
   }
 
   @ExceptionHandler(Exception.class)

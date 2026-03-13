@@ -77,8 +77,21 @@ export const useApi = () => {
           return await doFetch();
         }
 
-        userSession.value = null;
-        navigateTo('/login');
+        // SSR에서는 쿠키를 지우지 않습니다. (레이아웃 SSR 데이터 로드 실패 시 즉시 로그아웃되는 문제 방지)
+        if (import.meta.client) {
+          userSession.value = null;
+        }
+
+        // SSR 컨텍스트에서 navigateTo를 호출하면 런타임 에러가 나므로 클라이언트에서만 이동합니다.
+        if (import.meta.client) {
+          await navigateTo('/login');
+        }
+
+        return {
+          success: false,
+          data: null as T,
+          error: 'UNAUTHORIZED',
+        };
       }
       throw err;
     }

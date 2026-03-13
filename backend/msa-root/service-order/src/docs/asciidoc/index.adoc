@@ -1,0 +1,56 @@
+= Order Service API Docs
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== Order API
+
+=== POST `/api/v1/orders`
+
+==== 성공 응답
+include::{snippets}/orders-create-success/http-request.adoc[]
+include::{snippets}/orders-create-success/request-headers.adoc[]
+include::{snippets}/orders-create-success/request-fields.adoc[]
+include::{snippets}/orders-create-success/http-response.adoc[]
+include::{snippets}/orders-create-success/response-fields.adoc[]
+
+==== 요청 검증 실패
+include::{snippets}/orders-create-validation-error/http-request.adoc[]
+include::{snippets}/orders-create-validation-error/http-response.adoc[]
+include::{snippets}/orders-create-validation-error/response-fields.adoc[]
+
+=== GET `/api/v1/orders/my`
+
+==== 성공 응답
+include::{snippets}/orders-my-success/http-request.adoc[]
+include::{snippets}/orders-my-success/request-headers.adoc[]
+include::{snippets}/orders-my-success/http-response.adoc[]
+include::{snippets}/orders-my-success/response-fields.adoc[]
+
+==== 역할 헤더 누락
+include::{snippets}/orders-my-forbidden-missing-role/http-request.adoc[]
+include::{snippets}/orders-my-forbidden-missing-role/http-response.adoc[]
+include::{snippets}/orders-my-forbidden-missing-role/response-fields.adoc[]
+
+=== GET `/api/v1/orders/frontend/customer-summaries`
+
+include::{snippets}/orders-frontend-customer-summaries-success/http-request.adoc[]
+include::{snippets}/orders-frontend-customer-summaries-success/http-response.adoc[]
+include::{snippets}/orders-frontend-customer-summaries-success/response-fields.adoc[]
+
+=== PATCH `/api/v1/orders/{id}/status`
+
+include::{snippets}/orders-update-status-conflict/http-request.adoc[]
+include::{snippets}/orders-update-status-conflict/path-parameters.adoc[]
+include::{snippets}/orders-update-status-conflict/request-headers.adoc[]
+include::{snippets}/orders-update-status-conflict/request-fields.adoc[]
+include::{snippets}/orders-update-status-conflict/http-response.adoc[]
+include::{snippets}/orders-update-status-conflict/response-fields.adoc[]
+
+=== GET `/api/v1/orders/{id}`
+
+==== 조회 실패
+include::{snippets}/orders-get-not-found/http-request.adoc[]
+include::{snippets}/orders-get-not-found/path-parameters.adoc[]
+include::{snippets}/orders-get-not-found/http-response.adoc[]
+include::{snippets}/orders-get-not-found/response-fields.adoc[]

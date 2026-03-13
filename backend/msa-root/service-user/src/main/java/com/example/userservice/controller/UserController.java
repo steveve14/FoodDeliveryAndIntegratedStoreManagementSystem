@@ -6,7 +6,12 @@ import com.example.userservice.dto.UserDto;
 import com.example.userservice.security.RequireRole;
 import com.example.userservice.service.UserService;
 import jakarta.validation.Valid;
+import java.net.URLConnection;
+import java.util.NoSuchElementException;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -66,6 +73,35 @@ public class UserController {
     ensureProfileAccess(id, requesterId, requesterRole);
     com.example.userservice.dto.UserProfileDto dto = userService.updateProfile(id, req);
     return ResponseEntity.ok(ApiResponse.ok(dto));
+  }
+
+  @PostMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ApiResponse<com.example.userservice.dto.UserProfileDto>> uploadAvatar(
+      @PathVariable String id,
+      @RequestHeader("X-User-Id") String requesterId,
+      @RequestHeader("X-User-Role") String requesterRole,
+      @RequestPart("file") MultipartFile file) {
+    ensureProfileAccess(id, requesterId, requesterRole);
+    com.example.userservice.dto.UserProfileDto dto = userService.updateAvatar(id, file);
+    return ResponseEntity.ok(ApiResponse.ok(dto));
+  }
+
+  @GetMapping("/avatars/{filename:.+}")
+  public ResponseEntity<Resource> getAvatar(@PathVariable String filename) {
+    // Binary file response endpoint: intentionally not wrapped by ApiResponse.
+    try {
+      Resource resource = userService.loadAvatar(filename);
+      String contentType = URLConnection.guessContentTypeFromName(resource.getFilename());
+      MediaType mediaType = contentType != null
+          ? MediaType.parseMediaType(contentType)
+          : MediaType.APPLICATION_OCTET_STREAM;
+      return ResponseEntity.ok()
+          .contentType(mediaType)
+          .header(HttpHeaders.CACHE_CONTROL, "public, max-age=86400")
+          .body(resource);
+    } catch (NoSuchElementException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
   }
 
   @DeleteMapping("/{id}")

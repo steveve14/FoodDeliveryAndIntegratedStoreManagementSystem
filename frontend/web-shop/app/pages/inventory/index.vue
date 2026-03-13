@@ -6,72 +6,77 @@ import { format } from 'date-fns';
 type StockStatus = 'safe' | 'warning' | 'danger'; // 여유 | 주의 | 부족
 
 interface InventoryItem {
-  id: number;
+  id: string;
   name: string; // 품목명 (예: 11호 닭)
   category: string; // 분류 (주재료, 부재료, 포장재 등)
   currentStock: number; // 현재 재고
   minThreshold: number; // 최소 유지 재고 (이 이하로 떨어지면 경고)
   unit: string; // 단위 (kg, box, 개, ea)
   lastUpdated: string; // 마지막 입출고 일시
+  description: string;
+  price: number;
 }
 
-// 2. 더미 데이터 (치킨집 예시)
-const inventory = ref<InventoryItem[]>([
-  {
-    id: 1,
-    name: '신선육 11호 (염지)',
-    category: '주재료',
-    currentStock: 45,
-    minThreshold: 20,
-    unit: '마리',
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    name: '전용 튀김유 (18L)',
-    category: '주재료',
-    currentStock: 3,
-    minThreshold: 5,
-    unit: '캔',
-    lastUpdated: new Date(Date.now() - 86400000 * 2).toISOString(),
-  },
-  {
-    id: 3,
-    name: '치킨무 (박스)',
-    category: '부재료',
-    currentStock: 8,
-    minThreshold: 10,
-    unit: '박스',
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: 4,
-    name: '양념 소스 (10kg)',
-    category: '소스류',
-    currentStock: 12,
+interface StoreSummary {
+  id: string;
+}
+
+interface MenuApiItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  available: boolean;
+  createdAt?: string;
+}
+
+const { $api } = useApi();
+const toast = useToast();
+const inventory = ref<InventoryItem[]>([]);
+const storeId = ref<string | null>(null);
+
+async function resolveStoreId () {
+  if (storeId.value) {
+    return storeId.value;
+  }
+
+  const res = await $api<StoreSummary>('/api/v1/stores/me');
+  if (!res.success || !res.data) {
+    storeId.value = null;
+    return null;
+  }
+
+  storeId.value = res.data.id;
+  return storeId.value;
+}
+
+async function fetchInventory () {
+  const resolvedStoreId = await resolveStoreId();
+  if (!resolvedStoreId) {
+    inventory.value = [];
+    return;
+  }
+
+  const res = await $api<MenuApiItem[]>(`/api/v1/stores/${resolvedStoreId}/menus`);
+  if (!res.success || !res.data) {
+    inventory.value = [];
+    return;
+  }
+
+  inventory.value = res.data.map(menu => ({
+    id: menu.id,
+    name: menu.name,
+    category: '메뉴',
+    currentStock: menu.available ? 10 : 0,
     minThreshold: 3,
-    unit: '통',
-    lastUpdated: new Date(Date.now() - 86400000 * 5).toISOString(),
-  },
-  {
-    id: 5,
-    name: '포장 박스 (본품)',
-    category: '포장재',
-    currentStock: 150,
-    minThreshold: 50,
-    unit: '개',
-    lastUpdated: new Date().toISOString(),
-  },
-  {
-    id: 6,
-    name: '콜라 1.25L',
-    category: '음료',
-    currentStock: 2,
-    minThreshold: 12,
     unit: 'ea',
-    lastUpdated: new Date(Date.now() - 86400000).toISOString(),
-  },
-]);
+    lastUpdated: menu.createdAt ?? new Date().toISOString(),
+    description: menu.description ?? '',
+    price: menu.price,
+  }));
+}
+
+await fetchInventory();
 
 // 3. 상태 계산 로직
 const getStatus = (current: number, min: number): StockStatus => {
@@ -111,7 +116,9 @@ const q = ref('');
 const selectedCategory = ref('all');
 const hideSafeItems = ref(false); // '부족한 재료만 보기' 필터
 
-const categories = ['주재료', '부재료', '소스류', '포장재', '음료'];
+const categories = computed(() => {
+  return [...new Set(inventory.value.map(item => item.category))];
+});
 
 const filteredInventory = computed(() => {
   return inventory.value.filter((item) => {
@@ -133,7 +140,7 @@ const filteredInventory = computed(() => {
 // 5. 입출고 모달 관리
 const isStockModalOpen = ref(false);
 const stockForm = reactive({
-  id: 0,
+  id: '',
   name: '',
   type: 'in' as 'in' | 'out', // 입고 | 출고
   amount: 0,
@@ -149,13 +156,40 @@ const openStockModal = (item: InventoryItem) => {
   isStockModalOpen.value = true;
 };
 
-const updateStock = () => {
+const updateStock = async () => {
+  if (stockForm.amount <= 0) {
+    return;
+  }
+
   const index = inventory.value.findIndex(i => i.id === stockForm.id);
   if (index !== -1 && inventory.value[index]) {
+    const target = inventory.value[index];
     const change =
       stockForm.type === 'in' ? stockForm.amount : -stockForm.amount;
-    inventory.value[index].currentStock += change;
-    inventory.value[index].lastUpdated = new Date().toISOString();
+    const nextStock = Math.max(0, target.currentStock + change);
+
+    const resolvedStoreId = await resolveStoreId();
+    if (!resolvedStoreId) {
+      toast.add({
+        title: '매장을 찾을 수 없습니다.',
+        description: '현재 로그인한 계정에 연결된 매장이 없습니다.',
+        color: 'error',
+      });
+      return;
+    }
+
+    await $api<MenuApiItem>(`/api/v1/stores/${resolvedStoreId}/menus/${target.id}`, {
+      method: 'PUT',
+      body: {
+        name: target.name,
+        description: target.description,
+        price: target.price,
+        available: nextStock > 0,
+      },
+    });
+
+    target.currentStock = nextStock;
+    target.lastUpdated = new Date().toISOString();
   }
   isStockModalOpen.value = false;
 };

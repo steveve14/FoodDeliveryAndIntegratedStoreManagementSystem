@@ -1,0 +1,29 @@
+= User Service API Docs
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== User Authentication API
+
+=== POST `/api/v1/users/authenticate`
+
+사용자 이메일/비밀번호를 검증하고 기본 사용자 정보를 반환합니다.
+
+==== 성공 응답
+
+include::{snippets}/users-authenticate-success/http-request.adoc[]
+include::{snippets}/users-authenticate-success/request-fields.adoc[]
+include::{snippets}/users-authenticate-success/http-response.adoc[]
+include::{snippets}/users-authenticate-success/response-fields.adoc[]
+
+==== 인증 실패
+
+include::{snippets}/users-authenticate-unauthorized/http-request.adoc[]
+include::{snippets}/users-authenticate-unauthorized/http-response.adoc[]
+include::{snippets}/users-authenticate-unauthorized/response-fields.adoc[]
+
+==== 요청 검증 실패
+
+include::{snippets}/users-authenticate-validation-error/http-request.adoc[]
+include::{snippets}/users-authenticate-validation-error/http-response.adoc[]
+include::{snippets}/users-authenticate-validation-error/response-fields.adoc[]

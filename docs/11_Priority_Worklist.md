@@ -11,13 +11,10 @@
 
 ## P0 (완료 및 진행 중)
 
-### ⬜ P0-0. 프론트 실연동 차단요소 해소 (신규)
-- 현상: `web-user`에서 `/api/v1/stores` 호출 시 401 (백엔드/프론트 경유 동일)
-- 작업:
-  - 공개 조회 API와 보호 API 경계 재정의 (`stores list/detail` 공개 여부 확정)
-  - 공개 정책 유지 시 gateway 필터 예외 경로 명시
-  - 보호 정책 유지 시 프론트 초기 진입 인증 플로우(자동 로그인/리다이렉트) 정렬
-- 완료조건: 비로그인/로그인 케이스 기준 홈 매장 목록 노출 정책이 명확하고 동작 검증 완료
+### ✅ P0-0. 프론트 실연동 차단요소 해소 (완료 — 2026-03-13)
+- `GET /api/v1/stores`, `GET /api/v1/stores/*`, `GET /api/v1/stores/*/menus` 비인증 공개
+- 그 외 stores 변경/관리 API는 gateway 인증 필터 유지
+- web-user E2E 홈 → 카테고리 → 매장 상세 → 장바구니 → 주문 확정까지 통과 확인
 
 ### ✅ P0-1. 기준선 확정: 문서↔코드 정렬 정책 (완료 — 2026-03-04)
 - 결정: **코드 기준으로 문서를 정렬** (현실을 반영한 문서 최신화)
@@ -32,15 +29,12 @@
   - 글로벌 예외 처리기(에러 코드 정책 포함) 정비
 - 완료조건: Auth/User/Store/Order 서비스의 신규·기존 공개 API 100% 표준 준수
 
-### ⬜ P0-5. 하드코딩 고위험 항목 제거 (신규)
-- 목표: 운영/보안 영향이 큰 하드코딩을 설정/시크릿으로 외부화
-- 작업:
-  - gateway JWT secret 환경변수화
-  - delivery 고정 배달비 상수(`3000`)를 설정값으로 이동
-  - order VIP 분기 기준(`10`)을 설정값으로 이동
-  - gRPC `static://127.0.0.1:*` 주소를 환경변수 기반으로 전환
-  - Eureka/CORS 주소를 환경변수 목록 기반으로 전환
-- 완료조건: 민감/정책 값이 코드에 직접 하드코딩되지 않고 환경별 설정으로 분리
+### ✅ P0-5. 하드코딩 고위험 항목 제거 (완료 — 2026-03-10)
+- gateway JWT secret `${TOKEN_SECRET}` 환경변수화 완료
+- delivery 고정 배달비 `${DELIVERY_DEFAULT_FEE:3000}` 분리 완료
+- order VIP 기준 `${ORDER_VIP_THRESHOLD:10}` 분리 완료
+- gRPC 주소 `${SERVICE_*_GRPC_ADDR:...}` 환경변수 전환 완료
+- Eureka/CORS 주소 `${EUREKA_DEFAULT_ZONE}`, `${GATEWAY_ALLOWED_ORIGIN_*}` 외부화 완료
 
 ### ✅ P0-3. 서비스 간 통신 표준 적용 (완료 — 2026-03-04)
 - **결정**: OpenFeign 폐기 → **Spring gRPC 1.0.0-RC1** (Protobuf 스키마 기반) 채택
@@ -54,13 +48,11 @@
   - 모든 서비스 `application.yml` `grpc.*` → `spring.grpc.*` 접두사 변경
   - **전체 `BUILD SUCCESSFUL`** 확인 (8개 서비스, `clean compileJava`)
 
-### ⬜ P0-4. 핵심 도메인 최소 기능(MVP) 정의 및 구현 시작 (진행 필요)
-- 목표: "고객 주문 1건 생성→상태변경→조회"까지 E2E 최소 플로우 확보
-- 포함범위:
-  - 주문 생성/조회
-  - 주문 상태 전이(PENDING→COOKING→DELIVERING→DONE 등)
-  - 매장 메뉴 조회/재고 반영의 최소 경로
-- 완료조건: 데모 가능한 E2E 시나리오 1개 성공
+### ✅ P0-4. 핵심 도메인 최소 기능(MVP) 정의 및 구현 (완료 — 2026-03-13)
+- 주문 생성(`POST /api/v1/orders`), 조회(`GET /api/v1/orders/my`), 상태 전이(`PATCH /api/v1/orders/{id}/status`) 구현 완료
+- service-order: gRPC로 service-store 메뉴 검증 후 주문 생성
+- Playwright E2E 시나리오 통과: 홈 → 카테고리 → 매장 → 장바구니 담기 → 결제(주문 확정) → 주문 내역 화면 진입
+- `run/e2e/order-flow.spec.ts` 14단계 시나리오 `1 passed (4.1s)` 확인 (2026-03-13)
 
 ## P1 (P0 완료 직후)
 

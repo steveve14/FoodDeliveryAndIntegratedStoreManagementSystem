@@ -1,0 +1,42 @@
+= Store Service API Docs
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== Store API
+
+=== POST `/api/v1/stores`
+
+==== 성공 응답
+include::{snippets}/stores-create-success/http-request.adoc[]
+include::{snippets}/stores-create-success/request-headers.adoc[]
+include::{snippets}/stores-create-success/request-fields.adoc[]
+include::{snippets}/stores-create-success/http-response.adoc[]
+include::{snippets}/stores-create-success/response-fields.adoc[]
+
+==== 역할 헤더 누락
+include::{snippets}/stores-create-forbidden-missing-role/http-request.adoc[]
+include::{snippets}/stores-create-forbidden-missing-role/http-response.adoc[]
+include::{snippets}/stores-create-forbidden-missing-role/response-fields.adoc[]
+
+=== GET `/api/v1/stores`
+
+include::{snippets}/stores-list-success/http-request.adoc[]
+include::{snippets}/stores-list-success/query-parameters.adoc[]
+include::{snippets}/stores-list-success/http-response.adoc[]
+include::{snippets}/stores-list-success/response-fields.adoc[]
+
+=== GET `/api/v1/stores/me`
+
+include::{snippets}/stores-me-success/http-request.adoc[]
+include::{snippets}/stores-me-success/request-headers.adoc[]
+include::{snippets}/stores-me-success/http-response.adoc[]
+include::{snippets}/stores-me-success/response-fields.adoc[]
+
+=== GET `/api/v1/stores/{id}`
+
+==== 조회 실패
+include::{snippets}/stores-get-not-found/http-request.adoc[]
+include::{snippets}/stores-get-not-found/path-parameters.adoc[]
+include::{snippets}/stores-get-not-found/http-response.adoc[]
+include::{snippets}/stores-get-not-found/response-fields.adoc[]

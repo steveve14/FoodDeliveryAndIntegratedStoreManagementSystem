@@ -3,47 +3,49 @@
  * [신고 및 제재 관리]
  * 요청하신 UModal > #body > UForm 구조를 적용한 버전입니다.
  */
-import { h, ref, reactive, resolveComponent, watch, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import * as z from "zod";
-import { format, subDays, subHours } from "date-fns";
-import { getPaginationRowModel, getSortedRowModel } from "@tanstack/table-core";
+import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
+import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
+
+import * as z from 'zod';
+import { format, subDays, subHours } from 'date-fns';
+import { getPaginationRowModel } from '@tanstack/table-core';
+import type { Row, Table } from '@tanstack/table-core';
 
 // ==========================================
 // 1. 컴포넌트 리졸브
 // ==========================================
-const UButton = resolveComponent("UButton");
-const UBadge = resolveComponent("UBadge");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
-const UCheckbox = resolveComponent("UCheckbox");
-const URadioGroup = resolveComponent("URadioGroup"); // [추가] 상태 선택용
+const UButton = resolveComponent('UButton');
+const UBadge = resolveComponent('UBadge');
+const UDropdownMenu = resolveComponent('UDropdownMenu');
+const UCheckbox = resolveComponent('UCheckbox');
+const URadioGroup = resolveComponent('URadioGroup'); // [추�?] ?�태 ?�택??
 
 const toast = useToast();
-const table = ref<any>(null);
+type TableInstance<T> = { tableApi?: Table<T> } | null;
+type TableRow<T> = Row<T>;
+const table = ref<TableInstance<ReportItem>>(null);
 
 // ==========================================
 // 2. 설정 및 데이터 정의
 // ==========================================
-const PAGE_TITLE = "신고 및 제재 관리";
-const DATA_KEY = "reports";
+const DATA_KEY = 'reports';
 
 type ReportItem = {
   id: number;
-  targetType: "Review" | "User" | "Post";
+  targetType: 'Review' | 'User' | 'Post';
   targetName: string;
-  reason: "spam" | "abuse" | "sexual" | "fraud";
+  reason: 'spam' | 'abuse' | 'sexual' | 'fraud';
   description: string;
   reporter: string;
-  status: "open" | "resolved" | "dismissed";
+  status: 'open' | 'resolved' | 'dismissed';
   createdAt: string;
   adminNote?: string;
 };
 
 // 폼 스키마
 const formSchema = z.object({
-  status: z.enum(["resolved", "dismissed"]), // 제재(resolved) 또는 반려(dismissed)
-  adminNote: z.string().min(1, "조치 사유를 입력해주세요."),
+  status: z.enum(['resolved', 'dismissed']), // 제재(resolved) 또는 반려(dismissed)
+  adminNote: z.string().min(1, '조치 사유를 입력해주세요.'),
 });
 
 type FormSchema = z.output<typeof formSchema>;
@@ -51,13 +53,13 @@ type FormSchema = z.output<typeof formSchema>;
 // ==========================================
 // 3. 상태 관리
 // ==========================================
-const columnFilters = ref([{ id: "targetName", value: "" }]);
+const columnFilters = ref([{ id: 'targetName', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
-const sorting = ref([{ id: "id", desc: true }]);
+const sorting = ref([{ id: 'id', desc: true }]);
 
-const statusFilter = ref("all");
+const statusFilter = ref('all');
 const isModalOpen = ref(false);
 const selectedId = ref<number | null>(null);
 
@@ -65,7 +67,7 @@ const selectedId = ref<number | null>(null);
 const currentReport = ref<ReportItem | null>(null);
 
 // 폼 상태
-const initialFormState: FormSchema = { status: "resolved", adminNote: "" };
+const initialFormState: FormSchema = { status: 'resolved', adminNote: '' };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
@@ -74,16 +76,16 @@ const formState = reactive<FormSchema>({ ...initialFormState });
 const { data, status: loadingStatus } = await useAsyncData<ReportItem[]>(
   DATA_KEY,
   async () => {
-    const targetTypes: Array<"Review" | "User" | "Post"> = [
-      "Review",
-      "User",
-      "Post",
+    const targetTypes: Array<'Review' | 'User' | 'Post'> = [
+      'Review',
+      'User',
+      'Post',
     ];
-    const reasons: Array<"spam" | "abuse" | "sexual" | "fraud"> = [
-      "spam",
-      "abuse",
-      "sexual",
-      "fraud",
+    const reasons: Array<'spam' | 'abuse' | 'sexual' | 'fraud'> = [
+      'spam',
+      'abuse',
+      'sexual',
+      'fraud',
     ];
 
     return Array.from({ length: 50 }).map((_, i) => {
@@ -94,13 +96,13 @@ const { data, status: loadingStatus } = await useAsyncData<ReportItem[]>(
       return {
         id: 50 - i,
         targetType: type,
-        targetName: type === "User" ? `@user_${i}` : `${type} #${1000 + i}`,
+        targetName: type === 'User' ? `@user_${i}` : `${type} #${1000 + i}`,
         reason: reason,
-        description: "부적절한 내용을 포함하고 있습니다. 확인 부탁드립니다.",
+        description: '부?�절???�용???�함?�고 ?�습?�다. ?�인 부?�드립니??',
         reporter: `reporter_${i}`,
-        status: isOpen ? "open" : i % 2 === 0 ? "resolved" : "dismissed",
+        status: isOpen ? 'open' : i % 2 === 0 ? 'resolved' : 'dismissed',
         createdAt: subHours(subDays(new Date(), i % 5), i).toISOString(),
-        adminNote: isOpen ? undefined : "운영 정책 위반 확인되어 조치함.",
+        adminNote: isOpen ? undefined : '?�영 ?�책 ?�반 ?�인?�어 조치??',
       } as ReportItem;
     });
   },
@@ -109,59 +111,59 @@ const { data, status: loadingStatus } = await useAsyncData<ReportItem[]>(
 // ==========================================
 // 5. 액션 핸들러
 // ==========================================
-function openProcessModal(row: ReportItem) {
+function openProcessModal (row: ReportItem) {
   currentReport.value = row;
   selectedId.value = row.id;
 
-  if (row.status !== "open") {
+  if (row.status !== 'open') {
     Object.assign(formState, {
       status: row.status,
-      adminNote: row.adminNote || "",
+      adminNote: row.adminNote || '',
     });
   } else {
     // 기본값: 제재 처리
-    Object.assign(formState, { status: "resolved", adminNote: "" });
+    Object.assign(formState, { status: 'resolved', adminNote: '' });
   }
   isModalOpen.value = true;
 }
 
-async function onSubmit(event: FormSubmitEvent<FormSchema>) {
+async function onSubmit (_event: FormSubmitEvent<FormSchema>) {
   if (currentReport.value) {
     currentReport.value.status = formState.status;
     currentReport.value.adminNote = formState.adminNote;
   }
-  const actionText = formState.status === "resolved" ? "제재 처리" : "반려";
+  const actionText = formState.status === 'resolved' ? '제재 처리' : '반려';
   toast.add({
-    title: "처리 완료",
+    title: '처리 완료',
     description: `${actionText} 되었습니다.`,
-    color: "success",
+    color: 'success',
   });
   isModalOpen.value = false;
 }
 
-function onDelete(ids: number[]) {
+function onDelete (ids: number[]) {
   toast.add({
-    title: "삭제 완료",
+    title: '삭제 완료',
     description: `${ids.length}개의 기록이 삭제되었습니다.`,
-    color: "error",
+    color: 'error',
   });
   rowSelection.value = {};
 }
 
-function getRowItems(row: ReportItem) {
-  const isProcessed = row.status !== "open";
+function getRowItems (row: ReportItem) {
+  const isProcessed = row.status !== 'open';
   return [
-    { type: "label", label: "관리" },
+    { type: 'label', label: '관리' },
     {
-      label: isProcessed ? "처리 내역 보기" : "신고 처리하기",
-      icon: isProcessed ? "i-lucide-eye" : "i-lucide-gavel",
+      label: isProcessed ? '처리 내역 보기' : '신고 처리하기',
+      icon: isProcessed ? 'i-lucide-eye' : 'i-lucide-gavel',
       onSelect: () => openProcessModal(row),
     },
-    { type: "separator" },
+    { type: 'separator' },
     {
-      label: "기록 삭제",
-      icon: "i-lucide-trash",
-      color: "error",
+      label: '기록 삭제',
+      icon: 'i-lucide-trash',
+      color: 'error',
       onSelect: () => onDelete([row.id]),
     },
   ];
@@ -171,100 +173,100 @@ function getRowItems(row: ReportItem) {
 // 6. 테이블 컬럼 정의
 // ==========================================
 const columnLabels: Record<string, string> = {
-  select: "선택",
-  id: "No.",
-  reason: "신고 사유",
-  targetName: "신고 대상",
-  reporter: "신고자",
-  status: "상태",
-  createdAt: "접수일",
-  actions: "관리",
+  select: '선택',
+  id: 'No.',
+  reason: '신고 사유',
+  targetName: '신고 대상',
+  reporter: '신고자',
+  status: '상태',
+  createdAt: '접수일',
+  actions: '관리',
 };
 
 const columns: TableColumn<ReportItem>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
-        modelValue: table.getIsSomePageRowsSelected()
-          ? "indeterminate"
-          : table.getIsAllPageRowsSelected(),
-        "onUpdate:modelValue": (v: boolean) =>
+        'modelValue': table.getIsSomePageRowsSelected() ?
+          'indeterminate' :
+          table.getIsAllPageRowsSelected(),
+        'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
-        ariaLabel: "전체 선택",
+        'ariaLabel': '전체 선택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
-        modelValue: row.getIsSelected(),
-        "onUpdate:modelValue": (v: boolean) => row.toggleSelected(!!v),
-        ariaLabel: "행 선택",
+        'modelValue': row.getIsSelected(),
+        'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
+        'ariaLabel': '행 선택',
       }),
     enableSorting: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: 'id',
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       return h(UButton, {
-        color: "neutral",
-        variant: "ghost",
-        label: "No.",
+        color: 'neutral',
+        variant: 'ghost',
+        label: 'No.',
         icon:
-          isSorted === "asc"
-            ? "i-lucide-arrow-up-narrow-wide"
-            : isSorted === "desc"
-              ? "i-lucide-arrow-down-wide-narrow"
-              : "i-lucide-arrow-up-down",
-        class: "-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800",
-        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+          isSorted === 'asc' ?
+            'i-lucide-arrow-up-narrow-wide' :
+            isSorted === 'desc' ?
+              'i-lucide-arrow-down-wide-narrow' :
+              'i-lucide-arrow-up-down',
+        class: '-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
       });
     },
   },
   {
-    accessorKey: "reason",
-    header: "신고 사유",
+    accessorKey: 'reason',
+    header: '신고 사유',
     cell: ({ row }) => {
       const reasonMap: Record<string, string> = {
-        spam: "스팸/홍보",
-        abuse: "욕설/비방",
-        sexual: "음란물",
-        fraud: "사기/도배",
+        spam: '스팸/홍보',
+        abuse: '욕설/비방',
+        sexual: '음란물',
+        fraud: '사기/도배',
       };
       return h(
-        "span",
-        { class: "text-red-500 font-medium" },
+        'span',
+        { class: 'text-red-500 font-medium' },
         reasonMap[row.original.reason] || row.original.reason,
       );
     },
   },
   {
-    accessorKey: "targetName",
-    header: "신고 대상",
+    accessorKey: 'targetName',
+    header: '신고 대상',
     cell: ({ row }) =>
-      h("div", { class: "flex flex-col" }, [
-        h("span", { class: "text-xs text-gray-500" }, row.original.targetType),
+      h('div', { class: 'flex flex-col' }, [
+        h('span', { class: 'text-xs text-gray-500' }, row.original.targetType),
         h(
-          "span",
+          'span',
           {
             class:
-              "font-medium cursor-pointer hover:underline hover:text-primary",
+              'font-medium cursor-pointer hover:underline hover:text-primary',
             onClick: () => openProcessModal(row.original),
           },
           row.original.targetName,
         ),
       ]),
   },
-  { accessorKey: "reporter", header: "신고자" },
+  { accessorKey: 'reporter', header: '신고자' },
   {
-    accessorKey: "status",
-    header: "처리 상태",
-    filterFn: "equals",
+    accessorKey: 'status',
+    header: '처리 상태',
+    filterFn: 'equals',
     cell: ({ row }) => {
       const status = row.original.status;
       const config = {
-        open: { label: "접수됨", color: "error", variant: "solid" },
-        resolved: { label: "조치 완료", color: "success", variant: "subtle" },
-        dismissed: { label: "반려됨", color: "neutral", variant: "subtle" },
+        open: { label: '접수됨', color: 'error', variant: 'solid' },
+        resolved: { label: '조치 완료', color: 'success', variant: 'subtle' },
+        dismissed: { label: '반려됨', color: 'neutral', variant: 'subtle' },
       } as const;
       const current = config[status];
       return h(
@@ -275,29 +277,29 @@ const columns: TableColumn<ReportItem>[] = [
     },
   },
   {
-    accessorKey: "createdAt",
-    header: "접수일",
+    accessorKey: 'createdAt',
+    header: '접수일',
     cell: ({ row }) =>
-      format(new Date(row.original.createdAt), "yyyy-MM-dd HH:mm"),
+      format(new Date(row.original.createdAt), 'yyyy-MM-dd HH:mm'),
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) =>
       h(
-        "div",
-        { class: "text-right" },
+        'div',
+        { class: 'text-right' },
         h(
           UDropdownMenu,
           {
-            content: { align: "end" },
+            content: { align: 'end' },
             items: getRowItems(row.original),
           },
           () =>
             h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-              class: "ml-auto",
+              icon: 'i-lucide-ellipsis-vertical',
+              color: 'neutral',
+              variant: 'ghost',
+              class: 'ml-auto',
             }),
         ),
       ),
@@ -306,26 +308,29 @@ const columns: TableColumn<ReportItem>[] = [
 ];
 
 watch(statusFilter, (val) => {
-  if (!table.value?.tableApi) return;
+  if (!table.value?.tableApi) {
+    return;
+  }
   table.value.tableApi
-    .getColumn("status")
-    ?.setFilterValue(val === "all" ? undefined : val);
+    .getColumn('status')
+    ?.setFilterValue(val === 'all' ? undefined : val);
 });
 
 const targetSearch = computed({
   get: () =>
     (table.value?.tableApi
-      ?.getColumn("targetName")
-      ?.getFilterValue() as string) || "",
-  set: (val) =>
+      ?.getColumn('targetName')
+      ?.getFilterValue() as string) || '',
+  set: val =>
     table.value?.tableApi
-      ?.getColumn("targetName")
+      ?.getColumn('targetName')
       ?.setFilterValue(val || undefined),
 });
 </script>
 
 <template>
   <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col">
     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
       <UInput
         v-model="targetSearch"
@@ -344,15 +349,15 @@ const targetSearch = computed({
             onDelete(
               table?.tableApi
                 ?.getFilteredSelectedRowModel()
-                .rows.map((r: any) => r.original.id),
+                .rows.map((r: TableRow<ReportItem>) => r.original.id),
             )
           "
         >
-          <template #trailing
-            ><UKbd>{{
-              table?.tableApi?.getFilteredSelectedRowModel().rows.length
-            }}</UKbd></template
-          >
+          <template #trailing>
+            <UKbd>
+              {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length }}
+            </UKbd>
+          </template>
         </UButton>
         <USelect
           v-model="statusFilter"
@@ -368,8 +373,8 @@ const targetSearch = computed({
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((c: any) => c.getCanHide())
-              .map((c: any) => ({
+              .filter(c => c.getCanHide())
+              .map(c => ({
                 label: columnLabels[c.id] || c.id,
                 type: 'checkbox',
                 checked: c.getIsVisible(),
@@ -398,7 +403,6 @@ const targetSearch = computed({
       v-model:pagination="pagination"
       v-model:sorting="sorting"
       :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-      :sorting-options="{ getSortedRowModel: getSortedRowModel() } as any"
       :data="data || []"
       :columns="columns"
       :loading="loadingStatus === 'pending'"
@@ -417,9 +421,9 @@ const targetSearch = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}개 중
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}개
-        선택됨.
+        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}�?�?
+        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}�?
+        ?�택??
       </div>
       <UPagination
         :default-page="
@@ -430,7 +434,7 @@ const targetSearch = computed({
         @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)"
       />
     </div>
-  </div>
+    </div>
 
   <UModal
     v-model:open="isModalOpen"
@@ -480,7 +484,7 @@ const targetSearch = computed({
           </p>
         </div>
 
-        <hr class="border-gray-200 dark:border-gray-700" />
+        <hr class="border-gray-200 dark:border-gray-700">
 
         <UFormField
           label="관리자 조치 메모"
@@ -527,4 +531,5 @@ const targetSearch = computed({
       </UForm>
     </template>
   </UModal>
+  </div>
 </template>

@@ -1,405 +1,465 @@
 <script setup lang="ts">
-/**
- * [재무 > 결제/정산 관리]
- * Base Code 아키텍처 기반 리팩토링
- */
-import { h, ref, reactive, resolveComponent, watch, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import * as z from "zod";
-import { format, subDays, subHours } from "date-fns";
-import { getPaginationRowModel, getSortedRowModel } from "@tanstack/table-core";
+import { h, ref, resolveComponent, computed } from 'vue';
+import type { TableColumn } from '@nuxt/ui';
+import { format } from 'date-fns';
+import { getPaginationRowModel } from '@tanstack/table-core';
+import type { OrderDto } from '~/types/api';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
-// ==========================================
-// 1. 컴포넌트 리졸브
-// ==========================================
-const UButton = resolveComponent("UButton");
-const UBadge = resolveComponent("UBadge");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
-const UCheckbox = resolveComponent("UCheckbox");
-const URadioGroup = resolveComponent("URadioGroup");
+const UButton = resolveComponent('UButton');
+const UBadge = resolveComponent('UBadge');
+const UDropdownMenu = resolveComponent('UDropdownMenu');
 
-const toast = useToast();
-const table = ref<any>(null);
-
-// ==========================================
-// 2. 설정 및 데이터 정의
-// ==========================================
-const PAGE_TITLE = "결제/정산 관리";
-const DATA_KEY = "transactions";
-
-type TransactionItem = {
-  id: string; // 주문번호/거래ID (String)
-  type: "payment" | "refund" | "settlement";
-  amount: number;
-  method: "card" | "bank" | "point";
-  status: "success" | "pending" | "failed" | "cancelled";
-  user: string;
-  description: string;
-  createdAt: string;
-  note?: string; // 관리자 비고
+type DashboardColumn = {
+  id: string;
+  getCanHide: () => boolean;
+  getIsVisible: () => boolean;
+  toggleVisibility: (visible: boolean) => void;
 };
 
-// 폼 스키마 (상태 변경 및 비고 입력)
-const formSchema = z.object({
-  action: z.enum(["refund", "approve", "reject", "none"]),
-  note: z.string().optional(),
-});
+type DashboardTableApi = {
+  getAllColumns: () => DashboardColumn[];
+  getColumn?: (id: string) => DashboardColumn | undefined;
+  getState: () => {
+    pagination: {
+      pageIndex: number;
+      pageSize: number;
+    };
+  };
+  setPageIndex: (pageIndex: number) => void;
+};
 
-type FormSchema = z.output<typeof formSchema>;
+type DashboardTableRef = {
+  tableApi?: DashboardTableApi;
+};
 
-// ==========================================
-// 3. 상태 관리
-// ==========================================
-const columnFilters = ref([{ id: "id", value: "" }]); // ID 검색
+type TransactionType = 'payment' | 'refund' | 'settlement';
+type TransactionStatus = 'success' | 'pending' | 'cancelled';
+
+type TransactionItem = {
+  id: string;
+  orderId: string;
+  storeId: string;
+  storeName: string;
+  userId: string;
+  userEmail: string;
+  type: TransactionType;
+  amount: number;
+  status: TransactionStatus;
+  description: string;
+  createdAt: string;
+  note: string;
+};
+
+const toast = useToast();
+const table = ref<DashboardTableRef | null>(null);
+
+const { data: source, refresh, status: loadingStatus } = await useAdminHomeSource();
+
+const searchFilter = ref('');
+const typeFilter = ref<'all' | TransactionType>('all');
+const statusFilter = ref<'all' | TransactionStatus>('all');
 const columnVisibility = ref({});
-const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
-const sorting = ref([{ id: "createdAt", desc: true }]);
-
-const typeFilter = ref("all");
-const statusFilter = ref("all");
 const isModalOpen = ref(false);
-const selectedId = ref<string | null>(null);
-
-// 상세 정보 표시용 (읽기 전용)
 const currentTx = ref<TransactionItem | null>(null);
 
-// 폼 상태
-const initialFormState: FormSchema = { action: "none", note: "" };
-const formState = reactive<FormSchema>({ ...initialFormState });
+const currencyFormatter = new Intl.NumberFormat('ko-KR', {
+  style: 'currency',
+  currency: 'KRW',
+  maximumFractionDigits: 0,
+});
 
-// ==========================================
-// 4. 데이터 페칭 (Mock Data)
-// ==========================================
-const { data, status: loadingStatus } = await useAsyncData<TransactionItem[]>(
-  DATA_KEY,
-  async () => {
-    // 1. 배열 정의를 map 함수 밖으로 이동 (성능 및 가독성 최적화)
-    // 2. 'as const'를 사용하여 리터럴 타입으로 고정
-    const types = [
-      "payment",
-      "payment",
-      "payment",
-      "refund",
-      "settlement",
-    ] as const;
-    const methods = ["card", "bank", "point"] as const;
-    // TransactionItem 타입에 'cancelled'가 있다면 배열에도 포함하거나, Mock 데이터에서 제외해도 됩니다.
-    const statuses = [
-      "success",
-      "success",
-      "pending",
-      "failed",
-      "cancelled",
-    ] as const;
+const customerEmailById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.customers ?? []).map(customer => [customer.id, customer.email]),
+  );
+});
 
-    return Array.from({ length: 50 }).map((_, i) => {
-      // 인덱스 순환을 통해 값 선택
-      const type = types[i % types.length] as
-        | "payment"
-        | "refund"
-        | "settlement";
-      const method = methods[i % methods.length] as "card" | "bank" | "point";
-      const status = statuses[i % statuses.length] as
-        | "success"
-        | "pending"
-        | "failed"
-        | "cancelled";
+const storeNameById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.stores ?? []).map(store => [store.id, store.name]),
+  );
+});
 
-      // 금액 랜덤 생성
-      const amount = (Math.floor(Math.random() * 100) + 1) * 1000;
+function buildTransaction (order: OrderDto): TransactionItem {
+  const storeName = storeNameById.value[order.storeId] ?? order.storeId;
+  const userEmail = customerEmailById.value[order.userId] ?? order.userId;
 
-      return {
-        id: `ORD-${20240000 + i}-${String.fromCharCode(65 + (i % 26))}`,
-        type: type,
-        amount: type === "refund" ? -amount : amount, // 환불은 음수 처리
-        method: method,
-        status: status,
-        user: `User_${i}`,
-        description:
-          type === "settlement" ? "10월 판매 수익 정산" : `상품 구매 #${i}`,
-        // date-fns 함수 사용 (import 필요)
-        createdAt: subHours(subDays(new Date(), i % 10), i).toISOString(),
-        note: "",
-      };
-    });
-  },
-);
+  if (order.status === 'CANCELLED') {
+    return {
+      id: `refund-${order.id}`,
+      orderId: order.id,
+      storeId: order.storeId,
+      storeName,
+      userId: order.userId,
+      userEmail,
+      type: 'refund',
+      amount: -Math.abs(order.totalAmount),
+      status: 'cancelled',
+      description: `${storeName} 주문 취소 환불`,
+      createdAt: order.createdAt,
+      note: '주문 서비스의 취소 상태를 기준으로 환불 후보 건으로 표시합니다.',
+    };
+  }
 
-// ==========================================
-// 5. 액션 핸들러
-// ==========================================
-function openDetailModal(row: TransactionItem) {
-  currentTx.value = row;
-  selectedId.value = row.id;
+  if (order.status === 'DONE') {
+    return {
+      id: `settlement-${order.id}`,
+      orderId: order.id,
+      storeId: order.storeId,
+      storeName,
+      userId: order.userId,
+      userEmail,
+      type: 'settlement',
+      amount: order.totalAmount,
+      status: 'success',
+      description: `${storeName} 주문 정산 완료`,
+      createdAt: order.createdAt,
+      note: '정산 전용 원천 API가 없어 완료 주문 금액을 기준으로 정산 완료 건으로 집계합니다.',
+    };
+  }
 
-  // 폼 초기화
-  Object.assign(formState, {
-    action: "none",
-    note: row.note || "",
+  return {
+    id: `payment-${order.id}`,
+    orderId: order.id,
+    storeId: order.storeId,
+    storeName,
+    userId: order.userId,
+    userEmail,
+    type: 'payment',
+    amount: order.totalAmount,
+    status: 'pending',
+    description: `${storeName} 주문 결제 진행중`,
+    createdAt: order.createdAt,
+    note: '완료 전 주문은 결제 진행중 건으로 표시합니다.',
+  };
+}
+
+const allTransactions = computed<TransactionItem[]>(() => {
+  return (source.value?.orders ?? [])
+    .map(buildTransaction)
+    .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime());
+});
+
+const summary = computed(() => {
+  const transactions = allTransactions.value;
+  return {
+    total: transactions.length,
+    paymentAmount: transactions
+      .filter(transaction => transaction.type === 'payment')
+      .reduce((sum, transaction) => sum + transaction.amount, 0),
+    refundAmount: transactions
+      .filter(transaction => transaction.type === 'refund')
+      .reduce((sum, transaction) => sum + Math.abs(transaction.amount), 0),
+    settlementAmount: transactions
+      .filter(transaction => transaction.type === 'settlement')
+      .reduce((sum, transaction) => sum + transaction.amount, 0),
+  };
+});
+
+const filteredTransactions = computed<TransactionItem[]>(() => {
+  const keyword = searchFilter.value.trim().toLowerCase();
+
+  return allTransactions.value.filter((transaction) => {
+    if (typeFilter.value !== 'all' && transaction.type !== typeFilter.value) {
+      return false;
+    }
+
+    if (statusFilter.value !== 'all' && transaction.status !== statusFilter.value) {
+      return false;
+    }
+
+    if (!keyword) {
+      return true;
+    }
+
+    return [
+      transaction.id,
+      transaction.orderId,
+      transaction.storeName,
+      transaction.userEmail,
+      transaction.description,
+    ].some(value => value.toLowerCase().includes(keyword));
   });
+});
+
+const columnLabels: Record<string, string> = {
+  id: '거래번호',
+  type: '구분',
+  description: '내용',
+  amount: '금액',
+  status: '상태',
+  createdAt: '일시',
+  actions: '관리',
+};
+
+const columnVisibilityItems = computed(() => {
+  return (table.value?.tableApi?.getAllColumns() ?? [])
+    .filter(column => column.getCanHide())
+    .map(column => ({
+      label: columnLabels[column.id] || column.id,
+      type: 'checkbox' as const,
+      checked: column.getIsVisible(),
+      onUpdateChecked: (checked: boolean) =>
+        table.value?.tableApi?.getColumn?.(column.id)?.toggleVisibility?.(checked),
+      onSelect: (event: Event) => event.preventDefault(),
+    }));
+});
+
+function typeMeta (type: TransactionType) {
+  return {
+    payment: { label: '결제', color: 'primary' as const },
+    refund: { label: '환불', color: 'error' as const },
+    settlement: { label: '정산', color: 'success' as const },
+  }[type];
+}
+
+function statusMeta (status: TransactionStatus) {
+  return {
+    success: { label: '성공', color: 'success' as const },
+    pending: { label: '진행중', color: 'warning' as const },
+    cancelled: { label: '취소', color: 'neutral' as const },
+  }[status];
+}
+
+function openDetailModal (transaction: TransactionItem) {
+  currentTx.value = transaction;
   isModalOpen.value = true;
 }
 
-async function onSubmit(event: FormSubmitEvent<FormSchema>) {
-  if (currentTx.value) {
-    // Mock Update Logic
-    if (formState.action === "refund") {
-      currentTx.value.status = "cancelled";
-      currentTx.value.amount = -Math.abs(currentTx.value.amount); // 환불 처리 시 음수 전환 등 로직
-      currentTx.value.type = "refund";
-    } else if (formState.action === "approve") {
-      currentTx.value.status = "success";
-    } else if (formState.action === "reject") {
-      currentTx.value.status = "failed";
-    }
-    currentTx.value.note = formState.note;
-  }
-
-  toast.add({
-    title: "처리 완료",
-    description: "거래 상태가 업데이트되었습니다.",
-    color: "success",
-  });
-  isModalOpen.value = false;
-}
-
-function onExport() {
-  toast.add({
-    title: "엑셀 다운로드",
-    description: "요청하신 기간의 정산 내역을 다운로드합니다.",
-    color: "primary",
-  });
-}
-
-// 금액 포맷터
-const currencyFormatter = new Intl.NumberFormat("ko-KR", {
-  style: "currency",
-  currency: "KRW",
-});
-
-function getRowItems(row: TransactionItem) {
+function getRowItems (transaction: TransactionItem) {
   return [
-    { type: "label", label: "관리" },
+    { type: 'label', label: '조회' },
     {
-      label: "상세 및 처리",
-      icon: "i-lucide-file-text",
-      onSelect: () => openDetailModal(row),
+      label: '상세 보기',
+      icon: 'i-lucide-file-text',
+      onSelect: () => openDetailModal(transaction),
     },
-    { type: "separator" },
     {
-      label: "영수증 출력",
-      icon: "i-lucide-printer",
-      onSelect: () =>
-        toast.add({ title: "출력", description: "영수증 팝업을 엽니다." }),
+      label: '주문 관리로 이동',
+      icon: 'i-lucide-arrow-right',
+      onSelect: () => navigateTo('/operation/orders'),
     },
   ];
 }
 
-// ==========================================
-// 6. 테이블 컬럼 정의
-// ==========================================
-const columnLabels: Record<string, string> = {
-  select: "선택",
-  id: "거래번호",
-  type: "구분",
-  description: "내용",
-  amount: "금액",
-  method: "수단",
-  status: "상태",
-  createdAt: "일시",
-  actions: "관리",
+function escapeCsvValue (value: string | number) {
+  const stringValue = String(value).replaceAll('"', '""');
+  return `"${stringValue}"`;
+}
+
+function onExport () {
+  if (!import.meta.client) {
+    return;
+  }
+
+  const rows = filteredTransactions.value;
+  if (!rows.length) {
+    toast.add({
+      title: '내보낼 데이터가 없습니다.',
+      description: '필터 조건을 다시 확인해주세요.',
+      color: 'warning',
+    });
+    return;
+  }
+
+  const header = ['거래번호', '주문번호', '구분', '상태', '가게', '고객', '금액', '생성일시', '메모'];
+  const csv = [
+    header.map(escapeCsvValue).join(','),
+    ...rows.map(row => [
+      row.id,
+      row.orderId,
+      typeMeta(row.type).label,
+      statusMeta(row.status).label,
+      row.storeName,
+      row.userEmail,
+      row.amount,
+      row.createdAt,
+      row.note,
+    ].map(escapeCsvValue).join(',')),
+  ].join('\n');
+
+  const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `finance-transactions-${format(new Date(), 'yyyyMMdd-HHmmss')}.csv`;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+// Some Nuxt UI table wrappers expose optional helpers dynamically.
+type DashboardTableApiExtended = DashboardTableApi & {
+  getColumn?: (id: string) => {
+    toggleVisibility?: (visible: boolean) => void;
+  } | undefined;
 };
+
+if (table.value?.tableApi) {
+  (table.value.tableApi as DashboardTableApiExtended).getColumn =
+    (table.value.tableApi as DashboardTableApiExtended).getColumn;
+}
 
 const columns: TableColumn<TransactionItem>[] = [
   {
-    id: "select",
-    header: ({ table }) =>
-      h(UCheckbox, {
-        modelValue: table.getIsSomePageRowsSelected()
-          ? "indeterminate"
-          : table.getIsAllPageRowsSelected(),
-        "onUpdate:modelValue": (v: boolean) =>
-          table.toggleAllPageRowsSelected(!!v),
-        ariaLabel: "전체 선택",
-      }),
-    cell: ({ row }) =>
-      h(UCheckbox, {
-        modelValue: row.getIsSelected(),
-        "onUpdate:modelValue": (v: boolean) => row.toggleSelected(!!v),
-        ariaLabel: "행 선택",
-      }),
-    enableSorting: false,
-  },
-  {
-    accessorKey: "id",
+    accessorKey: 'id',
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       return h(UButton, {
-        color: "neutral",
-        variant: "ghost",
-        label: "거래번호",
+        color: 'neutral',
+        variant: 'ghost',
+        label: '거래번호',
         icon:
-          isSorted === "asc"
-            ? "i-lucide-arrow-up-narrow-wide"
-            : isSorted === "desc"
-              ? "i-lucide-arrow-down-wide-narrow"
-              : "i-lucide-arrow-up-down",
-        class: "-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800",
-        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+          isSorted === 'asc' ?
+            'i-lucide-arrow-up-narrow-wide' :
+            isSorted === 'desc' ?
+              'i-lucide-arrow-down-wide-narrow' :
+              'i-lucide-arrow-up-down',
+        class: '-ml-2.5',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
       });
     },
+    cell: ({ row }) => h('span', { class: 'font-mono text-xs' }, row.original.id),
   },
   {
-    accessorKey: "type",
-    header: "구분",
+    accessorKey: 'type',
+    header: '구분',
     cell: ({ row }) => {
-      const map: Record<string, any> = {
-        payment: { label: "결제", color: "primary" },
-        refund: { label: "환불", color: "error" },
-        settlement: { label: "정산", color: "orange" },
-      };
-      const info = map[row.original.type];
-      return h(
-        UBadge,
-        { color: info.color, variant: "subtle", size: "xs" },
-        () => info.label,
-      );
+      const info = typeMeta(row.original.type);
+      return h(UBadge, { color: info.color, variant: 'subtle', size: 'xs' }, () => info.label);
     },
   },
   {
-    accessorKey: "description",
-    header: "내용",
+    accessorKey: 'description',
+    header: '내용',
     cell: ({ row }) =>
-      h("div", { class: "flex flex-col max-w-[200px]" }, [
+      h('div', { class: 'flex flex-col max-w-[280px]' }, [
         h(
-          "span",
+          'button',
           {
-            class:
-              "truncate font-medium cursor-pointer hover:underline hover:text-primary",
+            type: 'button',
+            class: 'truncate text-left font-medium hover:underline hover:text-primary',
             onClick: () => openDetailModal(row.original),
           },
           row.original.description,
         ),
-        h("span", { class: "text-xs text-gray-500" }, row.original.user),
+        h('span', { class: 'text-xs text-muted' }, `${row.original.storeName} · ${row.original.userEmail}`),
       ]),
   },
   {
-    accessorKey: "amount",
-    header: "금액",
+    accessorKey: 'amount',
+    header: () => h('div', { class: 'text-right' }, '금액'),
     cell: ({ row }) => {
-      const amt = row.original.amount;
-      let colorClass = "text-gray-900 dark:text-white";
-      if (row.original.type === "refund")
-        colorClass = "text-red-600 dark:text-red-400";
-      if (row.original.type === "settlement")
-        colorClass = "text-blue-600 dark:text-blue-400";
+      const colorClass =
+        row.original.type === 'refund' ?
+          'text-error' :
+          row.original.type === 'settlement' ?
+            'text-success' :
+            'text-highlighted';
 
       return h(
-        "span",
-        { class: `font-bold ${colorClass}` },
-        currencyFormatter.format(amt),
+        'div',
+        { class: `text-right font-semibold ${colorClass}` },
+        currencyFormatter.format(row.original.amount),
       );
     },
   },
   {
-    accessorKey: "status",
-    header: "상태",
+    accessorKey: 'status',
+    header: '상태',
     cell: ({ row }) => {
-      const map: Record<string, any> = {
-        success: { label: "성공", color: "success" },
-        pending: { label: "대기", color: "warning" },
-        failed: { label: "실패", color: "error" },
-        cancelled: { label: "취소됨", color: "neutral" },
-      };
-      const info = map[row.original.status];
-      return h(
-        UBadge,
-        { color: info.color, variant: "subtle", size: "xs" },
-        () => info.label,
-      );
+      const info = statusMeta(row.original.status);
+      return h(UBadge, { color: info.color, variant: 'subtle', size: 'xs' }, () => info.label);
     },
   },
   {
-    accessorKey: "method",
-    header: "수단",
-    cell: ({ row }) => {
-      const map: Record<string, string> = {
-        card: "카드",
-        bank: "계좌",
-        point: "포인트",
-      };
-      return map[row.original.method];
-    },
+    accessorKey: 'createdAt',
+    header: '일시',
+    cell: ({ row }) => format(new Date(row.original.createdAt), 'yyyy-MM-dd HH:mm'),
   },
   {
-    accessorKey: "createdAt",
-    header: "일시",
-    cell: ({ row }) =>
-      format(new Date(row.original.createdAt), "yyyy-MM-dd HH:mm"),
-  },
-  {
-    id: "actions",
+    id: 'actions',
+    header: '관리',
     cell: ({ row }) =>
       h(
-        "div",
-        { class: "text-right" },
+        'div',
+        { class: 'text-right' },
         h(
           UDropdownMenu,
           {
-            content: { align: "end" },
+            content: { align: 'end' },
             items: getRowItems(row.original),
           },
           () =>
             h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-              class: "ml-auto",
+              icon: 'i-lucide-ellipsis-vertical',
+              color: 'neutral',
+              variant: 'ghost',
+              class: 'ml-auto',
             }),
         ),
       ),
-    enableSorting: false,
   },
 ];
-
-// ==========================================
-// 7. Watchers & Computeds
-// ==========================================
-watch([typeFilter, statusFilter], () => {
-  if (!table.value?.tableApi) return;
-  table.value.tableApi
-    .getColumn("type")
-    ?.setFilterValue(typeFilter.value === "all" ? undefined : typeFilter.value);
-  table.value.tableApi
-    .getColumn("status")
-    ?.setFilterValue(
-      statusFilter.value === "all" ? undefined : statusFilter.value,
-    );
-});
-
-const searchInput = computed({
-  get: () =>
-    (table.value?.tableApi?.getColumn("id")?.getFilterValue() as string) || "",
-  set: (val) =>
-    table.value?.tableApi?.getColumn("id")?.setFilterValue(val || undefined),
-});
 </script>
 
 <template>
-  <div class="flex-1 flex flex-col">
+  <div>
+    <div class="flex-1 flex flex-col">
+    <UAlert
+      v-if="loadingStatus === 'error'"
+      color="error"
+      variant="subtle"
+      icon="i-lucide-alert-circle"
+      title="거래 집계 데이터를 불러오지 못했습니다."
+      description="주문/가게 집계 중 일부 요청이 실패했을 수 있습니다. 새로고침 후 다시 확인해주세요."
+      class="mb-4"
+    />
+
+    <UAlert
+      color="neutral"
+      variant="subtle"
+      icon="i-lucide-info"
+      title="주문 기반 파생 뷰"
+      description="정산 전용 백엔드 API가 없어 주문 상태를 기준으로 결제·환불·정산 항목을 읽기 전용으로 구성했습니다."
+      class="mb-4"
+    />
+
+    <div class="grid gap-3 md:grid-cols-3 mb-4">
+      <UCard>
+        <p class="text-xs text-muted mb-1">결제 진행 금액</p>
+        <p class="text-2xl font-semibold">{{ currencyFormatter.format(summary.paymentAmount) }}</p>
+      </UCard>
+      <UCard>
+        <p class="text-xs text-muted mb-1">환불 후보 금액</p>
+        <p class="text-2xl font-semibold text-error">{{ currencyFormatter.format(summary.refundAmount) }}</p>
+      </UCard>
+      <UCard>
+        <p class="text-xs text-muted mb-1">정산 완료 금액</p>
+        <p class="text-2xl font-semibold text-success">{{ currencyFormatter.format(summary.settlementAmount) }}</p>
+      </UCard>
+    </div>
+
     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
       <UInput
-        v-model="searchInput"
+        v-model="searchFilter"
         icon="i-lucide-search"
-        placeholder="거래번호 검색..."
-        class="max-w-sm"
+        placeholder="거래번호, 주문번호, 가게명, 고객 이메일 검색"
+        class="max-w-md"
       />
 
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         <UButton
-          label="엑셀 다운로드"
+          label="새로고침"
+          icon="i-lucide-refresh-cw"
+          color="neutral"
+          variant="outline"
+          :loading="loadingStatus === 'pending'"
+          @click="refresh"
+        />
+        <UButton
+          label="CSV 다운로드"
           icon="i-lucide-download"
           color="neutral"
           variant="outline"
@@ -420,26 +480,14 @@ const searchInput = computed({
           :items="[
             { label: '전체 상태', value: 'all' },
             { label: '성공', value: 'success' },
-            { label: '대기', value: 'pending' },
-            { label: '실패', value: 'failed' },
+            { label: '진행중', value: 'pending' },
+            { label: '취소', value: 'cancelled' },
           ]"
           class="min-w-32"
         />
 
         <UDropdownMenu
-          :items="
-            table?.tableApi
-              ?.getAllColumns()
-              .filter((c: any) => c.getCanHide())
-              .map((c: any) => ({
-                label: columnLabels[c.id] || c.id,
-                type: 'checkbox',
-                checked: c.getIsVisible(),
-                onUpdateChecked: (v: boolean) =>
-                  table?.tableApi?.getColumn(c.id)?.toggleVisibility(v),
-                onSelect: (e: Event) => e.preventDefault(),
-              })) || []
-          "
+          :items="columnVisibilityItems"
           :content="{ align: 'end' }"
         >
           <UButton
@@ -452,190 +500,101 @@ const searchInput = computed({
       </div>
     </div>
 
-    <UTable
-      ref="table"
-      v-model:column-filters="columnFilters"
-      v-model:column-visibility="columnVisibility"
-      v-model:row-selection="rowSelection"
-      v-model:pagination="pagination"
-      v-model:sorting="sorting"
-      :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-      :sorting-options="{ getSortedRowModel: getSortedRowModel() } as any"
-      :data="data || []"
-      :columns="columns"
-      :loading="loadingStatus === 'pending'"
-      class="shrink-0"
-      :ui="{
-        base: 'table-fixed border-separate border-spacing-0',
-        thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-        tbody: '[&>tr]:last:[&>td]:border-b-0',
-        th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-        td: 'border-b border-default',
-        separator: 'h-0',
-      }"
-    />
-
-    <div
-      class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
-    >
-      <div class="text-sm text-muted">
-        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}건 중
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}건
-        선택됨.
-      </div>
-      <UPagination
-        :default-page="
-          (table?.tableApi?.getState().pagination.pageIndex || 0) + 1
-        "
-        :items-per-page="table?.tableApi?.getState().pagination.pageSize"
-        :total="table?.tableApi?.getFilteredRowModel().rows.length"
-        @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)"
+      <UTable
+        ref="table"
+        v-model:column-visibility="columnVisibility"
+        v-model:pagination="pagination"
+        :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
+        :data="filteredTransactions"
+        :columns="columns"
+        :loading="loadingStatus === 'pending'"
+        class="shrink-0"
+        :ui="{
+          base: 'table-fixed border-separate border-spacing-0',
+          thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+          tbody: '[&>tr]:last:[&>td]:border-b-0',
+          th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+          td: 'border-b border-default',
+          separator: 'h-0',
+        }"
       />
+
+      <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto">
+        <div class="text-sm text-muted">
+          총 {{ filteredTransactions.length }}건의 거래 항목
+        </div>
+        <UPagination
+          :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+          :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+          :total="filteredTransactions.length"
+          @update:page="(page: number) => table?.tableApi?.setPageIndex(page - 1)"
+        />
+      </div>
     </div>
-  </div>
 
-  <UModal
-    v-model:open="isModalOpen"
-    title="거래 상세 정보"
-    :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
-  >
-    <template #body>
-      <UForm
-        :schema="formSchema"
-        :state="formState"
-        class="space-y-4 p-4"
-        @submit="onSubmit"
-      >
-        <div
-          v-if="currentTx"
-          class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-3 border border-gray-100 dark:border-gray-700"
-        >
-          <div class="flex justify-between items-start">
-            <div class="flex flex-col">
-              <span class="text-xs text-gray-500 font-mono">{{
-                currentTx.id
-              }}</span>
-              <span
-                class="font-bold text-lg text-gray-900 dark:text-white mt-1"
-                >{{ currentTx.description }}</span
-              >
+    <UModal
+      v-model:open="isModalOpen"
+      title="거래 상세 정보"
+      :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
+    >
+      <template #body>
+        <div v-if="currentTx" class="space-y-4 p-4 text-sm">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-xs text-muted font-mono">{{ currentTx.id }}</p>
+              <p class="text-lg font-semibold mt-1">{{ currentTx.description }}</p>
             </div>
-            <div class="text-right">
-              <UBadge
-                :color="
-                  currentTx.status === 'success'
-                    ? 'success'
-                    : currentTx.status === 'pending'
-                      ? 'warning'
-                      : 'error'
-                "
-                variant="solid"
-              >
-                {{ currentTx.status.toUpperCase() }}
-              </UBadge>
+            <UBadge :color="statusMeta(currentTx.status).color" variant="subtle">
+              {{ statusMeta(currentTx.status).label }}
+            </UBadge>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-xs text-muted">주문 ID</p>
+              <p class="font-mono text-xs mt-1">{{ currentTx.orderId }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-muted">거래 구분</p>
+              <p class="mt-1">{{ typeMeta(currentTx.type).label }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-muted">가게</p>
+              <p class="mt-1">{{ currentTx.storeName }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-muted">고객</p>
+              <p class="mt-1">{{ currentTx.userEmail }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-muted">금액</p>
+              <p class="mt-1 text-base font-semibold">{{ currencyFormatter.format(currentTx.amount) }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-muted">생성 시각</p>
+              <p class="mt-1">{{ format(new Date(currentTx.createdAt), 'yyyy-MM-dd HH:mm:ss') }}</p>
             </div>
           </div>
 
-          <hr class="border-gray-200 dark:border-gray-700/50" />
-
-          <div class="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p class="text-gray-500 text-xs">결제 금액</p>
-              <p
-                class="font-bold text-xl mt-1"
-                :class="
-                  currentTx.type === 'refund'
-                    ? 'text-red-500'
-                    : 'text-gray-900 dark:text-white'
-                "
-              >
-                {{ currencyFormatter.format(currentTx.amount) }}
-              </p>
-            </div>
-            <div>
-              <p class="text-gray-500 text-xs">결제 수단</p>
-              <p class="font-medium mt-1">
-                {{
-                  currentTx.method === "card"
-                    ? "신용카드"
-                    : currentTx.method === "bank"
-                      ? "계좌이체"
-                      : "포인트"
-                }}
-              </p>
-            </div>
-            <div>
-              <p class="text-gray-500 text-xs">거래 일시</p>
-              <p class="font-medium mt-1">
-                {{
-                  format(new Date(currentTx.createdAt), "yyyy-MM-dd HH:mm:ss")
-                }}
-              </p>
-            </div>
-            <div>
-              <p class="text-gray-500 text-xs">사용자</p>
-              <p class="font-medium mt-1">{{ currentTx.user }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="currentTx" class="pt-2">
-          <div
-            v-if="
-              currentTx.status === 'success' && currentTx.type === 'payment'
-            "
-            class="bg-red-50 dark:bg-red-900/10 p-4 rounded border border-red-100 dark:border-red-900/30 mb-4"
-          >
-            <p class="text-sm font-bold text-red-600 mb-2">환불 처리</p>
-            <UCheckbox
-              v-model="formState.action"
-              :true-value="'refund'"
-              :false-value="'none'"
-              label="이 결제 건을 취소하고 환불 처리합니다."
-              color="error"
-            />
-          </div>
-
-          <div
-            v-if="
-              currentTx.status === 'pending' && currentTx.type === 'settlement'
-            "
-            class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded border border-blue-100 dark:border-blue-900/30 mb-4"
-          >
-            <p class="text-sm font-bold text-blue-600 mb-2">정산 승인/반려</p>
-            <URadioGroup
-              v-model="formState.action"
-              :items="[
-                { value: 'approve', label: '정산 승인' },
-                { value: 'reject', label: '정산 반려' },
-              ]"
-              class="flex gap-4"
-            />
-          </div>
-
-          <UFormField label="관리자 메모" name="note" class="w-full">
-            <UTextarea
-              v-model="formState.note"
-              :rows="3"
-              placeholder="특이사항이나 처리 사유를 입력하세요."
-              autoresize
-              class="w-full"
-            />
-          </UFormField>
-        </div>
-
-        <div
-          class="flex justify-end gap-2 pt-4 border-t border-default mt-auto"
-        >
-          <UButton
-            label="닫기"
+          <UAlert
             color="neutral"
-            variant="ghost"
-            @click="isModalOpen = false"
+            variant="subtle"
+            icon="i-lucide-info"
+            title="집계 기준 메모"
+            :description="currentTx.note"
           />
-          <UButton type="submit" label="저장하기" color="primary" />
+
+          <div class="flex justify-end gap-2 pt-4 border-t border-default">
+            <UButton
+              label="주문 관리 이동"
+              color="neutral"
+              variant="outline"
+              @click="navigateTo('/operation/orders')"
+            />
+            <UButton label="닫기" color="primary" @click="isModalOpen = false" />
+          </div>
         </div>
-      </UForm>
-    </template>
-  </UModal>
+      </template>
+    </UModal>
+  </div>
 </template>

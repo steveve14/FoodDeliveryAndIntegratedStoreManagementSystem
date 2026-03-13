@@ -59,12 +59,11 @@ const { data: profileResponse } = await useAsyncData(
 
 const user = computed(() => {
   const name = profileResponse.value?.name || sessionUser.value?.name || '사용자';
-  const email = profileResponse.value?.email || sessionUser.value?.email;
 
   return {
     name,
     avatar: {
-      src: profileResponse.value?.avatarUrl || (email ? `https://i.pravatar.cc/128?u=${encodeURIComponent(email)}` : undefined),
+      src: profileResponse.value?.avatarUrl || undefined,
       alt: name,
     },
   };
@@ -82,7 +81,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
     {
       label: '설정',
       icon: 'i-lucide-settings',
-      to: '/settings/profile',
+      to: '/settings',
     },
   ],
   [

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import type { MenuDto, CreateMenuRequest } from "~/types/api";
-import { useMenuApi } from "~/composables/api/useMenuApi";
-import { useStoreApi } from "~/composables/api/useStoreApi";
+import * as z from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import type { MenuDto, CreateMenuRequest } from '~/types/api';
+import { useMenuApi } from '~/composables/api/useMenuApi';
+import { useStoreApi } from '~/composables/api/useStoreApi';
 
-const UBadge = resolveComponent("UBadge");
-const UButton = resolveComponent("UButton");
+const UBadge = resolveComponent('UBadge');
+const UButton = resolveComponent('UButton');
 
 const route = useRoute();
 const toast = useToast();
@@ -17,7 +17,7 @@ const storeId = computed(() => route.params.storeId as string);
 
 // ── 상태 ──────────────────────────────────────────────────
 const menus = ref<MenuDto[]>([]);
-const storeName = ref("");
+const storeName = ref('');
 const loading = ref(true);
 const modalOpen = ref(false);
 const editingMenu = ref<MenuDto | null>(null);
@@ -25,20 +25,24 @@ const saving = ref(false);
 const deleting = ref<string | null>(null);
 
 // ── 데이터 로드 ────────────────────────────────────────────
-async function loadData() {
+async function loadData () {
   loading.value = true;
   try {
     const [storeRes, menuRes] = await Promise.all([
       getStore(storeId.value),
       getMenus(storeId.value),
     ]);
-    if (storeRes.success) storeName.value = storeRes.data.name;
-    if (menuRes.success) menus.value = menuRes.data;
+    if (storeRes.success) {
+      storeName.value = storeRes.data.name;
+    }
+    if (menuRes.success) {
+      menus.value = menuRes.data;
+    }
   } catch {
     toast.add({
-      title: "오류",
-      description: "데이터 로드에 실패했습니다.",
-      color: "error",
+      title: '오류',
+      description: '데이터 로드에 실패했습니다.',
+      color: 'error',
     });
   } finally {
     loading.value = false;
@@ -48,34 +52,34 @@ await loadData();
 
 // ── 메뉴 폼 ───────────────────────────────────────────────
 const menuSchema = z.object({
-  name: z.string().min(1, "메뉴명을 입력해주세요"),
-  description: z.string().optional().default(""),
+  name: z.string().min(1, '메뉴명을 입력해주세요'),
+  description: z.string().optional().default(''),
   price: z
-    .number({ message: "정확한 금액을 입력해주세요" })
-    .min(0, "0원 이상이어야 합니다"),
+    .number({ message: '정확한 금액을 입력해주세요' })
+    .min(0, '0원 이상이어야 합니다'),
   available: z.boolean().default(true),
 });
 type MenuSchema = z.output<typeof menuSchema>;
 
 const formState = reactive<Partial<MenuSchema>>({
-  name: "",
-  description: "",
+  name: '',
+  description: '',
   price: 0,
   available: true,
 });
 
-function openCreate() {
+function openCreate () {
   editingMenu.value = null;
   Object.assign(formState, {
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     price: 0,
     available: true,
   });
   modalOpen.value = true;
 }
 
-function openEdit(menu: MenuDto) {
+function openEdit (menu: MenuDto) {
   editingMenu.value = menu;
   Object.assign(formState, {
     name: menu.name,
@@ -86,7 +90,7 @@ function openEdit(menu: MenuDto) {
   modalOpen.value = true;
 }
 
-async function onSubmit(e: FormSubmitEvent<MenuSchema>) {
+async function onSubmit (e: FormSubmitEvent<MenuSchema>) {
   saving.value = true;
   try {
     const body: CreateMenuRequest = {
@@ -100,13 +104,15 @@ async function onSubmit(e: FormSubmitEvent<MenuSchema>) {
       const res = await updateMenu(storeId.value, editingMenu.value.id, body);
       if (res.success) {
         const idx = menus.value.findIndex(
-          (m) => m.id === editingMenu.value!.id,
+          m => m.id === editingMenu.value!.id,
         );
-        if (idx !== -1) menus.value[idx] = res.data;
+        if (idx !== -1) {
+          menus.value[idx] = res.data;
+        }
         toast.add({
-          title: "수정 완료",
+          title: '수정 완료',
           description: `"${res.data.name}" 메뉴가 수정되었습니다.`,
-          color: "success",
+          color: 'success',
         });
       }
     } else {
@@ -114,49 +120,51 @@ async function onSubmit(e: FormSubmitEvent<MenuSchema>) {
       if (res.success) {
         menus.value.push(res.data);
         toast.add({
-          title: "등록 완료",
+          title: '등록 완료',
           description: `"${res.data.name}" 메뉴가 추가되었습니다.`,
-          color: "success",
+          color: 'success',
         });
       }
     }
     modalOpen.value = false;
   } catch {
     toast.add({
-      title: "오류",
-      description: "저장에 실패했습니다.",
-      color: "error",
+      title: '오류',
+      description: '저장에 실패했습니다.',
+      color: 'error',
     });
   } finally {
     saving.value = false;
   }
 }
 
-async function onDelete(menu: MenuDto) {
-  if (!confirm(`"${menu.name}" 메뉴를 삭제하시겠습니까?`)) return;
+async function onDelete (menu: MenuDto) {
+  if (!confirm(`"${menu.name}" 메뉴를 삭제하시겠습니까?`)) {
+    return;
+  }
   deleting.value = menu.id;
   try {
     await deleteMenu(storeId.value, menu.id);
-    menus.value = menus.value.filter((m) => m.id !== menu.id);
+    menus.value = menus.value.filter(m => m.id !== menu.id);
     toast.add({
-      title: "삭제 완료",
+      title: '삭제 완료',
       description: `"${menu.name}" 메뉴가 삭제되었습니다.`,
-      color: "success",
+      color: 'success',
     });
   } catch {
     toast.add({
-      title: "오류",
-      description: "삭제에 실패했습니다.",
-      color: "error",
+      title: '오류',
+      description: '삭제에 실패했습니다.',
+      color: 'error',
     });
   } finally {
     deleting.value = null;
   }
 }
 
-const currencyFmt = new Intl.NumberFormat("ko-KR", {
-  style: "currency",
-  currency: "KRW",
+const currencyFmt = new Intl.NumberFormat('ko-KR', {
+  style: 'currency',
+  currency: 'KRW',
 });
 </script>
 

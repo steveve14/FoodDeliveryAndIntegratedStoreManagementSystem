@@ -29,11 +29,15 @@ public class AuthorizationHeaderFilter
   public AuthorizationHeaderFilter(Environment env) {
     super(Config.class);
     String secret = env.getProperty("token.secret");
-    if (secret == null) {
-      throw new IllegalStateException("Token secret key is not configured!");
+    if (!StringUtils.hasText(secret)) {
+      throw new IllegalStateException("token.secret is empty. Set TOKEN_SECRET environment variable.");
     }
-    byte[] keyBytes = Base64.getDecoder().decode(secret);
-    this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+    try {
+      byte[] keyBytes = Base64.getDecoder().decode(secret);
+      this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalStateException("TOKEN_SECRET must be a valid Base64-encoded key.", e);
+    }
   }
 
   public static class Config {

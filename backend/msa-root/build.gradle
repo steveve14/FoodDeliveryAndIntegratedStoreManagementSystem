@@ -22,6 +22,20 @@ description = 'msa-root'
 bootJar { enabled = false }
 jar { enabled = false }
 
+tasks.register('docsAggregate') {
+    dependsOn(
+        ':service-user:asciidoctor',
+        ':service-auth:asciidoctor',
+        ':service-store:asciidoctor',
+        ':service-order:asciidoctor',
+        ':service-delivery:asciidoctor',
+        ':service-event:asciidoctor',
+        ':service-gateway:asciidoctor'
+    )
+    group = 'documentation'
+    description = 'Builds API documentation for all documented services.'
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/milestone' }
@@ -52,6 +66,7 @@ subprojects {
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
         //lombok
@@ -68,6 +83,10 @@ subprojects {
         implementation 'io.grpc:grpc-netty-shaded'
 
         runtimeOnly 'com.h2database:h2'
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
     // Protobuf 코드 생성 설정

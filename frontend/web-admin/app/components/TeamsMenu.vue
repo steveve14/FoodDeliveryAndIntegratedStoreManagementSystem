@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  collapsed?: boolean
-}>()
+  collapsed?: boolean;
+}>();
 </script>
 
 <template>

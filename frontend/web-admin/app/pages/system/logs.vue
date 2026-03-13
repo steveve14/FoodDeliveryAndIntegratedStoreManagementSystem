@@ -1,83 +1,85 @@
 <script setup lang="ts">
 /**
- * [시스템 > 에러 로그 관리]
- * Base Code 아키텍처 기반 리팩토링
+ * [?�스??> ?�러 로그 관�?
+ * Base Code ?�키?�처 기반 리팩?�링
  */
-import { h, ref, reactive, resolveComponent, watch, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import * as z from "zod";
-import { format, subMinutes } from "date-fns";
-import { getPaginationRowModel, getSortedRowModel } from "@tanstack/table-core";
+import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
+import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
+
+import * as z from 'zod';
+import { format, subMinutes } from 'date-fns';
+import { getPaginationRowModel } from '@tanstack/table-core';
+import type { Table } from '@tanstack/table-core';
 
 // ==========================================
-// 1. 컴포넌트 리졸브
+// 1. 컴포?�트 리졸�?
 // ==========================================
-const UButton = resolveComponent("UButton");
-const UBadge = resolveComponent("UBadge");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
-const UCheckbox = resolveComponent("UCheckbox");
-const UIcon = resolveComponent("UIcon");
+const UButton = resolveComponent('UButton');
+const UBadge = resolveComponent('UBadge');
+const UDropdownMenu = resolveComponent('UDropdownMenu');
+const UCheckbox = resolveComponent('UCheckbox');
+const UIcon = resolveComponent('UIcon');
 
 const toast = useToast();
-const table = ref<any>(null);
+type TableInstance<T> = { tableApi?: Table<T> } | null;
+const table = ref<TableInstance<ErrorLogItem>>(null);
 
 // ==========================================
-// 2. 설정 및 데이터 정의
+// 2. ?�정 �??�이???�의
 // ==========================================
-const PAGE_TITLE = "에러 로그 관리";
-const DATA_KEY = "error-logs";
+const DATA_KEY = 'error-logs';
 
 type ErrorLogItem = {
   id: number;
   timestamp: string;
-  level: "critical" | "error" | "warning";
-  status: "open" | "in_progress" | "resolved";
+  level: 'critical' | 'error' | 'warning';
+  status: 'open' | 'in_progress' | 'resolved';
   message: string;
   source: string;
   traceId: string;
-  stackTrace?: string; // 상세 스택 트레이스 (가상)
+  stackTrace?: string; // ?�세 ?�택 ?�레?�스 (가??
 };
 
-// 폼 스키마 (상태 변경용)
+// ???�키�?(?�태 변경용)
 const formSchema = z.object({
-  status: z.enum(["open", "in_progress", "resolved"]),
+  status: z.enum(['open', 'in_progress', 'resolved']),
   adminNote: z.string().optional(),
 });
 
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. 상태 관리
+// 3. ?�태 관�?
 // ==========================================
-const columnFilters = ref([{ id: "message", value: "" }]);
+const columnFilters = ref([{ id: 'message', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
-const pagination = ref({ pageIndex: 0, pageSize: 10 }); // 로그는 한 번에 많이 봄
-const sorting = ref([{ id: "timestamp", desc: true }]);
+const pagination = ref({ pageIndex: 0, pageSize: 10 }); // 로그????번에 많이 �?
+const sorting = ref([{ id: 'timestamp', desc: true }]);
 
-const levelFilter = ref("all");
-const statusFilter = ref("all");
+const levelFilter = ref('all');
+const statusFilter = ref('all');
 const isModalOpen = ref(false);
 const selectedId = ref<number | null>(null);
 
-// 상세 정보 표시용
+// ?�세 ?�보 ?�시??
 const currentLog = ref<ErrorLogItem | null>(null);
 
-// 폼 상태
-const initialFormState: FormSchema = { status: "open", adminNote: "" };
+// ???�태
+const initialFormState: FormSchema = { status: 'open', adminNote: '' };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. ?�이???�칭 (Mock Data)
 // ==========================================
 const { data, status: loadingStatus } = await useAsyncData<ErrorLogItem[]>(
   DATA_KEY,
   async () => {
     return Array.from({ length: 50 }).map((_, i) => {
       const level =
-        i % 10 === 0 ? "critical" : i % 3 === 0 ? "warning" : "error";
-      const status = ["open", "in_progress", "resolved"][i % 3] as any;
+        i % 10 === 0 ? 'critical' : i % 3 === 0 ? 'warning' : 'error';
+      const statuses: ErrorLogItem['status'][] = ['open', 'in_progress', 'resolved'];
+      const status = statuses[i % statuses.length] ?? 'open';
 
       return {
         id: 5000 - i,
@@ -85,131 +87,131 @@ const { data, status: loadingStatus } = await useAsyncData<ErrorLogItem[]>(
         level: level,
         status: status,
         message:
-          i % 10 === 0
-            ? "데이터베이스 연결 실패"
-            : `JSON 위치 ${i}에서 예상하지 못한 토큰`,
-        source: i % 2 === 0 ? "/api/auth/login" : "/components/Dashboard.vue",
+          i % 10 === 0 ?
+            '?�이?�베?�스 ?�결 ?�패' :
+            `JSON ?�치 ${i}?�서 ?�상?��? 못한 ?�큰`,
+        source: i % 2 === 0 ? '/api/auth/login' : '/components/Dashboard.vue',
         traceId: `trace-${Math.random().toString(36).substring(7)}`,
-        stackTrace: `Error: ${i % 10 === 0 ? "데이터베이스 연결 실패" : "예상하지 못한 토큰"}\n    at /app/server/api.ts:45:12\n    at async /app/server/handler.ts:22:5`,
+        stackTrace: `Error: ${i % 10 === 0 ? '?�이?�베?�스 ?�결 ?�패' : '?�상?��? 못한 ?�큰'}\n    at /app/server/api.ts:45:12\n    at async /app/server/handler.ts:22:5`,
       };
     });
   },
 );
 
 // ==========================================
-// 5. 액션 핸들러
+// 5. ?�션 ?�들??
 // ==========================================
-function openDetailModal(row: ErrorLogItem) {
+function openDetailModal (row: ErrorLogItem) {
   currentLog.value = row;
   selectedId.value = row.id;
-  Object.assign(formState, { status: row.status, adminNote: "" });
+  Object.assign(formState, { status: row.status, adminNote: '' });
   isModalOpen.value = true;
 }
 
-async function onSubmit(event: FormSubmitEvent<FormSchema>) {
+async function onSubmit (event: FormSubmitEvent<FormSchema>) {
   if (currentLog.value) {
     currentLog.value.status = formState.status;
   }
   toast.add({
-    title: "상태 업데이트",
-    description: "로그 상태가 변경되었습니다.",
-    color: "success",
+    title: 'Status Updated',
+    description: 'Log status has been updated.',
+    color: 'success',
   });
   isModalOpen.value = false;
 }
 
-function copyTraceId(traceId: string) {
+function copyTraceId (traceId: string) {
   navigator.clipboard.writeText(traceId);
-  toast.add({ title: "복사 완료", description: `Trace ID가 복사되었습니다.` });
+  toast.add({ title: 'Copied', description: 'Trace ID copied.' });
 }
 
-function getRowItems(row: ErrorLogItem) {
+function getRowItems (row: ErrorLogItem) {
   return [
-    { type: "label", label: "관리" },
+    { type: 'label', label: '관리' },
     {
-      label: "상세 보기",
-      icon: "i-lucide-search",
+      label: 'View detail',
+      icon: 'i-lucide-search',
       onSelect: () => openDetailModal(row),
     },
     {
-      label: "Trace ID 복사",
-      icon: "i-lucide-copy",
+      label: 'Trace ID 복사',
+      icon: 'i-lucide-copy',
       onSelect: () => copyTraceId(row.traceId),
     },
-    { type: "separator" },
+    { type: 'separator' },
     {
-      label: "해결 처리",
-      icon: "i-lucide-check-circle",
-      color: "success",
-      disabled: row.status === "resolved",
+      label: 'Mark resolved',
+      icon: 'i-lucide-check-circle',
+      color: 'success',
+      disabled: row.status === 'resolved',
       onSelect: () => {
-        row.status = "resolved";
-        toast.add({ title: "처리 완료", color: "success" });
+        row.status = 'resolved';
+        toast.add({ title: 'Done', color: 'success' });
       },
     },
   ];
 }
 
 // ==========================================
-// 6. 테이블 컬럼 정의
+// 6. ?�이�?컬럼 ?�의
 // ==========================================
 const columnLabels: Record<string, string> = {
-  select: "선택",
-  timestamp: "발생 시간",
-  level: "심각도",
-  message: "에러 메시지",
-  source: "위치",
-  status: "상태",
-  actions: "관리",
+  select: '?�택',
+  timestamp: '발생 ?�간',
+  level: '심각도',
+  message: '?�러 메시지',
+  source: '?�치',
+  status: '?�태',
+  actions: '관리',
 };
 
 const columns: TableColumn<ErrorLogItem>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
-        modelValue: table.getIsSomePageRowsSelected()
-          ? "indeterminate"
-          : table.getIsAllPageRowsSelected(),
-        "onUpdate:modelValue": (v: boolean) =>
+        'modelValue': table.getIsSomePageRowsSelected() ?
+          'indeterminate' :
+          table.getIsAllPageRowsSelected(),
+        'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
-        modelValue: row.getIsSelected(),
-        "onUpdate:modelValue": (v: boolean) => row.toggleSelected(!!v),
+        'modelValue': row.getIsSelected(),
+        'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
       }),
     enableSorting: false,
   },
   {
-    accessorKey: "timestamp",
+    accessorKey: 'timestamp',
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       return h(UButton, {
-        color: "neutral",
-        variant: "ghost",
-        label: "발생 시간",
+        color: 'neutral',
+        variant: 'ghost',
+        label: '발생 ?�간',
         icon:
-          isSorted === "asc"
-            ? "i-lucide-arrow-up-narrow-wide"
-            : isSorted === "desc"
-              ? "i-lucide-arrow-down-wide-narrow"
-              : "i-lucide-arrow-up-down",
-        class: "-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800",
-        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+          isSorted === 'asc' ?
+            'i-lucide-arrow-up-narrow-wide' :
+            isSorted === 'desc' ?
+              'i-lucide-arrow-down-wide-narrow' :
+              'i-lucide-arrow-up-down',
+        class: '-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
       });
     },
     cell: ({ row }) =>
-      format(new Date(row.original.timestamp), "yyyy-MM-dd HH:mm:ss"),
+      format(new Date(row.original.timestamp), 'yyyy-MM-dd HH:mm:ss'),
   },
   {
-    accessorKey: "level",
-    header: "심각도",
+    accessorKey: 'level',
+    header: '심각도',
     cell: ({ row }) => {
-      const map: Record<string, any> = {
-        critical: { label: "CRITICAL", color: "error", variant: "solid" },
-        error: { label: "ERROR", color: "error", variant: "subtle" },
-        warning: { label: "WARN", color: "warning", variant: "subtle" },
+      const map: Record<ErrorLogItem['level'], { label: string; color: 'error' | 'warning'; variant: 'solid' | 'subtle' }> = {
+        critical: { label: 'CRITICAL', color: 'error', variant: 'solid' },
+        error: { label: 'ERROR', color: 'error', variant: 'subtle' },
+        warning: { label: 'WARN', color: 'warning', variant: 'subtle' },
       };
       const info = map[row.original.level];
       return h(
@@ -220,71 +222,71 @@ const columns: TableColumn<ErrorLogItem>[] = [
     },
   },
   {
-    accessorKey: "status",
-    header: "상태",
+    accessorKey: 'status',
+    header: '?�태',
     cell: ({ row }) => {
-      const map: Record<string, any> = {
-        open: { label: "대기", color: "error" },
-        in_progress: { label: "진행중", color: "primary" },
-        resolved: { label: "해결됨", color: "success" },
+      const map: Record<ErrorLogItem['status'], { label: string; color: 'error' | 'primary' | 'success' }> = {
+        open: { label: '오픈', color: 'error' },
+        in_progress: { label: '진행중', color: 'primary' },
+        resolved: { label: '해결', color: 'success' },
       };
       const info = map[row.original.status];
       return h(
         UBadge,
-        { color: info.color, variant: "subtle" },
+        { color: info.color, variant: 'subtle' },
         () => info.label,
       );
     },
   },
   {
-    accessorKey: "message",
-    header: "에러 메시지",
+    accessorKey: 'message',
+    header: '?�러 메시지',
     cell: ({ row }) =>
-      h("div", { class: "flex flex-col max-w-[300px]" }, [
+      h('div', { class: 'flex flex-col max-w-[300px]' }, [
         h(
-          "span",
+          'span',
           {
             class:
-              "truncate font-mono text-xs cursor-pointer hover:text-primary hover:underline",
+              'truncate font-mono text-xs cursor-pointer hover:text-primary hover:underline',
             onClick: () => openDetailModal(row.original),
           },
           row.original.message,
         ),
         h(
-          "span",
-          { class: "text-xs text-gray-400 font-mono truncate" },
+          'span',
+          { class: 'text-xs text-gray-400 font-mono truncate' },
           row.original.traceId,
         ),
       ]),
   },
   {
-    accessorKey: "source",
-    header: "위치",
+    accessorKey: 'source',
+    header: '?�치',
     cell: ({ row }) =>
       h(
-        "code",
-        { class: "text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded" },
+        'code',
+        { class: 'text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded' },
         row.original.source,
       ),
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) =>
       h(
-        "div",
-        { class: "text-right" },
+        'div',
+        { class: 'text-right' },
         h(
           UDropdownMenu,
           {
-            content: { align: "end" },
+            content: { align: 'end' },
             items: getRowItems(row.original),
           },
           () =>
             h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-              class: "ml-auto",
+              icon: 'i-lucide-ellipsis-vertical',
+              color: 'neutral',
+              variant: 'ghost',
+              class: 'ml-auto',
             }),
         ),
       ),
@@ -296,26 +298,28 @@ const columns: TableColumn<ErrorLogItem>[] = [
 // 7. Watchers & Computeds
 // ==========================================
 watch([levelFilter, statusFilter], () => {
-  if (!table.value?.tableApi) return;
+  if (!table.value?.tableApi) {
+    return;
+  }
   table.value.tableApi
-    .getColumn("level")
+    .getColumn('level')
     ?.setFilterValue(
-      levelFilter.value === "all" ? undefined : levelFilter.value,
+      levelFilter.value === 'all' ? undefined : levelFilter.value,
     );
   table.value.tableApi
-    .getColumn("status")
+    .getColumn('status')
     ?.setFilterValue(
-      statusFilter.value === "all" ? undefined : statusFilter.value,
+      statusFilter.value === 'all' ? undefined : statusFilter.value,
     );
 });
 
 const messageSearch = computed({
   get: () =>
-    (table.value?.tableApi?.getColumn("message")?.getFilterValue() as string) ||
-    "",
-  set: (val) =>
+    (table.value?.tableApi?.getColumn('message')?.getFilterValue() as string) ||
+    '',
+  set: val =>
     table.value?.tableApi
-      ?.getColumn("message")
+      ?.getColumn('message')
       ?.setFilterValue(val || undefined),
 });
 </script>
@@ -326,13 +330,13 @@ const messageSearch = computed({
       <UInput
         v-model="messageSearch"
         icon="i-lucide-search"
-        placeholder="에러 메시지 검색..."
+        placeholder="?�러 메시지 검??.."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
-          label="로그 다운로드"
+          label="로그 ?�운로드"
           icon="i-lucide-download"
           color="neutral"
           variant="outline"
@@ -340,7 +344,7 @@ const messageSearch = computed({
         <USelect
           v-model="levelFilter"
           :items="[
-            { label: '전체 등급', value: 'all' },
+            { label: '?�체 ?�급', value: 'all' },
             { label: 'Critical', value: 'critical' },
             { label: 'Error', value: 'error' },
             { label: 'Warning', value: 'warning' },
@@ -350,10 +354,10 @@ const messageSearch = computed({
         <USelect
           v-model="statusFilter"
           :items="[
-            { label: '전체 상태', value: 'all' },
-            { label: '대기 (Open)', value: 'open' },
+            { label: '?�체 ?�태', value: 'all' },
+            { label: '?��?(Open)', value: 'open' },
             { label: '진행중', value: 'in_progress' },
-            { label: '해결됨', value: 'resolved' },
+            { label: '해결', value: 'resolved' },
           ]"
           class="min-w-32"
         />
@@ -362,8 +366,8 @@ const messageSearch = computed({
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((c: any) => c.getCanHide())
-              .map((c: any) => ({
+              .filter(c => c.getCanHide())
+              .map(c => ({
                 label: columnLabels[c.id] || c.id,
                 type: 'checkbox',
                 checked: c.getIsVisible(),
@@ -375,7 +379,7 @@ const messageSearch = computed({
           :content="{ align: 'end' }"
         >
           <UButton
-            label="컬럼 설정"
+            label="컬럼 ?�정"
             color="neutral"
             variant="outline"
             trailing-icon="i-lucide-settings-2"
@@ -392,7 +396,6 @@ const messageSearch = computed({
       v-model:pagination="pagination"
       v-model:sorting="sorting"
       :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-      :sorting-options="{ getSortedRowModel: getSortedRowModel() } as any"
       :data="data || []"
       :columns="columns"
       :loading="loadingStatus === 'pending'"
@@ -411,10 +414,10 @@ const messageSearch = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}개 로그
-        중
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}개
-        선택됨.
+        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}�?로그
+        �?
+        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}�?
+        ?�택??
       </div>
       <UPagination
         :default-page="
@@ -429,7 +432,7 @@ const messageSearch = computed({
 
   <UModal
     v-model:open="isModalOpen"
-    title="에러 로그 상세"
+    title="?�러 로그 ?�세"
     :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
   >
     <template #body>
@@ -481,16 +484,16 @@ const messageSearch = computed({
           </div>
         </div>
 
-        <hr class="border-gray-200 dark:border-gray-700" />
+        <hr class="border-gray-200 dark:border-gray-700">
 
         <div class="grid grid-cols-2 gap-4">
           <UFormField label="처리 상태 변경" name="status" class="w-full">
             <USelect
               v-model="formState.status"
               :items="[
-                { label: '대기 (Open)', value: 'open' },
-                { label: '진행중 (In Progress)', value: 'in_progress' },
-                { label: '해결됨 (Resolved)', value: 'resolved' },
+                { label: '?��?(Open)', value: 'open' },
+                { label: '진행중(In Progress)', value: 'in_progress' },
+                { label: '해결(Resolved)', value: 'resolved' },
               ]"
               class="w-full"
             />
@@ -499,7 +502,7 @@ const messageSearch = computed({
           <UFormField label="관리자 메모" name="adminNote" class="w-full">
             <UInput
               v-model="formState.adminNote"
-              placeholder="처리 내역 메모"
+              placeholder="처리 ?�역 메모"
               class="w-full"
             />
           </UFormField>
@@ -507,7 +510,7 @@ const messageSearch = computed({
 
         <div class="flex justify-end gap-2 pt-2 mt-auto">
           <UButton
-            label="닫기"
+            label="?�기"
             color="neutral"
             variant="ghost"
             @click="isModalOpen = false"

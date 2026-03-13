@@ -1,0 +1,18 @@
+= Gateway Service API Docs
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== Gateway-Owned API
+
+=== GET `/api/v1/info`
+
+Gateway 자체 상태와 서비스 메타데이터를 반환합니다.
+
+include::{snippets}/gateway-info-success/http-request.adoc[]
+include::{snippets}/gateway-info-success/http-response.adoc[]
+
+== Notes
+
+- 실제 비즈니스 API(`/api/v1/auth/**`, `/api/v1/users/**` 등)는 Gateway를 통해 프록시되며, 상세 스펙은 각 서비스 문서를 참고합니다.
+- JWT 검증 및 사용자 헤더 주입은 `AuthorizationHeaderFilter`에서 처리됩니다.

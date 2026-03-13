@@ -1,46 +1,46 @@
 <script setup lang="ts">
-import { format, isToday } from 'date-fns'
-import { ko } from 'date-fns/locale' // ★ 1. 한국어 로케일 추가
-import type { Mail } from '~/types'
+import { format, isToday } from 'date-fns';
+import { ko } from 'date-fns/locale'; // ★ 1. 한국어 로케일 추가
+import type { Mail } from '~/types';
 
 const props = defineProps<{
-  mails: Mail[]
-}>()
+  mails: Mail[];
+}>();
 
-const mailsRefs = ref<Element[]>([])
+const mailsRefs = ref<Element[]>([]);
 
-const selectedMail = defineModel<Mail | null>()
+const selectedMail = defineModel<Mail | null>();
 
 watch(selectedMail, () => {
   if (!selectedMail.value) {
-    return
+    return;
   }
-  const ref = mailsRefs.value[selectedMail.value.id]
+  const ref = mailsRefs.value[selectedMail.value.id];
   if (ref) {
-    ref.scrollIntoView({ block: 'nearest' })
+    ref.scrollIntoView({ block: 'nearest' });
   }
-})
+});
 
 defineShortcuts({
   arrowdown: () => {
-    const index = props.mails.findIndex(mail => mail.id === selectedMail.value?.id)
+    const index = props.mails.findIndex(mail => mail.id === selectedMail.value?.id);
 
     if (index === -1) {
-      selectedMail.value = props.mails[0]
+      selectedMail.value = props.mails[0];
     } else if (index < props.mails.length - 1) {
-      selectedMail.value = props.mails[index + 1]
+      selectedMail.value = props.mails[index + 1];
     }
   },
   arrowup: () => {
-    const index = props.mails.findIndex(mail => mail.id === selectedMail.value?.id)
+    const index = props.mails.findIndex(mail => mail.id === selectedMail.value?.id);
 
     if (index === -1) {
-      selectedMail.value = props.mails[props.mails.length - 1]
+      selectedMail.value = props.mails[props.mails.length - 1];
     } else if (index > 0) {
-      selectedMail.value = props.mails[index - 1]
+      selectedMail.value = props.mails[index - 1];
     }
-  }
-})
+  },
+});
 </script>
 
 <template>
@@ -68,10 +68,10 @@ defineShortcuts({
           </div>
 
           <span>
-            {{ 
-              isToday(new Date(mail.date)) 
-                ? format(new Date(mail.date), 'HH:mm') 
-                : format(new Date(mail.date), 'M월 d일', { locale: ko }) 
+            {{
+              isToday(new Date(mail.date))
+                ? format(new Date(mail.date), 'HH:mm')
+                : format(new Date(mail.date), 'M월 d일', { locale: ko })
             }}
           </span>
         </div>

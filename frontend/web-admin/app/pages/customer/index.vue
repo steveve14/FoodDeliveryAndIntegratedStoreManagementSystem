@@ -1,26 +1,52 @@
 ﻿<script setup lang="ts">
-import { h, ref, resolveComponent } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import { getPaginationRowModel } from "@tanstack/table-core";
-import type { Row } from "@tanstack/table-core";
-import type { UserDto, UserProfileDto } from "~/types/api";
+import { h, ref, resolveComponent, computed } from 'vue';
+import type { TableColumn } from '@nuxt/ui';
+import { getPaginationRowModel } from '@tanstack/table-core';
+import type { Row } from '@tanstack/table-core';
+import type { UserDto, UserProfileDto } from '~/types/api';
+import { useUserApi } from '~/composables/api/useUserApi';
 
 // ── 컴포넌트 ─────────────────────────────────────────────────
-const UButton = resolveComponent("UButton");
-const UBadge = resolveComponent("UBadge");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
-const UCheckbox = resolveComponent("UCheckbox");
-const UAvatar = resolveComponent("UAvatar");
+const UButton = resolveComponent('UButton');
+const UBadge = resolveComponent('UBadge');
+const UDropdownMenu = resolveComponent('UDropdownMenu');
+const UCheckbox = resolveComponent('UCheckbox');
+const UAvatar = resolveComponent('UAvatar');
+
+type DashboardColumn = {
+  id: string;
+  getCanHide: () => boolean;
+  getIsVisible: () => boolean;
+  toggleVisibility: (visible: boolean) => void;
+};
+
+type DashboardTableApi = {
+  getAllColumns: () => DashboardColumn[];
+  getColumn: (id: string) => (DashboardColumn & {
+    setFilterValue?: (value: unknown) => void;
+  }) | undefined;
+  getState: () => {
+    pagination: {
+      pageIndex: number;
+      pageSize: number;
+    };
+  };
+  setPageIndex: (pageIndex: number) => void;
+};
+
+type DashboardTableRef = {
+  tableApi?: DashboardTableApi;
+};
 
 const toast = useToast();
-const table = useTemplateRef<any>("table");
+const table = useTemplateRef<DashboardTableRef>('table');
 const { getUserByEmail, getProfile, deleteUser } = useUserApi();
 
 // ── 상태 ─────────────────────────────────────────────────────
-const searchEmail = ref("");
+const searchEmail = ref('');
 const searchLoading = ref(false);
 const data = ref<UserDto[]>([]);
-const columnFilters = ref([{ id: "email", value: "" }]);
+const columnFilters = ref([{ id: 'email', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
@@ -30,94 +56,112 @@ const profileLoading = ref(false);
 const deletingId = ref<string | null>(null);
 
 const columnLabels: Record<string, string> = {
-  select: "선택",
-  name: "이름",
-  email: "이메일",
-  roles: "권한",
-  createdAt: "가입일",
-  actions: "관리",
+  select: '선택',
+  name: '이름',
+  email: '이메일',
+  roles: '권한',
+  createdAt: '가입일',
+  actions: '관리',
 };
 
+const columnVisibilityItems = computed(() => {
+  return (table.value?.tableApi?.getAllColumns() ?? [])
+    .filter(col => col.getCanHide())
+    .map(col => ({
+      label: columnLabels[col.id] || col.id,
+      type: 'checkbox' as const,
+      checked: col.getIsVisible(),
+      onUpdateChecked (checked: boolean) {
+        table.value?.tableApi?.getColumn(col.id)?.toggleVisibility(!!checked);
+      },
+      onSelect (e?: Event) { e?.preventDefault(); },
+    }));
+});
+
 // ── 이메일 검색 ───────────────────────────────────────────────
-async function searchUser() {
+async function searchUser () {
   if (!searchEmail.value.trim()) {
-    toast.add({ title: "이메일을 입력해주세요.", color: "warning" });
+    toast.add({ title: '이메일을 입력해주세요.', color: 'warning' });
     return;
   }
   searchLoading.value = true;
   try {
     const res = await getUserByEmail(searchEmail.value.trim());
     if (res.success && res.data) {
-      const exists = data.value.find((u) => u.id === res.data.id);
+      const exists = data.value.find(u => u.id === res.data.id);
       if (!exists) {
         data.value = [res.data, ...data.value];
-        toast.add({ title: "고객 추가됨", description: res.data.email, color: "success" });
+        toast.add({ title: '고객 추가됨', description: res.data.email, color: 'success' });
       } else {
-        toast.add({ title: "이미 목록에 있습니다.", color: "neutral" });
+        toast.add({ title: '이미 목록에 있습니다.', color: 'neutral' });
       }
     } else {
-      toast.add({ title: "해당 이메일의 고객을 찾을 수 없습니다.", color: "error" });
+      toast.add({ title: '해당 이메일의 고객을 찾을 수 없습니다.', color: 'error' });
     }
   } catch {
-    toast.add({ title: "조회 실패", color: "error" });
+    toast.add({ title: '조회 실패', color: 'error' });
   } finally {
     searchLoading.value = false;
-    searchEmail.value = "";
+    searchEmail.value = '';
   }
 }
 
 // ── 프로필 보기 ───────────────────────────────────────────────
-async function viewProfile(userId: string) {
+async function viewProfile (userId: string) {
   profileLoading.value = true;
   profileModal.value = true;
   selectedProfile.value = null;
   try {
     const res = await getProfile(userId);
-    if (res.success) selectedProfile.value = res.data;
+    if (res.success) {
+      selectedProfile.value = res.data;
+    }
   } finally {
     profileLoading.value = false;
   }
 }
 
 // ── 고객 삭제 ─────────────────────────────────────────────────
-async function onDelete(userId: string, name: string) {
-  if (!confirm(`"${name}" 고객을 삭제하시겠습니까?`)) return;
+async function onDelete (userId: string, name: string) {
+  if (!confirm(`"${name}" 고객을 삭제하시겠습니까?`)) {
+    return;
+  }
   deletingId.value = userId;
   try {
     await deleteUser(userId);
-    data.value = data.value.filter((u) => u.id !== userId);
-    toast.add({ title: "삭제 완료", description: `${name} 님이 삭제되었습니다.`, color: "success" });
+    data.value = data.value.filter(u => u.id !== userId);
+    toast.add({ title: '삭제 완료', description: `${name} 님이 삭제되었습니다.`, color: 'success' });
   } catch {
-    toast.add({ title: "삭제 실패", color: "error" });
+    toast.add({ title: '삭제 실패', color: 'error' });
   } finally {
     deletingId.value = null;
   }
 }
 
 // ── 행 액션 ───────────────────────────────────────────────────
-function getRowItems(row: Row<UserDto>) {
+function getRowItems (row: Row<UserDto>) {
   return [
-    { type: "label", label: "고객 관리" },
+    { type: 'label', label: '고객 관리' },
     {
-      label: "ID 복사",
-      icon: "i-lucide-copy",
-      onSelect() {
+      label: 'ID 복사',
+      icon: 'i-lucide-copy',
+      onSelect () {
         navigator.clipboard.writeText(row.original.id);
-        toast.add({ title: "복사 완료", description: "고객 ID가 복사되었습니다." });
+        toast.add({ title: '복사 완료', description: '고객 ID가 복사되었습니다.' });
       },
     },
-    { type: "separator" },
+    { type: 'separator' },
     {
-      label: "프로필 상세 보기",
-      icon: "i-lucide-user",
-      onSelect() { viewProfile(row.original.id); },
+      label: '프로필 상세 보기',
+      icon: 'i-lucide-user',
+      onSelect () { viewProfile(row.original.id); },
     },
-    { type: "separator" },
+    { type: 'separator' },
     {
-      label: "고객 삭제",
-      icon: "i-lucide-trash",
-      color: "error",
-      onSelect() { onDelete(row.original.id, row.original.name); },
+      label: '고객 삭제',
+      icon: 'i-lucide-trash',
+      color: 'error',
+      onSelect () { onDelete(row.original.id, row.original.name); },
     },
   ];
 }
@@ -125,70 +169,70 @@ function getRowItems(row: Row<UserDto>) {
 // ── 테이블 컬럼 ───────────────────────────────────────────────
 const columns: TableColumn<UserDto>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
-        modelValue: table.getIsSomePageRowsSelected() ? "indeterminate" : table.getIsAllPageRowsSelected(),
-        "onUpdate:modelValue": (v: boolean) => table.toggleAllPageRowsSelected(!!v),
-        ariaLabel: "전체 선택",
+        'modelValue': table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected(),
+        'onUpdate:modelValue': (v: boolean) => table.toggleAllPageRowsSelected(!!v),
+        'ariaLabel': '전체 선택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
-        modelValue: row.getIsSelected(),
-        "onUpdate:modelValue": (v: boolean) => row.toggleSelected(!!v),
-        ariaLabel: "행 선택",
+        'modelValue': row.getIsSelected(),
+        'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
+        'ariaLabel': '행 선택',
       }),
   },
   {
-    accessorKey: "name",
-    header: "이름",
+    accessorKey: 'name',
+    header: '이름',
     cell: ({ row }) =>
-      h("div", { class: "flex items-center gap-3" }, [
-        h(UAvatar, { alt: row.original.name, size: "sm" }),
-        h("div", {}, [
-          h("p", { class: "font-medium text-highlighted" }, row.original.name),
-          h("p", { class: "text-xs text-muted" }, row.original.id.slice(0, 8) + "..."),
+      h('div', { class: 'flex items-center gap-3' }, [
+        h(UAvatar, { alt: row.original.name, size: 'sm' }),
+        h('div', {}, [
+          h('p', { class: 'font-medium text-highlighted' }, row.original.name),
+          h('p', { class: 'text-xs text-muted' }, row.original.id.slice(0, 8) + '...'),
         ]),
       ]),
   },
   {
-    accessorKey: "email",
-    header: "이메일",
-    filterFn: "includesString",
+    accessorKey: 'email',
+    header: '이메일',
+    filterFn: 'includesString',
   },
   {
-    accessorKey: "roles",
-    header: "권한",
+    accessorKey: 'roles',
+    header: '권한',
     cell: ({ row }) => {
       const role = row.original.roles;
-      const color = role?.includes("ADMIN") ? "error" : role?.includes("STORE") ? "warning" : "neutral";
-      return h(UBadge, { color, variant: "subtle" }, () => role || "USER");
+      const color = role?.includes('ADMIN') ? 'error' : role?.includes('STORE') ? 'warning' : 'neutral';
+      return h(UBadge, { color, variant: 'subtle' }, () => role || 'USER');
     },
   },
   {
-    accessorKey: "createdAt",
-    header: "가입일",
+    accessorKey: 'createdAt',
+    header: '가입일',
     cell: ({ row }) =>
-      row.original.createdAt
-        ? new Date(row.original.createdAt).toLocaleDateString("ko-KR")
-        : "-",
+      row.original.createdAt ?
+        new Date(row.original.createdAt).toLocaleDateString('ko-KR') :
+        '-',
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) =>
       h(
-        "div",
-        { class: "text-right" },
+        'div',
+        { class: 'text-right' },
         h(UDropdownMenu, {
-          content: { align: "end" },
+          content: { align: 'end' },
           items: getRowItems(row),
         }, () =>
           h(UButton, {
-            icon: "i-lucide-ellipsis-vertical",
-            color: "neutral",
-            variant: "ghost",
-          })
-        )
+            icon: 'i-lucide-ellipsis-vertical',
+            color: 'neutral',
+            variant: 'ghost',
+          }),
+        ),
       ),
   },
 ];
@@ -227,20 +271,7 @@ const columns: TableColumn<UserDto>[] = [
 
         <div class="flex flex-wrap items-center gap-1.5">
           <UDropdownMenu
-            :items="
-              table?.tableApi
-                ?.getAllColumns()
-                .filter((col: any) => col.getCanHide())
-                .map((col: any) => ({
-                  label: columnLabels[col.id] || col.id,
-                  type: 'checkbox' as const,
-                  checked: col.getIsVisible(),
-                  onUpdateChecked(checked: boolean) {
-                    table?.tableApi?.getColumn(col.id)?.toggleVisibility(!!checked)
-                  },
-                  onSelect(e?: Event) { e?.preventDefault() }
-                }))
-            "
+            :items="columnVisibilityItems"
             :content="{ align: 'end' }"
           >
             <UButton label="컬럼 설정" color="neutral" variant="outline" trailing-icon="i-lucide-settings-2" />

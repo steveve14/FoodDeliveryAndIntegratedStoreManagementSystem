@@ -2,6 +2,7 @@
 import { h, resolveComponent } from 'vue';
 import type { TableColumn } from '@nuxt/ui';
 import type { Period, Range } from '~/types';
+import { useHomeStoreSource, type HomeOrderApiItem } from '~/composables/useHomeStoreSource';
 
 const props = defineProps<{
   period: Period;
@@ -9,15 +10,6 @@ const props = defineProps<{
 }>();
 
 const UBadge = resolveComponent('UBadge');
-
-// 더미 메뉴 데이터
-const sampleMenus = [
-  '황금 올리브 치킨',
-  '양념 반 후라이드 반',
-  '블랙 페퍼 윙봉',
-  '치즈볼 세트 A',
-  '콜라 1.25L 포함 세트',
-];
 
 // 주문 상태 타입 정의
 type OrderStatus = '접수' | '조리중' | '배달중' | '완료' | '취소';
@@ -30,43 +22,55 @@ type Order = {
   amount: number;
 };
 
-const { data } = await useAsyncData(
-  'home-sales',
-  async () => {
-    const sales: Order[] = [];
-    const currentDate = new Date();
+const { data: source } = await useHomeStoreSource();
 
-    for (let i = 0; i < 5; i++) {
-      const minutesAgo = Math.floor(Math.random() * 120); // 최근 2시간 내
-      const date = new Date(currentDate.getTime() - minutesAgo * 60000);
+const statusLabel = (status: string): OrderStatus => {
+  switch (status) {
+    case 'COOKING':
+      return '조리중';
+    case 'DELIVERING':
+      return '배달중';
+    case 'DONE':
+      return '완료';
+    case 'CANCELLED':
+      return '취소';
+    default:
+      return '접수';
+  }
+};
 
-      // 상태 랜덤 배정
-      const statuses = ['접수', '조리중', '배달중', '완료'];
+const summarizeMenu = (order: HomeOrderApiItem, menuNameById: Record<string, string>) => {
+  if (!order.items.length) {
+    return '주문 항목 없음';
+  }
 
-      sales.push({
-        id: (240215001 + i).toString(), // 주문번호 형식
-        date: date.toISOString(),
-        status: statuses[
-          Math.floor(Math.random() * statuses.length)
-        ] as OrderStatus,
-        menu: sampleMenus[
-          Math.floor(Math.random() * sampleMenus.length)
-        ] as string,
-        amount:
-          Math.floor(Math.random() * 3 + 1) * 10000 +
-          (Math.random() > 0.5 ? 5000 : 0), // 1.5만 ~ 3.5만
-      });
-    }
+  const first = order.items[0];
+  const firstName = (first && menuNameById[first.productId]) || '알 수 없는 메뉴';
+  if (order.items.length === 1) {
+    return `${firstName} x ${first?.quantity ?? 1}`;
+  }
 
-    return sales.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
-  },
-  {
-    watch: [() => props.period, () => props.range],
-    default: () => [],
-  },
-);
+  return `${firstName} 외 ${order.items.length - 1}건`;
+};
+
+const data = computed<Order[]>(() => {
+  const menuNameById = source.value?.menuNameById ?? {};
+
+  return (source.value?.orders ?? [])
+    .filter((order) => {
+      const createdAt = new Date(order.createdAt).getTime();
+      return createdAt >= props.range.start.getTime() && createdAt <= props.range.end.getTime();
+    })
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5)
+    .map(order => ({
+      id: order.id,
+      date: order.createdAt,
+      status: statusLabel(order.status),
+      menu: summarizeMenu(order, menuNameById),
+      amount: order.totalAmount,
+    }));
+});
 
 const columns: TableColumn<any>[] = [
   {
@@ -105,7 +109,7 @@ const columns: TableColumn<any>[] = [
         배달중: 'primary',
         완료: 'success',
         취소: 'neutral',
-      }[status] as any;
+      }[status] as string;
 
       return h(
         UBadge,

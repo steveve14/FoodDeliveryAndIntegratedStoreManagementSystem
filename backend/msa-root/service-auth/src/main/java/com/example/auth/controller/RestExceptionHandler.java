@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestControllerAdvice
@@ -31,6 +32,13 @@ class RestExceptionHandler {
   @ExceptionHandler(IllegalStateException.class)
   ResponseEntity<ApiResponse<Object>> handleConflict(IllegalStateException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, ex.getMessage()));
+  }
+
+  @ExceptionHandler(ResponseStatusException.class)
+  ResponseEntity<ApiResponse<Object>> handleResponseStatus(ResponseStatusException ex) {
+    String message = ex.getReason() != null ? ex.getReason() : "요청 처리 중 오류가 발생했습니다.";
+    return ResponseEntity.status(ex.getStatusCode())
+        .body(ApiResponse.error(ex.getStatusCode().value(), message));
   }
 
   @ExceptionHandler(Exception.class)

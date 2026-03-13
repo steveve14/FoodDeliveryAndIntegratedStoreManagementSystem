@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
+import * as z from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import { useUserApi } from '~/composables/api/useUserApi';
 
 const schema = z.object({
-  name: z.string().min(2, "이름은 최소 2글자 이상이어야 합니다."),
-  email: z.string().email("유효하지 않은 이메일 형식입니다."),
-  password: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다."),
+  name: z.string().min(2, '이름은 최소 2글자 이상이어야 합니다.'),
+  email: z.string().email('유효하지 않은 이메일 형식입니다.'),
+  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다.'),
 });
 const open = ref(false);
 const loading = ref(false);
@@ -21,7 +22,7 @@ const state = reactive<Partial<Schema>>({
 const toast = useToast();
 const { register } = useUserApi();
 
-async function onSubmit(event: FormSubmitEvent<Schema>) {
+async function onSubmit (event: FormSubmitEvent<Schema>) {
   loading.value = true;
   try {
     const res = await register({
@@ -31,9 +32,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     });
     if (res.success) {
       toast.add({
-        title: "등록 성공",
+        title: '등록 성공',
         description: `${res.data.name} 님이 등록되었습니다.`,
-        color: "success",
+        color: 'success',
       });
       open.value = false;
       Object.assign(state, {
@@ -42,13 +43,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         password: undefined,
       });
     } else {
-      toast.add({ title: "등록 실패", color: "error" });
+      toast.add({ title: '등록 실패', color: 'error' });
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     toast.add({
-      title: "오류",
-      description: e?.message || "등록에 실패했습니다.",
-      color: "error",
+      title: '오류',
+      description: (e as Error)?.message || '등록에 실패했습니다.',
+      color: 'error',
     });
   } finally {
     loading.value = false;

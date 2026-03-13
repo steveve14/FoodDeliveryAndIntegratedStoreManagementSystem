@@ -33,9 +33,12 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
-              - "http://localhost:3000"
-              - "http://localhost:3001"
-              - "http://localhost:3002"
+              - ${GATEWAY_ALLOWED_ORIGIN_1:http://localhost:3000}
+              - ${GATEWAY_ALLOWED_ORIGIN_2:http://localhost:3001}
+              - ${GATEWAY_ALLOWED_ORIGIN_3:http://localhost:3002}
+               - ${GATEWAY_ALLOWED_ORIGIN_4:http://localhost:3010}
+               - ${GATEWAY_ALLOWED_ORIGIN_5:http://localhost:3100}
+               - ${GATEWAY_ALLOWED_ORIGIN_6:http://localhost:3200}
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
@@ -47,18 +50,18 @@ spring.grpc:
   client:
     channels:
       service-auth:
-        address: static://127.0.0.1:9000  # IPv4 명시 (Windows에서 localhost=::1 방지)
+        address: ${SERVICE_AUTH_GRPC_ADDR:static://127.0.0.1:9000}
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8100/eureka/
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8100/eureka/}
 
 # JWT 시크릿 키 설정
 token:
-  secret: "c2lsdmVyLTI1Ni1iaXQtc2VjcmV0LWtleS1mb3ItjwtlbmNvZGluZy1leGFtcGxlCg==" # Base64 인코딩된 긴 문자열 권장
+  secret: ${TOKEN_SECRET:}
   expiration_time: 3600000       # Access Token 만료 시간 (1시간)
   refresh_time: 1209600000       # Refresh Token 만료 시간 (2주)
 

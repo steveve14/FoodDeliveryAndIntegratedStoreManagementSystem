@@ -1,101 +1,194 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import type { OrderDto, OrderStatus } from "~/types/api";
-import { useOrderApi } from "~/composables/api/useOrderApi";
+import { h, resolveComponent } from 'vue';
+import type { TableColumn } from '@nuxt/ui';
+import type { OrderDto, OrderStatus } from '~/types/api';
+import { useOrderApi } from '~/composables/api/useOrderApi';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
-// ── 컴포넌트 ──────────────────────────────────────────────
-const UBadge = resolveComponent("UBadge");
-const UButton = resolveComponent("UButton");
+const UBadge = resolveComponent('UBadge');
+const UButton = resolveComponent('UButton');
 
 const toast = useToast();
-const { getOrder, updateOrderStatus } = useOrderApi();
+const { updateOrderStatus } = useOrderApi();
+const { data: source, refresh, status: sourceStatus } = await useAdminHomeSource();
 
-// ── 상태 ──────────────────────────────────────────────────
-const searchId = ref("");
-const loading = ref(false);
-const updating = ref(false);
-const order = ref<OrderDto | null>(null);
-const error = ref<string | null>(null);
+const searchFilter = ref('');
+const statusFilter = ref<'all' | OrderStatus>('all');
+const detailOpen = ref(false);
+const selectedOrderId = ref<string | null>(null);
+const updatingOrderId = ref<string | null>(null);
 
-// ── 주문 상태 메타 ─────────────────────────────────────────
 const STATUS_META: Record<
   OrderStatus,
   {
     label: string;
-    color: "success" | "warning" | "primary" | "error" | "neutral" | "info";
+    color: 'success' | 'warning' | 'primary' | 'error' | 'neutral' | 'info';
   }
 > = {
-  CREATED: { label: "접수됨", color: "info" },
-  CONFIRMED: { label: "확인됨", color: "primary" },
-  PREPARING: { label: "조리중", color: "warning" },
-  READY: { label: "준비완료", color: "success" },
-  DELIVERING: { label: "배달중", color: "warning" },
-  COMPLETED: { label: "완료", color: "success" },
-  CANCELLED: { label: "취소됨", color: "error" },
+  CREATED: { label: '접수됨', color: 'info' },
+  COOKING: { label: '조리중', color: 'warning' },
+  DELIVERING: { label: '배달중', color: 'primary' },
+  DONE: { label: '완료', color: 'success' },
+  CANCELLED: { label: '취소됨', color: 'error' },
 };
+
+const STATUS_OPTIONS: { label: string; value: 'all' | OrderStatus }[] = [
+  { label: '전체 상태', value: 'all' },
+  { label: '접수됨', value: 'CREATED' },
+  { label: '조리중', value: 'COOKING' },
+  { label: '배달중', value: 'DELIVERING' },
+  { label: '완료', value: 'DONE' },
+  { label: '취소', value: 'CANCELLED' },
+];
 
 const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus[]>> = {
-  CREATED: ["CONFIRMED", "CANCELLED"],
-  CONFIRMED: ["PREPARING", "CANCELLED"],
-  PREPARING: ["READY", "CANCELLED"],
-  READY: ["DELIVERING"],
-  DELIVERING: ["COMPLETED"],
+  CREATED: ['COOKING', 'CANCELLED'],
+  COOKING: ['DELIVERING', 'CANCELLED'],
+  DELIVERING: ['DONE', 'CANCELLED'],
 };
 
-// ── 검색 ──────────────────────────────────────────────────
-const searchSchema = z.object({
-  orderId: z.string().min(1, "주문 ID를 입력해주세요"),
+const currencyFmt = new Intl.NumberFormat('ko-KR', {
+  style: 'currency',
+  currency: 'KRW',
+  maximumFractionDigits: 0,
 });
 
-async function onSearch(e: FormSubmitEvent<{ orderId: string }>) {
-  error.value = null;
-  order.value = null;
-  loading.value = true;
-  try {
-    const res = await getOrder(e.data.orderId);
-    if (res.success) {
-      order.value = res.data;
-    } else {
-      error.value = "주문을 찾을 수 없습니다.";
-    }
-  } catch {
-    error.value = "주문 조회 중 오류가 발생했습니다.";
-  } finally {
-    loading.value = false;
+const customerEmailById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.customers ?? []).map(customer => [customer.id, customer.email]),
+  );
+});
+
+const storeNameById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.stores ?? []).map(store => [store.id, store.name]),
+  );
+});
+
+const filteredOrders = computed(() => {
+  const keyword = searchFilter.value.trim().toLowerCase();
+
+  return (source.value?.orders ?? [])
+    .filter((order) => {
+      if (statusFilter.value !== 'all' && order.status !== statusFilter.value) {
+        return false;
+      }
+
+      if (!keyword) {
+        return true;
+      }
+
+      const email = customerEmailById.value[order.userId] ?? '';
+      const storeName = storeNameById.value[order.storeId] ?? '';
+      return [order.id, order.userId, order.storeId, order.status, email, storeName]
+        .some(value => value.toLowerCase().includes(keyword));
+    })
+    .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime());
+});
+
+const selectedOrder = computed(() => {
+  if (!selectedOrderId.value) {
+    return null;
   }
+
+  return (source.value?.orders ?? []).find(order => order.id === selectedOrderId.value) ?? null;
+});
+
+function openOrderDetail (order: OrderDto) {
+  selectedOrderId.value = order.id;
+  detailOpen.value = true;
 }
 
-// ── 상태 변경 ──────────────────────────────────────────────
-async function changeStatus(status: OrderStatus) {
-  if (!order.value) return;
-  updating.value = true;
+async function changeStatus (orderId: string, nextStatus: OrderStatus) {
+  updatingOrderId.value = orderId;
   try {
-    const res = await updateOrderStatus(order.value.id, status);
-    if (res.success) {
-      order.value = res.data;
-      toast.add({
-        title: "상태 변경 완료",
-        description: `주문 상태가 "${STATUS_META[status].label}"으로 변경되었습니다.`,
-        color: "success",
-      });
+    const res = await updateOrderStatus(orderId, nextStatus);
+    if (!res.success) {
+      throw new Error();
     }
+
+    await refresh();
+    selectedOrderId.value = orderId;
+    toast.add({
+      title: '주문 상태 변경 완료',
+      description: `주문 상태가 ${STATUS_META[nextStatus].label}로 변경되었습니다.`,
+      color: 'success',
+    });
   } catch {
     toast.add({
-      title: "오류",
-      description: "상태 변경에 실패했습니다.",
-      color: "error",
+      title: '주문 상태 변경 실패',
+      description: '잠시 후 다시 시도해주세요.',
+      color: 'error',
     });
   } finally {
-    updating.value = false;
+    updatingOrderId.value = null;
   }
 }
 
-// ── 금액 포맷터 ────────────────────────────────────────────
-const currencyFmt = new Intl.NumberFormat("ko-KR", {
-  style: "currency",
-  currency: "KRW",
-});
+const columns: TableColumn<OrderDto>[] = [
+  {
+    accessorKey: 'id',
+    header: '주문 ID',
+    cell: ({ row }) => h('span', { class: 'font-mono text-xs' }, row.original.id),
+  },
+  {
+    accessorKey: 'createdAt',
+    header: '주문 시각',
+    cell: ({ row }) => new Date(row.original.createdAt).toLocaleString('ko-KR'),
+  },
+  {
+    id: 'store',
+    header: '가게',
+    cell: ({ row }) => storeNameById.value[row.original.storeId] ?? row.original.storeId,
+  },
+  {
+    id: 'customer',
+    header: '고객',
+    cell: ({ row }) => customerEmailById.value[row.original.userId] ?? row.original.userId,
+  },
+  {
+    accessorKey: 'totalAmount',
+    header: () => h('div', { class: 'text-right' }, '금액'),
+    cell: ({ row }) => h('div', { class: 'text-right font-medium' }, currencyFmt.format(row.original.totalAmount)),
+  },
+  {
+    accessorKey: 'status',
+    header: '상태',
+    cell: ({ row }) => h(
+      UBadge,
+      {
+        variant: 'subtle',
+        color: STATUS_META[row.original.status]?.color ?? 'neutral',
+      },
+      () => STATUS_META[row.original.status]?.label ?? row.original.status,
+    ),
+  },
+  {
+    id: 'actions',
+    header: '관리',
+    cell: ({ row }) => h(
+      'div',
+      { class: 'flex justify-end gap-2' },
+      [
+        h(UButton, {
+          label: '상세',
+          color: 'neutral',
+          variant: 'outline',
+          onClick: () => openOrderDetail(row.original),
+        }),
+        NEXT_STATUS[row.original.status]?.[0] ?
+          h(UButton, {
+            label: `${STATUS_META[NEXT_STATUS[row.original.status]![0]].label}`,
+            color: STATUS_META[NEXT_STATUS[row.original.status]![0]].color,
+            variant: 'subtle',
+            loading: updatingOrderId.value === row.original.id,
+            onClick: () => changeStatus(row.original.id, NEXT_STATUS[row.original.status]![0]),
+          }) :
+          null,
+      ],
+    ),
+  },
+];
 </script>
 
 <template>
@@ -105,124 +198,131 @@ const currencyFmt = new Intl.NumberFormat("ko-KR", {
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
+        <template #right>
+          <UButton
+            label="새로고침"
+            icon="i-lucide-refresh-cw"
+            color="neutral"
+            variant="outline"
+            :loading="sourceStatus === 'pending'"
+            @click="refresh"
+          />
+        </template>
       </UDashboardNavbar>
     </template>
 
     <template #body>
-      <div class="max-w-2xl mx-auto space-y-6 p-4">
-        <!-- 검색 폼 -->
-        <UForm
-          :schema="searchSchema"
-          :state="{ orderId: searchId }"
-          class="flex gap-2"
-          @submit="onSearch"
-        >
-          <UFormField name="orderId" class="flex-1">
-            <UInput
-              v-model="searchId"
-              placeholder="주문 ID를 입력하세요 (UUID)"
-              icon="i-lucide-search"
-              class="w-full"
-            />
-          </UFormField>
-          <UButton
-            type="submit"
-            label="조회"
-            :loading="loading"
-            icon="i-lucide-search"
-          />
-        </UForm>
+      <UAlert
+        v-if="sourceStatus === 'error'"
+        color="error"
+        variant="subtle"
+        icon="i-lucide-alert-circle"
+        title="주문 목록을 불러오지 못했습니다."
+        description="store별 집계 호출 중 실패한 요청이 있을 수 있습니다. 새로고침 후 다시 확인해주세요."
+        class="mb-4"
+      />
 
-        <!-- 오류 -->
-        <UAlert
-          v-if="error"
-          color="error"
-          variant="subtle"
-          icon="i-lucide-alert-circle"
-          :title="error"
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <UInput
+          v-model="searchFilter"
+          class="max-w-md"
+          icon="i-lucide-search"
+          placeholder="주문 ID, 고객 이메일, 가게명으로 검색"
         />
 
-        <!-- 주문 상세 카드 -->
-        <UCard v-if="order">
-          <template #header>
+        <USelect
+          v-model="statusFilter"
+          :items="STATUS_OPTIONS"
+          class="min-w-40"
+        />
+      </div>
+
+      <UTable
+        :data="filteredOrders"
+        :columns="columns"
+        :loading="sourceStatus === 'pending'"
+        class="flex-1"
+        :ui="{
+          base: 'table-fixed border-separate border-spacing-0',
+          thead: '[&>tr]:bg-elevated/50',
+          th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+          td: 'border-b border-default',
+          separator: 'h-0',
+        }"
+      />
+
+      <div class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-4">
+        <div class="text-sm text-muted">
+          총 {{ filteredOrders.length }}건의 주문
+        </div>
+      </div>
+
+      <UModal
+        v-model:open="detailOpen"
+        title="주문 상세"
+        description="store별 주문 집계 기준 상세 정보입니다."
+      >
+        <template #body>
+          <div v-if="selectedOrder" class="space-y-4 text-sm">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <UIcon name="i-lucide-shopping-bag" class="text-xl" />
-                <div>
-                  <p class="font-semibold text-sm text-muted">주문 ID</p>
-                  <p class="font-mono text-xs">{{ order.id }}</p>
-                </div>
+              <div>
+                <p class="text-muted mb-0.5">주문 ID</p>
+                <p class="font-mono text-xs">{{ selectedOrder.id }}</p>
               </div>
-              <UBadge
-                :color="STATUS_META[order.status].color"
-                variant="subtle"
-                size="lg"
-              >
-                {{ STATUS_META[order.status].label }}
+              <UBadge :color="STATUS_META[selectedOrder.status].color" variant="subtle">
+                {{ STATUS_META[selectedOrder.status].label }}
               </UBadge>
             </div>
-          </template>
 
-          <div class="space-y-4">
-            <!-- 기본 정보 -->
-            <div class="grid grid-cols-2 gap-4 text-sm">
+            <div class="grid grid-cols-2 gap-4">
               <div>
-                <p class="text-muted mb-0.5">고객 ID</p>
-                <p class="font-mono">{{ order.userId }}</p>
+                <p class="text-muted mb-0.5">가게</p>
+                <p>{{ storeNameById[selectedOrder.storeId] ?? selectedOrder.storeId }}</p>
               </div>
               <div>
-                <p class="text-muted mb-0.5">가게 ID</p>
-                <p class="font-mono">{{ order.storeId }}</p>
-              </div>
-              <div>
-                <p class="text-muted mb-0.5">총 금액</p>
-                <p class="font-semibold text-primary">
-                  {{ currencyFmt.format(order.totalAmount) }}
-                </p>
+                <p class="text-muted mb-0.5">고객</p>
+                <p>{{ customerEmailById[selectedOrder.userId] ?? selectedOrder.userId }}</p>
               </div>
               <div>
                 <p class="text-muted mb-0.5">주문 시각</p>
-                <p>{{ new Date(order.createdAt).toLocaleString("ko-KR") }}</p>
+                <p>{{ new Date(selectedOrder.createdAt).toLocaleString('ko-KR') }}</p>
+              </div>
+              <div>
+                <p class="text-muted mb-0.5">총 금액</p>
+                <p class="font-semibold text-primary">{{ currencyFmt.format(selectedOrder.totalAmount) }}</p>
               </div>
             </div>
 
-            <!-- 주문 항목 -->
             <div>
               <p class="text-sm font-medium mb-2">주문 항목</p>
-              <div
-                class="rounded-lg border border-default divide-y divide-default"
-              >
+              <div class="rounded-lg border border-default divide-y divide-default">
                 <div
-                  v-for="item in order.items"
+                  v-for="item in selectedOrder.items"
                   :key="item.productId"
-                  class="flex items-center justify-between px-4 py-2 text-sm"
+                  class="flex items-center justify-between px-4 py-2"
                 >
-                  <span class="text-muted font-mono text-xs">{{
-                    item.productId
-                  }}</span>
+                  <span class="font-mono text-xs text-muted">{{ item.productId }}</span>
                   <span>{{ item.quantity }}개</span>
-                  <span class="font-semibold">{{
-                    currencyFmt.format(item.price * item.quantity)
-                  }}</span>
+                  <span class="font-semibold">{{ currencyFmt.format(item.price * item.quantity) }}</span>
                 </div>
               </div>
             </div>
 
-            <!-- 상태 변경 -->
-            <div v-if="NEXT_STATUS[order.status]?.length">
+            <div v-if="NEXT_STATUS[selectedOrder.status]?.length">
               <p class="text-sm font-medium mb-2">상태 변경</p>
               <div class="flex flex-wrap gap-2">
                 <UButton
-                  v-for="next in NEXT_STATUS[order.status]"
-                  :key="next"
-                  :label="STATUS_META[next].label + '으로 변경'"
-                  :color="STATUS_META[next].color"
+                  v-for="nextStatus in NEXT_STATUS[selectedOrder.status]"
+                  :key="nextStatus"
+                  :label="`${STATUS_META[nextStatus].label}로 변경`"
+                  :color="STATUS_META[nextStatus].color"
                   variant="subtle"
-                  :loading="updating"
-                  @click="changeStatus(next)"
+                  :loading="updatingOrderId === selectedOrder.id"
+                  @click="changeStatus(selectedOrder.id, nextStatus)"
                 />
               </div>
             </div>
+
             <UAlert
               v-else
               color="neutral"
@@ -231,20 +331,12 @@ const currencyFmt = new Intl.NumberFormat("ko-KR", {
               title="최종 상태입니다. 더 이상 상태를 변경할 수 없습니다."
             />
           </div>
-        </UCard>
 
-        <!-- 안내 -->
-        <div
-          v-if="!order && !error && !loading"
-          class="text-center text-muted text-sm py-12"
-        >
-          <UIcon
-            name="i-lucide-package-search"
-            class="text-4xl mb-3 block mx-auto"
-          />
-          주문 ID를 입력하여 주문 상태를 조회하고 관리하세요.
-        </div>
-      </div>
+          <div v-else class="text-center text-muted py-6">
+            선택한 주문 정보를 찾을 수 없습니다.
+          </div>
+        </template>
+      </UModal>
     </template>
   </UDashboardPanel>
 </template>

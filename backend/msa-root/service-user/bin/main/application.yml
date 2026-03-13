@@ -26,9 +26,14 @@ eureka:
     register-with-eureka: true   # Eureka에 등록
     fetch-registry: true         # 다른 서비스 주소 조회
     service-url:
-      defaultZone: http://localhost:8100/eureka/  # Discovery Service 주소
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8100/eureka/}
 
 # Spring gRPC 서버 설정 (Netty 독립 서버)
 spring.grpc:
   server:
     port: 9010  # gRPC 전용 포트 (HTTP 8010과 완전히 분리)
+
+app:
+  avatar:
+    upload-dir: ${AVATAR_UPLOAD_DIR:uploads/avatars}
+    public-base-url: ${AVATAR_PUBLIC_BASE_URL:/api/v1/users/avatars/}

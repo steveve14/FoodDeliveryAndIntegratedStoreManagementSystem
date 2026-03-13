@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import type { DeliveryDto, DeliveryStatus } from "~/types/api";
-import { useDeliveryApi } from "~/composables/api/useDeliveryApi";
+import * as z from 'zod';
+import type { FormSubmitEvent } from '@nuxt/ui';
+import type { DeliveryDto, DeliveryStatus } from '~/types/api';
+import { useDeliveryApi } from '~/composables/api/useDeliveryApi';
 
-const UBadge = resolveComponent("UBadge");
-const UButton = resolveComponent("UButton");
+const UBadge = resolveComponent('UBadge');
+const UButton = resolveComponent('UButton');
 
 const toast = useToast();
 const { getDelivery, updateDeliveryStatus } = useDeliveryApi();
 
 // ── 상태 ──────────────────────────────────────────────────
-const searchId = ref("");
+const searchId = ref('');
 const loading = ref(false);
 const updating = ref(false);
 const delivery = ref<DeliveryDto | null>(null);
@@ -22,30 +22,30 @@ const STATUS_META: Record<
   DeliveryStatus,
   {
     label: string;
-    color: "success" | "warning" | "primary" | "error" | "neutral" | "info";
+    color: 'success' | 'warning' | 'primary' | 'error' | 'neutral' | 'info';
   }
 > = {
-  SCHEDULED: { label: "배달 예약됨", color: "info" },
-  PENDING: { label: "대기중", color: "neutral" },
-  PICKED_UP: { label: "픽업 완료", color: "primary" },
-  IN_TRANSIT: { label: "이동중", color: "warning" },
-  DELIVERED: { label: "배달 완료", color: "success" },
-  CANCELLED: { label: "취소됨", color: "error" },
+  SCHEDULED: { label: '배달 예약됨', color: 'info' },
+  PENDING: { label: '대기중', color: 'neutral' },
+  PICKED_UP: { label: '픽업 완료', color: 'primary' },
+  IN_TRANSIT: { label: '이동중', color: 'warning' },
+  DELIVERED: { label: '배달 완료', color: 'success' },
+  CANCELLED: { label: '취소됨', color: 'error' },
 };
 
 const NEXT_STATUS: Partial<Record<DeliveryStatus, DeliveryStatus[]>> = {
-  SCHEDULED: ["PENDING", "CANCELLED"],
-  PENDING: ["PICKED_UP", "CANCELLED"],
-  PICKED_UP: ["IN_TRANSIT"],
-  IN_TRANSIT: ["DELIVERED", "CANCELLED"],
+  SCHEDULED: ['PENDING', 'CANCELLED'],
+  PENDING: ['PICKED_UP', 'CANCELLED'],
+  PICKED_UP: ['IN_TRANSIT'],
+  IN_TRANSIT: ['DELIVERED', 'CANCELLED'],
 };
 
 // ── 검색 ──────────────────────────────────────────────────
 const searchSchema = z.object({
-  deliveryId: z.string().min(1, "배달 ID를 입력해주세요"),
+  deliveryId: z.string().min(1, '배달 ID를 입력해주세요'),
 });
 
-async function onSearch(e: FormSubmitEvent<{ deliveryId: string }>) {
+async function onSearch (e: FormSubmitEvent<{ deliveryId: string }>) {
   error.value = null;
   delivery.value = null;
   loading.value = true;
@@ -54,43 +54,45 @@ async function onSearch(e: FormSubmitEvent<{ deliveryId: string }>) {
     if (res.success) {
       delivery.value = res.data;
     } else {
-      error.value = "배달 정보를 찾을 수 없습니다.";
+      error.value = '배달 정보를 찾을 수 없습니다.';
     }
   } catch {
-    error.value = "배달 조회 중 오류가 발생했습니다.";
+    error.value = '배달 조회 중 오류가 발생했습니다.';
   } finally {
     loading.value = false;
   }
 }
 
 // ── 상태 변경 ──────────────────────────────────────────────
-async function changeStatus(status: DeliveryStatus) {
-  if (!delivery.value) return;
+async function changeStatus (status: DeliveryStatus) {
+  if (!delivery.value) {
+    return;
+  }
   updating.value = true;
   try {
     const res = await updateDeliveryStatus(delivery.value.id, status);
     if (res.success) {
       delivery.value = res.data;
       toast.add({
-        title: "상태 변경 완료",
+        title: '상태 변경 완료',
         description: `배달 상태가 "${STATUS_META[status].label}"으로 변경되었습니다.`,
-        color: "success",
+        color: 'success',
       });
     }
   } catch {
     toast.add({
-      title: "오류",
-      description: "상태 변경에 실패했습니다.",
-      color: "error",
+      title: '오류',
+      description: '상태 변경에 실패했습니다.',
+      color: 'error',
     });
   } finally {
     updating.value = false;
   }
 }
 
-const currencyFmt = new Intl.NumberFormat("ko-KR", {
-  style: "currency",
-  currency: "KRW",
+const currencyFmt = new Intl.NumberFormat('ko-KR', {
+  style: 'currency',
+  currency: 'KRW',
 });
 </script>
 

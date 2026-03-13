@@ -1,3 +1,11 @@
+plugins {
+    id 'org.asciidoctor.jvm.convert' version '4.0.5'
+}
+
+ext {
+    snippetsDir = file("$buildDir/generated-snippets")
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -19,4 +27,20 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.springframework.security:spring-security-crypto'
     runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    dependsOn test
+    inputs.dir snippetsDir
+    baseDirFollowsSourceFile()
+    sources {
+        include 'index.adoc'
+    }
+    attributes 'snippets': snippetsDir
 }

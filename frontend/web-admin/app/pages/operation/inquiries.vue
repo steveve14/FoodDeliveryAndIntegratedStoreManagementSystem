@@ -1,32 +1,35 @@
 <script setup lang="ts">
 /**
- * [1:1 문의 관리]
- * Base Code(공지사항)의 아키텍처를 기반으로 리팩토링된 코드입니다.
+ * [1:1 문의 관�?
+ * Base Code(공�??�항)???�키?�처�?기반?�로 리팩?�링??코드?�니??
  */
-import { h, ref, reactive, resolveComponent, watch, computed } from "vue";
-import type { TableColumn } from "@nuxt/ui";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import * as z from "zod";
-import { format, subDays, subHours } from "date-fns";
-import { getPaginationRowModel, getSortedRowModel } from "@tanstack/table-core";
+import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
+import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
+
+import * as z from 'zod';
+import { format, subDays, subHours } from 'date-fns';
+import { getPaginationRowModel } from '@tanstack/table-core';
+import type { Row, Table } from '@tanstack/table-core';
 
 // ==========================================
-// 1. 컴포넌트 리졸브
+// 1. 컴포?�트 리졸�?
 // ==========================================
-const UButton = resolveComponent("UButton");
-const UBadge = resolveComponent("UBadge");
-const UDropdownMenu = resolveComponent("UDropdownMenu");
-const UCheckbox = resolveComponent("UCheckbox");
-const UAvatar = resolveComponent("UAvatar"); // 첨부 이미지 표시용
+const UButton = resolveComponent('UButton');
+const UBadge = resolveComponent('UBadge');
+const UDropdownMenu = resolveComponent('UDropdownMenu');
+const UCheckbox = resolveComponent('UCheckbox');
+const UAvatar = resolveComponent('UAvatar'); // 첨�? ?��?지 ?�시??
 
 const toast = useToast();
-const table = ref<any>(null);
+type TableInstance<T> = { tableApi?: Table<T> } | null;
+type TableRow<T> = Row<T>;
+const table = ref<TableInstance<InquiryItem>>(null);
 
 // ==========================================
-// 2. 설정 및 데이터 정의
+// 2. ?�정 �??�이???�의
 // ==========================================
-const PAGE_TITLE = "1:1 문의 관리";
-const DATA_KEY = "inquiries";
+const PAGE_TITLE = '1:1 문의 관리';
+const DATA_KEY = 'inquiries';
 
 type InquiryItem = {
   id: number;
@@ -34,63 +37,63 @@ type InquiryItem = {
   title: string;
   content: string;
   user: string;
-  status: "pending" | "resolved";
+  status: 'pending' | 'resolved';
   createdAt: string;
-  answer?: string; // 답변 내용
-  imageUrl?: string; // 첨부 이미지
+  answer?: string; // ?��? ?�용
+  imageUrl?: string; // 첨�? ?��?지
 };
 
-// 폼 스키마 (답변 등록 위주)
+// ???�키�?(?��? ?�록 ?�주)
 const formSchema = z.object({
   title: z.string(),
   type: z.string(),
   user: z.string(),
-  status: z.enum(["pending", "resolved"]),
+  status: z.enum(['pending', 'resolved']),
   content: z.string(),
-  answer: z.string().optional(), // 답변은 선택사항 (대기중일 수 있으므로)
+  answer: z.string().optional(), // ?��??� ?�택?�항 (?�기중?????�으므�?
   imageUrl: z.string().optional(),
 });
 
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. 상태 관리
+// 3. ?�태 관�?
 // ==========================================
-const columnFilters = ref([{ id: "title", value: "" }]);
+const columnFilters = ref([{ id: 'title', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
-const sorting = ref([{ id: "id", desc: true }]); // 초기 정렬: 최신순
+const sorting = ref([{ id: 'id', desc: true }]); // 초기 ?�렬: 최신??
 
-const statusFilter = ref("all");
+const statusFilter = ref('all');
 const isSlideoverOpen = ref(false);
 const selectedId = ref<number | null>(null);
 
-// 폼 상태
+// ???�태
 const initialFormState: FormSchema = {
-  title: "",
-  type: "",
-  user: "",
-  status: "pending",
-  content: "",
-  answer: "",
-  imageUrl: "",
+  title: '',
+  type: '',
+  user: '',
+  status: 'pending',
+  content: '',
+  answer: '',
+  imageUrl: '',
 };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. ?�이???�칭 (Mock Data)
 // ==========================================
 const { data, status: loadingStatus } = await useAsyncData<InquiryItem[]>(
   DATA_KEY,
   async () => {
-    const types = ["결제/환불", "계정 이용", "시스템 장애", "기타 문의"];
+    const types = ['결제/?�불', '계정 ?�용', '?�스???�애', '기�? 문의'];
     const titles = [
-      "결제가 중복으로 되었습니다.",
-      "로그인이 안돼요",
-      "환불 규정이 어떻게 되나요?",
-      "앱이 자꾸 꺼집니다.",
-      "회원 탈퇴는 어디서 하나요?",
+      '결제가 중복?�로 ?�었?�니??',
+      '로그인이 안돼요',
+      '?�불 규정???�떻�??�나??',
+      '?�이 ?�꾸 꺼집?�다.',
+      '?�원 ?�퇴???�디???�나??',
     ];
 
     return Array.from({ length: 50 }).map((_, i) => {
@@ -104,25 +107,25 @@ const { data, status: loadingStatus } = await useAsyncData<InquiryItem[]>(
         user: `User-${1000 + i}`,
         type: randomType,
         title: randomTitle,
-        content: `문의사항 상세 내용입니다. (${randomTitle})\n빠른 확인 부탁드립니다.`,
-        status: isPending ? "pending" : "resolved",
+        content: `문의?�항 ?�세 ?�용?�니?? (${randomTitle})\n빠른 ?�인 부?�드립니??`,
+        status: isPending ? 'pending' : 'resolved',
         createdAt: date,
-        answer: isPending
-          ? ""
-          : "문의주셔서 감사합니다. 해당 내용은 처리되었습니다.",
+        answer: isPending ?
+          '' :
+          '문의주셔??감사?�니?? ?�당 ?�용?� 처리?�었?�니??',
         imageUrl:
-          Math.random() > 0.8
-            ? `https://picsum.photos/seed/${i}/200/200`
-            : undefined,
+          Math.random() > 0.8 ?
+            `https://picsum.photos/seed/${i}/200/200` :
+            undefined,
       };
     });
   },
 );
 
 // ==========================================
-// 5. 액션 핸들러
+// 5. ?�션 ?�들??
 // ==========================================
-function openEditModal(row: InquiryItem) {
+function openEditModal (row: InquiryItem) {
   selectedId.value = row.id;
   Object.assign(formState, {
     title: row.title,
@@ -130,180 +133,180 @@ function openEditModal(row: InquiryItem) {
     user: row.user,
     status: row.status,
     content: row.content,
-    answer: row.answer || "",
+    answer: row.answer || '',
     imageUrl: row.imageUrl,
   });
   isSlideoverOpen.value = true;
 }
 
-// 답변 등록/수정 처리
-async function onSubmit(event: FormSubmitEvent<FormSchema>) {
-  // 실제 로직: API 호출하여 답변 저장 및 상태 변경
-  if (formState.answer && formState.status === "pending") {
-    formState.status = "resolved"; // 답변이 있으면 완료 처리 (예시)
+// ?��? ?�록/?�정 처리
+async function onSubmit (event: FormSubmitEvent<FormSchema>) {
+  // ?�제 로직: API ?�출?�여 ?��? ?�??�??�태 변�?
+  if (formState.answer && formState.status === 'pending') {
+    formState.status = 'resolved'; // ?��????�으�??�료 처리 (?�시)
   }
   toast.add({
-    title: "저장 완료",
-    description: "문의 내용이 수정되었습니다.",
-    color: "success",
+    title: '?�???�료',
+    description: '문의 ?�용???�정?�었?�니??',
+    color: 'success',
   });
   isSlideoverOpen.value = false;
 }
 
-function onDelete(ids: number[]) {
+function onDelete (ids: number[]) {
   toast.add({
-    title: "삭제 완료",
-    description: `${ids.length}개의 항목이 삭제되었습니다.`,
-    color: "error",
+    title: '??�� ?�료',
+    description: `${ids.length}개의 ??��????��?�었?�니??`,
+    color: 'error',
   });
   rowSelection.value = {};
 }
 
-function getRowItems(row: InquiryItem) {
+function getRowItems (row: InquiryItem) {
   return [
-    { type: "label", label: "관리" },
+    { type: 'label', label: '관리' },
     {
-      label: row.status === "pending" ? "답변하기" : "상세보기",
-      icon: "i-lucide-edit",
+      label: row.status === 'pending' ? '?��??�기' : '?�세보기',
+      icon: 'i-lucide-edit',
       onSelect: () => openEditModal(row),
     },
-    { type: "separator" },
+    { type: 'separator' },
     {
-      label: "삭제",
-      icon: "i-lucide-trash",
-      color: "error",
+      label: '??��',
+      icon: 'i-lucide-trash',
+      color: 'error',
       onSelect: () => onDelete([row.id]),
     },
   ];
 }
 
 // ==========================================
-// 6. 테이블 컬럼 정의
+// 6. ?�이�?컬럼 ?�의
 // ==========================================
 const columnLabels: Record<string, string> = {
-  select: "선택",
-  id: "No.",
-  type: "유형",
-  title: "제목",
-  user: "작성자",
-  status: "상태",
-  createdAt: "등록일",
-  actions: "관리",
+  select: '?�택',
+  id: 'No.',
+  type: '?�형',
+  title: '?�목',
+  user: '작성자',
+  status: '?�태',
+  createdAt: '등록일',
+  actions: '관리',
 };
 
 const columns: TableColumn<InquiryItem>[] = [
   // 1. 체크박스
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
-        modelValue: table.getIsSomePageRowsSelected()
-          ? "indeterminate"
-          : table.getIsAllPageRowsSelected(),
-        "onUpdate:modelValue": (v: boolean) =>
+        'modelValue': table.getIsSomePageRowsSelected() ?
+          'indeterminate' :
+          table.getIsAllPageRowsSelected(),
+        'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
-        ariaLabel: "전체 선택",
+        'ariaLabel': '?�체 ?�택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
-        modelValue: row.getIsSelected(),
-        "onUpdate:modelValue": (v: boolean) => row.toggleSelected(!!v),
-        ariaLabel: "행 선택",
+        'modelValue': row.getIsSelected(),
+        'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
+        'ariaLabel': '???�택',
       }),
     enableSorting: false,
   },
-  // 2. No. (정렬 가능)
+  // 2. No. (?�렬 가??
   {
-    accessorKey: "id",
+    accessorKey: 'id',
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       return h(UButton, {
-        color: "neutral",
-        variant: "ghost",
-        label: "No.",
+        color: 'neutral',
+        variant: 'ghost',
+        label: 'No.',
         icon:
-          isSorted === "asc"
-            ? "i-lucide-arrow-up-narrow-wide"
-            : isSorted === "desc"
-              ? "i-lucide-arrow-down-wide-narrow"
-              : "i-lucide-arrow-up-down",
-        class: "-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800",
-        onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+          isSorted === 'asc' ?
+            'i-lucide-arrow-up-narrow-wide' :
+            isSorted === 'desc' ?
+              'i-lucide-arrow-down-wide-narrow' :
+              'i-lucide-arrow-up-down',
+        class: '-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
       });
     },
   },
-  // 3. 유형
+  // 3. ?�형
   {
-    accessorKey: "type",
-    header: "유형",
+    accessorKey: 'type',
+    header: '?�형',
     cell: ({ row }) =>
-      h(UBadge, { variant: "subtle", color: "gray" }, () => row.original.type),
+      h(UBadge, { variant: 'subtle', color: 'gray' }, () => row.original.type),
   },
-  // 4. 제목 (이미지 있으면 아이콘 표시)
+  // 4. ?�목 (?��?지 ?�으�??�이�??�시)
   {
-    accessorKey: "title",
-    header: "문의 제목",
+    accessorKey: 'title',
+    header: '문의 ?�목',
     cell: ({ row }) =>
-      h("div", { class: "flex items-center gap-2" }, [
-        // 첨부 이미지 썸네일
+      h('div', { class: 'flex items-center gap-2' }, [
+        // 첨�? ?��?지 ?�네??
         row.original.imageUrl &&
-          h(UAvatar, { src: row.original.imageUrl, size: "2xs" }),
+        h(UAvatar, { src: row.original.imageUrl, size: '2xs' }),
         h(
-          "span",
+          'span',
           {
             class:
-              "font-medium truncate max-w-[300px] cursor-pointer hover:text-primary hover:underline",
+              'font-medium truncate max-w-[300px] cursor-pointer hover:text-primary hover:underline',
             onClick: () => openEditModal(row.original),
           },
           row.original.title,
         ),
       ]),
   },
-  // 5. 작성자
-  { accessorKey: "user", header: "작성자" },
-  // 6. 상태 (필터 적용)
+  // 5. ?�성??
+  { accessorKey: 'user', header: '작성자' },
+  // 6. ?�태 (?�터 ?�용)
   {
-    accessorKey: "status",
-    header: "상태",
-    filterFn: "equals",
+    accessorKey: 'status',
+    header: '?�태',
+    filterFn: 'equals',
     cell: ({ row }) => {
-      const isPending = row.original.status === "pending";
+      const isPending = row.original.status === 'pending';
       return h(
         UBadge,
         {
-          variant: "subtle",
-          color: isPending ? "warning" : "success", // 주황: 대기, 초록: 완료
+          variant: 'subtle',
+          color: isPending ? 'warning' : 'success', // 주황: ?��? 초록: ?�료
         },
-        () => (isPending ? "답변 대기" : "답변 완료"),
+        () => (isPending ? '답변 대기' : '답변 완료'),
       );
     },
   },
-  // 7. 등록일
+  // 7. ?�록??
   {
-    accessorKey: "createdAt",
-    header: "등록일",
+    accessorKey: 'createdAt',
+    header: '등록일',
     cell: ({ row }) =>
-      format(new Date(row.original.createdAt), "yyyy-MM-dd HH:mm"),
+      format(new Date(row.original.createdAt), 'yyyy-MM-dd HH:mm'),
   },
-  // 8. 관리
+  // 8. 관�?
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) =>
       h(
-        "div",
-        { class: "text-right" },
+        'div',
+        { class: 'text-right' },
         h(
           UDropdownMenu,
           {
-            content: { align: "end" },
+            content: { align: 'end' },
             items: getRowItems(row.original),
           },
           () =>
             h(UButton, {
-              icon: "i-lucide-ellipsis-vertical",
-              color: "neutral",
-              variant: "ghost",
-              class: "ml-auto",
+              icon: 'i-lucide-ellipsis-vertical',
+              color: 'neutral',
+              variant: 'ghost',
+              class: 'ml-auto',
             }),
         ),
       ),
@@ -315,18 +318,18 @@ const columns: TableColumn<InquiryItem>[] = [
 // 7. Watchers & Computeds
 // ==========================================
 watch(statusFilter, (val) => {
-  if (!table.value?.tableApi) return;
+  if (!table.value?.tableApi) { return; }
   table.value.tableApi
-    .getColumn("status")
-    ?.setFilterValue(val === "all" ? undefined : val);
+    .getColumn('status')
+    ?.setFilterValue(val === 'all' ? undefined : val);
 });
 
 const titleSearch = computed({
   get: () =>
-    (table.value?.tableApi?.getColumn("title")?.getFilterValue() as string) ||
-    "",
-  set: (val) =>
-    table.value?.tableApi?.getColumn("title")?.setFilterValue(val || undefined),
+    (table.value?.tableApi?.getColumn('title')?.getFilterValue() as string) ||
+    '',
+  set: val =>
+    table.value?.tableApi?.getColumn('title')?.setFilterValue(val || undefined),
 });
 </script>
 
@@ -336,14 +339,14 @@ const titleSearch = computed({
       <UInput
         v-model="titleSearch"
         icon="i-lucide-search"
-        placeholder="제목 검색..."
+        placeholder="?�목 검??.."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
           v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-          label="선택 삭제"
+          label="?�택 ??��"
           color="error"
           variant="subtle"
           icon="i-lucide-trash"
@@ -351,23 +354,25 @@ const titleSearch = computed({
             onDelete(
               table?.tableApi
                 ?.getFilteredSelectedRowModel()
-                .rows.map((r: any) => r.original.id),
+                .rows.map((r: TableRow<InquiryItem>) => r.original.id),
             )
           "
         >
           <template #trailing>
-            <UKbd>{{
+            <UKbd>
+{{
               table?.tableApi?.getFilteredSelectedRowModel().rows.length
-            }}</UKbd>
+            }}
+</UKbd>
           </template>
         </UButton>
 
         <USelect
           v-model="statusFilter"
           :items="[
-            { label: '전체 상태', value: 'all' },
+            { label: '?�체 ?�태', value: 'all' },
             { label: '답변 대기', value: 'pending' },
-            { label: '답변 완료', value: 'resolved' },
+            { label: '?��? ?�료', value: 'resolved' },
           ]"
           class="min-w-32"
         />
@@ -376,8 +381,8 @@ const titleSearch = computed({
           :items="
             table?.tableApi
               ?.getAllColumns()
-              .filter((c: any) => c.getCanHide())
-              .map((c: any) => ({
+              .filter(c => c.getCanHide())
+              .map(c => ({
                 label: columnLabels[c.id] || c.id,
                 type: 'checkbox',
                 checked: c.getIsVisible(),
@@ -389,7 +394,7 @@ const titleSearch = computed({
           :content="{ align: 'end' }"
         >
           <UButton
-            label="컬럼 설정"
+            label="컬럼 ?�정"
             color="neutral"
             variant="outline"
             trailing-icon="i-lucide-settings-2"
@@ -406,7 +411,6 @@ const titleSearch = computed({
       v-model:pagination="pagination"
       v-model:sorting="sorting"
       :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-      :sorting-options="{ getSortedRowModel: getSortedRowModel() } as any"
       :data="data || []"
       :columns="columns"
       :loading="loadingStatus === 'pending'"
@@ -425,9 +429,9 @@ const titleSearch = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}개 중
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}개
-        선택됨.
+        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}�?�?
+        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}�?
+        ?�택??
       </div>
 
       <UPagination
@@ -441,7 +445,7 @@ const titleSearch = computed({
     </div>
   </div>
 
-  <UModal v-model:open="isSlideoverOpen" title="문의 상세 및 답변">
+  <UModal v-model:open="isSlideoverOpen" title="문의 ?�세 �??��?">
     <template #body>
       <UForm
         :schema="formSchema"
@@ -455,7 +459,7 @@ const titleSearch = computed({
               :color="formState.status === 'pending' ? 'warning' : 'success'"
               variant="subtle"
             >
-              {{ formState.status === "pending" ? "답변 대기" : "답변 완료" }}
+              {{ formState.status === 'pending' ? '답변 대기' : '답변 완료' }}
             </UBadge>
             <span class="text-sm text-gray-500"
               >{{ formState.type }} | {{ formState.user }}</span
@@ -465,21 +469,21 @@ const titleSearch = computed({
           <p class="text-sm whitespace-pre-wrap">{{ formState.content }}</p>
 
           <div v-if="formState.imageUrl" class="mt-2">
-            <p class="text-xs text-gray-500 mb-1">첨부 이미지:</p>
+            <p class="text-xs text-gray-500 mb-1">첨�? ?��?지:</p>
             <img
               :src="formState.imageUrl"
               class="rounded border w-full max-h-48 object-cover"
-            />
+            >
           </div>
         </div>
 
-        <hr class="border-gray-200 dark:border-gray-700" />
+        <hr class="border-gray-200 dark:border-gray-700">
 
-        <UFormField label="답변 내용" name="answer" required class="w-full">
+        <UFormField label="?��? ?�용" name="answer" required class="w-full">
           <UTextarea
             v-model="formState.answer"
             :rows="8"
-            placeholder="답변을 입력해주세요."
+            placeholder="?��????�력?�주?�요."
             autoresize
             class="w-full"
           />
@@ -491,7 +495,7 @@ const titleSearch = computed({
               v-model="formState.status"
               :true-value="'resolved'"
               :false-value="'pending'"
-              label="답변 완료 처리"
+              label="?��? ?�료 처리"
             />
           </UFormField>
         </div>
@@ -500,7 +504,7 @@ const titleSearch = computed({
           class="flex justify-end gap-2 pt-4 border-t border-default mt-auto"
         >
           <UButton
-            label="닫기"
+            label="?�기"
             color="neutral"
             variant="ghost"
             @click="isSlideoverOpen = false"

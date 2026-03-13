@@ -1,50 +1,50 @@
 <script setup lang="ts">
-import { format } from 'date-fns'
-import { ko } from 'date-fns/locale' // ★ 한국어 로케일 추가
-import type { Mail } from '~/types'
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale'; // ★ 한국어 로케일 추가
+import type { Mail } from '~/types';
 
 defineProps<{
-  mail: Mail
-}>()
+  mail: Mail;
+}>();
 
-const emits = defineEmits(['close'])
+const emits = defineEmits(['close']);
 
 // 1. 드롭다운 메뉴 한글화
 const dropdownItems = [[{
   label: '읽지 않음으로 표시',
-  icon: 'i-lucide-check-circle'
+  icon: 'i-lucide-check-circle',
 }, {
   label: '중요 메일로 표시',
-  icon: 'i-lucide-triangle-alert'
+  icon: 'i-lucide-triangle-alert',
 }], [{
   label: '별표 표시',
-  icon: 'i-lucide-star'
+  icon: 'i-lucide-star',
 }, {
   label: '메일 숨기기',
-  icon: 'i-lucide-circle-pause'
-}]]
+  icon: 'i-lucide-circle-pause',
+}]];
 
-const toast = useToast()
+const toast = useToast();
 
-const reply = ref('')
-const loading = ref(false)
+const reply = ref('');
+const loading = ref(false);
 
-function onSubmit() {
-  loading.value = true
+function onSubmit () {
+  loading.value = true;
 
   setTimeout(() => {
-    reply.value = ''
+    reply.value = '';
 
     // 2. 전송 완료 메시지 한글화
     toast.add({
       title: '발송 완료',
       description: '메일이 성공적으로 발송되었습니다.',
       icon: 'i-lucide-check-circle',
-      color: 'success'
-    })
+      color: 'success',
+    });
 
-    loading.value = false
-  }, 1000)
+    loading.value = false;
+  }, 1000);
 }
 </script>
 
