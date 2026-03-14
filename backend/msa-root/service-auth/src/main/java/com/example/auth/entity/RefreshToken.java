@@ -12,6 +12,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+/** RefreshToken 타입입니다. */
 @Table("refresh_tokens")
 @Getter
 @Setter
@@ -38,8 +39,7 @@ public class RefreshToken implements Persistable<String> {
   @Column("expires_at")
   private Instant expiresAt;
 
-  @Transient
-  private boolean isNewEntity;
+  @Transient private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

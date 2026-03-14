@@ -24,12 +24,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/users")
 /** REST controller exposing user management endpoints. */
+/** UserController 타입입니다. */
 public class UserController {
 
   private final UserService userService;
@@ -45,7 +46,7 @@ public class UserController {
   }
 
   @GetMapping
-  @RequireRole({ "ADMIN" })
+  @RequireRole({"ADMIN"})
   public ResponseEntity<ApiResponse<UserDto>> getByEmail(@RequestParam String email) {
     UserDto dto = userService.findByEmail(email);
     if (dto == null) {
@@ -92,9 +93,10 @@ public class UserController {
     try {
       Resource resource = userService.loadAvatar(filename);
       String contentType = URLConnection.guessContentTypeFromName(resource.getFilename());
-      MediaType mediaType = contentType != null
-          ? MediaType.parseMediaType(contentType)
-          : MediaType.APPLICATION_OCTET_STREAM;
+      MediaType mediaType =
+          contentType != null
+              ? MediaType.parseMediaType(contentType)
+              : MediaType.APPLICATION_OCTET_STREAM;
       return ResponseEntity.ok()
           .contentType(mediaType)
           .header(HttpHeaders.CACHE_CONTROL, "public, max-age=86400")
@@ -105,7 +107,7 @@ public class UserController {
   }
 
   @DeleteMapping("/{id}")
-  @RequireRole({ "ADMIN" })
+  @RequireRole({"ADMIN"})
   public ResponseEntity<ApiResponse<Object>> withdraw(@PathVariable String id) {
     userService.withdraw(id);
     return ResponseEntity.ok(ApiResponse.ok(null));

@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** EventService 타입입니다. */
 @Service
 public class EventService {
   private final EventRepository eventRepository;
@@ -18,13 +19,14 @@ public class EventService {
 
   @Transactional
   public EventDto createEvent(String type, String payload) {
-    Event e = Event.builder()
-        .id(java.util.UUID.randomUUID().toString())
-        .type(type)
-        .payload(payload)
-        .createdAt(Instant.now())
-        .isNewEntity(true)
-        .build();
+    Event e =
+        Event.builder()
+            .id(java.util.UUID.randomUUID().toString())
+            .type(type)
+            .payload(payload)
+            .createdAt(Instant.now())
+            .isNewEntity(true)
+            .build();
     Event saved = eventRepository.save(e);
     return new EventDto(saved.getId(), saved.getType(), saved.getPayload(), saved.getCreatedAt());
   }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root, @stylistic/max-statements-per-line */
 /**
- * [FAQ 관�?
- * Base Code ?�키?�처 기반 리팩?�링
+ * [FAQ 관리]
+ * Base Code 아키텍처 기반 리팩토링
  */
 import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
 import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
@@ -13,7 +13,7 @@ import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
 
 // ==========================================
-// 1. 컴포?�트 리졸�?
+// 1. 컴포넌트 리졸브
 // ==========================================
 const UButton = resolveComponent('UButton');
 const UBadge = resolveComponent('UBadge');
@@ -28,7 +28,7 @@ type TableRow<T> = Row<T>;
 const table = ref<TableInstance<FaqItem>>(null);
 
 // ==========================================
-// 2. ?�정 �??�이???�의
+// 2. 상수 및 타입 정의
 // ==========================================
 const PAGE_TITLE = 'FAQ 관리';
 const DATA_KEY = 'faqs';
@@ -43,18 +43,18 @@ type FaqItem = {
   createdAt: string;
 };
 
-// ???�키�?
+// 폼 스키마
 const formSchema = z.object({
   category: z.enum(['member', 'payment', 'shipping', 'etc']).catch('etc'),
-  question: z.string().min(2, '질문???�력?�주?�요.'),
-  answer: z.string().min(5, '?��? ?�용???�력?�주?�요.'),
+  question: z.string().min(2, '질문을 입력해주세요.'),
+  answer: z.string().min(5, '답변 내용을 입력해주세요.'),
   isPublished: z.boolean().default(true),
 });
 
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. ?�태 관�?
+// 3. 상태 관리
 // ==========================================
 const columnFilters = ref([{ id: 'question', value: '' }]);
 const columnVisibility = ref({});
@@ -67,7 +67,7 @@ const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const selectedId = ref<number | null>(null);
 
-// ???�태
+// 폼 상태
 const initialFormState: FormSchema = {
   category: 'member',
   question: '',
@@ -77,7 +77,7 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. ?�이???�칭 (Mock Data)
+// 4. 데이터 페칭 (Mock Data)
 // ==========================================
 const { data, status: loadingStatus } = await useAsyncData<FaqItem[]>(
   DATA_KEY,
@@ -94,10 +94,10 @@ const { data, status: loadingStatus } = await useAsyncData<FaqItem[]>(
       return {
         id: 50 - i,
         category: category,
-        question: `?�주 묻는 질문 ?�시?�니??(${i + 1})?`,
-        answer: '?�당 질문???�???�세 ?��? ?�용?�니??\n줄바꿈이 ?�함???�시 ?�스?�입?�다.',
+        question: `자주 묻는 질문 예시입니다 (${i + 1})`,
+        answer: '해당 질문에 대한 상세 답변 내용입니다.\n줄바꿈이 포함된 예시 테스트입니다.',
         viewCount: Math.floor(Math.random() * 2000),
-        isPublished: i % 10 !== 0, // 10% ?�률�?비공�?
+        isPublished: i % 10 !== 0, // 10% 확률로 비공개
         createdAt: subDays(new Date(), i).toISOString(),
       };
     });
@@ -105,7 +105,7 @@ const { data, status: loadingStatus } = await useAsyncData<FaqItem[]>(
 );
 
 // ==========================================
-// 5. ?�션 ?�들??
+// 5. 액션 핸들러
 // ==========================================
 function openCreateModal () {
   isEditMode.value = false;
@@ -127,10 +127,10 @@ function openEditModal (row: FaqItem) {
 }
 
 async function onSubmit (event: FormSubmitEvent<FormSchema>) {
-  const action = isEditMode.value ? '?�정' : '?�록';
+  const action = isEditMode.value ? '수정' : '등록';
   toast.add({
-    title: `${action} ?�료`,
-    description: `FAQ가 ?�공?�으�?${action}?�었?�니??`,
+    title: `${action} 완료`,
+    description: `FAQ가 성공적으로 ${action}되었습니다.`,
     color: 'success',
   });
   isModalOpen.value = false;
@@ -138,8 +138,8 @@ async function onSubmit (event: FormSubmitEvent<FormSchema>) {
 
 function onDelete (ids: number[]) {
   toast.add({
-    title: '??�� ?�료',
-    description: `${ids.length}개의 ??��????��?�었?�니??`,
+    title: '삭제 완료',
+    description: `${ids.length}개의 항목이 삭제되었습니다.`,
     color: 'error',
   });
   rowSelection.value = {};
@@ -149,13 +149,13 @@ function getRowItems (row: FaqItem) {
   return [
     { type: 'label', label: '관리' },
     {
-      label: '?�정?�기',
+      label: '수정하기',
       icon: 'i-lucide-edit',
       onSelect: () => openEditModal(row),
     },
     { type: 'separator' },
     {
-      label: '??��',
+      label: '삭제',
       icon: 'i-lucide-trash',
       color: 'error',
       onSelect: () => onDelete([row.id]),
@@ -164,15 +164,15 @@ function getRowItems (row: FaqItem) {
 }
 
 // ==========================================
-// 6. ?�이�?컬럼 ?�의
+// 6. 테이블 컬럼 정의
 // ==========================================
 const columnLabels: Record<string, string> = {
-  select: '?�택',
+  select: '선택',
   id: 'No.',
   category: '카테고리',
   question: '질문',
   viewCount: '조회수',
-  isPublished: '?�태',
+  isPublished: '상태',
   createdAt: '등록일',
   actions: '관리',
 };
@@ -187,13 +187,13 @@ const columns: TableColumn<FaqItem>[] = [
           table.getIsAllPageRowsSelected(),
         'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
-        'ariaLabel': '?�체 ?�택',
+        'ariaLabel': '전체 선택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
         'modelValue': row.getIsSelected(),
         'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
-        'ariaLabel': '???�택',
+        'ariaLabel': '행 선택',
       }),
     enableSorting: false,
   },
@@ -221,10 +221,10 @@ const columns: TableColumn<FaqItem>[] = [
     header: '카테고리',
     cell: ({ row }) => {
       const map: Record<string, string> = {
-        member: '?�원/계정',
-        payment: '결제/?�불',
-        shipping: '배송/?�배',
-        etc: '기�?',
+        member: '회원/계정',
+        payment: '결제/환불',
+        shipping: '배송/교환',
+        etc: '기타',
       };
       return h(
         UBadge,
@@ -269,7 +269,7 @@ const columns: TableColumn<FaqItem>[] = [
   },
   {
     accessorKey: 'isPublished',
-    header: '?�태',
+    header: '상태',
     cell: ({ row }) =>
       h(
         UBadge,
@@ -339,14 +339,14 @@ const questionSearch = computed({
       <UInput
         v-model="questionSearch"
         icon="i-lucide-search"
-        placeholder="질문 검??.."
+        placeholder="질문 검색.."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
           v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-          label="?�택 ??��"
+          label="선택 삭제"
           color="error"
           variant="subtle"
           icon="i-lucide-trash"
@@ -372,11 +372,11 @@ const questionSearch = computed({
         <USelect
           v-model="categoryFilter"
           :items="[
-            { label: '?�체 카테고리', value: 'all' },
-            { label: '?�원/계정', value: 'member' },
-            { label: '결제/?�불', value: 'payment' },
-            { label: '배송/?�배', value: 'shipping' },
-            { label: '기�?', value: 'etc' },
+            { label: '전체 카테고리', value: 'all' },
+            { label: '회원/계정', value: 'member' },
+            { label: '결제/환불', value: 'payment' },
+            { label: '배송/교환', value: 'shipping' },
+            { label: '기타', value: 'etc' },
           ]"
           class="min-w-32"
         />
@@ -398,7 +398,7 @@ const questionSearch = computed({
           :content="{ align: 'end' }"
         >
           <UButton
-            label="컬럼 ?�정"
+            label="컬럼 설정"
             color="neutral"
             variant="outline"
             trailing-icon="i-lucide-settings-2"
@@ -433,9 +433,8 @@ const questionSearch = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}�?�?
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}�?
-        ?�택??
+        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}건,
+        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}건 선택됨
       </div>
       <UPagination
         :default-page="
@@ -450,7 +449,7 @@ const questionSearch = computed({
 
   <UModal
     v-model:open="isModalOpen"
-    :title="isEditMode ? 'FAQ ?�정' : 'FAQ ?�록'"
+    :title="isEditMode ? 'FAQ 수정' : 'FAQ 등록'"
     :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
   >
     <template #body>
@@ -465,10 +464,10 @@ const questionSearch = computed({
             <USelect
               v-model="formState.category"
               :items="[
-                { label: '?�원/계정', value: 'member' },
-                { label: '결제/?�불', value: 'payment' },
-                { label: '배송/?�배', value: 'shipping' },
-                { label: '기�?', value: 'etc' },
+                { label: '회원/계정', value: 'member' },
+                { label: '결제/환불', value: 'payment' },
+                { label: '배송/교환', value: 'shipping' },
+                { label: '기타', value: 'etc' },
               ]"
               class="w-full"
             />
@@ -477,7 +476,7 @@ const questionSearch = computed({
           <div class="flex items-end pb-2">
             <UCheckbox
               v-model="formState.isPublished"
-              label="공개 ?�태�??�록"
+              label="공개 상태로 등록"
               color="primary"
             />
           </div>
@@ -491,16 +490,16 @@ const questionSearch = computed({
         >
           <UInput
             v-model="formState.question"
-            placeholder="?�주 묻는 질문???�력?�세??"
+            placeholder="자주 묻는 질문을 입력하세요"
             class="w-full"
           />
         </UFormField>
 
-        <UFormField label="?��? (Answer)" name="answer" required class="w-full">
+        <UFormField label="답변 (Answer)" name="answer" required class="w-full">
           <UTextarea
             v-model="formState.answer"
             :rows="8"
-            placeholder="?��? ?�용???�력?�세??"
+            placeholder="답변 내용을 입력하세요"
             autoresize
             class="w-full"
           />
@@ -517,7 +516,7 @@ const questionSearch = computed({
           />
           <UButton
             type="submit"
-            :label="isEditMode ? '?�정 ?�료' : '?�록?�기'"
+            :label="isEditMode ? '수정 완료' : '등록하기'"
             color="primary"
           />
         </div>

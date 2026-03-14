@@ -11,48 +11,48 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+/** FavoriteStore 타입입니다. */
 @Table("favorite_stores")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class FavoriteStore implements Persistable<String> {
-    @Id
-    @Column("id")
-    private String id;
+  @Id
+  @Column("id")
+  private String id;
 
-    @Column("user_id")
-    private String userId;
+  @Column("user_id")
+  private String userId;
 
-    @Column("store_id")
-    private String storeId;
+  @Column("store_id")
+  private String storeId;
 
-    @Column("name")
-    private String name;
+  @Column("name")
+  private String name;
 
-    @Column("category")
-    private String category;
+  @Column("category")
+  private String category;
 
-    @Column("rating")
-    private double rating;
+  @Column("rating")
+  private double rating;
 
-    @Column("delivery_time")
-    private String deliveryTime;
+  @Column("delivery_time")
+  private String deliveryTime;
 
-    @Column("min_order")
-    private String minOrder;
+  @Column("min_order")
+  private String minOrder;
 
-    @Column("image_icon")
-    private String imageIcon;
+  @Column("image_icon")
+  private String imageIcon;
 
-    @Column("created_at")
-    private Instant createdAt;
+  @Column("created_at")
+  private Instant createdAt;
 
-    @Transient
-    private boolean isNewEntity;
+  @Transient private boolean isNewEntity;
 
-    @Override
-    public boolean isNew() {
-        return isNewEntity;
-    }
+  @Override
+  public boolean isNew() {
+    return isNewEntity;
+  }
 }

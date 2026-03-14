@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/** DeliveryServiceTest 타입입니다. */
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
 

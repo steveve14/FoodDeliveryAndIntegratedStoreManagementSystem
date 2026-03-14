@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 /*
  * Repository for Address entities.
  */
+/** AddressRepository 타입입니다. */
 public interface AddressRepository extends CrudRepository<Address, String> {
 
   List<Address> findByUserId(String userId);

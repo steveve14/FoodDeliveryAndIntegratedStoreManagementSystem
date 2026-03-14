@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-multiple-template-root */
 /**
- * [마�???> 쿠폰 관�?
- * Base Code ?�키?�처 기반 리팩?�링
+ * [마케팅 > 쿠폰 관리]
+ * Base Code 아키텍처 기반 리팩토링
  */
 import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
 import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
@@ -13,7 +13,7 @@ import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
 
 // ==========================================
-// 1. 컴포?�트 리졸�?
+// 1. 컴포넌트 리졸브
 // ==========================================
 const UButton = resolveComponent('UButton');
 const UBadge = resolveComponent('UBadge');
@@ -27,7 +27,7 @@ type TableRow<T> = Row<T>;
 const table = ref<TableInstance<CouponItem>>(null);
 
 // ==========================================
-// 2. ?�정 �??�이???�의
+// 2. 상수 및 타입 정의
 // ==========================================
 const DATA_KEY = 'coupons';
 
@@ -35,9 +35,9 @@ type CouponItem = {
   id: number;
   name: string;
   code: string;
-  discountType: 'percent' | 'amount'; // ?�센???�인 or ?�액 ?�인
+  discountType: 'percent' | 'amount'; // 퍼센트 할인 or 정액 할인
   discountValue: number;
-  totalLimit: number | null; // null?�면 무제??
+  totalLimit: number | null; // null이면 무제한
   usedCount: number;
   startDate: string;
   endDate: string;
@@ -45,16 +45,16 @@ type CouponItem = {
   createdAt: string;
 };
 
-// ???�키�?
+// 폼 스키마
 const formSchema = z.object({
-  name: z.string().min(2, '쿠폰명을 ?�력?�주?�요.'),
+  name: z.string().min(2, '쿠폰명을 입력해주세요.'),
   code: z
     .string()
-    .min(3, '쿠폰 코드�??�력?�주?�요.')
-    .regex(/^[A-Z0-9]+$/, '?�문 ?�문자?� ?�자�?가?�합?�다.'),
+    .min(3, '쿠폰 코드를 입력해주세요.')
+    .regex(/^[A-Z0-9]+$/, '영문 대문자와 숫자만 가능합니다.'),
   discountType: z.enum(['percent', 'amount']),
-  discountValue: z.number().min(1, '?�인 값을 ?�력?�주?�요.'),
-  totalLimit: z.number().nullable().optional(), // ?�택?�항
+  discountValue: z.number().min(1, '할인 값을 입력해주세요.'),
+  totalLimit: z.number().nullable().optional(), // 선택사항
   startDate: z.string(),
   endDate: z.string(),
   status: z.enum(['active', 'inactive']),
@@ -63,7 +63,7 @@ const formSchema = z.object({
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. ?�태 관�?
+// 3. 상태 관리
 // ==========================================
 const columnFilters = ref([{ id: 'name', value: '' }]);
 const columnVisibility = ref({});
@@ -76,7 +76,7 @@ const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const selectedId = ref<number | null>(null);
 
-// ???�태
+// 폼 상태
 const initialFormState: FormSchema = {
   name: '',
   code: '',
@@ -90,7 +90,7 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. ?�이???�칭 (Mock Data)
+// 4. 데이터 페칭 (Mock Data)
 // ==========================================
 const { data, status: loadingStatus } = await useAsyncData<CouponItem[]>(
   DATA_KEY,
@@ -104,7 +104,7 @@ const { data, status: loadingStatus } = await useAsyncData<CouponItem[]>(
 
       return {
         id: 50 - i,
-        name: i % 2 === 0 ? `?�규 가???�영 쿠폰 ${i}` : `주말 깜짝 ?�인 ${i}`,
+        name: i % 2 === 0 ? `신규 가입 환영 쿠폰 ${i}` : `주말 깜짝 할인 ${i}`,
         code: `WELCOME${50 - i}${String.fromCharCode(65 + (i % 26))}`,
         discountType: isPercent ? 'percent' : 'amount',
         discountValue: isPercent ?
@@ -122,13 +122,13 @@ const { data, status: loadingStatus } = await useAsyncData<CouponItem[]>(
 );
 
 // ==========================================
-// 5. ?�션 ?�들??
+// 5. 액션 핸들러
 // ==========================================
 function openCreateModal () {
   isEditMode.value = false;
   selectedId.value = null;
   Object.assign(formState, initialFormState);
-  generateRandomCode(); // ?�규 ?�록 ??코드 ?�동 ?�성 ?�의??
+  generateRandomCode(); // 신규 등록 시 코드 자동 생성 의도함
   isModalOpen.value = true;
 }
 
@@ -167,7 +167,7 @@ function onDelete (ids: number[]) {
   rowSelection.value = {};
 }
 
-// ?�덤 쿠폰 코드 ?�성�?
+// 랜덤 쿠폰 코드 생성기
 function generateRandomCode () {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';
@@ -196,7 +196,7 @@ function getRowItems (row: CouponItem) {
 }
 
 // ==========================================
-// 6. ?�이�?컬럼 ?�의
+// 6. 테이블 컬럼 정의
 // ==========================================
 const columnLabels: Record<string, string> = {
   select: '선택',
@@ -220,13 +220,13 @@ const columns: TableColumn<CouponItem>[] = [
           table.getIsAllPageRowsSelected(),
         'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
-        'ariaLabel': '?�체 ?�택',
+        'ariaLabel': '전체 선택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
         'modelValue': row.getIsSelected(),
         'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
-        'ariaLabel': '???�택',
+        'ariaLabel': '행 선택',
       }),
     enableSorting: false,
   },
@@ -263,7 +263,7 @@ const columns: TableColumn<CouponItem>[] = [
           },
           row.original.name,
         ),
-        h('span', { class: 'text-xs text-gray-500' }, row.original.code), // 코드 ?�께 ?�시
+        h('span', { class: 'text-xs text-gray-500' }, row.original.code), // 코드 함께 표시
       ]),
   },
   {

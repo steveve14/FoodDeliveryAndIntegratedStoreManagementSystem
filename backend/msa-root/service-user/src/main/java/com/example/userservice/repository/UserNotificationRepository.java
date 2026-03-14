@@ -5,8 +5,9 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+/** UserNotificationRepository 타입입니다. */
 @Repository
 public interface UserNotificationRepository extends CrudRepository<UserNotification, Long> {
 
-	List<UserNotification> findAllByOrderByCreatedAtDesc();
+  List<UserNotification> findAllByOrderByCreatedAtDesc();
 }

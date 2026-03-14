@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 /*
  * Repository for User entities.
  */
+/** UserRepository 타입입니다. */
 public interface UserRepository extends CrudRepository<User, String> {
 
   Optional<User> findByEmail(String email);

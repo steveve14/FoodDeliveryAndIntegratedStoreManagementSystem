@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/** SignupRequest 타입입니다. */
 @Getter
 @Setter
 @NoArgsConstructor

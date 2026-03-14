@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+/** HealthControllerTest 타입입니다. */
 @WebMvcTest(HealthController.class)
 class HealthControllerTest {
 

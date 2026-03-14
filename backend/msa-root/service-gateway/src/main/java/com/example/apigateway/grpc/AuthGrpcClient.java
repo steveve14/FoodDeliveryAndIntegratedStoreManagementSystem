@@ -6,6 +6,7 @@ import com.example.auth.grpc.ValidateTokenResponse;
 import org.springframework.stereotype.Service;
 
 /** service-auth gRPC 클라이언트 Gateway에서 JWT 검증 시 호출 */
+/** AuthGrpcClient 타입입니다. */
 @Service
 public class AuthGrpcClient {
 

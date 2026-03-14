@@ -8,6 +8,7 @@ import io.grpc.stub.StreamObserver;
 import org.springframework.grpc.server.service.GrpcService;
 
 /** Store 서비스 gRPC 서버 구현 내부 MSA 통신용 */
+/** StoreGrpcServiceImpl 타입입니다. */
 @GrpcService
 public class StoreGrpcServiceImpl extends StoreGrpcServiceGrpc.StoreGrpcServiceImplBase {
 

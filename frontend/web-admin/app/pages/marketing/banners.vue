@@ -1,19 +1,19 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root */
 /**
- * [마�???> 배너/광고 관�?
- * Base Code ?�키?�처 기반 구현
+ * [마케팅 > 배너/광고 관리]
+ * Base Code 아키텍처 기반 구현
  */
 import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
 import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
 
 import * as z from 'zod';
-import { format, addDays, subDays } from 'date-fns'; // isWithinInterval ?�거 (미사??
+import { format, addDays, subDays } from 'date-fns'; // isWithinInterval 제거 (미사용)
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
 
 // ==========================================
-// 1. 컴포?�트 리졸�?
+// 1. 컴포넌트 리졸브
 // ==========================================
 const UButton = resolveComponent('UButton');
 const UBadge = resolveComponent('UBadge');
@@ -26,7 +26,7 @@ type TableRow<T> = Row<T>;
 const table = ref<TableInstance<BannerItem>>(null);
 
 // ==========================================
-// 2. ?�정 �??�이???�의
+// 2. 상수 및 타입 정의
 // ==========================================
 const DATA_KEY = 'banners';
 
@@ -36,7 +36,7 @@ type BannerItem = {
   imageUrl: string;
   linkUrl: string;
   position: 'main_top' | 'main_middle' | 'sidebar' | 'popup';
-  priority: number; // ?�출 ?�서
+  priority: number; // 노출 순서
   startDate: string;
   endDate: string;
   status: 'active' | 'inactive' | 'scheduled';
@@ -44,28 +44,28 @@ type BannerItem = {
   createdAt: string;
 };
 
-// ???�키�?
+// 폼 스키마
 const formSchema = z.object({
-  title: z.string().min(2, '배너 ?�목???�력?�주?�요.'),
-  linkUrl: z.string().url('?�효??URL???�력?�주?�요.').or(z.literal('')),
+  title: z.string().min(2, '배너 제목을 입력해주세요.'),
+  linkUrl: z.string().url('유효한 URL을 입력해주세요.').or(z.literal('')),
   position: z.enum(['main_top', 'main_middle', 'sidebar', 'popup']),
   priority: z.number().min(0),
   startDate: z.string(),
   endDate: z.string(),
   status: z.enum(['active', 'inactive']),
-  imageUrl: z.string().min(1, '?��?지�??�록?�주?�요.'),
+  imageUrl: z.string().min(1, '이미지를 등록해주세요.'),
 });
 
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. ?�태 관�?
+// 3. 상태 관리
 // ==========================================
 const columnFilters = ref([{ id: 'title', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
-const sorting = ref([{ id: 'priority', desc: false }]); // ?�서 기�? ?�렬
+const sorting = ref([{ id: 'priority', desc: false }]); // 순서 기준 정렬
 
 const positionFilter = ref('all');
 const statusFilter = ref('all');
@@ -74,7 +74,7 @@ const isEditMode = ref(false);
 const selectedId = ref<number | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 
-// ???�태
+// 폼 상태
 const initialFormState: FormSchema = {
   title: '',
   linkUrl: '',
@@ -88,7 +88,7 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. ?�이???�칭 (Mock Data)
+// 4. 데이터 페칭 (Mock Data)
 // ==========================================
 const { data, status: loadingStatus } = await useAsyncData<BannerItem[]>(
   DATA_KEY,
@@ -96,13 +96,13 @@ const { data, status: loadingStatus } = await useAsyncData<BannerItem[]>(
     const positions = ['main_top', 'main_middle', 'sidebar', 'popup'] as const;
 
     return Array.from({ length: 30 }).map((_, i) => {
-      // [?�정] ?? "main_top"??추�??�여 undefined ?�???�류 ?�결
+      // [수정] 강제 "main_top"으로 추가하여 undefined 접근 오류 해결
       const position = positions[i % positions.length] ?? 'main_top';
       const isActive = i % 5 !== 0;
 
       return {
         id: 30 - i,
-        title: `?�로모션 배너 ${i + 1} - ${position}`,
+        title: `프로모션 배너 ${i + 1} - ${position}`,
         imageUrl: `https://picsum.photos/seed/banner${i}/400/200`,
         linkUrl: 'https://example.com/event',
         position: position,
@@ -118,7 +118,7 @@ const { data, status: loadingStatus } = await useAsyncData<BannerItem[]>(
 );
 
 // ==========================================
-// 5. ?�션 ?�들??
+// 5. 액션 핸들러
 // ==========================================
 function openCreateModal () {
   isEditMode.value = false;
@@ -143,7 +143,7 @@ function openEditModal (row: BannerItem) {
   isModalOpen.value = true;
 }
 
-// ?�일 ?�택 ?�들??
+// 파일 선택 핸들러
 function onFileSelect (event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
@@ -161,10 +161,10 @@ function removeImage () {
 }
 
 async function onSubmit (event: FormSubmitEvent<FormSchema>) {
-  const action = isEditMode.value ? '?�정' : '?�록';
+  const action = isEditMode.value ? '수정' : '등록';
   toast.add({
-    title: `${action} ?�료`,
-    description: `배너가 ?�공?�으�?${action}?�었?�니??`,
+    title: `${action} 완료`,
+    description: `배너가 성공적으로 ${action}되었습니다.`,
     color: 'success',
   });
   isModalOpen.value = false;
@@ -172,8 +172,8 @@ async function onSubmit (event: FormSubmitEvent<FormSchema>) {
 
 function onDelete (ids: number[]) {
   toast.add({
-    title: '??�� ?�료',
-    description: `${ids.length}개의 배너가 ??��?�었?�니??`,
+    title: '삭제 완료',
+    description: `${ids.length}개의 배너가 삭제되었습니다.`,
     color: 'error',
   });
   rowSelection.value = {};
@@ -183,13 +183,13 @@ function getRowItems (row: BannerItem) {
   return [
     { type: 'label', label: '관리' },
     {
-      label: '?�정?�기',
+      label: '수정하기',
       icon: 'i-lucide-edit',
       onSelect: () => openEditModal(row),
     },
     { type: 'separator' },
     {
-      label: '??��',
+      label: '삭제',
       icon: 'i-lucide-trash',
       color: 'error',
       onSelect: () => onDelete([row.id]),
@@ -198,17 +198,17 @@ function getRowItems (row: BannerItem) {
 }
 
 // ==========================================
-// 6. ?�이�?컬럼 ?�의
+// 6. 테이블 컬럼 정의
 // ==========================================
 const columnLabels: Record<string, string> = {
-  select: '?�택',
+  select: '선택',
   id: 'No.',
-  imageUrl: '?��?지',
-  title: '배너 ?�보',
-  position: '?�치',
-  priority: '?�서',
+  imageUrl: '이미지',
+  title: '배너 정보',
+  position: '위치',
+  priority: '순서',
   period: '게시 기간',
-  status: '?�태',
+  status: '상태',
   actions: '관리',
 };
 
@@ -222,13 +222,13 @@ const columns: TableColumn<BannerItem>[] = [
           table.getIsAllPageRowsSelected(),
         'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
-        'ariaLabel': '?�체 ?�택',
+        'ariaLabel': '전체 선택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
         'modelValue': row.getIsSelected(),
         'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
-        'ariaLabel': '???�택',
+        'ariaLabel': '행 선택',
       }),
     enableSorting: false,
   },
@@ -253,7 +253,7 @@ const columns: TableColumn<BannerItem>[] = [
   },
   {
     accessorKey: 'imageUrl',
-    header: '?��?지',
+    header: '이미지',
     cell: ({ row }) =>
       h('img', {
         src: row.original.imageUrl,
@@ -263,7 +263,7 @@ const columns: TableColumn<BannerItem>[] = [
   },
   {
     accessorKey: 'title',
-    header: '배너 ?�보',
+    header: '배너 정보',
     cell: ({ row }) =>
       h('div', { class: 'flex flex-col max-w-[250px]' }, [
         h(
@@ -284,13 +284,13 @@ const columns: TableColumn<BannerItem>[] = [
   },
   {
     accessorKey: 'position',
-    header: '게시 ?�치',
+    header: '게시 위치',
     cell: ({ row }) => {
       const map: Record<string, string> = {
-        main_top: '메인 ?�단',
+        main_top: '메인 상단',
         main_middle: '메인 중단',
-        sidebar: '?�이?�바',
-        popup: '?�업',
+        sidebar: '사이드바',
+        popup: '팝업',
       };
       return h(
         UBadge,
@@ -306,7 +306,7 @@ const columns: TableColumn<BannerItem>[] = [
       return h(UButton, {
         color: 'neutral',
         variant: 'ghost',
-        label: '?�서',
+        label: '순서',
         icon:
           isSorted === 'asc' ?
             'i-lucide-arrow-up-narrow-wide' :
@@ -330,7 +330,7 @@ const columns: TableColumn<BannerItem>[] = [
   },
   {
     accessorKey: 'status',
-    header: '?�태',
+    header: '상태',
     cell: ({ row }) => {
       const today = new Date();
       const start = new Date(row.original.startDate);
@@ -341,7 +341,7 @@ const columns: TableColumn<BannerItem>[] = [
         if (today < start) {
           status = 'scheduled';
         }
-        // else if (today > end) status = 'inactive' // 만료 로직 ?�함 ??
+        // else if (today > end) status = 'inactive' // 만료 로직 포함 가능
       }
 
       const map = {
@@ -417,20 +417,20 @@ const titleSearch = computed({
       <UInput
         v-model="titleSearch"
         icon="i-lucide-search"
-        placeholder="배너�?검??.."
+        placeholder="배너 검색.."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
-          label="배너 ?�록"
+          label="배너 등록"
           icon="i-lucide-plus"
           color="primary"
           @click="openCreateModal"
         />
         <UButton
           v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-          label="?�택 ??��"
+          label="선택 삭제"
           color="error"
           variant="subtle"
           icon="i-lucide-trash"
@@ -456,11 +456,11 @@ const titleSearch = computed({
         <USelect
           v-model="positionFilter"
           :items="[
-            { label: '?�체 ?�치', value: 'all' },
-            { label: '메인 ?�단', value: 'main_top' },
+            { label: '전체 위치', value: 'all' },
+            { label: '메인 상단', value: 'main_top' },
             { label: '메인 중단', value: 'main_middle' },
-            { label: '?�이?�바', value: 'sidebar' },
-            { label: '?�업', value: 'popup' },
+            { label: '사이드바', value: 'sidebar' },
+            { label: '팝업', value: 'popup' },
           ]"
           class="min-w-32"
         />
@@ -468,9 +468,9 @@ const titleSearch = computed({
         <USelect
           v-model="statusFilter"
           :items="[
-            { label: '?�체 ?�태', value: 'all' },
+            { label: '전체 상태', value: 'all' },
             { label: '게시중', value: 'active' },
-            { label: '중�?/만료', value: 'inactive' },
+            { label: '중지/만료', value: 'inactive' },
             { label: '예약됨', value: 'scheduled' },
           ]"
           class="min-w-32"
@@ -493,7 +493,7 @@ const titleSearch = computed({
           :content="{ align: 'end' }"
         >
           <UButton
-            label="컬럼 ?�정"
+            label="컬럼 설정"
             color="neutral"
             variant="outline"
             trailing-icon="i-lucide-settings-2"
@@ -528,9 +528,8 @@ const titleSearch = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}�?�?
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}�?
-        ?�택??
+        전체 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}건,
+        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}건 선택됨
       </div>
       <UPagination
         :default-page="
@@ -545,7 +544,7 @@ const titleSearch = computed({
 
   <UModal
     v-model:open="isModalOpen"
-    :title="isEditMode ? '배너 ?�정' : '배너 ?�록'"
+    :title="isEditMode ? '배너 수정' : '배너 등록'"
     :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
   >
     <template #body>
@@ -555,7 +554,7 @@ const titleSearch = computed({
         class="space-y-4 p-4"
         @submit="onSubmit"
       >
-        <UFormField label="배너 ?��?지" name="imageUrl" required class="w-full">
+        <UFormField label="배너 이미지" name="imageUrl" required class="w-full">
           <div class="flex flex-col gap-2">
             <input
               ref="fileInput"
@@ -585,14 +584,14 @@ const titleSearch = computed({
         </UFormField>
 
         <div class="grid grid-cols-1 gap-4">
-          <UFormField label="배너 ?�목" name="title" required class="w-full">
+          <UFormField label="배너 제목" name="title" required class="w-full">
             <UInput
               v-model="formState.title"
-              placeholder="관리용 배너 ?�목???�력?�세??"
+              placeholder="관리용 배너 제목을 입력하세요"
               class="w-full"
             />
           </UFormField>
-          <UFormField label="?�결 링크 (URL)" name="linkUrl" class="w-full">
+          <UFormField label="연결 링크 (URL)" name="linkUrl" class="w-full">
             <UInput
               v-model="formState.linkUrl"
               placeholder="https://example.com/event"
@@ -602,20 +601,20 @@ const titleSearch = computed({
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <UFormField label="게시 ?�치" name="position" required class="w-full">
+          <UFormField label="게시 위치" name="position" required class="w-full">
             <USelect
               v-model="formState.position"
               :items="[
-                { label: '메인 ?�단', value: 'main_top' },
+                { label: '메인 상단', value: 'main_top' },
                 { label: '메인 중단', value: 'main_middle' },
-                { label: '?�이?�바', value: 'sidebar' },
-                { label: '?�업', value: 'popup' },
+                { label: '사이드바', value: 'sidebar' },
+                { label: '팝업', value: 'popup' },
               ]"
               class="w-full"
             />
           </UFormField>
           <UFormField
-            label="?�출 ?�서 (?�선?�위)"
+            label="노출 순서 (우선순위)"
             name="priority"
             required
             class="w-full"
@@ -648,17 +647,17 @@ const titleSearch = computed({
           </UFormField>
         </div>
 
-        <UFormField label="?�영 ?�태" name="status" required class="w-full">
+        <UFormField label="운영 상태" name="status" required class="w-full">
           <div class="flex items-center gap-4">
             <UCheckbox
               :model-value="formState.status === 'active'"
-              label="?�성??(즉시 게시)"
+              label="활성화 (즉시 게시)"
               @update:model-value="
                 (v: boolean) => (formState.status = v ? 'active' : 'inactive')
               "
             />
             <span class="text-xs text-gray-500"
-              >* 기간 ?�라??비활?�화 ???�출?��? ?�습?�다.</span
+              >* 기간 외라면 비활성화 시 노출되지 않습니다.</span
             >
           </div>
         </UFormField>
@@ -674,7 +673,7 @@ const titleSearch = computed({
           />
           <UButton
             type="submit"
-            :label="isEditMode ? '?�정 ?�료' : '?�록?�기'"
+            :label="isEditMode ? '수정 완료' : '등록하기'"
             color="primary"
           />
         </div>

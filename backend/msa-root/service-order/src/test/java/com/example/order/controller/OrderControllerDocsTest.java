@@ -39,6 +39,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+/** OrderControllerDocsTest 타입입니다. */
 @ExtendWith(RestDocumentationExtension.class)
 class OrderControllerDocsTest {
 
@@ -58,7 +59,8 @@ class OrderControllerDocsTest {
 
   @Test
   void createDocumentsSuccessfulOrderCreation() throws Exception {
-    when(orderService.createOrder(eq("user-1"), any(List.class), eq("CREATED"))).thenReturn(sampleOrder());
+    when(orderService.createOrder(eq("user-1"), any(List.class), eq("CREATED")))
+        .thenReturn(sampleOrder());
 
     mockMvc
         .perform(
@@ -140,7 +142,8 @@ class OrderControllerDocsTest {
     when(orderService.findByUserId("user-1")).thenReturn(List.of(sampleOrder()));
 
     mockMvc
-        .perform(get("/api/v1/orders/my").header("X-User-Id", "user-1").header("X-User-Role", "USER"))
+        .perform(
+            get("/api/v1/orders/my").header("X-User-Id", "user-1").header("X-User-Role", "USER"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data[0].id").value("order-1"))
         .andDo(
@@ -157,7 +160,10 @@ class OrderControllerDocsTest {
   @Test
   void getFrontendCustomerSummariesDocumentsSuccessResponse() throws Exception {
     when(orderService.getFrontendCustomerSummaries())
-        .thenReturn(List.of(new FrontendCustomerOrderSummaryDto("user-1", 12L, Instant.parse("2026-03-13T00:00:00Z"), "vip")));
+        .thenReturn(
+            List.of(
+                new FrontendCustomerOrderSummaryDto(
+                    "user-1", 12L, Instant.parse("2026-03-13T00:00:00Z"), "vip")));
 
     mockMvc
         .perform(get("/api/v1/orders/frontend/customer-summaries"))
@@ -203,7 +209,8 @@ class OrderControllerDocsTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(parameterWithName("id").description("Order id")),
-                requestHeaders(headerWithName("X-User-Role").description("Requester role (STORE or ADMIN)")),
+                requestHeaders(
+                    headerWithName("X-User-Role").description("Requester role (STORE or ADMIN)")),
                 requestFields(fieldWithPath("status").description("New order status")),
                 responseFields(
                     fieldWithPath("success").description("Whether request succeeded"),
@@ -239,7 +246,7 @@ class OrderControllerDocsTest {
         .perform(get("/api/v1/orders/my").header("X-User-Id", "user-1"))
         .andExpect(status().isForbidden())
         .andExpect(jsonPath("$.success").value(false))
-      .andExpect(jsonPath("$.error").exists())
+        .andExpect(jsonPath("$.error").exists())
         .andDo(
             document(
                 "orders-my-forbidden-missing-role",

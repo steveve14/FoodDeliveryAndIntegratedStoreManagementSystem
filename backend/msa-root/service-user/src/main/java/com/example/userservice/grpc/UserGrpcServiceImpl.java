@@ -7,10 +7,7 @@ import com.example.userservice.service.UserService;
 import io.grpc.stub.StreamObserver;
 import org.springframework.grpc.server.service.GrpcService;
 
-/**
- * gRPC service implementation for user operations used by internal MSA
- * communication.
- */
+/** gRPC service implementation for user operations used by internal MSA communication. */
 @GrpcService
 public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImplBase {
 
@@ -107,7 +104,8 @@ public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImpl
       com.example.userservice.grpc.CreateUserRequest request,
       StreamObserver<CreateUserResponse> responseObserver) {
     try {
-      CreateUserRequest dto = new CreateUserRequest(request.getEmail(), request.getPassword(), request.getName());
+      CreateUserRequest dto =
+          new CreateUserRequest(request.getEmail(), request.getPassword(), request.getName());
       UserDto created = userService.register(dto);
 
       responseObserver.onNext(

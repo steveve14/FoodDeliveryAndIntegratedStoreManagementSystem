@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 /*
  DTO returned for user details responses.
 */
+/** UserResponseDto 타입입니다. */
 public class UserResponseDto {
 
   private String id;

@@ -5,6 +5,7 @@ import com.example.order.grpc.OrderGrpcServiceGrpc;
 import com.example.order.grpc.OrderResponse;
 import org.springframework.stereotype.Service;
 
+/** OrderGrpcClient 타입입니다. */
 @Service
 public class OrderGrpcClient {
 

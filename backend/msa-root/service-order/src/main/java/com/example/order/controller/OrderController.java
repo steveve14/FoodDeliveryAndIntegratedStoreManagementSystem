@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** OrderController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1/orders")
 public class OrderController {
@@ -28,7 +29,7 @@ public class OrderController {
   }
 
   @PostMapping
-  @RequireRole({ "USER", "STORE", "ADMIN" })
+  @RequireRole({"USER", "STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<OrderDto>> create(
       @RequestHeader("X-User-Id") String userId, @RequestBody @Valid CreateOrderRequest req) {
     OrderDto dto = orderService.createOrder(userId, req.getItems(), "CREATED");
@@ -44,19 +45,20 @@ public class OrderController {
   }
 
   @GetMapping("/my")
-  @RequireRole({ "USER", "ADMIN" })
+  @RequireRole({"USER", "ADMIN"})
   public ResponseEntity<ApiResponse<java.util.List<OrderDto>>> getMyOrders(
       @RequestHeader("X-User-Id") String userId) {
     return ResponseEntity.ok(ApiResponse.ok(orderService.findByUserId(userId)));
   }
 
   @GetMapping("/frontend/customer-summaries")
-  public ResponseEntity<ApiResponse<java.util.List<FrontendCustomerOrderSummaryDto>>> getFrontendCustomerSummaries() {
+  public ResponseEntity<ApiResponse<java.util.List<FrontendCustomerOrderSummaryDto>>>
+      getFrontendCustomerSummaries() {
     return ResponseEntity.ok(ApiResponse.ok(orderService.getFrontendCustomerSummaries()));
   }
 
   @GetMapping("/store/{storeId}")
-  @RequireRole({ "STORE", "ADMIN" })
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<java.util.List<OrderDto>>> getStoreOrders(
       @PathVariable String storeId,
       @RequestHeader("X-User-Id") String userId,
@@ -65,7 +67,7 @@ public class OrderController {
   }
 
   @PatchMapping("/{id}/status")
-  @RequireRole({ "STORE", "ADMIN" })
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<OrderDto>> updateStatus(
       @PathVariable String id, @RequestBody java.util.Map<String, String> body) {
     String status = body.get("status");

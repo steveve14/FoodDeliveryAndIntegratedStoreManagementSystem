@@ -15,11 +15,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+/** UserServiceTest 타입입니다. */
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -30,7 +30,9 @@ class UserServiceTest {
 
   @BeforeEach
   void setUp() {
-    userService = new UserService(userRepository, passwordEncoder, "build/test-avatars", "/api/v1/users/avatars/");
+    userService =
+        new UserService(
+            userRepository, passwordEncoder, "build/test-avatars", "/api/v1/users/avatars/");
   }
 
   @Test
@@ -39,7 +41,8 @@ class UserServiceTest {
 
     when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.empty());
     when(passwordEncoder.encode("password123")).thenReturn("encoded-password");
-    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0, User.class));
+    when(userRepository.save(any(User.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0, User.class));
 
     var result = userService.register(request);
 

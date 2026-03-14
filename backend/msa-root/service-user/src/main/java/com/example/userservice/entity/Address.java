@@ -11,13 +11,14 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+/** Address 타입입니다. */
 @Table("addresses")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-/** Represents a user address stored in the addresses table. */
 public class Address implements Persistable<String> {
+
   @Id
   @Column("id")
   private String id;
@@ -52,8 +53,7 @@ public class Address implements Persistable<String> {
   @Column("created_at")
   private Instant createdAt;
 
-  @Transient
-  private boolean isNewEntity;
+  @Transient private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

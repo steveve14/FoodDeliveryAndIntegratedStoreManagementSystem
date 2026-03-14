@@ -9,6 +9,7 @@ import org.springframework.grpc.server.service.GrpcService;
  * Order 서비스 gRPC 서버 구현
  * 내부 MSA 통신용
  */
+/** OrderGrpcServiceImpl 타입입니다. */
 @GrpcService
 public class OrderGrpcServiceImpl extends OrderGrpcServiceGrpc.OrderGrpcServiceImplBase {
 

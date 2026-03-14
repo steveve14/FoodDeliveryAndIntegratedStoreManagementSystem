@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root, @stylistic/max-statements-per-line */
 /**
- * [1:1 문의 관�?
- * Base Code(공�??�항)???�키?�처�?기반?�로 리팩?�링??코드?�니??
+ * [1:1 문의 관리]
+ * Base Code(공지사항)의 아키텍처를 기반으로 리팩토링한 코드입니다.
  */
 import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
 import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
@@ -13,13 +13,13 @@ import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
 
 // ==========================================
-// 1. 컴포?�트 리졸�?
+// 1. 컴포넌트 리졸브
 // ==========================================
 const UButton = resolveComponent('UButton');
 const UBadge = resolveComponent('UBadge');
 const UDropdownMenu = resolveComponent('UDropdownMenu');
 const UCheckbox = resolveComponent('UCheckbox');
-const UAvatar = resolveComponent('UAvatar'); // 첨�? ?��?지 ?�시??
+const UAvatar = resolveComponent('UAvatar'); // 첨부 이미지 표시
 
 const toast = useToast();
 type TableInstance<T> = { tableApi?: Table<T> } | null;
@@ -27,7 +27,7 @@ type TableRow<T> = Row<T>;
 const table = ref<TableInstance<InquiryItem>>(null);
 
 // ==========================================
-// 2. ?�정 �??�이???�의
+// 2. 상수 및 타입 정의
 // ==========================================
 const PAGE_TITLE = '1:1 문의 관리';
 const DATA_KEY = 'inquiries';
@@ -40,37 +40,37 @@ type InquiryItem = {
   user: string;
   status: 'pending' | 'resolved';
   createdAt: string;
-  answer?: string; // ?��? ?�용
-  imageUrl?: string; // 첨�? ?��?지
+  answer?: string; // 답변 내용
+  imageUrl?: string; // 첨부 이미지
 };
 
-// ???�키�?(?��? ?�록 ?�주)
+// 폼 스키마 (답변 등록 위주)
 const formSchema = z.object({
   title: z.string(),
   type: z.string(),
   user: z.string(),
   status: z.enum(['pending', 'resolved']),
   content: z.string(),
-  answer: z.string().optional(), // ?��??� ?�택?�항 (?�기중?????�으므�?
+  answer: z.string().optional(), // 답변은 선택사항 (작성 중이면 없을 수 있으므로)
   imageUrl: z.string().optional(),
 });
 
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. ?�태 관�?
+// 3. 상태 관리
 // ==========================================
 const columnFilters = ref([{ id: 'title', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
 const pagination = ref({ pageIndex: 0, pageSize: 10 });
-const sorting = ref([{ id: 'id', desc: true }]); // 초기 ?�렬: 최신??
+const sorting = ref([{ id: 'id', desc: true }]); // 초기 정렬: 최신순
 
 const statusFilter = ref('all');
 const isSlideoverOpen = ref(false);
 const selectedId = ref<number | null>(null);
 
-// ???�태
+// 폼 상태
 const initialFormState: FormSchema = {
   title: '',
   type: '',
@@ -83,18 +83,18 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. ?�이???�칭 (Mock Data)
+// 4. 데이터 페칭 (Mock Data)
 // ==========================================
 const { data, status: loadingStatus } = await useAsyncData<InquiryItem[]>(
   DATA_KEY,
   async () => {
-    const types = ['결제/?�불', '계정 ?�용', '?�스???�애', '기�? 문의'];
+    const types = ['결제/환불', '계정 이용', '서비스 장애', '기타 문의'];
     const titles = [
-      '결제가 중복?�로 ?�었?�니??',
+      '결제가 중복으로 되었습니다',
       '로그인이 안돼요',
-      '?�불 규정???�떻�??�나??',
-      '?�이 ?�꾸 꺼집?�다.',
-      '?�원 ?�퇴???�디???�나??',
+      '환불 규정이 어떻게 되나요',
+      '앱이 자꾸 꺼집니다.',
+      '회원 탈퇴는 어디서 하나요',
     ];
 
     return Array.from({ length: 50 }).map((_, i) => {
@@ -108,12 +108,12 @@ const { data, status: loadingStatus } = await useAsyncData<InquiryItem[]>(
         user: `User-${1000 + i}`,
         type: randomType,
         title: randomTitle,
-        content: `문의?�항 ?�세 ?�용?�니?? (${randomTitle})\n빠른 ?�인 부?�드립니??`,
+        content: `문의사항 상세 내용입니다 (${randomTitle})\n빠른 확인 부탁드립니다`,
         status: isPending ? 'pending' : 'resolved',
         createdAt: date,
         answer: isPending ?
           '' :
-          '문의주셔??감사?�니?? ?�당 ?�용?� 처리?�었?�니??',
+          '문의주셔서 감사합니다. 해당 내용은 처리되었습니다.',
         imageUrl:
           Math.random() > 0.8 ?
             `https://picsum.photos/seed/${i}/200/200` :
@@ -124,7 +124,7 @@ const { data, status: loadingStatus } = await useAsyncData<InquiryItem[]>(
 );
 
 // ==========================================
-// 5. ?�션 ?�들??
+// 5. 액션 핸들러
 // ==========================================
 function openEditModal (row: InquiryItem) {
   selectedId.value = row.id;
@@ -140,15 +140,15 @@ function openEditModal (row: InquiryItem) {
   isSlideoverOpen.value = true;
 }
 
-// ?��? ?�록/?�정 처리
+// 답변 등록/수정 처리
 async function onSubmit (event: FormSubmitEvent<FormSchema>) {
-  // ?�제 로직: API ?�출?�여 ?��? ?�??�??�태 변�?
+  // 실제 로직: API 호출하여 답변 저장 및 상태 변경
   if (formState.answer && formState.status === 'pending') {
-    formState.status = 'resolved'; // ?��????�으�??�료 처리 (?�시)
+    formState.status = 'resolved'; // 답변이 있으면 완료 처리 (임시)
   }
   toast.add({
-    title: '?�???�료',
-    description: '문의 ?�용???�정?�었?�니??',
+    title: '저장 완료',
+    description: '문의 답변이 저장되었습니다.',
     color: 'success',
   });
   isSlideoverOpen.value = false;
@@ -156,8 +156,8 @@ async function onSubmit (event: FormSubmitEvent<FormSchema>) {
 
 function onDelete (ids: number[]) {
   toast.add({
-    title: '??�� ?�료',
-    description: `${ids.length}개의 ??��????��?�었?�니??`,
+    title: '삭제 완료',
+    description: `${ids.length}개의 항목이 삭제되었습니다.`,
     color: 'error',
   });
   rowSelection.value = {};
@@ -167,13 +167,13 @@ function getRowItems (row: InquiryItem) {
   return [
     { type: 'label', label: '관리' },
     {
-      label: row.status === 'pending' ? '?��??�기' : '?�세보기',
+      label: row.status === 'pending' ? '답변하기' : '상세보기',
       icon: 'i-lucide-edit',
       onSelect: () => openEditModal(row),
     },
     { type: 'separator' },
     {
-      label: '??��',
+      label: '삭제',
       icon: 'i-lucide-trash',
       color: 'error',
       onSelect: () => onDelete([row.id]),
@@ -182,15 +182,15 @@ function getRowItems (row: InquiryItem) {
 }
 
 // ==========================================
-// 6. ?�이�?컬럼 ?�의
+// 6. 테이블 컬럼 정의
 // ==========================================
 const columnLabels: Record<string, string> = {
-  select: '?�택',
+  select: '선택',
   id: 'No.',
-  type: '?�형',
-  title: '?�목',
+  type: '유형',
+  title: '제목',
   user: '작성자',
-  status: '?�태',
+  status: '상태',
   createdAt: '등록일',
   actions: '관리',
 };
@@ -206,17 +206,17 @@ const columns: TableColumn<InquiryItem>[] = [
           table.getIsAllPageRowsSelected(),
         'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
-        'ariaLabel': '?�체 ?�택',
+        'ariaLabel': '전체 선택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
         'modelValue': row.getIsSelected(),
         'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
-        'ariaLabel': '???�택',
+        'ariaLabel': '행 선택',
       }),
     enableSorting: false,
   },
-  // 2. No. (?�렬 가??
+  // 2. No. (정렬 가능)
   {
     accessorKey: 'id',
     header: ({ column }) => {
@@ -236,20 +236,20 @@ const columns: TableColumn<InquiryItem>[] = [
       });
     },
   },
-  // 3. ?�형
+  // 3. 유형
   {
     accessorKey: 'type',
-    header: '?�형',
+    header: '유형',
     cell: ({ row }) =>
       h(UBadge, { variant: 'subtle', color: 'gray' }, () => row.original.type),
   },
-  // 4. ?�목 (?��?지 ?�으�??�이�??�시)
+  // 4. 제목 (이미지 있으면 아이콘 표시)
   {
     accessorKey: 'title',
-    header: '문의 ?�목',
+    header: '문의 제목',
     cell: ({ row }) =>
       h('div', { class: 'flex items-center gap-2' }, [
-        // 첨�? ?��?지 ?�네??
+        // 첨부 이미지 썸네일
         row.original.imageUrl &&
         h(UAvatar, { src: row.original.imageUrl, size: '2xs' }),
         h(
@@ -263,12 +263,12 @@ const columns: TableColumn<InquiryItem>[] = [
         ),
       ]),
   },
-  // 5. ?�성??
+  // 5. 작성자
   { accessorKey: 'user', header: '작성자' },
-  // 6. ?�태 (?�터 ?�용)
+  // 6. 상태 (필터 적용)
   {
     accessorKey: 'status',
-    header: '?�태',
+    header: '상태',
     filterFn: 'equals',
     cell: ({ row }) => {
       const isPending = row.original.status === 'pending';
@@ -276,20 +276,20 @@ const columns: TableColumn<InquiryItem>[] = [
         UBadge,
         {
           variant: 'subtle',
-          color: isPending ? 'warning' : 'success', // 주황: ?��? 초록: ?�료
+          color: isPending ? 'warning' : 'success', // 주황: 대기 초록: 완료
         },
         () => (isPending ? '답변 대기' : '답변 완료'),
       );
     },
   },
-  // 7. ?�록??
+  // 7. 등록일
   {
     accessorKey: 'createdAt',
     header: '등록일',
     cell: ({ row }) =>
       format(new Date(row.original.createdAt), 'yyyy-MM-dd HH:mm'),
   },
-  // 8. 관�?
+  // 8. 관리
   {
     id: 'actions',
     cell: ({ row }) =>
@@ -340,14 +340,14 @@ const titleSearch = computed({
       <UInput
         v-model="titleSearch"
         icon="i-lucide-search"
-        placeholder="?�목 검??.."
+        placeholder="제목 검색.."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
           v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-          label="?�택 ??��"
+          label="선택 삭제"
           color="error"
           variant="subtle"
           icon="i-lucide-trash"
@@ -371,9 +371,9 @@ const titleSearch = computed({
         <USelect
           v-model="statusFilter"
           :items="[
-            { label: '?�체 ?�태', value: 'all' },
+            { label: '전체 상태', value: 'all' },
             { label: '답변 대기', value: 'pending' },
-            { label: '?��? ?�료', value: 'resolved' },
+            { label: '답변 완료', value: 'resolved' },
           ]"
           class="min-w-32"
         />
@@ -395,7 +395,7 @@ const titleSearch = computed({
           :content="{ align: 'end' }"
         >
           <UButton
-            label="컬럼 ?�정"
+            label="컬럼 설정"
             color="neutral"
             variant="outline"
             trailing-icon="i-lucide-settings-2"
@@ -430,9 +430,8 @@ const titleSearch = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}�?�?
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}�?
-        ?�택??
+        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}건,
+        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}건 선택됨
       </div>
 
       <UPagination
@@ -446,7 +445,7 @@ const titleSearch = computed({
     </div>
   </div>
 
-  <UModal v-model:open="isSlideoverOpen" title="문의 ?�세 �??��?">
+  <UModal v-model:open="isSlideoverOpen" title="문의 상세 및 답변">
     <template #body>
       <UForm
         :schema="formSchema"
@@ -470,7 +469,7 @@ const titleSearch = computed({
           <p class="text-sm whitespace-pre-wrap">{{ formState.content }}</p>
 
           <div v-if="formState.imageUrl" class="mt-2">
-            <p class="text-xs text-gray-500 mb-1">첨�? ?��?지:</p>
+            <p class="text-xs text-gray-500 mb-1">첨부 이미지:</p>
             <img
               :src="formState.imageUrl"
               class="rounded border w-full max-h-48 object-cover"
@@ -480,11 +479,11 @@ const titleSearch = computed({
 
         <hr class="border-gray-200 dark:border-gray-700">
 
-        <UFormField label="?��? ?�용" name="answer" required class="w-full">
+        <UFormField label="답변 내용" name="answer" required class="w-full">
           <UTextarea
             v-model="formState.answer"
             :rows="8"
-            placeholder="?��????�력?�주?�요."
+            placeholder="답변을 입력해주세요."
             autoresize
             class="w-full"
           />
@@ -496,7 +495,7 @@ const titleSearch = computed({
               v-model="formState.status"
               :true-value="'resolved'"
               :false-value="'pending'"
-              label="?��? ?�료 처리"
+              label="답변 완료 처리"
             />
           </UFormField>
         </div>
@@ -505,7 +504,7 @@ const titleSearch = computed({
           class="flex justify-end gap-2 pt-4 border-t border-default mt-auto"
         >
           <UButton
-            label="?�기"
+            label="닫기"
             color="neutral"
             variant="ghost"
             @click="isSlideoverOpen = false"

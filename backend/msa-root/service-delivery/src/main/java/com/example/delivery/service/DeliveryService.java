@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** DeliveryService 타입입니다. */
 @Service
 public class DeliveryService {
 
@@ -20,9 +21,10 @@ public class DeliveryService {
   private final OrderGrpcClient orderGrpcClient;
 
   // 상태 전이 규칙: SCHEDULED → IN_PROGRESS → DELIVERED | FAILED
-  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS = Map.of(
-      "SCHEDULED", Set.of("IN_PROGRESS"),
-      "IN_PROGRESS", Set.of("DELIVERED", "FAILED"));
+  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS =
+      Map.of(
+          "SCHEDULED", Set.of("IN_PROGRESS"),
+          "IN_PROGRESS", Set.of("DELIVERED", "FAILED"));
 
   @Value("${app.delivery.fixed-fee:3000}")
   private int fixedDeliveryFee = 3000;
@@ -41,15 +43,16 @@ public class DeliveryService {
 
     String assigned = (courier != null && !courier.isBlank()) ? courier : "unassigned";
 
-    Delivery d = Delivery.builder()
-        .id(UUID.randomUUID().toString())
-        .orderId(orderId)
-        .courier(assigned)
-        .status(status)
-      .deliveryFee(fixedDeliveryFee)
-        .scheduledAt(Instant.now())
-        .isNewEntity(true)
-        .build();
+    Delivery d =
+        Delivery.builder()
+            .id(UUID.randomUUID().toString())
+            .orderId(orderId)
+            .courier(assigned)
+            .status(status)
+            .deliveryFee(fixedDeliveryFee)
+            .scheduledAt(Instant.now())
+            .isNewEntity(true)
+            .build();
     Delivery saved = deliveryRepository.save(d);
     return toDto(saved);
   }
@@ -60,9 +63,10 @@ public class DeliveryService {
 
   @Transactional
   public DeliveryDto updateStatus(String deliveryId, String newStatus) {
-    Delivery d = deliveryRepository
-        .findById(deliveryId)
-        .orElseThrow(() -> new IllegalArgumentException("Delivery not found: " + deliveryId));
+    Delivery d =
+        deliveryRepository
+            .findById(deliveryId)
+            .orElseThrow(() -> new IllegalArgumentException("Delivery not found: " + deliveryId));
 
     Set<String> allowed = ALLOWED_TRANSITIONS.getOrDefault(d.getStatus(), Set.of());
     if (!allowed.contains(newStatus)) {

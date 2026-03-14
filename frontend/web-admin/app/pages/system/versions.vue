@@ -24,7 +24,7 @@ type TableInstance<T> = { tableApi?: Table<T> } | null;
 type TableRow<T> = Row<T>;
 const table = ref<TableInstance<VersionItem>>(null);
 
-// 2. ?�정 �??�이???�의
+// 2. 상수 및 타입 정의
 const DATA_KEY = 'app_versions';
 
 type VersionItem = {
@@ -32,7 +32,7 @@ type VersionItem = {
   platform: 'ios' | 'android';
   version: string;
   buildNumber: number;
-  isRequired: boolean; // 강제 ?�데?�트 ?��?
+  isRequired: boolean; // 강제 업데이트 여부
   releaseNotes: string;
   status: 'active' | 'inactive';
   releaseDate: string;
@@ -51,7 +51,7 @@ const formSchema = z.object({
 
 type FormSchema = z.output<typeof formSchema>;
 
-// 3. ?�태 관�?
+// 3. 상태 관리
 const columnFilters = ref([{ id: 'version', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
@@ -63,7 +63,7 @@ const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const selectedId = ref<number | null>(null);
 
-// ???�태
+// 폼 상태
 const initialFormState: FormSchema = {
   platform: 'ios',
   version: '',
@@ -74,7 +74,7 @@ const initialFormState: FormSchema = {
 };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
-// 4. ?�이???�칭
+// 4. 데이터 페칭
 const { data, status: loadingStatus } = await useAsyncData<VersionItem[]>(
   DATA_KEY,
   async () => {
@@ -86,12 +86,12 @@ const { data, status: loadingStatus } = await useAsyncData<VersionItem[]>(
       isRequired: i % 5 === 0,
       status: i < 4 ? 'active' : 'inactive',
       releaseDate: new Date().toISOString(),
-      releaseNotes: '버그 ?�정 �??�능 개선',
+      releaseNotes: '버그 수정 및 성능 개선',
     }));
   },
 );
 
-// 5. ?�션 ?�들??
+// 5. 액션 핸들러
 function openCreateModal () {
   isEditMode.value = false;
   Object.assign(formState, initialFormState);
@@ -108,8 +108,8 @@ function openEditModal (row: VersionItem) {
 async function onSubmit (event: FormSubmitEvent<FormSchema>) {
   const action = isEditMode.value ? '수정' : '배포';
   toast.add({
-    title: `${action} ?�료`,
-    description: `버전 ?�보가 ${action}?�었?�니??`,
+    title: `${action} 완료`,
+    description: `버전 정보가 ${action}되었습니다.`,
     color: 'success',
   });
   isModalOpen.value = false;
@@ -117,8 +117,8 @@ async function onSubmit (event: FormSubmitEvent<FormSchema>) {
 
 function onDelete (ids: number[]) {
   toast.add({
-    title: '??�� ?�료',
-    description: '?�택??버전 ?�보가 ??��?�었?�니??',
+    title: '삭제 완료',
+    description: '선택한 버전 정보가 삭제되었습니다.',
     color: 'error',
   });
   rowSelection.value = {};
@@ -134,7 +134,7 @@ function getRowItems (row: VersionItem) {
     },
     { type: 'separator' },
     {
-      label: '??��',
+      label: '삭제',
       icon: 'i-lucide-trash',
       color: 'error',
       onSelect: () => onDelete([row.id]),
@@ -142,7 +142,7 @@ function getRowItems (row: VersionItem) {
   ];
 }
 
-// 6. 컬럼 ?�의
+// 6. 컬럼 정의
 const columns: TableColumn<VersionItem>[] = [
   {
     id: 'select',
@@ -188,7 +188,7 @@ const columns: TableColumn<VersionItem>[] = [
   },
   {
     accessorKey: 'status',
-    header: '?�태',
+    header: '상태',
     cell: ({ row }) =>
       h(
         UBadge,
@@ -240,7 +240,7 @@ watch(platformFilter, (val) => {
   <div class="flex-1 flex flex-col">
     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
       <UButton
-        label="버전 ?�록"
+        label="버전 등록"
         icon="i-lucide-plus"
         color="primary"
         @click="openCreateModal"
@@ -249,7 +249,7 @@ watch(platformFilter, (val) => {
         <USelect
           v-model="platformFilter"
           :items="[
-            { label: '?�체 OS', value: 'all' },
+            { label: '전체 OS', value: 'all' },
             { label: 'iOS', value: 'ios' },
             { label: 'Android', value: 'android' },
           ]"
@@ -257,7 +257,7 @@ watch(platformFilter, (val) => {
         />
         <UButton
           v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-          label="?�택 ??��"
+          label="선택 삭제"
           color="error"
           variant="subtle"
           icon="i-lucide-trash"
@@ -298,7 +298,7 @@ watch(platformFilter, (val) => {
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        �?{{ table?.tableApi?.getFilteredRowModel().rows.length }}�?버전
+        총 {{ table?.tableApi?.getFilteredRowModel().rows.length }}개 버전
       </div>
       <UPagination
         :default-page="
@@ -336,7 +336,7 @@ watch(platformFilter, (val) => {
 
         <div class="grid grid-cols-2 gap-4">
           <UFormField
-            label="버전�?(x.y.z)"
+            label="버전명 (x.y.z)"
             name="version"
             required
             class="w-full"
@@ -364,15 +364,15 @@ watch(platformFilter, (val) => {
         <div
           class="flex justify-between items-center bg-gray-50 dark:bg-gray-800 p-3 rounded"
         >
-          <UFormField name="isRequired" label="강제 ?�데?�트 ?��?">
+          <UFormField name="isRequired" label="강제 업데이트 여부">
             <UCheckbox
               :model-value="formState.isRequired"
-              label="?�수 ?�데?�트 (구버???�용 불�?)"
+              label="필수 업데이트 (구버전 사용 불가)"
               @update:model-value="(v: boolean) => (formState.isRequired = v)"
             />
           </UFormField>
 
-          <UFormField name="status" label="배포 ?�태">
+          <UFormField name="status" label="배포 상태">
             <UCheckbox
               :model-value="formState.status === 'active'"
               label="즉시 활성화"
@@ -383,7 +383,7 @@ watch(platformFilter, (val) => {
           </UFormField>
         </div>
 
-        <UFormField label="릴리�??�트" name="releaseNotes" class="w-full">
+        <UFormField label="릴리즈 노트" name="releaseNotes" class="w-full">
           <UTextarea
             v-model="formState.releaseNotes"
             :rows="4"

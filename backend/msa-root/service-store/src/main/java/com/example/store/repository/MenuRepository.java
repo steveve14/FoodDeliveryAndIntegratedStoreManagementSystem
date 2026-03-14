@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 /** Repository for Menu entities. */
+/** MenuRepository 타입입니다. */
 public interface MenuRepository extends CrudRepository<Menu, String> {
 
   List<Menu> findByStoreId(String storeId);

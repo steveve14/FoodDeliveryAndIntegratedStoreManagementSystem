@@ -12,17 +12,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestControllerAdvice
-/**
- * Global REST exception handler mapping common exceptions to HTTP responses.
- */
+/** Global REST exception handler mapping common exceptions to HTTP responses. */
 public class RestExceptionHandler {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiResponse<Object>> handleValidation(MethodArgumentNotValidException ex) {
-    String message = ex.getBindingResult().getFieldErrors().stream()
-        .map(e -> e.getField() + ": " + e.getDefaultMessage())
-        .reduce((a, b) -> a + ", " + b)
-        .orElse("입력값이 올바르지 않습니다.");
+    String message =
+        ex.getBindingResult().getFieldErrors().stream()
+            .map(e -> e.getField() + ": " + e.getDefaultMessage())
+            .reduce((a, b) -> a + ", " + b)
+            .orElse("입력값이 올바르지 않습니다.");
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, message));
   }
 

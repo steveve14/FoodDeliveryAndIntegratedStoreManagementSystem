@@ -8,6 +8,7 @@ import com.example.apigateway.filter.AuthorizationHeaderFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
 
+/** GatewayRouteConfigTest 타입입니다. */
 class GatewayRouteConfigTest {
 
   @Test

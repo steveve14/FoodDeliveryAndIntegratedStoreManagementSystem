@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root */
 /**
- * [?�스??> ?�러 로그 관�?
- * Base Code ?�키?�처 기반 리팩?�링
+ * [시스템 > 에러 로그 관리]
+ * Base Code 아키텍처 기반 리팩토링
  */
 import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
 import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
@@ -13,7 +13,7 @@ import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Table } from '@tanstack/table-core';
 
 // ==========================================
-// 1. 컴포?�트 리졸�?
+// 1. 컴포넌트 리졸브
 // ==========================================
 const UButton = resolveComponent('UButton');
 const UBadge = resolveComponent('UBadge');
@@ -26,7 +26,7 @@ type TableInstance<T> = { tableApi?: Table<T> } | null;
 const table = ref<TableInstance<ErrorLogItem>>(null);
 
 // ==========================================
-// 2. ?�정 �??�이???�의
+// 2. 상수 및 타입 정의
 // ==========================================
 const DATA_KEY = 'error-logs';
 
@@ -38,10 +38,10 @@ type ErrorLogItem = {
   message: string;
   source: string;
   traceId: string;
-  stackTrace?: string; // ?�세 ?�택 ?�레?�스 (가??
+  stackTrace?: string; // 상세 스택 트레이스 (옵션)
 };
 
-// ???�키�?(?�태 변경용)
+// 폼 스키마 (상태 변경용)
 const formSchema = z.object({
   status: z.enum(['open', 'in_progress', 'resolved']),
   adminNote: z.string().optional(),
@@ -50,12 +50,12 @@ const formSchema = z.object({
 type FormSchema = z.output<typeof formSchema>;
 
 // ==========================================
-// 3. ?�태 관�?
+// 3. 상태 관리
 // ==========================================
 const columnFilters = ref([{ id: 'message', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
-const pagination = ref({ pageIndex: 0, pageSize: 10 }); // 로그????번에 많이 �?
+const pagination = ref({ pageIndex: 0, pageSize: 10 }); // 한 페이지당 10건
 const sorting = ref([{ id: 'timestamp', desc: true }]);
 
 const levelFilter = ref('all');
@@ -63,15 +63,15 @@ const statusFilter = ref('all');
 const isModalOpen = ref(false);
 const selectedId = ref<number | null>(null);
 
-// ?�세 ?�보 ?�시??
+// 상세 정보 표시용
 const currentLog = ref<ErrorLogItem | null>(null);
 
-// ???�태
+// 폼 상태
 const initialFormState: FormSchema = { status: 'open', adminNote: '' };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. ?�이???�칭 (Mock Data)
+// 4. 데이터 페칭 (Mock Data)
 // ==========================================
 const { data, status: loadingStatus } = await useAsyncData<ErrorLogItem[]>(
   DATA_KEY,
@@ -89,18 +89,18 @@ const { data, status: loadingStatus } = await useAsyncData<ErrorLogItem[]>(
         status: status,
         message:
           i % 10 === 0 ?
-            '?�이?�베?�스 ?�결 ?�패' :
-            `JSON ?�치 ${i}?�서 ?�상?��? 못한 ?�큰`,
+            '데이터베이스 연결 실패' :
+            `JSON 파싱 ${i}에서 예상하지 못한 토큰`,
         source: i % 2 === 0 ? '/api/auth/login' : '/components/Dashboard.vue',
         traceId: `trace-${Math.random().toString(36).substring(7)}`,
-        stackTrace: `Error: ${i % 10 === 0 ? '?�이?�베?�스 ?�결 ?�패' : '?�상?��? 못한 ?�큰'}\n    at /app/server/api.ts:45:12\n    at async /app/server/handler.ts:22:5`,
+        stackTrace: `Error: ${i % 10 === 0 ? '데이터베이스 연결 실패' : '예상하지 못한 토큰'}\n    at /app/server/api.ts:45:12\n    at async /app/server/handler.ts:22:5`,
       };
     });
   },
 );
 
 // ==========================================
-// 5. ?�션 ?�들??
+// 5. 액션 핸들러
 // ==========================================
 function openDetailModal (row: ErrorLogItem) {
   currentLog.value = row;
@@ -154,15 +154,15 @@ function getRowItems (row: ErrorLogItem) {
 }
 
 // ==========================================
-// 6. ?�이�?컬럼 ?�의
+// 6. 테이블 컬럼 정의
 // ==========================================
 const columnLabels: Record<string, string> = {
-  select: '?�택',
-  timestamp: '발생 ?�간',
+  select: '선택',
+  timestamp: '발생 시간',
   level: '심각도',
-  message: '?�러 메시지',
-  source: '?�치',
-  status: '?�태',
+  message: '에러 메시지',
+  source: '위치',
+  status: '상태',
   actions: '관리',
 };
 
@@ -191,7 +191,7 @@ const columns: TableColumn<ErrorLogItem>[] = [
       return h(UButton, {
         color: 'neutral',
         variant: 'ghost',
-        label: '발생 ?�간',
+        label: '발생 시간',
         icon:
           isSorted === 'asc' ?
             'i-lucide-arrow-up-narrow-wide' :
@@ -224,7 +224,7 @@ const columns: TableColumn<ErrorLogItem>[] = [
   },
   {
     accessorKey: 'status',
-    header: '?�태',
+    header: '상태',
     cell: ({ row }) => {
       const map: Record<ErrorLogItem['status'], { label: string; color: 'error' | 'primary' | 'success' }> = {
         open: { label: '오픈', color: 'error' },
@@ -241,7 +241,7 @@ const columns: TableColumn<ErrorLogItem>[] = [
   },
   {
     accessorKey: 'message',
-    header: '?�러 메시지',
+    header: '에러 메시지',
     cell: ({ row }) =>
       h('div', { class: 'flex flex-col max-w-[300px]' }, [
         h(
@@ -262,7 +262,7 @@ const columns: TableColumn<ErrorLogItem>[] = [
   },
   {
     accessorKey: 'source',
-    header: '?�치',
+    header: '위치',
     cell: ({ row }) =>
       h(
         'code',
@@ -331,13 +331,13 @@ const messageSearch = computed({
       <UInput
         v-model="messageSearch"
         icon="i-lucide-search"
-        placeholder="?�러 메시지 검??.."
+        placeholder="에러 메시지 검색.."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
-          label="로그 ?�운로드"
+          label="로그 다운로드"
           icon="i-lucide-download"
           color="neutral"
           variant="outline"
@@ -345,7 +345,7 @@ const messageSearch = computed({
         <USelect
           v-model="levelFilter"
           :items="[
-            { label: '?�체 ?�급', value: 'all' },
+            { label: '전체 등급', value: 'all' },
             { label: 'Critical', value: 'critical' },
             { label: 'Error', value: 'error' },
             { label: 'Warning', value: 'warning' },
@@ -355,8 +355,8 @@ const messageSearch = computed({
         <USelect
           v-model="statusFilter"
           :items="[
-            { label: '?�체 ?�태', value: 'all' },
-            { label: '?��?(Open)', value: 'open' },
+            { label: '전체 상태', value: 'all' },
+            { label: '오픈(Open)', value: 'open' },
             { label: '진행중', value: 'in_progress' },
             { label: '해결', value: 'resolved' },
           ]"
@@ -380,7 +380,7 @@ const messageSearch = computed({
           :content="{ align: 'end' }"
         >
           <UButton
-            label="컬럼 ?�정"
+            label="컬럼 설정"
             color="neutral"
             variant="outline"
             trailing-icon="i-lucide-settings-2"
@@ -415,10 +415,8 @@ const messageSearch = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}�?로그
-        �?
-        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}�?
-        ?�택??
+        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}개 로그,
+        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}개 선택됨
       </div>
       <UPagination
         :default-page="
@@ -433,7 +431,7 @@ const messageSearch = computed({
 
   <UModal
     v-model:open="isModalOpen"
-    title="?�러 로그 ?�세"
+    title="에러 로그 상세"
     :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
   >
     <template #body>
@@ -492,7 +490,7 @@ const messageSearch = computed({
             <USelect
               v-model="formState.status"
               :items="[
-                { label: '?��?(Open)', value: 'open' },
+                { label: '오픈(Open)', value: 'open' },
                 { label: '진행중(In Progress)', value: 'in_progress' },
                 { label: '해결(Resolved)', value: 'resolved' },
               ]"
@@ -503,7 +501,7 @@ const messageSearch = computed({
           <UFormField label="관리자 메모" name="adminNote" class="w-full">
             <UInput
               v-model="formState.adminNote"
-              placeholder="처리 ?�역 메모"
+              placeholder="처리 이력 메모"
               class="w-full"
             />
           </UFormField>
@@ -511,7 +509,7 @@ const messageSearch = computed({
 
         <div class="flex justify-end gap-2 pt-2 mt-auto">
           <UButton
-            label="?�기"
+            label="닫기"
             color="neutral"
             variant="ghost"
             @click="isModalOpen = false"

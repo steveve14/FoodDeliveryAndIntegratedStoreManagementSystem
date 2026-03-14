@@ -4,6 +4,7 @@ import com.example.auth.entity.RefreshToken;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+/** RefreshTokenRepository 타입입니다. */
 @Repository
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, String> {
 

@@ -8,6 +8,7 @@ import org.springframework.grpc.server.service.GrpcService;
  * Auth 서비스 gRPC 서버 구현
  * 다른 MSA에서 JWT 검증 시 호출
  */
+/** AuthGrpcServiceImpl 타입입니다. */
 @GrpcService
 public class AuthGrpcServiceImpl extends AuthGrpcServiceGrpc.AuthGrpcServiceImplBase {
 

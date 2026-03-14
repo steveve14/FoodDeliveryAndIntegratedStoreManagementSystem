@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'checkstyle'
     id 'org.springframework.boot' version '4.0.2'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.google.protobuf' version '0.9.4' apply false
@@ -44,6 +45,7 @@ repositories {
 // 하위 모듈(Microservices) 공통 설정
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'checkstyle'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.google.protobuf'
@@ -87,6 +89,33 @@ subprojects {
 
     test {
         useJUnitPlatform()
+    }
+
+    checkstyle {
+        toolVersion = '10.21.1'
+        configFile = rootProject.file('config/checkstyle/google_checks.xml')
+        configProperties = [
+            'org.checkstyle.google.severity': 'error'
+        ]
+    }
+
+    tasks.withType(Checkstyle).configureEach {
+        reports {
+            xml.required = true
+            html.required = true
+        }
+    }
+
+    tasks.named('checkstyleMain', Checkstyle) {
+        source = fileTree('src/main/java') {
+            include '**/*.java'
+        }
+    }
+
+    tasks.named('checkstyleTest', Checkstyle) {
+        source = fileTree('src/test/java') {
+            include '**/*.java'
+        }
     }
 
     // Protobuf 코드 생성 설정

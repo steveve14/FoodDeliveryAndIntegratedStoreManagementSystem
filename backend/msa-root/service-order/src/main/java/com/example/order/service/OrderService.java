@@ -1,7 +1,7 @@
 package com.example.order.service;
 
-import com.example.order.dto.OrderDto;
 import com.example.order.dto.FrontendCustomerOrderSummaryDto;
+import com.example.order.dto.OrderDto;
 import com.example.order.dto.OrderItemDto;
 import com.example.order.entity.Order;
 import com.example.order.entity.OrderItem;
@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/** OrderService 타입입니다. */
 @Service
 public class OrderService {
 
@@ -29,10 +30,11 @@ public class OrderService {
   private long vipThreshold = 10L;
 
   // 주문 상태 전이 규칙: CREATED → COOKING → DELIVERING → DONE | CANCELLED
-  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS = Map.of(
-      "CREATED", Set.of("COOKING", "CANCELLED"),
-      "COOKING", Set.of("DELIVERING", "CANCELLED"),
-      "DELIVERING", Set.of("DONE", "CANCELLED"));
+  private static final Map<String, Set<String>> ALLOWED_TRANSITIONS =
+      Map.of(
+          "CREATED", Set.of("COOKING", "CANCELLED"),
+          "COOKING", Set.of("DELIVERING", "CANCELLED"),
+          "DELIVERING", Set.of("DONE", "CANCELLED"));
 
   public OrderService(
       OrderRepository orderRepository,
@@ -86,26 +88,28 @@ public class OrderService {
       total += (int) (p.getPrice() * it.getQuantity());
     }
 
-    Order o = Order.builder()
-        .id(java.util.UUID.randomUUID().toString())
-        .userId(userId)
-        .storeId(storeId)
-        .totalAmount(total)
-        .status(status)
-        .createdAt(Instant.now())
-        .isNewEntity(true)
-        .build();
+    Order o =
+        Order.builder()
+            .id(java.util.UUID.randomUUID().toString())
+            .userId(userId)
+            .storeId(storeId)
+            .totalAmount(total)
+            .status(status)
+            .createdAt(Instant.now())
+            .isNewEntity(true)
+            .build();
     Order saved = orderRepository.save(o);
 
     for (OrderItemDto it : items) {
-      OrderItem oi = OrderItem.builder()
-          .id(java.util.UUID.randomUUID().toString())
-          .orderId(saved.getId())
-          .menuId(it.getProductId())
-          .quantity(it.getQuantity())
-          .priceSnapshot(it.getPrice())
-          .isNewEntity(true)
-          .build();
+      OrderItem oi =
+          OrderItem.builder()
+              .id(java.util.UUID.randomUUID().toString())
+              .orderId(saved.getId())
+              .menuId(it.getProductId())
+              .quantity(it.getQuantity())
+              .priceSnapshot(it.getPrice())
+              .isNewEntity(true)
+              .build();
       orderItemRepository.save(oi);
     }
 
@@ -132,9 +136,10 @@ public class OrderService {
 
   @Transactional
   public OrderDto updateStatus(String orderId, String newStatus) {
-    Order o = orderRepository
-        .findById(orderId)
-        .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+    Order o =
+        orderRepository
+            .findById(orderId)
+            .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
     Set<String> allowed = ALLOWED_TRANSITIONS.getOrDefault(o.getStatus(), Set.of());
     if (!allowed.contains(newStatus)) {

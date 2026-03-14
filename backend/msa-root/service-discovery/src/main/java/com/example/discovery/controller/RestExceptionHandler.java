@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+/** RestExceptionHandler 타입입니다. */
 @Slf4j
 @RestControllerAdvice
 public class RestExceptionHandler {

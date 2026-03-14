@@ -6,9 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-/** Entry point for the order service Spring Boot application. */
+/** Application entry point for the order service. */
 public class OrderServiceApplication {
 
+  /** 애플리케이션 실행 진입점입니다. */
   public static void main(String[] args) {
     SpringApplication.run(OrderServiceApplication.class, args);
   }

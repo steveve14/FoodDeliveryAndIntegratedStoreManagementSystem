@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/** JwtProviderTest 타입입니다. */
 class JwtProviderTest {
 
   private JwtProvider jwtProvider;

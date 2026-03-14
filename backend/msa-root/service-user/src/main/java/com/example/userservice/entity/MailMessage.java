@@ -11,36 +11,36 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+/** MailMessage 타입입니다. */
 @Table("mail_messages")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class MailMessage implements Persistable<Long> {
-    @Id
-    @Column("id")
-    private Long id;
+  @Id
+  @Column("id")
+  private Long id;
 
-    @Column("from_user_id")
-    private String fromUserId;
+  @Column("from_user_id")
+  private String fromUserId;
 
-    @Column("subject")
-    private String subject;
+  @Column("subject")
+  private String subject;
 
-    @Column("body")
-    private String body;
+  @Column("body")
+  private String body;
 
-    @Column("unread")
-    private boolean unread;
+  @Column("unread")
+  private boolean unread;
 
-    @Column("created_at")
-    private Instant createdAt;
+  @Column("created_at")
+  private Instant createdAt;
 
-    @Transient
-    private boolean isNewEntity;
+  @Transient private boolean isNewEntity;
 
-    @Override
-    public boolean isNew() {
-        return isNewEntity;
-    }
+  @Override
+  public boolean isNew() {
+    return isNewEntity;
+  }
 }

@@ -3,6 +3,7 @@ package com.example.order.dto;
 import java.time.Instant;
 import lombok.Builder;
 
+/** InfoResponse 타입입니다. */
 @Builder
 public class InfoResponse {
   private String service;

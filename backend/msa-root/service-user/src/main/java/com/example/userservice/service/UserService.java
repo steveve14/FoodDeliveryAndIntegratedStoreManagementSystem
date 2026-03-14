@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
  * Service that handles user management operations such as registration, profile
  * retrieval and updates.
  */
+/** UserService 타입입니다. */
 public class UserService {
 
   private final UserRepository userRepository;
@@ -43,9 +44,8 @@ public class UserService {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.avatarUploadPath = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
-    this.avatarPublicBaseUrl = avatarPublicBaseUrl.endsWith("/")
-        ? avatarPublicBaseUrl
-        : avatarPublicBaseUrl + "/";
+    this.avatarPublicBaseUrl =
+        avatarPublicBaseUrl.endsWith("/") ? avatarPublicBaseUrl : avatarPublicBaseUrl + "/";
   }
 
   @Transactional
@@ -58,18 +58,19 @@ public class UserService {
     // 비밀번호를 해시처리
     String hashed = passwordEncoder.encode(req.getPassword());
     // create entity using builder
-    User user = User.builder()
-        .id(java.util.UUID.randomUUID().toString())
-        .email(req.getEmail())
-        .passwordHash(hashed)
-        .name(req.getName())
-        .phone(null)
-        .roles("USER")
-        .provider("local")
-        .providerId(null)
-        .createdAt(Instant.now())
-        .isNewEntity(true)
-        .build();
+    User user =
+        User.builder()
+            .id(java.util.UUID.randomUUID().toString())
+            .email(req.getEmail())
+            .passwordHash(hashed)
+            .name(req.getName())
+            .phone(null)
+            .roles("USER")
+            .provider("local")
+            .providerId(null)
+            .createdAt(Instant.now())
+            .isNewEntity(true)
+            .build();
 
     User saved = userRepository.save(user);
     return new UserDto(
@@ -91,25 +92,28 @@ public class UserService {
   }
 
   public UserProfileDto getProfile(String id) {
-    User user = userRepository
-        .findById(id)
-        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
     return toUserProfileDto(user);
   }
 
   @Transactional
   public UserProfileDto updateProfile(String id, UpdateProfileRequest req) {
-    User user = userRepository
-        .findById(id)
-        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
     // use toBuilder() to create a modified instance
-    User updated = user.toBuilder()
-      .name(req.getName())
-      .username(req.getUsername())
-      .phone(req.getPhone())
-      .avatarUrl(req.getAvatarUrl())
-      .location(req.getLocation())
-      .build();
+    User updated =
+        user.toBuilder()
+            .name(req.getName())
+            .username(req.getUsername())
+            .phone(req.getPhone())
+            .avatarUrl(req.getAvatarUrl())
+            .location(req.getLocation())
+            .build();
     User saved = userRepository.save(updated);
     return toUserProfileDto(saved);
   }
@@ -140,12 +144,14 @@ public class UserService {
       throw new RuntimeException("아바타 파일 저장 중 오류가 발생했습니다.", e);
     }
 
-    User user = userRepository
-        .findById(id)
-        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
 
     String previousAvatarUrl = user.getAvatarUrl();
-    User saved = userRepository.save(user.toBuilder().avatarUrl(avatarPublicBaseUrl + fileName).build());
+    User saved =
+        userRepository.save(user.toBuilder().avatarUrl(avatarPublicBaseUrl + fileName).build());
     deleteLocalAvatarIfManaged(previousAvatarUrl);
     return toUserProfileDto(saved);
   }
@@ -170,8 +176,9 @@ public class UserService {
         .findByEmail(email)
         .filter(u -> passwordEncoder.matches(rawPassword, u.getPasswordHash()))
         .map(
-            u -> new com.example.userservice.dto.AuthUserDto(
-                u.getId(), u.getEmail(), u.getName(), u.getRoles()))
+            u ->
+                new com.example.userservice.dto.AuthUserDto(
+                    u.getId(), u.getEmail(), u.getName(), u.getRoles()))
         .orElse(null);
   }
 
@@ -200,7 +207,8 @@ public class UserService {
     if (filename.isBlank()) {
       return;
     }
-    Path oldTarget = avatarUploadPath.resolve(Paths.get(filename).getFileName().toString()).normalize();
+    Path oldTarget =
+        avatarUploadPath.resolve(Paths.get(filename).getFileName().toString()).normalize();
     if (!oldTarget.startsWith(avatarUploadPath)) {
       return;
     }

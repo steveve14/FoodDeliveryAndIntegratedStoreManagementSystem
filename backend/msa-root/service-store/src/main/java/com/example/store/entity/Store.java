@@ -10,14 +10,14 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
+/** Store 타입입니다. */
 @Table("store")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Store implements Persistable<String> {
-  @Id
-  private String id;
+  @Id private String id;
   private String name;
   private String address;
   private String phone;
@@ -32,8 +32,7 @@ public class Store implements Persistable<String> {
   private String ownerId;
   private Instant createdAt;
 
-  @Transient
-  private boolean isNewEntity;
+  @Transient private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

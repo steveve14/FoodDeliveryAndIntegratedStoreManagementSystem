@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 /** DTO representing a user address. */
+/** AddressDto 타입입니다. */
 public class AddressDto {
 
   private String id;

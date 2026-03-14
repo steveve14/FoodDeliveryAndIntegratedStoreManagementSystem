@@ -10,14 +10,14 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
+/** Menu 타입입니다. */
 @Table("menu")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Menu implements Persistable<String> {
-  @Id
-  private String id;
+  @Id private String id;
   private String storeId;
   private String name;
   private String description;
@@ -25,8 +25,7 @@ public class Menu implements Persistable<String> {
   private boolean available;
   private Instant createdAt;
 
-  @Transient
-  private boolean isNewEntity;
+  @Transient private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

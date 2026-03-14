@@ -5,27 +5,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** FavoriteStoreRequest 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FavoriteStoreRequest {
-    @NotBlank
-    private String storeId;
+  @NotBlank private String storeId;
 
-    @NotBlank
-    private String name;
+  @NotBlank private String name;
 
-    @NotBlank
-    private String category;
+  @NotBlank private String category;
 
-    private double rating;
+  private double rating;
 
-    @NotBlank
-    private String deliveryTime;
+  @NotBlank private String deliveryTime;
 
-    @NotBlank
-    private String minOrder;
+  @NotBlank private String minOrder;
 
-    @NotBlank
-    private String imageIcon;
+  @NotBlank private String imageIcon;
 }

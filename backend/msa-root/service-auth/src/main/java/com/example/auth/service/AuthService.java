@@ -19,8 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * AuthService 역할: - 소셜 로그인(예: Google) 토큰 검증과 내부 로그인 로직(예: 이메일/비밀번호)을 담당하는 서비스
- * 레이어입니다. - 내부 MSA 통신은
+ * AuthService 역할: - 소셜 로그인(예: Google) 토큰 검증과 내부 로그인 로직(예: 이메일/비밀번호)을 담당하는 서비스 레이어입니다. - 내부 MSA 통신은
  * gRPC를 사용합니다.
  */
 @Service
@@ -37,18 +36,17 @@ public class AuthService implements AuthenticationService {
   private final RefreshTokenRepository refreshTokenRepository;
 
   /**
-   * 구글 ID 토큰을 검증하고, 검증된 정보를 바탕으로 내부 로직으로 로그인/회원등록을 수행한 뒤 자체 JWT(access/refresh)를
-   * 발급합니다. 이 메서드는 주요
-   * 단계: 1) GoogleIdTokenVerifier로 토큰 유효성 검증 2) payload에서 이메일, 이름, subject(google
-   * id) 추출 3) 내부 사용자
+   * 구글 ID 토큰을 검증하고, 검증된 정보를 바탕으로 내부 로직으로 로그인/회원등록을 수행한 뒤 자체 JWT(access/refresh)를 발급합니다. 이 메서드는 주요
+   * 단계: 1) GoogleIdTokenVerifier로 토큰 유효성 검증 2) payload에서 이메일, 이름, subject(google id) 추출 3) 내부 사용자
    * 저장/조회 (주석 처리된 부분) 4) JwtProvider로 자체 토큰 발급 (현재는 더미 토큰 반환)
    */
   @Transactional
   public LoginResult verifyGoogleTokenAndLogin(String idTokenString) {
     try {
-      GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-          .setAudience(Collections.singletonList(googleClientId))
-          .build();
+      GoogleIdTokenVerifier verifier =
+          new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+              .setAudience(Collections.singletonList(googleClientId))
+              .build();
 
       // 1. 구글 토큰 검증
       GoogleIdToken idToken = verifier.verify(idTokenString);
@@ -77,15 +75,16 @@ public class AuthService implements AuthenticationService {
       String refreshToken = jwtProvider.createRefreshToken(userId, role);
 
       // Persist refresh token
-      RefreshToken rt = RefreshToken.builder()
-          .id(java.util.UUID.randomUUID().toString())
-          .userId(userId)
-          .token(refreshToken)
-          .revoked(false)
-          .createdAt(java.time.Instant.now())
-          .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
-          .isNewEntity(true)
-          .build();
+      RefreshToken rt =
+          RefreshToken.builder()
+              .id(java.util.UUID.randomUUID().toString())
+              .userId(userId)
+              .token(refreshToken)
+              .revoked(false)
+              .createdAt(java.time.Instant.now())
+              .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
+              .isNewEntity(true)
+              .build();
       refreshTokenRepository.save(rt);
 
       return new LoginResult(
@@ -137,15 +136,16 @@ public class AuthService implements AuthenticationService {
     String refreshToken = jwtProvider.createRefreshToken(userId, role);
 
     // Persist refresh token
-    RefreshToken rt = RefreshToken.builder()
-        .id(java.util.UUID.randomUUID().toString())
-        .userId(userId)
-        .token(refreshToken)
-        .revoked(false)
-        .createdAt(java.time.Instant.now())
-        .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
-        .isNewEntity(true)
-        .build();
+    RefreshToken rt =
+        RefreshToken.builder()
+            .id(java.util.UUID.randomUUID().toString())
+            .userId(userId)
+            .token(refreshToken)
+            .revoked(false)
+            .createdAt(java.time.Instant.now())
+            .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
+            .isNewEntity(true)
+            .build();
     refreshTokenRepository.save(rt);
 
     return new LoginResult(
@@ -205,7 +205,9 @@ public class AuthService implements AuthenticationService {
     var createResponse = userGrpcClient.createUser(email, password, name);
     if (!createResponse.getSuccess()) {
       throw new IllegalArgumentException(
-          createResponse.getErrorMessage().isEmpty() ? "회원가입에 실패했습니다." : createResponse.getErrorMessage());
+          createResponse.getErrorMessage().isEmpty()
+              ? "회원가입에 실패했습니다."
+              : createResponse.getErrorMessage());
     }
 
     // 2. DB에서 다시 조회하여 실제로 저장되었는지 검증
@@ -223,15 +225,16 @@ public class AuthService implements AuthenticationService {
     String refreshToken = jwtProvider.createRefreshToken(userId, role);
 
     // 4. Refresh token을 DB에 저장
-    RefreshToken rt = RefreshToken.builder()
-        .id(java.util.UUID.randomUUID().toString())
-        .userId(userId)
-        .token(refreshToken)
-        .revoked(false)
-        .createdAt(java.time.Instant.now())
-        .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
-        .isNewEntity(true)
-        .build();
+    RefreshToken rt =
+        RefreshToken.builder()
+            .id(java.util.UUID.randomUUID().toString())
+            .userId(userId)
+            .token(refreshToken)
+            .revoked(false)
+            .createdAt(java.time.Instant.now())
+            .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
+            .isNewEntity(true)
+            .build();
     refreshTokenRepository.save(rt);
 
     return new LoginResult(

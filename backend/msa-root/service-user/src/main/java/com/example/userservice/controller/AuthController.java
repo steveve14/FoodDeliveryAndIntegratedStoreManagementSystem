@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users")
 /** Controller exposing authentication endpoints for users. */
+/** AuthController 타입입니다. */
 public class AuthController {
 
   private final UserService userService;

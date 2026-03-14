@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /// 간단한 헬스 엔드포인트 제공
+/** HealthController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1")
 public class HealthController {

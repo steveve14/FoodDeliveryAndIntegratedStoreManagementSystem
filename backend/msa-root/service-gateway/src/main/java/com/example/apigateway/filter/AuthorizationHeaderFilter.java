@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+/** AuthorizationHeaderFilter 타입입니다. */
 @Component
 @Slf4j
 public class AuthorizationHeaderFilter
@@ -30,7 +31,8 @@ public class AuthorizationHeaderFilter
     super(Config.class);
     String secret = env.getProperty("token.secret");
     if (!StringUtils.hasText(secret)) {
-      throw new IllegalStateException("token.secret is empty. Set TOKEN_SECRET environment variable.");
+      throw new IllegalStateException(
+          "token.secret is empty. Set TOKEN_SECRET environment variable.");
     }
     try {
       byte[] keyBytes = Base64.getDecoder().decode(secret);

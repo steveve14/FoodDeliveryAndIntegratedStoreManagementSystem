@@ -31,6 +31,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+/** EventControllerDocsTest 타입입니다. */
 @ExtendWith(RestDocumentationExtension.class)
 class EventControllerDocsTest {
 
@@ -49,8 +50,7 @@ class EventControllerDocsTest {
 
   @Test
   void createDocumentsSuccessfulEventCreation() throws Exception {
-    when(eventService.createEvent(eq("ORDER_CREATED"), eq("order-1")))
-        .thenReturn(sampleEvent());
+    when(eventService.createEvent(eq("ORDER_CREATED"), eq("order-1"))).thenReturn(sampleEvent());
 
     mockMvc
         .perform(
@@ -125,7 +125,11 @@ class EventControllerDocsTest {
   }
 
   private EventDto sampleEvent() {
-    return new EventDto("event-1", "ORDER_CREATED", "{\"orderId\":\"order-1\"}", Instant.parse("2026-03-13T00:00:00Z"));
+    return new EventDto(
+        "event-1",
+        "ORDER_CREATED",
+        "{\"orderId\":\"order-1\"}",
+        Instant.parse("2026-03-13T00:00:00Z"));
   }
 
   private org.springframework.restdocs.payload.FieldDescriptor[] eventResponseFields() {

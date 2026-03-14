@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 /** Repository for Event entities. */
+/** EventRepository 타입입니다. */
 public interface EventRepository extends CrudRepository<Event, String> {}

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** ApiResponse 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

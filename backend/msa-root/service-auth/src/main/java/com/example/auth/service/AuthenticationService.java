@@ -3,6 +3,7 @@ package com.example.auth.service;
 import com.example.auth.dto.LoginResult;
 import com.example.auth.dto.TokenResponse;
 
+/** AuthenticationService 타입입니다. */
 public interface AuthenticationService {
 
   /// 일반 이메일/비밀번호 로그인

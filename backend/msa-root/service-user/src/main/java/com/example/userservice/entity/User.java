@@ -17,6 +17,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 /** Represents a user account stored in the users table. */
+/** User 타입입니다. */
 public class User implements Persistable<String> {
   @Id
   @Column("id")
@@ -61,8 +62,7 @@ public class User implements Persistable<String> {
   @Column("created_at")
   private Instant createdAt;
 
-  @Transient
-  private boolean isNewEntity;
+  @Transient private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

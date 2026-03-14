@@ -6,25 +6,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** CartItemRequest 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartItemRequest {
-    @NotBlank
-    private String storeId;
+  @NotBlank private String storeId;
 
-    @NotBlank
-    private String storeName;
+  @NotBlank private String storeName;
 
-    @NotBlank
-    private String menuId;
+  @NotBlank private String menuId;
 
-    @NotBlank
-    private String menuName;
+  @NotBlank private String menuName;
 
-    @Min(1)
-    private int quantity;
+  @Min(1)
+  private int quantity;
 
-    @Min(0)
-    private int price;
+  @Min(0)
+  private int price;
 }

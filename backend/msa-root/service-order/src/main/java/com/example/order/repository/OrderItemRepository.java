@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 /** Repository for OrderItem entities. */
+/** OrderItemRepository 타입입니다. */
 public interface OrderItemRepository extends CrudRepository<OrderItem, String> {
 
   List<OrderItem> findByOrderId(String orderId);

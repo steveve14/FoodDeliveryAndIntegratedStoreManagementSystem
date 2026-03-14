@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** MenuController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1/stores/{storeId}/menus")
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class MenuController {
   }
 
   @PostMapping
-  @RequireRole({ "STORE", "ADMIN" })
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<MenuDto>> create(
       @PathVariable String storeId,
       @RequestHeader("X-User-Id") String userId,
@@ -40,18 +41,19 @@ public class MenuController {
   }
 
   @PutMapping("/{menuId}")
-  @RequireRole({ "STORE", "ADMIN" })
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<MenuDto>> update(
       @PathVariable String storeId,
       @PathVariable String menuId,
       @RequestHeader("X-User-Id") String userId,
       @RequestHeader("X-User-Role") String userRole,
       @RequestBody MenuDto req) {
-    return ResponseEntity.ok(ApiResponse.ok(menuService.update(storeId, menuId, userId, userRole, req)));
+    return ResponseEntity.ok(
+        ApiResponse.ok(menuService.update(storeId, menuId, userId, userRole, req)));
   }
 
   @DeleteMapping("/{menuId}")
-  @RequireRole({ "STORE", "ADMIN" })
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<Object>> delete(
       @PathVariable String storeId,
       @PathVariable String menuId,

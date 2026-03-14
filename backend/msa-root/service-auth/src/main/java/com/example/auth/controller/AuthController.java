@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/** AuthController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -117,11 +118,9 @@ class AuthController {
   }
 
   private String extractCookie(HttpServletRequest request, String name) {
-    if (request.getCookies() == null)
-      return null;
+    if (request.getCookies() == null) return null;
     for (Cookie c : request.getCookies()) {
-      if (name.equals(c.getName()))
-        return c.getValue();
+      if (name.equals(c.getName())) return c.getValue();
     }
     return null;
   }
@@ -139,10 +138,7 @@ class AuthController {
     if (userResponse.getFound()) {
       String resolvedRole = userResponse.getRoles().isBlank() ? role : userResponse.getRoles();
       return new LoginResponse(
-          userResponse.getUserId(),
-          userResponse.getEmail(),
-          userResponse.getName(),
-          resolvedRole);
+          userResponse.getUserId(), userResponse.getEmail(), userResponse.getName(), resolvedRole);
     }
 
     return new LoginResponse(userId, "", "", role);

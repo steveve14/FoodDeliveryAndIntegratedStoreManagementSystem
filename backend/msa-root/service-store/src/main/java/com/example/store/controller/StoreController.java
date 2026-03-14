@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/stores")
 /** REST controller exposing store management endpoints. */
+/** StoreController 타입입니다. */
 public class StoreController {
 
   private final StoreService storeService;
@@ -28,7 +29,7 @@ public class StoreController {
   }
 
   @PostMapping
-  @RequireRole({ "STORE", "ADMIN" })
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<StoreDto>> create(
       @RequestHeader("X-User-Id") String userId,
       @RequestHeader("X-User-Role") String userRole,
@@ -45,7 +46,7 @@ public class StoreController {
   }
 
   @GetMapping("/me")
-  @RequireRole({ "STORE", "ADMIN" })
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<StoreDto>> getMyStore(
       @RequestHeader("X-User-Id") String userId) {
     return storeService

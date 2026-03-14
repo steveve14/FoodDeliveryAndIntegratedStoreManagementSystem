@@ -38,6 +38,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+/** AuthControllerTest 타입입니다. */
 @ExtendWith(RestDocumentationExtension.class)
 class AuthControllerTest {
 
@@ -96,7 +97,8 @@ class AuthControllerTest {
                     fieldWithPath("email").description("User email for login"),
                     fieldWithPath("password").description("User password for login")),
                 responseHeaders(
-                    headerWithName("Set-Cookie").description("access-token and refresh-token httpOnly cookies")),
+                    headerWithName("Set-Cookie")
+                        .description("access-token and refresh-token httpOnly cookies")),
                 responseFields(
                     fieldWithPath("success").description("Whether request succeeded"),
                     fieldWithPath("code").description("Response code"),
@@ -112,7 +114,8 @@ class AuthControllerTest {
     TokenResponse tokens = new TokenResponse("signup-access-token", "signup-refresh-token");
     LoginResult result = new LoginResult(tokens, "user-2", "new@example.com", "New User", "USER");
 
-    when(authService.signup(eq("new@example.com"), eq("password123"), eq("New User"))).thenReturn(result);
+    when(authService.signup(eq("new@example.com"), eq("password123"), eq("New User")))
+        .thenReturn(result);
 
     mockMvc
         .perform(
@@ -141,7 +144,8 @@ class AuthControllerTest {
                     fieldWithPath("password").description("Password for signup"),
                     fieldWithPath("name").description("Name for signup")),
                 responseHeaders(
-                    headerWithName("Set-Cookie").description("access-token and refresh-token httpOnly cookies")),
+                    headerWithName("Set-Cookie")
+                        .description("access-token and refresh-token httpOnly cookies")),
                 responseFields(
                     fieldWithPath("success").description("Whether request succeeded"),
                     fieldWithPath("code").description("Response code"),
@@ -169,7 +173,8 @@ class AuthControllerTest {
                 .build());
 
     mockMvc
-        .perform(post("/api/v1/auth/refresh").cookie(new Cookie("refresh-token", "refresh-token-value")))
+        .perform(
+            post("/api/v1/auth/refresh").cookie(new Cookie("refresh-token", "refresh-token-value")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.data.id").value("user-3"))
@@ -182,7 +187,8 @@ class AuthControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseHeaders(
-                    headerWithName("Set-Cookie").description("refreshed access-token and refresh-token cookies")),
+                    headerWithName("Set-Cookie")
+                        .description("refreshed access-token and refresh-token cookies")),
                 responseFields(
                     fieldWithPath("success").description("Whether request succeeded"),
                     fieldWithPath("code").description("Response code"),
@@ -217,7 +223,8 @@ class AuthControllerTest {
     doNothing().when(authService).logout("refresh-token-value");
 
     mockMvc
-        .perform(post("/api/v1/auth/logout").cookie(new Cookie("refresh-token", "refresh-token-value")))
+        .perform(
+            post("/api/v1/auth/logout").cookie(new Cookie("refresh-token", "refresh-token-value")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.data").isEmpty())
@@ -229,7 +236,8 @@ class AuthControllerTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 responseHeaders(
-                    headerWithName("Set-Cookie").description("expired access-token and refresh-token cookies")),
+                    headerWithName("Set-Cookie")
+                        .description("expired access-token and refresh-token cookies")),
                 responseFields(
                     fieldWithPath("success").description("Whether request succeeded"),
                     fieldWithPath("code").description("Response code"),
@@ -240,7 +248,8 @@ class AuthControllerTest {
   @Test
   void socialLoginDocumentsSuccessfulFlow() throws Exception {
     TokenResponse tokens = new TokenResponse("social-access-token", "social-refresh-token");
-    LoginResult result = new LoginResult(tokens, "user-4", "social@example.com", "Social User", "USER");
+    LoginResult result =
+        new LoginResult(tokens, "user-4", "social@example.com", "Social User", "USER");
 
     when(authService.socialLogin(eq("google"), eq("google-id-token"))).thenReturn(result);
 
@@ -260,7 +269,8 @@ class AuthControllerTest {
                     parameterWithName("provider").description("Social login provider name"),
                     parameterWithName("token").description("Provider-issued login token")),
                 responseHeaders(
-                    headerWithName("Set-Cookie").description("access-token and refresh-token httpOnly cookies")),
+                    headerWithName("Set-Cookie")
+                        .description("access-token and refresh-token httpOnly cookies")),
                 responseFields(
                     fieldWithPath("success").description("Whether request succeeded"),
                     fieldWithPath("code").description("Response code"),

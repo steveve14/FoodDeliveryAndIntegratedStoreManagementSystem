@@ -37,6 +37,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+/** StoreControllerDocsTest 타입입니다. */
 @ExtendWith(RestDocumentationExtension.class)
 class StoreControllerDocsTest {
 
@@ -58,7 +59,8 @@ class StoreControllerDocsTest {
   void createDocumentsSuccessfulStoreCreation() throws Exception {
     StoreDto store = sampleStore();
 
-    when(storeService.createStore(any(CreateStoreRequest.class), eq("owner-1"), eq("STORE"))).thenReturn(store);
+    when(storeService.createStore(any(CreateStoreRequest.class), eq("owner-1"), eq("STORE")))
+        .thenReturn(store);
 
     mockMvc
         .perform(
@@ -167,7 +169,9 @@ class StoreControllerDocsTest {
                     fieldWithPath("data[].status").description("Status").optional(),
                     fieldWithPath("data[].latitude").description("Latitude").optional(),
                     fieldWithPath("data[].longitude").description("Longitude").optional(),
-                    fieldWithPath("data[].minOrderAmount").description("Min order amount").optional(),
+                    fieldWithPath("data[].minOrderAmount")
+                        .description("Min order amount")
+                        .optional(),
                     fieldWithPath("data[].ratingAvg").description("Average rating").optional(),
                     fieldWithPath("data[].description").description("Store description").optional(),
                     fieldWithPath("data[].openingHours").description("Opening hours").optional(),
@@ -208,7 +212,8 @@ class StoreControllerDocsTest {
     when(storeService.findByOwnerId("owner-1")).thenReturn(Optional.of(sampleStore()));
 
     mockMvc
-        .perform(get("/api/v1/stores/me").header("X-User-Id", "owner-1").header("X-User-Role", "STORE"))
+        .perform(
+            get("/api/v1/stores/me").header("X-User-Id", "owner-1").header("X-User-Role", "STORE"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.id").value("store-1"))
         .andDo(

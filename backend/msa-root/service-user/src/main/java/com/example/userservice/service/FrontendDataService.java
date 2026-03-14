@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 
+/** FrontendDataService 타입입니다. */
 @Service
 public class FrontendDataService {
 
@@ -33,7 +34,9 @@ public class FrontendDataService {
   }
 
   public List<FrontendUserDto> getCustomers() {
-    return userRepository.findByRolesOrderByCreatedAtDesc("USER").stream().map(this::toFrontendUser).toList();
+    return userRepository.findByRolesOrderByCreatedAtDesc("USER").stream()
+        .map(this::toFrontendUser)
+        .toList();
   }
 
   public List<FrontendMemberDto> getMembers() {
@@ -66,8 +69,10 @@ public class FrontendDataService {
   }
 
   public List<FrontendNotificationDto> getNotifications() {
-    List<UserNotification> notifications = userNotificationRepository.findAllByOrderByCreatedAtDesc();
-    Map<String, User> userMap = loadUsers(notifications.stream().map(UserNotification::getUserId).toList());
+    List<UserNotification> notifications =
+        userNotificationRepository.findAllByOrderByCreatedAtDesc();
+    Map<String, User> userMap =
+        loadUsers(notifications.stream().map(UserNotification::getUserId).toList());
 
     return notifications.stream()
         .map(

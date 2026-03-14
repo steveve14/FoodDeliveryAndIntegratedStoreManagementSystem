@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 /** Repository for Store entities. */
+/** StoreRepository 타입입니다. */
 public interface StoreRepository extends CrudRepository<Store, String> {
-    Optional<Store> findByOwnerId(String ownerId);
+  Optional<Store> findByOwnerId(String ownerId);
 }

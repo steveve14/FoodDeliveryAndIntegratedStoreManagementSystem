@@ -34,6 +34,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+/** DeliveryControllerDocsTest 타입입니다. */
 @ExtendWith(RestDocumentationExtension.class)
 class DeliveryControllerDocsTest {
 
@@ -77,7 +78,8 @@ class DeliveryControllerDocsTest {
                 "deliveries-create-success",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                requestHeaders(headerWithName("X-User-Role").description("Requester role (STORE or ADMIN)")),
+                requestHeaders(
+                    headerWithName("X-User-Role").description("Requester role (STORE or ADMIN)")),
                 requestFields(
                     fieldWithPath("orderId").description("Order id"),
                     fieldWithPath("address").description("Delivery address").optional(),
@@ -150,7 +152,12 @@ class DeliveryControllerDocsTest {
 
   private DeliveryDto sampleDelivery() {
     return new DeliveryDto(
-        "delivery-1", "order-1", "courier-a", "SCHEDULED", 3000, Instant.parse("2026-03-13T00:00:00Z"));
+        "delivery-1",
+        "order-1",
+        "courier-a",
+        "SCHEDULED",
+        3000,
+        Instant.parse("2026-03-13T00:00:00Z"));
   }
 
   private org.springframework.restdocs.payload.FieldDescriptor[] deliveryResponseFields() {

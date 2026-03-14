@@ -9,6 +9,7 @@ import org.springframework.grpc.server.service.GrpcService;
  * Delivery 서비스 gRPC 서버 구현
  * 내부 MSA 통신용
  */
+/** DeliveryGrpcServiceImpl 타입입니다. */
 @GrpcService
 public class DeliveryGrpcServiceImpl extends DeliveryGrpcServiceGrpc.DeliveryGrpcServiceImplBase {
 

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 
+/** StoreServiceApplicationTest 타입입니다. */
 class StoreServiceApplicationTest {
 
   @Test

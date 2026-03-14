@@ -10,22 +10,21 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
+/** Delivery 타입입니다. */
 @Table("delivery")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Delivery implements Persistable<String> {
-  @Id
-  private String id;
+  @Id private String id;
   private String orderId;
   private String courier;
   private String status;
   private int deliveryFee;
   private Instant scheduledAt;
 
-  @Transient
-  private boolean isNewEntity;
+  @Transient private boolean isNewEntity;
 
   @Override
   public boolean isNew() {

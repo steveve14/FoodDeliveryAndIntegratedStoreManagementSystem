@@ -1,8 +1,8 @@
 package com.example.apigateway.controller;
 
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.test.web.reactive.server.WebTestClient.bindToController;
 
@@ -14,6 +14,7 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+/** HealthControllerTest 타입입니다. */
 @ExtendWith(RestDocumentationExtension.class)
 class HealthControllerTest {
 
@@ -21,10 +22,11 @@ class HealthControllerTest {
 
   @BeforeEach
   void setUp(RestDocumentationContextProvider restDocumentation) {
-    webTestClient = bindToController(new HealthController())
-        .configureClient()
-        .filter(WebTestClientRestDocumentation.documentationConfiguration(restDocumentation))
-        .build();
+    webTestClient =
+        bindToController(new HealthController())
+            .configureClient()
+            .filter(WebTestClientRestDocumentation.documentationConfiguration(restDocumentation))
+            .build();
   }
 
   @Test

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 /** Simple DTO representing user identity and metadata. */
+/** UserDto 타입입니다. */
 public class UserDto {
 
   private String id;

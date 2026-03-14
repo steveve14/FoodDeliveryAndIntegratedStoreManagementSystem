@@ -1,9 +1,9 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root */
 /**
- * [?�스??> 관리자 ?�동 로그]
- * - ?�기 ?�용 (?�정/??�� 불�?)
- * - ?�세 JSON 보기 기능 ?�함
+ * [시스템 > 관리자 활동 로그]
+ * - 읽기 전용 (수정/삭제 불가)
+ * - 상세 JSON 보기 기능 포함
  */
 import { h, ref, resolveComponent, watch, computed } from 'vue';
 import type { TableColumn } from '@nuxt/ui';
@@ -11,7 +11,7 @@ import { format, subMinutes, subDays } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Table } from '@tanstack/table-core';
 
-// 1. 컴포?�트 리졸�?
+// 1. 컴포넌트 리졸브
 const UButton = resolveComponent('UButton');
 const UBadge = resolveComponent('UBadge');
 const UDropdownMenu = resolveComponent('UDropdownMenu');
@@ -22,7 +22,7 @@ const toast = useToast();
 type TableInstance<T> = { tableApi?: Table<T> } | null;
 const table = ref<TableInstance<AuditLogItem>>(null);
 
-// 2. ?�정 �??�이???�의
+// 2. 상수 및 타입 정의
 const DATA_KEY = 'audit_logs';
 
 type AuditLogItem = {
@@ -30,24 +30,24 @@ type AuditLogItem = {
   adminName: string;
   adminIp: string;
   action: 'create' | 'update' | 'delete' | 'login' | 'export';
-  targetModule: string; // ?? User, Product, Banner
-  targetId?: string; // ?? #123
-  details: string; // ?�세 변�??�용 (JSON string)
+  targetModule: string; // 예: User, Product, Banner
+  targetId?: string; // 예: #123
+  details: string; // 상세 변경 내용 (JSON string)
   createdAt: string;
 };
 
-// 3. ?�태 관�?
+// 3. 상태 관리
 const columnFilters = ref([{ id: 'adminName', value: '' }]);
 const columnVisibility = ref({});
 const rowSelection = ref({});
-const pagination = ref({ pageIndex: 0, pageSize: 10 }); // 로그??많이 보�?�?20�?
+const pagination = ref({ pageIndex: 0, pageSize: 10 }); // 한 페이지당 10건
 const sorting = ref([{ id: 'id', desc: true }]);
 
 const actionFilter = ref('all');
 const isModalOpen = ref(false);
 const currentLog = ref<AuditLogItem | null>(null);
 
-// 4. ?�이???�칭 (Mock Data)
+// 4. 데이터 페칭 (Mock Data)
 const { data, status: loadingStatus } = await useAsyncData<AuditLogItem[]>(
   DATA_KEY,
   async () => {
@@ -80,7 +80,7 @@ const { data, status: loadingStatus } = await useAsyncData<AuditLogItem[]>(
   },
 );
 
-// 5. ?�션 ?�들??
+// 5. 액션 핸들러
 function openDetailModal (row: AuditLogItem) {
   currentLog.value = row;
   isModalOpen.value = true;
@@ -88,13 +88,13 @@ function openDetailModal (row: AuditLogItem) {
 
 function onExport () {
   toast.add({
-    title: '?�운로드 ?�작',
-    description: '?�체 로그�??��? ?�일�?변?�합?�다.',
+    title: '다운로드 시작',
+    description: '전체 로그를 파일로 변환합니다.',
     color: 'primary',
   });
 }
 
-// 6. ?�이�?컬럼 ?�의
+// 6. 테이블 컬럼 정의
 const columnLabels: Record<string, string> = {
   id: 'Log ID',
   adminName: '관리자',
@@ -194,13 +194,13 @@ const searchInput = computed({
       <UInput
         v-model="searchInput"
         icon="i-lucide-search"
-        placeholder="관리자�?검??.."
+        placeholder="관리자 검색.."
         class="max-w-sm"
       />
 
       <div class="flex items-center gap-2">
         <UButton
-          label="로그 ?�운로드"
+          label="로그 다운로드"
           icon="i-lucide-download"
           color="neutral"
           variant="outline"
@@ -235,7 +235,7 @@ const searchInput = computed({
           :content="{ align: 'end' }"
         >
           <UButton
-            label="컬럼 ?�정"
+            label="컬럼 설정"
             color="neutral"
             variant="outline"
             trailing-icon="i-lucide-settings-2"
@@ -269,8 +269,8 @@ const searchInput = computed({
       class="flex items-center justify-between gap-3 border-t border-default pt-4 mt-auto"
     >
       <div class="text-sm text-muted">
-        �?{{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}건의
-        로그가 검?�됨.
+        총 {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}건의 로그,
+        {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }}건 선택됨
       </div>
       <UPagination
         :default-page="
@@ -285,7 +285,7 @@ const searchInput = computed({
 
   <UModal
     v-model:open="isModalOpen"
-    title="로그 ?�세 ?�보"
+    title="로그 상세 정보"
     :ui="{ wrapper: 'w-full sm:max-w-2xl' }"
   >
     <template #body>
@@ -324,7 +324,7 @@ const searchInput = computed({
 
         <div class="flex justify-end pt-2">
           <UButton
-            label="?�기"
+            label="닫기"
             color="neutral"
             variant="ghost"
             @click="isModalOpen = false"

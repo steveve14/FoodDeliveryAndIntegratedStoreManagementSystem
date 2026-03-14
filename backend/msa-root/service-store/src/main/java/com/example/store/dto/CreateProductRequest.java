@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** CreateProductRequest 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

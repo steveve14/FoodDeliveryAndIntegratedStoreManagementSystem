@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 /*
  * DTO representing a user's public profile information.
  */
+/** UserProfileDto 타입입니다. */
 public class UserProfileDto {
 
   private String id;
