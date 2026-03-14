@@ -11,7 +11,7 @@ interface Customer {
 }
 
 const { data: customers } = await useFetch<Customer[]>('/api/customers', {
-  default: () => []
+  default: () => [],
 });
 
 const koMessages: UseTimeAgoMessages = {
@@ -25,7 +25,7 @@ const koMessages: UseTimeAgoMessages = {
   hour: n => `${n}시간`,
   minute: n => `${n}분`,
   second: n => `${n}초`,
-  invalid: '유효하지 않은 날짜'
+  invalid: '유효하지 않은 날짜',
 };
 
 function formatLastOrderAt (value: string | null) {

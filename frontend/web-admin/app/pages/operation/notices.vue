@@ -1,10 +1,11 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root, @stylistic/max-statements-per-line */
 /**
  * [?�수 ?�포??
  * Vue ?�심 기능 �?UI ?�이브러�??�?? ?�이�?코어 ?�수 ?�을 불러?�니??
  */
 import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
-import type { TableColumn, FormSubmitEvent  } from "@nuxt/ui";
+import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
 
 import * as z from 'zod'; // ?�효??검???�이브러�?
 import { format } from 'date-fns'; // ?�짜 ?�맷??
@@ -94,8 +95,13 @@ const { data, status: loadingStatus } = await useAsyncData<NoticeItem[]>(
   DATA_KEY,
   async () => {
     // ?�덤 ?�이???�성 ?�퍼 ?�수
-    const getRandom = <T>(arr: readonly T[]) =>
-      arr.length > 0 ? arr[Math.floor(Math.random() * arr.length)] : arr[0];
+    function getRandom<T> (arr: readonly T[]): T | undefined {
+      if (arr.length === 0) {
+        return undefined;
+      }
+
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
 
     const categories = ['general', 'urgent', 'event'] as const;
     const statuses = ['active', 'inactive', 'scheduled'] as const;
@@ -176,7 +182,7 @@ function onFileSelect (event: Event) {
 // [추�?] ?��?지 ??�� ?�들??
 function removeImage () {
   formState.imageUrl = '';
-  if (fileInput.value) {fileInput.value.value = "";} // ?�풋 초기??
+  if (fileInput.value) { fileInput.value.value = ''; } // ?�풋 초기??
 }
 
 // ???�출 ?�들??
@@ -239,18 +245,18 @@ const columns: TableColumn<NoticeItem>[] = [
     id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
-        "modelValue": table.getIsSomePageRowsSelected() ?
-          "indeterminate" :
+        'modelValue': table.getIsSomePageRowsSelected() ?
+          'indeterminate' :
           table.getIsAllPageRowsSelected(),
         'onUpdate:modelValue': (v: boolean) =>
           table.toggleAllPageRowsSelected(!!v),
-        "ariaLabel": '?�체 ?�택',
+        'ariaLabel': '?�체 ?�택',
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
-        "modelValue": row.getIsSelected(),
+        'modelValue': row.getIsSelected(),
         'onUpdate:modelValue': (v: boolean) => row.toggleSelected(!!v),
-        "ariaLabel": '???�택',
+        'ariaLabel': '???�택',
       }),
     enableSorting: false, // ?�렬 불필??
   },
@@ -267,11 +273,11 @@ const columns: TableColumn<NoticeItem>[] = [
         label: 'No.',
         // ?�렬 ?�태???�라 ?�이�?변�?
         icon:
-          isSorted === 'asc'
-            ? 'i-lucide-arrow-up-narrow-wide'
-            : isSorted === 'desc'
-              ? 'i-lucide-arrow-down-wide-narrow'
-              : 'i-lucide-arrow-up-down', // 기본 ?�태
+          isSorted === 'asc' ?
+            'i-lucide-arrow-up-narrow-wide' :
+            isSorted === 'desc' ?
+              'i-lucide-arrow-down-wide-narrow' :
+              'i-lucide-arrow-up-down', // 기본 ?�태
         class: '-ml-2.5 font-bold hover:bg-gray-100 dark:hover:bg-gray-800',
         // ?�릭 ???�렬 ?��? (?�름차순 <-> ?�림차순)
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
@@ -307,9 +313,9 @@ const columns: TableColumn<NoticeItem>[] = [
         // 고정?� ?�이�?
         row.original.isPinned &&
         h(UIcon, {
-            name: 'i-lucide-pin',
-            class: 'text-primary w-4 h-4 shrink-0',
-          }),
+          name: 'i-lucide-pin',
+          class: 'text-primary w-4 h-4 shrink-0',
+        }),
         // [추�?] ?��?지가 ?�으�??�바?� ?�시
         row.original.imageUrl &&
         h(UAvatar, { src: row.original.imageUrl, size: '2xs' }),
@@ -392,7 +398,7 @@ const columns: TableColumn<NoticeItem>[] = [
 
 // ?�태 ?�터 ?�롭?�운 변�?감�? -> ?�이�?컬럼 ?�터 ?�용
 watch(statusFilter, (val) => {
-  if (!table.value?.tableApi) {return;}
+  if (!table.value?.tableApi) { return; }
   table.value.tableApi
     .getColumn('status')
     ?.setFilterValue(val === 'all' ? undefined : val);

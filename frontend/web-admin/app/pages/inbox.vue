@@ -49,44 +49,46 @@ const isMobile = breakpoints.smaller('lg');
 </script>
 
 <template>
-  <UDashboardPanel
-    id="inbox-1"
-    :default-size="25"
-    :min-size="20"
-    :max-size="30"
-    resizable
-  >
-    <UDashboardNavbar title="메시지함">
-      <template #leading>
-        <UDashboardSidebarCollapse />
-      </template>
-      <template #trailing>
-        <UBadge :label="filteredMails.length" variant="subtle" />
-      </template>
+  <div class="flex flex-1 min-h-0">
+    <UDashboardPanel
+      id="inbox-1"
+      :default-size="25"
+      :min-size="20"
+      :max-size="30"
+      resizable
+    >
+      <UDashboardNavbar title="메시지함">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
+        <template #trailing>
+          <UBadge :label="filteredMails.length" variant="subtle" />
+        </template>
 
-      <template #right>
-        <UTabs
-          v-model="selectedTab"
-          :items="tabItems"
-          :content="false"
-          size="xs"
-        />
-      </template>
-    </UDashboardNavbar>
+        <template #right>
+          <UTabs
+            v-model="selectedTab"
+            :items="tabItems"
+            :content="false"
+            size="xs"
+          />
+        </template>
+      </UDashboardNavbar>
 
-    <InboxList v-model="selectedMail" :mails="filteredMails" />
-  </UDashboardPanel>
+      <InboxList v-model="selectedMail" :mails="filteredMails" />
+    </UDashboardPanel>
 
-  <InboxMail v-if="selectedMail" :mail="selectedMail" @close="selectedMail = null" />
-  <div v-else class="hidden lg:flex flex-1 items-center justify-center">
-    <UIcon name="i-lucide-inbox" class="size-32 text-dimmed" />
+    <InboxMail v-if="selectedMail" :mail="selectedMail" @close="selectedMail = null" />
+    <div v-else class="hidden lg:flex flex-1 items-center justify-center">
+      <UIcon name="i-lucide-inbox" class="size-32 text-dimmed" />
+    </div>
+
+    <ClientOnly>
+      <USlideover v-if="isMobile" v-model:open="isMailPanelOpen">
+        <template #content>
+          <InboxMail v-if="selectedMail" :mail="selectedMail" @close="selectedMail = null" />
+        </template>
+      </USlideover>
+    </ClientOnly>
   </div>
-
-  <ClientOnly>
-    <USlideover v-if="isMobile" v-model:open="isMailPanelOpen">
-      <template #content>
-        <InboxMail v-if="selectedMail" :mail="selectedMail" @close="selectedMail = null" />
-      </template>
-    </USlideover>
-  </ClientOnly>
 </template>

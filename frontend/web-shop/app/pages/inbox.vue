@@ -4,7 +4,7 @@ import type { UseTimeAgoMessages } from '@vueuse/core';
 import type { Mail } from '~/types';
 
 const { data: threads } = await useFetch<Mail[]>('/api/mails', {
-  default: () => []
+  default: () => [],
 });
 
 const koMessages: UseTimeAgoMessages = {
@@ -18,7 +18,7 @@ const koMessages: UseTimeAgoMessages = {
   hour: n => `${n}시간`,
   minute: n => `${n}분`,
   second: n => `${n}초`,
-  invalid: '유효하지 않은 날짜'
+  invalid: '유효하지 않은 날짜',
 };
 
 function formatUpdatedAt (dateString: string) {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable vue/no-multiple-template-root */
 /**
  * [마�???> 쿠폰 관�?
  * Base Code ?�키?�처 기반 리팩?�링

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root */
 /**
  * [마�???> 배너/광고 관�?
  * Base Code ?�키?�처 기반 구현

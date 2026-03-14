@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root */
 /**
  * [시스템 > 앱 버전 관리]
  * Base Code 아키텍처 기반 구현

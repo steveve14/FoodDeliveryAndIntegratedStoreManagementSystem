@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root */
 /**
  * [?�스??> 관리자 ?�동 로그]
  * - ?�기 ?�용 (?�정/??�� 불�?)

@@ -12,7 +12,7 @@ const props = defineProps<{
 const days = computed(() => {
   try {
     return eachDayOfInterval(props.range);
-  } catch (e) {
+  } catch {
     return []; // 날짜 계산 실패 시 빈 배열 반환
   }
 });

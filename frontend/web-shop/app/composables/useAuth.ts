@@ -34,8 +34,9 @@ export const useAuth = () => {
       });
     } finally {
       user.value = null;
-      return navigateTo('/login');
     }
+
+    return navigateTo('/login');
   };
 
   /** 토큰 갱신 */

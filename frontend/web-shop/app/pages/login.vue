@@ -48,10 +48,11 @@ async function onSubmit (payload: FormSubmitEvent<Schema>) {
       color: 'success',
     });
     await navigateTo('/');
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : undefined;
     toast.add({
       title: '오류',
-      description: error?.message || '로그인에 실패했습니다.',
+      description: message || '로그인에 실패했습니다.',
       color: 'error',
     });
   }

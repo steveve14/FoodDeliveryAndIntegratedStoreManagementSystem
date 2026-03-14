@@ -133,9 +133,9 @@ const openEditModal = (product: Product) => {
   isEditMode.value = true;
   state.id = product.id;
   state.name = product.name;
-  state.category = categories.includes(product.category)
-    ? product.category
-    : DEFAULT_STORE_CATEGORY_LABEL;
+  state.category = categories.includes(product.category) ?
+    product.category :
+    DEFAULT_STORE_CATEGORY_LABEL;
   state.price = product.price;
   state.status = product.status;
   isModalOpen.value = true;

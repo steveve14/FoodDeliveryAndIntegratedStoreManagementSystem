@@ -19,18 +19,18 @@ interface CustomerSummary {
 export default eventHandler(async (event) => {
   const [customers, summaries] = await Promise.all([
     fetchBackendData<Customer[]>(event, '/api/v1/users/frontend/customers'),
-    fetchBackendData<CustomerSummary[]>(event, '/api/v1/orders/frontend/customer-summaries')
+    fetchBackendData<CustomerSummary[]>(event, '/api/v1/orders/frontend/customer-summaries'),
   ]);
   const summaryMap = new Map(summaries.map(summary => [summary.userId, summary]));
 
-  return customers.map(customer => {
+  return customers.map((customer) => {
     const summary = summaryMap.get(customer.id);
 
     return {
       ...customer,
       orders: summary?.ordersCount ?? 0,
       lastOrderAt: summary?.lastOrderAt ?? null,
-      grade: summary?.grade ?? 'regular'
+      grade: summary?.grade ?? 'regular',
     };
   });
 });

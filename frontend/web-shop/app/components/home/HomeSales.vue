@@ -72,7 +72,7 @@ const data = computed<Order[]>(() => {
     }));
 });
 
-const columns: TableColumn<any>[] = [
+const columns: TableColumn<Order>[] = [
   {
     accessorKey: 'id',
     header: '주문번호',

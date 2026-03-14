@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-unused-vars, vue/no-multiple-template-root, @stylistic/max-statements-per-line */
 /**
  * [1:1 문의 관�?
  * Base Code(공�??�항)???�키?�처�?기반?�로 리팩?�링??코드?�니??

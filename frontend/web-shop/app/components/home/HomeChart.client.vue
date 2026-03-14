@@ -78,7 +78,7 @@ watch(
         date,
         amount: amountByBucket.get(bucketStart(date).getTime()) ?? 0,
       }));
-    } catch (e) {
+    } catch {
       data.value = []; // 날짜 범위 오류 방지
     }
   },

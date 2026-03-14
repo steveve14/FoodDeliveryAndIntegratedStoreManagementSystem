@@ -68,8 +68,9 @@ export const useApi = () => {
 
     try {
       return await doFetch();
-    } catch (err: any) {
-      if (err?.response?.status === 401) {
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 401) {
         const refreshed = await tryRefreshToken();
         if (refreshed) {
           return await doFetch();

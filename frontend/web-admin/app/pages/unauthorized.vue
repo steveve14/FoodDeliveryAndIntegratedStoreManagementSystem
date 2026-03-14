@@ -1,54 +1,8 @@
 <script setup lang="ts">
-const { user, isAdmin, isStore } = useAuth();
+const { user } = useAuth();
 
 definePageMeta({
   layout: 'auth',
-});
-
-type ButtonColor =
-  | 'primary' |
-  'warning' |
-  'secondary' |
-  'success' |
-  'info' |
-  'error' |
-  'neutral' |
-  'gray';
-
-interface NavLink {
-  label: string;
-  icon: string;
-  to: string;
-  color: ButtonColor;
-}
-
-const links = computed<NavLink[]>(() => {
-  const items: NavLink[] = [];
-
-  if (isAdmin.value) {
-    items.push({
-      label: '시스템 관리자로 이동',
-      icon: 'i-lucide-shield-check',
-      to: '/system/audit',
-      color: 'primary',
-    });
-  }
-  if (isStore.value || isAdmin.value) {
-    items.push({
-      label: '가게 관리 페이지로 이동',
-      icon: 'i-lucide-store',
-      to: '/stores',
-      color: 'warning',
-    });
-  }
-  items.push({
-    label: '홈으로 이동',
-    icon: 'i-lucide-home',
-    to: '/',
-    color: 'gray',
-  });
-
-  return items;
 });
 </script>
 

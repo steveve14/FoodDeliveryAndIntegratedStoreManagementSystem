@@ -1,4 +1,4 @@
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to) => {
   const { user } = useAuth();
 
   const publicPages = ['/login', '/unauthorized'];
