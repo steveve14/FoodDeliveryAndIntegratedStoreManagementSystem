@@ -12,18 +12,19 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-/** Service handling menu items for stores (list, create, update, delete). */
 /** MenuService 타입입니다. */
+@Service
 public class MenuService {
   private final MenuRepository menuRepository;
   private final StoreRepository storeRepository;
 
+  /** 메뉴 서비스를 생성합니다. */
   public MenuService(MenuRepository menuRepository, StoreRepository storeRepository) {
     this.menuRepository = menuRepository;
     this.storeRepository = storeRepository;
   }
 
+  /** 매장 메뉴 목록을 조회합니다. */
   public List<MenuDto> listByStore(String storeId) {
     return menuRepository.findByStoreId(storeId).stream()
         .map(
@@ -39,6 +40,7 @@ public class MenuService {
         .collect(Collectors.toList());
   }
 
+  /** 매장 메뉴를 생성합니다. */
   @Transactional
   public MenuDto create(String storeId, String userId, String userRole, MenuDto req) {
     assertStoreOwnership(storeId, userId, userRole);
@@ -65,6 +67,7 @@ public class MenuService {
         saved.getCreatedAt());
   }
 
+  /** 매장 메뉴를 수정합니다. */
   @Transactional
   public MenuDto update(
       String storeId, String menuId, String userId, String userRole, MenuDto req) {
@@ -72,7 +75,9 @@ public class MenuService {
         menuRepository
             .findById(menuId)
             .orElseThrow(() -> new IllegalArgumentException("Menu not found"));
-    if (!m.getStoreId().equals(storeId)) throw new IllegalArgumentException("Forbidden");
+    if (!m.getStoreId().equals(storeId)) {
+      throw new IllegalArgumentException("Forbidden");
+    }
     assertStoreOwnership(storeId, userId, userRole);
     Menu updated =
         m.toBuilder()
@@ -92,13 +97,16 @@ public class MenuService {
         saved.getCreatedAt());
   }
 
+  /** 매장 메뉴를 삭제합니다. */
   @Transactional
   public void delete(String storeId, String menuId, String userId, String userRole) {
     Menu m =
         menuRepository
             .findById(menuId)
             .orElseThrow(() -> new IllegalArgumentException("Menu not found"));
-    if (!m.getStoreId().equals(storeId)) throw new IllegalArgumentException("Forbidden");
+    if (!m.getStoreId().equals(storeId)) {
+      throw new IllegalArgumentException("Forbidden");
+    }
     assertStoreOwnership(storeId, userId, userRole);
     menuRepository.deleteById(menuId);
   }

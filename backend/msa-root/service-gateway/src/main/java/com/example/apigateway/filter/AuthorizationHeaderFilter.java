@@ -27,6 +27,7 @@ public class AuthorizationHeaderFilter
 
   private final SecretKey secretKey;
 
+  /** 인증 필터를 생성하고 JWT 서명 키를 초기화합니다. */
   public AuthorizationHeaderFilter(Environment env) {
     super(Config.class);
     String secret = env.getProperty("token.secret");
@@ -42,10 +43,12 @@ public class AuthorizationHeaderFilter
     }
   }
 
+  /** 게이트웨이 인증 필터 설정 타입입니다. */
   public static class Config {
     // 설정 정보가 필요하면 여기에 추가
   }
 
+  /** 게이트웨이 요청에 대한 JWT 검증 필터를 반환합니다. */
   @Override
   public GatewayFilter apply(Config config) {
     return (exchange, chain) -> {
@@ -84,7 +87,7 @@ public class AuthorizationHeaderFilter
     }
   }
 
-  /** Authorization 헤더 → access-token 쿠키 순으로 JWT를 추출 */
+  /** Authorization 헤더에서 먼저, 없으면 access-token 쿠키에서 JWT를 추출합니다. */
   private String resolveToken(ServerHttpRequest request) {
     // 1) Authorization: Bearer <token> 헤더 우선
     String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);

@@ -14,6 +14,7 @@ public class InfoResponse {
   private String status;
   private String timestamp;
 
+  /** 서비스 구동 상태 정보를 생성합니다. */
   public static InfoResponse up(String serviceName) {
     return new InfoResponse(serviceName, "UP", Instant.now().toString());
   }

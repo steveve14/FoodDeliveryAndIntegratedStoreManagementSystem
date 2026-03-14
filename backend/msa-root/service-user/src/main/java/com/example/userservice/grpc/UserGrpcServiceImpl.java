@@ -13,6 +13,7 @@ public class UserGrpcServiceImpl extends UserGrpcServiceGrpc.UserGrpcServiceImpl
 
   private final UserService userService;
 
+  /** 사용자 gRPC 서비스 구현을 생성합니다. */
   public UserGrpcServiceImpl(UserService userService) {
     this.userService = userService;
   }

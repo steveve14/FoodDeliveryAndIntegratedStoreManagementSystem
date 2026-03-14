@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class HealthController {
 
+  /** 서비스 상태 정보를 반환합니다. */
   @GetMapping("/info")
   public ApiResponse<InfoResponse> info() {
     return ApiResponse.ok(InfoResponse.up("service-gateway"));

@@ -36,6 +36,7 @@ public class OrderService {
           "COOKING", Set.of("DELIVERING", "CANCELLED"),
           "DELIVERING", Set.of("DONE", "CANCELLED"));
 
+  /** 주문 서비스 인스턴스를 생성합니다. */
   public OrderService(
       OrderRepository orderRepository,
       OrderItemRepository orderItemRepository,
@@ -47,6 +48,7 @@ public class OrderService {
     this.jdbcTemplate = jdbcTemplate;
   }
 
+  /** 고객 주문 요약 목록을 조회합니다. */
   public java.util.List<FrontendCustomerOrderSummaryDto> getFrontendCustomerSummaries() {
     return jdbcTemplate.query(
         """
@@ -64,6 +66,7 @@ public class OrderService {
                 rs.getLong("orders_count") >= vipThreshold ? "vip" : "regular"));
   }
 
+  /** 주문을 생성합니다. */
   @Transactional
   public OrderDto createOrder(String userId, java.util.List<OrderItemDto> items, String status) {
     if (items == null || items.isEmpty()) {
@@ -116,16 +119,19 @@ public class OrderService {
     return toDto(saved, items);
   }
 
+  /** ID로 주문을 조회합니다. */
   public Optional<OrderDto> findById(String id) {
     return orderRepository.findById(id).map(o -> toDto(o, loadItems(o.getId())));
   }
 
+  /** 사용자 ID 기준으로 주문 목록을 조회합니다. */
   public java.util.List<OrderDto> findByUserId(String userId) {
     return orderRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
         .map(order -> toDto(order, loadItems(order.getId())))
         .toList();
   }
 
+  /** 매장 ID 기준으로 주문 목록을 조회합니다. */
   public java.util.List<OrderDto> findByStoreId(
       String storeId, String currentUserId, String currentUserRole) {
     validateStoreAccess(storeId, currentUserId, currentUserRole);
@@ -134,6 +140,7 @@ public class OrderService {
         .toList();
   }
 
+  /** 주문 상태를 변경합니다. */
   @Transactional
   public OrderDto updateStatus(String orderId, String newStatus) {
     Order o =

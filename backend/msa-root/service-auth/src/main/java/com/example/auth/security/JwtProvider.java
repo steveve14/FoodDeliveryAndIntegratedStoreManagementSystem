@@ -63,9 +63,9 @@ public class JwtProvider {
   }
 
   /**
-   * 액세스 토큰 생성 파라미터: - userId: 토큰의 subject(sub)으로 들어갈 사용자 식별자(필수) - role: 사용자 권한 정보(예: "ROLE_USER")를
-   * role 클레임으로 포함 토큰 내용: - subject(sub): userId - claim("role"): role 정보 - iat: 발행 시각 - exp: 만료
-   * 시각(현재 시각 + accessTokenValidityMs) - 서명: HS256과 위에서 생성된 SecretKey로 서명 반환값: 서명된 JWT 문자열
+   * 액세스 토큰을 생성합니다.
+   *
+   * <p>파라미터: userId(필수), role(권한 정보)
    */
   public String createAccessToken(String userId, String role) {
     Instant now = Instant.now();
@@ -85,10 +85,9 @@ public class JwtProvider {
   }
 
   /**
-   * 리프레시 토큰 생성 파라미터: - userId: 토큰의 subject(sub)으로 들어갈 사용자 식별자(필수) 토큰 내용: - subject(sub): userId -
-   * claim("type"): "refresh" 로 리프레시 토큰임을 표시 - iat: 발행 시각 - exp: 만료 시각(현재 시각 +
-   * refreshTokenValidityMs) - 서명: HS256과 SecretKey로 서명 반환값: 서명된 JWT 문자열 권고: - 리프레시 토큰의 경우 서버 측에서
-   * jti(토큰 식별자)를 발급해 DB에 저장하고 폐기(revoke) 처리를 하는 패턴이 안전합니다(여기서는 jti를 추가/저장하지 않음).
+   * 리프레시 토큰을 생성합니다.
+   *
+   * <p>파라미터: userId(필수), role(권한 정보)
    */
   public String createRefreshToken(String userId, String role) {
     Instant now = Instant.now();
@@ -110,7 +109,7 @@ public class JwtProvider {
   }
 
   /**
-   * JWT 토큰 유효성 검증
+   * JWT 토큰 유효성 검증입니다.
    *
    * @param token 검증할 JWT 토큰
    * @return 유효하면 true, 그렇지 않으면 false
@@ -127,7 +126,7 @@ public class JwtProvider {
   }
 
   /**
-   * JWT 토큰에서 사용자 ID 추출
+   * JWT 토큰에서 사용자 ID를 추출합니다.
    *
    * @param token JWT 토큰
    * @return 사용자 ID
@@ -138,7 +137,7 @@ public class JwtProvider {
   }
 
   /**
-   * JWT 토큰에서 권한(role) 정보 추출
+   * JWT 토큰에서 권한(role) 정보를 추출합니다.
    *
    * @param token JWT 토큰
    * @return 권한 문자열 (없으면 빈 문자열)

@@ -18,16 +18,19 @@ public class CartService {
 
   private final CartItemRepository cartItemRepository;
 
+  /** 장바구니 서비스를 생성합니다. */
   public CartService(CartItemRepository cartItemRepository) {
     this.cartItemRepository = cartItemRepository;
   }
 
+  /** 사용자 장바구니 목록을 조회합니다. */
   public List<CartItemDto> listByUser(String userId) {
     return cartItemRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
         .map(this::toDto)
         .toList();
   }
 
+  /** 장바구니 항목을 추가하거나 수량을 갱신합니다. */
   @Transactional
   public CartItemDto addItem(String userId, CartItemRequest request) {
     CartItem cartItem =
@@ -57,6 +60,7 @@ public class CartService {
     return toDto(saved);
   }
 
+  /** 장바구니 항목을 삭제합니다. */
   @Transactional
   public void deleteItem(String userId, String cartItemId) {
     CartItem existing =
@@ -68,6 +72,7 @@ public class CartService {
     cartItemRepository.deleteById(cartItemId);
   }
 
+  /** 사용자 장바구니를 모두 비웁니다. */
   @Transactional
   public void clear(String userId) {
     cartItemRepository
@@ -81,6 +86,7 @@ public class CartService {
     }
   }
 
+  /** 장바구니 엔티티를 응답 DTO로 변환합니다. */
   private CartItemDto toDto(CartItem cartItem) {
     return new CartItemDto(
         cartItem.getId(),

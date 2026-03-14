@@ -12,9 +12,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-/** Service handling store management operations (create, find, list). */
 /** StoreService 타입입니다. */
+@Service
 public class StoreService {
   private record CategoryProfile(String eta, String heroIcon, List<String> tags) {}
 
@@ -72,16 +71,19 @@ public class StoreService {
   private final StoreRepository storeRepository;
   private final MenuRepository menuRepository;
 
+  /** 가게 서비스를 생성합니다. */
   public StoreService(StoreRepository storeRepository, MenuRepository menuRepository) {
     this.storeRepository = storeRepository;
     this.menuRepository = menuRepository;
   }
 
+  /** 가게를 생성합니다. */
   @Transactional
   public StoreDto createStore(com.example.store.dto.CreateStoreRequest req) {
     return createStore(req, req.getOwnerId(), "ADMIN");
   }
 
+  /** 사용자 권한을 고려해 가게를 생성합니다. */
   @Transactional
   public StoreDto createStore(
       com.example.store.dto.CreateStoreRequest req, String currentUserId, String currentUserRole) {
@@ -114,14 +116,17 @@ public class StoreService {
     return toDto(saved);
   }
 
+  /** ID로 가게를 조회합니다. */
   public Optional<StoreDto> findById(String id) {
     return storeRepository.findById(id).map(this::toDto);
   }
 
+  /** 점주 ID로 가게를 조회합니다. */
   public Optional<StoreDto> findByOwnerId(String ownerId) {
     return storeRepository.findByOwnerId(ownerId).map(this::toDto);
   }
 
+  /** 조건에 맞는 가게 목록을 조회합니다. */
   public java.util.List<StoreDto> list(String category, String status) {
     String normalizedCategory = normalizeCategoryCode(category);
     java.util.List<com.example.store.entity.Store> all = new java.util.ArrayList<>();
@@ -131,8 +136,9 @@ public class StoreService {
       stream =
           stream.filter(s -> normalizedCategory.equals(normalizeCategoryCode(s.getCategory())));
     }
-    if (status != null && !status.isEmpty())
+    if (status != null && !status.isEmpty()) {
       stream = stream.filter(s -> status.equals(s.getStatus()));
+    }
     return stream.map(this::toDto).collect(java.util.stream.Collectors.toList());
   }
 

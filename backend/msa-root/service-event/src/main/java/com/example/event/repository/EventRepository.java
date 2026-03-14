@@ -4,7 +4,6 @@ import com.example.event.entity.Event;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+/** Event 엔티티를 조회하고 저장하는 저장소입니다. */
 @Repository
-/** Repository for Event entities. */
-/** EventRepository 타입입니다. */
 public interface EventRepository extends CrudRepository<Event, String> {}

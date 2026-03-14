@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserNotificationRepository extends CrudRepository<UserNotification, Long> {
 
+  /** 사용자 알림 목록을 최신순으로 조회합니다. */
   List<UserNotification> findAllByOrderByCreatedAtDesc();
 }

@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** AuthUserDto 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/** DTO returned after successful authentication containing basic user info. */
-/** AuthUserDto 타입입니다. */
 public class AuthUserDto {
 
   private String id;

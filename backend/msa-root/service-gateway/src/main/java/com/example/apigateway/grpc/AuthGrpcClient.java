@@ -5,19 +5,19 @@ import com.example.auth.grpc.ValidateTokenRequest;
 import com.example.auth.grpc.ValidateTokenResponse;
 import org.springframework.stereotype.Service;
 
-/** service-auth gRPC 클라이언트 Gateway에서 JWT 검증 시 호출 */
 /** AuthGrpcClient 타입입니다. */
 @Service
 public class AuthGrpcClient {
 
   private final AuthGrpcServiceGrpc.AuthGrpcServiceBlockingStub authStub;
 
+  /** 인증 서비스 gRPC 클라이언트를 생성합니다. */
   public AuthGrpcClient(AuthGrpcServiceGrpc.AuthGrpcServiceBlockingStub authStub) {
     this.authStub = authStub;
   }
 
   /**
-   * JWT 토큰 검증
+   * JWT 토큰을 검증합니다.
    *
    * @return ValidateTokenResponse (valid, userId, roles, errorMessage)
    */

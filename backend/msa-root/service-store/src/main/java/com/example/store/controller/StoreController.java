@@ -16,18 +16,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/** StoreController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1/stores")
-/** REST controller exposing store management endpoints. */
-/** StoreController 타입입니다. */
 public class StoreController {
 
   private final StoreService storeService;
 
+  /** 가게 컨트롤러를 생성합니다. */
   public StoreController(StoreService storeService) {
     this.storeService = storeService;
   }
 
+  /** 가게를 생성합니다. */
   @PostMapping
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<StoreDto>> create(
@@ -38,6 +39,7 @@ public class StoreController {
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** 가게 목록을 조회합니다. */
   @GetMapping
   public ResponseEntity<ApiResponse<java.util.List<StoreDto>>> list(
       @RequestParam(required = false) String category,
@@ -45,6 +47,7 @@ public class StoreController {
     return ResponseEntity.ok(ApiResponse.ok(storeService.list(category, status)));
   }
 
+  /** 현재 사용자의 가게를 조회합니다. */
   @GetMapping("/me")
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<StoreDto>> getMyStore(
@@ -55,6 +58,7 @@ public class StoreController {
         .orElseGet(() -> ResponseEntity.status(404).body(ApiResponse.error(404, "Not found")));
   }
 
+  /** ID로 가게를 조회합니다. */
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<StoreDto>> get(@PathVariable String id) {
     return storeService

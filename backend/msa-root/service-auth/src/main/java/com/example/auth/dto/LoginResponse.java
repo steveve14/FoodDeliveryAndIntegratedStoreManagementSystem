@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/** 로그인 성공 시 사용자 정보만 반환하는 DTO (토큰은 httpOnly 쿠키로 전송) */
-/** LoginResponse 타입입니다. */
+/** 로그인 성공 시 사용자 정보만 반환하는 DTO입니다 (토큰은 httpOnly 쿠키로 전송). */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

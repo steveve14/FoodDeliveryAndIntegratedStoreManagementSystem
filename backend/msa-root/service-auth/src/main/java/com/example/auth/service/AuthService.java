@@ -111,7 +111,7 @@ public class AuthService implements AuthenticationService {
     }
   }
 
-  /** 이메일/비밀번호 로그인 - gRPC를 통해 service-user와 통신 */
+  /** 이메일/비밀번호 로그인입니다. gRPC를 통해 service-user와 통신합니다. */
   @Transactional
   public LoginResult login(String email, String password) {
     if (email == null || password == null) {
@@ -171,7 +171,6 @@ public class AuthService implements AuthenticationService {
     String userId = jwtProvider.getUserIdFromToken(stored.getToken());
     String roles = jwtProvider.getRolesFromToken(stored.getToken());
 
-    String newAccess = jwtProvider.createAccessToken(userId, roles);
     String newRefresh = jwtProvider.createRefreshToken(userId, roles);
 
     // update stored token (rotate)
@@ -180,6 +179,7 @@ public class AuthService implements AuthenticationService {
     stored.setExpiresAt(java.time.Instant.now().plusMillis(1209600000L));
     refreshTokenRepository.save(stored);
 
+    String newAccess = jwtProvider.createAccessToken(userId, roles);
     return new TokenResponse(newAccess, newRefresh);
   }
 

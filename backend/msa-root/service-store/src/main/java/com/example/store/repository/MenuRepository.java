@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+/** 메뉴 엔티티 저장소입니다. */
 @Repository
-/** Repository for Menu entities. */
-/** MenuRepository 타입입니다. */
 public interface MenuRepository extends CrudRepository<Menu, String> {
 
+  /** 매장 ID로 메뉴 목록을 조회합니다. */
   List<Menu> findByStoreId(String storeId);
 }

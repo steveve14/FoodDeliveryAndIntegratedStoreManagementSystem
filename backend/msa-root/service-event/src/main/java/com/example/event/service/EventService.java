@@ -13,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventService {
   private final EventRepository eventRepository;
 
+  /** 이벤트 서비스 인스턴스를 생성합니다. */
   public EventService(EventRepository eventRepository) {
     this.eventRepository = eventRepository;
   }
 
+  /** 새로운 이벤트를 생성하고 저장합니다. */
   @Transactional
   public EventDto createEvent(String type, String payload) {
     Event e =
@@ -31,6 +33,7 @@ public class EventService {
     return new EventDto(saved.getId(), saved.getType(), saved.getPayload(), saved.getCreatedAt());
   }
 
+  /** ID로 이벤트를 조회합니다. */
   public Optional<EventDto> findById(String id) {
     return eventRepository
         .findById(id)

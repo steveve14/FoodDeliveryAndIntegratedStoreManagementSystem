@@ -1,4 +1,3 @@
-// src/main/java/com/example/auth/dto/TokenResponse.java
 package com.example.auth.dto;
 
 import lombok.AllArgsConstructor;

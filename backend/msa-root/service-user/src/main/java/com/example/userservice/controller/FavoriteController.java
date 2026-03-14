@@ -26,18 +26,21 @@ public class FavoriteController {
 
   private final FavoriteService favoriteService;
 
+  /** 현재 사용자의 찜한 가게 목록을 조회합니다. */
   @GetMapping
   public ResponseEntity<ApiResponse<java.util.List<FavoriteStoreDto>>> list(
       @RequestHeader("X-User-Id") String userId) {
     return ResponseEntity.ok(ApiResponse.ok(favoriteService.listByUser(userId)));
   }
 
+  /** 가게를 찜 목록에 추가합니다. */
   @PostMapping
   public ResponseEntity<ApiResponse<FavoriteStoreDto>> add(
       @RequestHeader("X-User-Id") String userId, @RequestBody @Valid FavoriteStoreRequest request) {
     return ResponseEntity.ok(ApiResponse.ok(favoriteService.add(userId, request)));
   }
 
+  /** 찜한 가게를 삭제합니다. */
   @DeleteMapping("/{favoriteId}")
   public ResponseEntity<ApiResponse<Object>> delete(
       @RequestHeader("X-User-Id") String userId, @PathVariable String favoriteId) {

@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+/** RestExceptionHandler 타입입니다. */
 @Slf4j
 @RestControllerAdvice
-/** Global REST exception handler mapping common exceptions to HTTP responses. */
 public class RestExceptionHandler {
 
+  /** 유효성 검증 실패 예외를 처리합니다. */
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiResponse<Object>> handleValidation(MethodArgumentNotValidException ex) {
     String message =
@@ -25,24 +26,28 @@ public class RestExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, message));
   }
 
+  /** 잘못된 요청 예외를 처리합니다. */
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ApiResponse<Object>> handleBadRequest(IllegalArgumentException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponse.error(400, ex.getMessage()));
   }
 
+  /** 리소스 미존재 예외를 처리합니다. */
   @ExceptionHandler(NoSuchElementException.class)
   public ResponseEntity<ApiResponse<Object>> handleNotFound(NoSuchElementException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(ApiResponse.error(404, ex.getMessage()));
   }
 
+  /** 응답 상태 기반 예외를 처리합니다. */
   @ExceptionHandler(ResponseStatusException.class)
   public ResponseEntity<ApiResponse<Object>> handleResponseStatus(ResponseStatusException ex) {
     return ResponseEntity.status(ex.getStatusCode())
         .body(ApiResponse.error(ex.getStatusCode().value(), ex.getReason()));
   }
 
+  /** 처리되지 않은 예외를 공통으로 처리합니다. */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiResponse<Object>> handleGeneric(Exception ex) {
     log.error("예상치 못한 오류 발생", ex);

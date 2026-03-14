@@ -27,24 +27,26 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+/** UserController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1/users")
-/** REST controller exposing user management endpoints. */
-/** UserController 타입입니다. */
 public class UserController {
 
   private final UserService userService;
 
+  /** 사용자 컨트롤러를 생성합니다. */
   public UserController(UserService userService) {
     this.userService = userService;
   }
 
+  /** 사용자를 회원가입 처리합니다. */
   @PostMapping("/register")
   public ResponseEntity<ApiResponse<UserDto>> register(@RequestBody @Valid CreateUserRequest req) {
     UserDto dto = userService.register(req);
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** 이메일로 사용자를 조회합니다. */
   @GetMapping
   @RequireRole({"ADMIN"})
   public ResponseEntity<ApiResponse<UserDto>> getByEmail(@RequestParam String email) {
@@ -55,6 +57,7 @@ public class UserController {
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** 사용자 프로필을 조회합니다. */
   @GetMapping("/{id}/profile")
   public ResponseEntity<ApiResponse<com.example.userservice.dto.UserProfileDto>> getProfile(
       @PathVariable String id,
@@ -65,6 +68,7 @@ public class UserController {
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** 사용자 프로필을 수정합니다. */
   @PutMapping("/{id}/profile")
   public ResponseEntity<ApiResponse<com.example.userservice.dto.UserProfileDto>> updateProfile(
       @PathVariable String id,
@@ -76,6 +80,7 @@ public class UserController {
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** 사용자 아바타 이미지를 업로드합니다. */
   @PostMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ApiResponse<com.example.userservice.dto.UserProfileDto>> uploadAvatar(
       @PathVariable String id,
@@ -87,6 +92,7 @@ public class UserController {
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** 사용자 아바타 이미지를 조회합니다. */
   @GetMapping("/avatars/{filename:.+}")
   public ResponseEntity<Resource> getAvatar(@PathVariable String filename) {
     // Binary file response endpoint: intentionally not wrapped by ApiResponse.
@@ -106,6 +112,7 @@ public class UserController {
     }
   }
 
+  /** 사용자를 탈퇴 처리합니다. */
   @DeleteMapping("/{id}")
   @RequireRole({"ADMIN"})
   public ResponseEntity<ApiResponse<Object>> withdraw(@PathVariable String id) {

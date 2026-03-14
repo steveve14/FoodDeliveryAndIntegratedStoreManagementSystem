@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** 사용자 생성 요청 DTO */
 /** CreateUserRequest 타입입니다. */
 @Data
 @NoArgsConstructor

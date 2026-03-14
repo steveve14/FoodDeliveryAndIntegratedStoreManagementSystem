@@ -23,12 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
-/*
- * Service that handles user management operations such as registration, profile
- * retrieval and updates.
- */
 /** UserService 타입입니다. */
+@Service
 public class UserService {
 
   private final UserRepository userRepository;
@@ -36,6 +32,7 @@ public class UserService {
   private final Path avatarUploadPath;
   private final String avatarPublicBaseUrl;
 
+  /** 사용자 서비스를 생성합니다. */
   public UserService(
       UserRepository userRepository,
       BCryptPasswordEncoder passwordEncoder,
@@ -48,6 +45,7 @@ public class UserService {
         avatarPublicBaseUrl.endsWith("/") ? avatarPublicBaseUrl : avatarPublicBaseUrl + "/";
   }
 
+  /** 사용자를 등록합니다. */
   @Transactional
   public UserDto register(CreateUserRequest req) {
     // 기본 검증: 동일 이메일이 이미 존재하면 예외
@@ -77,6 +75,7 @@ public class UserService {
         saved.getId(), saved.getEmail(), saved.getName(), saved.getRoles(), saved.getCreatedAt());
   }
 
+  /** 이메일로 사용자를 조회합니다. */
   public UserDto findByEmail(String email) {
     return userRepository
         .findByEmail(email)
@@ -84,6 +83,7 @@ public class UserService {
         .orElse(null);
   }
 
+  /** ID로 사용자를 조회합니다. */
   public UserDto findById(String id) {
     return userRepository
         .findById(id)
@@ -91,6 +91,7 @@ public class UserService {
         .orElse(null);
   }
 
+  /** 사용자 프로필을 조회합니다. */
   public UserProfileDto getProfile(String id) {
     User user =
         userRepository
@@ -99,6 +100,7 @@ public class UserService {
     return toUserProfileDto(user);
   }
 
+  /** 사용자 프로필을 수정합니다. */
   @Transactional
   public UserProfileDto updateProfile(String id, UpdateProfileRequest req) {
     User user =
@@ -118,6 +120,7 @@ public class UserService {
     return toUserProfileDto(saved);
   }
 
+  /** 사용자 아바타를 업로드하고 프로필을 갱신합니다. */
   @Transactional
   public UserProfileDto updateAvatar(String id, MultipartFile file) {
     if (file == null || file.isEmpty()) {
@@ -156,6 +159,7 @@ public class UserService {
     return toUserProfileDto(saved);
   }
 
+  /** 저장된 아바타 리소스를 반환합니다. */
   public Resource loadAvatar(String filename) {
     String safeFilename = Paths.get(filename).getFileName().toString();
     Path target = avatarUploadPath.resolve(safeFilename).normalize();
@@ -170,7 +174,7 @@ public class UserService {
     }
   }
 
-  // 이메일/비밀번호 인증 (service-auth에서 호출 가능)
+  /** 이메일과 비밀번호로 사용자를 인증합니다. */
   public com.example.userservice.dto.AuthUserDto authenticate(String email, String rawPassword) {
     return userRepository
         .findByEmail(email)
@@ -182,6 +186,7 @@ public class UserService {
         .orElse(null);
   }
 
+  /** 사용자를 삭제합니다. */
   @Transactional
   public void withdraw(String id) {
     // Delete user and cascade addresses if needed

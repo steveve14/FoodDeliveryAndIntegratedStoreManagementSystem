@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestControllerAdvice
 public class RestExceptionHandler {
 
+  /** 유효성 검증 예외를 처리합니다. */
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiResponse<Object>> handleValidation(MethodArgumentNotValidException ex) {
     String message =
@@ -24,17 +25,20 @@ public class RestExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, message));
   }
 
+  /** 잘못된 요청 예외를 처리합니다. */
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ApiResponse<Object>> handleBadRequest(IllegalArgumentException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponse.error(400, ex.getMessage()));
   }
 
+  /** 상태 충돌 예외를 처리합니다. */
   @ExceptionHandler(IllegalStateException.class)
   public ResponseEntity<ApiResponse<Object>> handleConflict(IllegalStateException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, ex.getMessage()));
   }
 
+  /** ResponseStatusException을 처리합니다. */
   @ExceptionHandler(ResponseStatusException.class)
   public ResponseEntity<ApiResponse<Object>> handleResponseStatus(ResponseStatusException ex) {
     String message = ex.getReason() != null ? ex.getReason() : "요청 처리 중 오류가 발생했습니다.";
@@ -42,6 +46,7 @@ public class RestExceptionHandler {
         .body(ApiResponse.error(ex.getStatusCode().value(), message));
   }
 
+  /** 처리되지 않은 예외를 처리합니다. */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiResponse<Object>> handleGeneric(Exception ex) {
     log.error("예상치 못한 오류 발생", ex);

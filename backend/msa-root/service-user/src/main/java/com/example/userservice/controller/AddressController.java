@@ -23,18 +23,21 @@ public class AddressController {
 
   private final AddressService addressService;
 
+  /** 현재 사용자의 주소 목록을 조회합니다. */
   @GetMapping
   public ResponseEntity<ApiResponse<java.util.List<AddressDto>>> list(
       @RequestHeader("X-User-Id") String userId) {
     return ResponseEntity.ok(ApiResponse.ok(addressService.listByUser(userId)));
   }
 
+  /** 현재 사용자 주소를 생성합니다. */
   @PostMapping
   public ResponseEntity<ApiResponse<AddressDto>> create(
       @RequestHeader("X-User-Id") String userId, @RequestBody AddressDto req) {
     return ResponseEntity.ok(ApiResponse.ok(addressService.create(userId, req)));
   }
 
+  /** 현재 사용자 주소를 수정합니다. */
   @PutMapping("/{addressId}")
   public ResponseEntity<ApiResponse<AddressDto>> update(
       @RequestHeader("X-User-Id") String userId,
@@ -43,6 +46,7 @@ public class AddressController {
     return ResponseEntity.ok(ApiResponse.ok(addressService.update(userId, addressId, req)));
   }
 
+  /** 현재 사용자 주소를 삭제합니다. */
   @DeleteMapping("/{addressId}")
   public ResponseEntity<ApiResponse<Object>> delete(
       @RequestHeader("X-User-Id") String userId, @PathVariable String addressId) {

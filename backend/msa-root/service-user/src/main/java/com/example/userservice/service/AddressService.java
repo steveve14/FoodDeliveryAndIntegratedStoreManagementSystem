@@ -10,16 +10,17 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-/** Service for managing user addresses (create, update, list, delete). */
 /** AddressService 타입입니다. */
+@Service
 public class AddressService {
   private final AddressRepository addressRepository;
 
+  /** 주소 서비스를 생성합니다. */
   public AddressService(AddressRepository addressRepository) {
     this.addressRepository = addressRepository;
   }
 
+  /** 사용자 주소 목록을 조회합니다. */
   public List<AddressDto> listByUser(String userId) {
     return addressRepository.findByUserId(userId).stream()
         .map(
@@ -39,6 +40,7 @@ public class AddressService {
         .collect(Collectors.toList());
   }
 
+  /** 사용자 주소를 생성합니다. */
   @Transactional
   public AddressDto create(String userId, AddressDto req) {
     Address a =
@@ -71,13 +73,16 @@ public class AddressService {
         saved.getCreatedAt());
   }
 
+  /** 사용자 주소를 수정합니다. */
   @Transactional
   public AddressDto update(String userId, String addressId, AddressDto req) {
     Address existing =
         addressRepository
             .findById(addressId)
             .orElseThrow(() -> new IllegalArgumentException("Address not found"));
-    if (!existing.getUserId().equals(userId)) throw new IllegalArgumentException("Forbidden");
+    if (!existing.getUserId().equals(userId)) {
+      throw new IllegalArgumentException("Forbidden");
+    }
     Address updated =
         existing.toBuilder()
             .label(req.getLabel())
@@ -104,13 +109,16 @@ public class AddressService {
         saved.getCreatedAt());
   }
 
+  /** 사용자 주소를 삭제합니다. */
   @Transactional
   public void delete(String userId, String addressId) {
     Address existing =
         addressRepository
             .findById(addressId)
             .orElseThrow(() -> new IllegalArgumentException("Address not found"));
-    if (!existing.getUserId().equals(userId)) throw new IllegalArgumentException("Forbidden");
+    if (!existing.getUserId().equals(userId)) {
+      throw new IllegalArgumentException("Forbidden");
+    }
     addressRepository.deleteById(addressId);
   }
 }

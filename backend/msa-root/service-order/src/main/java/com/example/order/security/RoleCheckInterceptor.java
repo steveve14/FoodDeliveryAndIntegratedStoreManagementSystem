@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-/** Gateway가 전달하는 X-User-Role 헤더를 읽어 @RequireRole 어노테이션과 비교하는 인터셉터 */
 /** RoleCheckInterceptor 타입입니다. */
 @Slf4j
 @Component

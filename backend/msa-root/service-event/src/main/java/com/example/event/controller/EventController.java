@@ -19,10 +19,12 @@ public class EventController {
 
   private final EventService eventService;
 
+  /** 이벤트 컨트롤러를 생성합니다. */
   public EventController(EventService eventService) {
     this.eventService = eventService;
   }
 
+  /** 이벤트를 생성합니다. */
   @PostMapping
   public ResponseEntity<ApiResponse<EventDto>> create(
       @RequestBody @Valid com.example.event.dto.CreateEventRequest req) {
@@ -30,6 +32,7 @@ public class EventController {
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** ID로 이벤트를 조회합니다. */
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<EventDto>> get(@PathVariable String id) {
     return eventService

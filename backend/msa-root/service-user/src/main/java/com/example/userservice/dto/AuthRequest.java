@@ -6,11 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** AuthRequest 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/** DTO for authentication requests (email + password). */
-/** AuthRequest 타입입니다. */
 public class AuthRequest {
   @NotBlank(message = "이메일을 입력해주세요.")
   @Email(message = "유효한 이메일 형식이 아닙니다.")

@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+/** 주문 엔티티 저장소입니다. */
 @Repository
-/** Repository for Order entities. */
-/** OrderRepository 타입입니다. */
 public interface OrderRepository extends CrudRepository<Order, String> {
+
+  /** 사용자 ID 기준으로 최신 주문 목록을 조회합니다. */
   List<Order> findByUserIdOrderByCreatedAtDesc(String userId);
 
+  /** 매장 ID 기준으로 최신 주문 목록을 조회합니다. */
   List<Order> findByStoreIdOrderByCreatedAtDesc(String storeId);
 }

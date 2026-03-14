@@ -11,13 +11,12 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+/** User 타입입니다. */
 @Table("users")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-/** Represents a user account stored in the users table. */
-/** User 타입입니다. */
 public class User implements Persistable<String> {
   @Id
   @Column("id")

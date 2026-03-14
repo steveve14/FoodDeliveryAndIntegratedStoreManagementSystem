@@ -15,6 +15,7 @@ public class OrderGrpcServiceImpl extends OrderGrpcServiceGrpc.OrderGrpcServiceI
 
   private final OrderService orderService;
 
+  /** 주문 gRPC 서비스 구현을 생성합니다. */
   public OrderGrpcServiceImpl(OrderService orderService) {
     this.orderService = orderService;
   }

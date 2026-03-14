@@ -14,6 +14,7 @@ public class AuthGrpcServiceImpl extends AuthGrpcServiceGrpc.AuthGrpcServiceImpl
 
   private final JwtProvider jwtProvider;
 
+  /** gRPC 서비스 구현에 사용할 JWT 유틸을 주입합니다. */
   public AuthGrpcServiceImpl(JwtProvider jwtProvider) {
     this.jwtProvider = jwtProvider;
   }

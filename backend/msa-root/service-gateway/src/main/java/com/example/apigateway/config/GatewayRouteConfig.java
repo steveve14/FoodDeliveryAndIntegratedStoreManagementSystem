@@ -7,17 +7,18 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/** 게이트웨이 라우트를 Java 코드로 정의합니다. */
 /** GatewayRouteConfig 타입입니다. */
 @Configuration
 public class GatewayRouteConfig {
 
   private final AuthorizationHeaderFilter authFilter;
 
+  /** 게이트웨이 라우트 설정 클래스를 생성합니다. */
   public GatewayRouteConfig(AuthorizationHeaderFilter authFilter) {
     this.authFilter = authFilter;
   }
 
+  /** 서비스별 라우트 구성을 생성합니다. */
   @Bean
   public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
     GatewayFilter authGatewayFilter = authFilter.apply(new AuthorizationHeaderFilter.Config());

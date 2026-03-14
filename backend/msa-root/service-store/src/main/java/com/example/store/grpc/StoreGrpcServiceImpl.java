@@ -7,7 +7,6 @@ import com.example.store.service.StoreService;
 import io.grpc.stub.StreamObserver;
 import org.springframework.grpc.server.service.GrpcService;
 
-/** Store 서비스 gRPC 서버 구현 내부 MSA 통신용 */
 /** StoreGrpcServiceImpl 타입입니다. */
 @GrpcService
 public class StoreGrpcServiceImpl extends StoreGrpcServiceGrpc.StoreGrpcServiceImplBase {
@@ -15,6 +14,7 @@ public class StoreGrpcServiceImpl extends StoreGrpcServiceGrpc.StoreGrpcServiceI
   private final StoreService storeService;
   private final MenuRepository menuRepository;
 
+  /** 가게 gRPC 서비스 구현을 생성합니다. */
   public StoreGrpcServiceImpl(StoreService storeService, MenuRepository menuRepository) {
     this.storeService = storeService;
     this.menuRepository = menuRepository;

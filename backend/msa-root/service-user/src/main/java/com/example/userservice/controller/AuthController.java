@@ -10,18 +10,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** AuthController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1/users")
-/** Controller exposing authentication endpoints for users. */
-/** AuthController 타입입니다. */
 public class AuthController {
 
   private final UserService userService;
 
+  /** 인증 컨트롤러를 생성합니다. */
   public AuthController(UserService userService) {
     this.userService = userService;
   }
 
+  /** 이메일과 비밀번호로 사용자를 인증합니다. */
   @PostMapping("/authenticate")
   public ResponseEntity<ApiResponse<com.example.userservice.dto.AuthUserDto>> authenticate(
       @RequestBody @Valid AuthRequest req) {

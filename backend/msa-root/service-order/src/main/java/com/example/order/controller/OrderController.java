@@ -24,10 +24,12 @@ public class OrderController {
 
   private final OrderService orderService;
 
+  /** 주문 컨트롤러를 생성합니다. */
   public OrderController(OrderService orderService) {
     this.orderService = orderService;
   }
 
+  /** 주문을 생성합니다. */
   @PostMapping
   @RequireRole({"USER", "STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<OrderDto>> create(
@@ -36,6 +38,7 @@ public class OrderController {
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** ID로 주문을 조회합니다. */
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<OrderDto>> get(@PathVariable String id) {
     return orderService
@@ -44,6 +47,7 @@ public class OrderController {
         .orElseGet(() -> ResponseEntity.status(404).body(ApiResponse.error(404, "Not found")));
   }
 
+  /** 현재 사용자의 주문 목록을 조회합니다. */
   @GetMapping("/my")
   @RequireRole({"USER", "ADMIN"})
   public ResponseEntity<ApiResponse<java.util.List<OrderDto>>> getMyOrders(
@@ -51,12 +55,14 @@ public class OrderController {
     return ResponseEntity.ok(ApiResponse.ok(orderService.findByUserId(userId)));
   }
 
+  /** 프런트엔드 고객 주문 요약 목록을 조회합니다. */
   @GetMapping("/frontend/customer-summaries")
   public ResponseEntity<ApiResponse<java.util.List<FrontendCustomerOrderSummaryDto>>>
       getFrontendCustomerSummaries() {
     return ResponseEntity.ok(ApiResponse.ok(orderService.getFrontendCustomerSummaries()));
   }
 
+  /** 매장별 주문 목록을 조회합니다. */
   @GetMapping("/store/{storeId}")
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<java.util.List<OrderDto>>> getStoreOrders(
@@ -66,6 +72,7 @@ public class OrderController {
     return ResponseEntity.ok(ApiResponse.ok(orderService.findByStoreId(storeId, userId, userRole)));
   }
 
+  /** 주문 상태를 변경합니다. */
   @PatchMapping("/{id}/status")
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<OrderDto>> updateStatus(

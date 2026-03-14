@@ -15,17 +15,20 @@ import org.springframework.web.server.ServerWebExchange;
 @RestControllerAdvice
 public class RestExceptionHandler {
 
+  /** 잘못된 요청 예외를 처리합니다. */
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ApiResponse<Object>> handleBadRequest(IllegalArgumentException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponse.error(400, ex.getMessage()));
   }
 
+  /** 상태 충돌 예외를 처리합니다. */
   @ExceptionHandler(IllegalStateException.class)
   public ResponseEntity<ApiResponse<Object>> handleConflict(IllegalStateException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, ex.getMessage()));
   }
 
+  /** 응답 상태 기반 예외를 처리합니다. */
   @ExceptionHandler(ResponseStatusException.class)
   public ResponseEntity<ApiResponse<Object>> handleResponseStatus(
       ResponseStatusException ex, ServerWebExchange exchange) {
@@ -51,6 +54,7 @@ public class RestExceptionHandler {
     return ResponseEntity.status(ex.getStatusCode()).body(ApiResponse.error(statusCode, message));
   }
 
+  /** 처리되지 않은 예외를 공통으로 처리합니다. */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiResponse<Object>> handleGeneric(Exception ex) {
     log.error("예상치 못한 오류 발생: {}", ex.getMessage(), ex);

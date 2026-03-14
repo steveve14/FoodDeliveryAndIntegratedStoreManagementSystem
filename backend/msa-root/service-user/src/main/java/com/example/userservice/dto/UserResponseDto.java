@@ -6,14 +6,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/** UserResponseDto 타입입니다. */
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor // @Builder를 클래스 레벨에 쓸 때 @NoArgsConstructor와 세트로 써주는 것이 안전합니다.
-/*
- DTO returned for user details responses.
-*/
-/** UserResponseDto 타입입니다. */
 public class UserResponseDto {
 
   private String id;

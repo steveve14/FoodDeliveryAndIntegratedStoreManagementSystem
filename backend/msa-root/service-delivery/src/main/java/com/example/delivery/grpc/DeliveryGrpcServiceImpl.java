@@ -15,6 +15,7 @@ public class DeliveryGrpcServiceImpl extends DeliveryGrpcServiceGrpc.DeliveryGrp
 
   private final DeliveryService deliveryService;
 
+  /** 배달 서비스 의존성을 주입합니다. */
   public DeliveryGrpcServiceImpl(DeliveryService deliveryService) {
     this.deliveryService = deliveryService;
   }

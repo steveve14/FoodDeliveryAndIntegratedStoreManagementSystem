@@ -19,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+  /** 인증/인가 필터 체인을 구성합니다. */
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
@@ -48,6 +49,7 @@ public class SecurityConfig {
     return http.build();
   }
 
+  /** 패스워드 인코더 빈을 제공합니다. */
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();

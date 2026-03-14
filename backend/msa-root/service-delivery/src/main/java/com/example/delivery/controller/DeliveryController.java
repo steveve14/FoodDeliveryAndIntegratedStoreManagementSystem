@@ -22,10 +22,12 @@ public class DeliveryController {
 
   private final DeliveryService deliveryService;
 
+  /** 컨트롤러 의존성을 주입합니다. */
   public DeliveryController(DeliveryService deliveryService) {
     this.deliveryService = deliveryService;
   }
 
+  /** 배달을 생성합니다. */
   @PostMapping
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<DeliveryDto>> create(
@@ -35,6 +37,7 @@ public class DeliveryController {
     return ResponseEntity.ok(ApiResponse.ok(dto));
   }
 
+  /** 배달 ID로 배달 정보를 조회합니다. */
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<DeliveryDto>> get(@PathVariable String id) {
     return deliveryService
@@ -43,6 +46,7 @@ public class DeliveryController {
         .orElseGet(() -> ResponseEntity.status(404).body(ApiResponse.error(404, "Not found")));
   }
 
+  /** 배달 상태를 업데이트합니다. */
   @PatchMapping("/{id}/status")
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<DeliveryDto>> updateStatus(

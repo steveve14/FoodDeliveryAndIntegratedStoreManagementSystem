@@ -25,11 +25,13 @@ public class MenuController {
 
   private final MenuService menuService;
 
+  /** 매장의 메뉴 목록을 조회합니다. */
   @GetMapping
   public ResponseEntity<ApiResponse<List<MenuDto>>> list(@PathVariable String storeId) {
     return ResponseEntity.ok(ApiResponse.ok(menuService.listByStore(storeId)));
   }
 
+  /** 매장 메뉴를 생성합니다. */
   @PostMapping
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<MenuDto>> create(
@@ -40,6 +42,7 @@ public class MenuController {
     return ResponseEntity.ok(ApiResponse.ok(menuService.create(storeId, userId, userRole, req)));
   }
 
+  /** 매장 메뉴를 수정합니다. */
   @PutMapping("/{menuId}")
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<MenuDto>> update(
@@ -52,6 +55,7 @@ public class MenuController {
         ApiResponse.ok(menuService.update(storeId, menuId, userId, userRole, req)));
   }
 
+  /** 매장 메뉴를 삭제합니다. */
   @DeleteMapping("/{menuId}")
   @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<Object>> delete(

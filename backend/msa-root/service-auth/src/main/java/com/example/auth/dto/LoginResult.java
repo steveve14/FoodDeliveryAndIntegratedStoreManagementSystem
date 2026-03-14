@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/** 인증 결과: 토큰 + 사용자 정보를 함께 전달 */
-/** LoginResult 타입입니다. */
+/** 인증 결과로 토큰과 사용자 정보를 함께 전달합니다. */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

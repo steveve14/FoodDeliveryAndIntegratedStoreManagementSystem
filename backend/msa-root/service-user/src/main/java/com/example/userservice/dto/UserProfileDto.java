@@ -4,13 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** UserProfileDto 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/*
- * DTO representing a user's public profile information.
- */
-/** UserProfileDto 타입입니다. */
 public class UserProfileDto {
 
   private String id;

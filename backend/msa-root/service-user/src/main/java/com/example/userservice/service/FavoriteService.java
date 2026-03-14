@@ -18,16 +18,19 @@ public class FavoriteService {
 
   private final FavoriteStoreRepository favoriteStoreRepository;
 
+  /** 찜 목록 서비스를 생성합니다. */
   public FavoriteService(FavoriteStoreRepository favoriteStoreRepository) {
     this.favoriteStoreRepository = favoriteStoreRepository;
   }
 
+  /** 사용자 찜한 가게 목록을 조회합니다. */
   public List<FavoriteStoreDto> listByUser(String userId) {
     return favoriteStoreRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
         .map(this::toDto)
         .toList();
   }
 
+  /** 가게를 찜 목록에 추가하거나 갱신합니다. */
   @Transactional
   public FavoriteStoreDto add(String userId, FavoriteStoreRequest request) {
     FavoriteStore favoriteStore =
@@ -63,6 +66,7 @@ public class FavoriteService {
     return toDto(saved);
   }
 
+  /** 찜한 가게를 삭제합니다. */
   @Transactional
   public void delete(String userId, String favoriteId) {
     FavoriteStore favoriteStore =
@@ -80,6 +84,7 @@ public class FavoriteService {
     }
   }
 
+  /** 찜한 가게 엔티티를 응답 DTO로 변환합니다. */
   private FavoriteStoreDto toDto(FavoriteStore favoriteStore) {
     return new FavoriteStoreDto(
         favoriteStore.getId(),

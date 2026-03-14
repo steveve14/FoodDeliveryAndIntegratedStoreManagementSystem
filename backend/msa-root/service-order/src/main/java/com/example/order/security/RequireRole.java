@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequireRole {
-  /** 허용할 역할 목록 */
+  /** 허용할 역할 목록입니다. */
   String[] value();
 }

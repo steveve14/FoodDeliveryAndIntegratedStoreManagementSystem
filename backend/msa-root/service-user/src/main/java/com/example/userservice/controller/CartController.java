@@ -26,18 +26,21 @@ public class CartController {
 
   private final CartService cartService;
 
+  /** 현재 사용자의 장바구니 목록을 조회합니다. */
   @GetMapping
   public ResponseEntity<ApiResponse<java.util.List<CartItemDto>>> list(
       @RequestHeader("X-User-Id") String userId) {
     return ResponseEntity.ok(ApiResponse.ok(cartService.listByUser(userId)));
   }
 
+  /** 장바구니에 항목을 추가합니다. */
   @PostMapping
   public ResponseEntity<ApiResponse<CartItemDto>> add(
       @RequestHeader("X-User-Id") String userId, @RequestBody @Valid CartItemRequest request) {
     return ResponseEntity.ok(ApiResponse.ok(cartService.addItem(userId, request)));
   }
 
+  /** 장바구니 항목 하나를 삭제합니다. */
   @DeleteMapping("/{cartItemId}")
   public ResponseEntity<ApiResponse<Object>> delete(
       @RequestHeader("X-User-Id") String userId, @PathVariable String cartItemId) {
@@ -45,6 +48,7 @@ public class CartController {
     return ResponseEntity.ok(ApiResponse.ok(null));
   }
 
+  /** 현재 사용자의 장바구니를 비웁니다. */
   @DeleteMapping
   public ResponseEntity<ApiResponse<Object>> clear(@RequestHeader("X-User-Id") String userId) {
     cartService.clear(userId);

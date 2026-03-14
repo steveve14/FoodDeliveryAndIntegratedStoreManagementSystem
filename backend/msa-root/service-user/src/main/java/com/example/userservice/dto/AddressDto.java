@@ -5,11 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** AddressDto 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/** DTO representing a user address. */
-/** AddressDto 타입입니다. */
 public class AddressDto {
 
   private String id;

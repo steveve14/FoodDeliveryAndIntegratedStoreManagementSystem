@@ -5,11 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** UserDto 타입입니다. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/** Simple DTO representing user identity and metadata. */
-/** UserDto 타입입니다. */
 public class UserDto {
 
   private String id;

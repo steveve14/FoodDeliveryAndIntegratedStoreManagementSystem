@@ -29,11 +29,13 @@ public class DeliveryService {
   @Value("${app.delivery.fixed-fee:3000}")
   private int fixedDeliveryFee = 3000;
 
+  /** 서비스 의존성을 주입합니다. */
   public DeliveryService(DeliveryRepository deliveryRepository, OrderGrpcClient orderGrpcClient) {
     this.deliveryRepository = deliveryRepository;
     this.orderGrpcClient = orderGrpcClient;
   }
 
+  /** 배달 정보를 생성합니다. */
   @Transactional
   public DeliveryDto createDelivery(String orderId, String courier, String status) {
     var resp = orderGrpcClient.getOrderById(orderId);
@@ -57,10 +59,12 @@ public class DeliveryService {
     return toDto(saved);
   }
 
+  /** 배달 ID로 배달 정보를 조회합니다. */
   public Optional<DeliveryDto> findById(String id) {
     return deliveryRepository.findById(id).map(this::toDto);
   }
 
+  /** 배달 상태를 업데이트합니다. */
   @Transactional
   public DeliveryDto updateStatus(String deliveryId, String newStatus) {
     Delivery d =
@@ -79,6 +83,7 @@ public class DeliveryService {
     return toDto(saved);
   }
 
+  /** 엔티티를 DTO로 변환합니다. */
   private DeliveryDto toDto(Delivery d) {
     return new DeliveryDto(
         d.getId(),

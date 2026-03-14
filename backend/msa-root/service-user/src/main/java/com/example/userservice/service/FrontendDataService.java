@@ -24,6 +24,7 @@ public class FrontendDataService {
   private final MailMessageRepository mailMessageRepository;
   private final UserNotificationRepository userNotificationRepository;
 
+  /** 프런트엔드 데이터 서비스를 생성합니다. */
   public FrontendDataService(
       UserRepository userRepository,
       MailMessageRepository mailMessageRepository,
@@ -33,12 +34,14 @@ public class FrontendDataService {
     this.userNotificationRepository = userNotificationRepository;
   }
 
+  /** 고객 목록 데이터를 조회합니다. */
   public List<FrontendUserDto> getCustomers() {
     return userRepository.findByRolesOrderByCreatedAtDesc("USER").stream()
         .map(this::toFrontendUser)
         .toList();
   }
 
+  /** 운영 멤버 목록 데이터를 조회합니다. */
   public List<FrontendMemberDto> getMembers() {
     return userRepository.findByRolesAndTeamRoleIsNotNullOrderByCreatedAtDesc("ADMIN").stream()
         .map(
@@ -51,6 +54,7 @@ public class FrontendDataService {
         .toList();
   }
 
+  /** 메일 목록 데이터를 조회합니다. */
   public List<FrontendMailDto> getMails() {
     List<MailMessage> mails = mailMessageRepository.findAllByOrderByCreatedAtDesc();
     Map<String, User> userMap = loadUsers(mails.stream().map(MailMessage::getFromUserId).toList());
@@ -68,6 +72,7 @@ public class FrontendDataService {
         .toList();
   }
 
+  /** 알림 목록 데이터를 조회합니다. */
   public List<FrontendNotificationDto> getNotifications() {
     List<UserNotification> notifications =
         userNotificationRepository.findAllByOrderByCreatedAtDesc();

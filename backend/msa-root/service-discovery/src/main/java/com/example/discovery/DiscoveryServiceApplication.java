@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
+/** Application entry point for the discovery service. */
 @SpringBootApplication
 @EnableEurekaServer
-/** Application entry point for the discovery service. */
 public class DiscoveryServiceApplication {
 
   /** 애플리케이션 실행 진입점입니다. */

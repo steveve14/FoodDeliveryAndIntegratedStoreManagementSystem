@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, String> {
 
+  /** 토큰 문자열로 리프레시 토큰을 조회합니다. */
   java.util.Optional<RefreshToken> findByToken(String token);
 
+  /** 토큰 문자열로 리프레시 토큰을 삭제합니다. */
   void deleteByToken(String token);
 }
