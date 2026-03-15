@@ -37,10 +37,11 @@
 - **Spring gRPC GA 업그레이드**: 1.0.0-RC1 → **1.0.2 GA** (Maven Central 정식 배포)
   - io.grpc: 1.76.0 → **1.77.1**, Protobuf: 4.32.1 → **4.33.2**
   - Spring Boot 4.0.2 정식 지원
-- **Android 앱 스캐폴드 추가**: 3개 네이티브 앱 프로젝트 구축
+- **Android 앱 스캐폴드 추가**: 4개 네이티브 앱 프로젝트 구축
   - `frontend/app-android-shop/` (매장용, `com.fooddelivery.shop`)
   - `frontend/app-android-user/` (고객용, `com.fooddelivery.user`)
   - `frontend/app-android-kiosk/` (키오스크용, `com.fooddelivery.kiosk`)
+  - `frontend/app-android-delivery/` (라이더/배달용, `com.fooddelivery.delivery`)
   - Android SDK 34, minSdk 24, Material Design, ConstraintLayout
   - 기본 MainActivity 스캐폴드 완료, API 연동 추후 진행
 - **전체 문서 최신화**: docs/ 전체 문서를 실제 코드 기준으로 정렬
@@ -93,10 +94,11 @@
 
 ### Android 앱
 
-- 3개 네이티브 앱 스캐폴드 구축 완료
+- 4개 네이티브 앱 스캐폴드 구축 완료
   - `app-android-shop` (매장용, com.fooddelivery.shop)
   - `app-android-user` (고객용, com.fooddelivery.user)
   - `app-android-kiosk` (키오스크용, com.fooddelivery.kiosk)
+  - `app-android-delivery` (라이더/배달용, com.fooddelivery.delivery)
 - Android SDK 34, minSdk 24, Material Design 1.10.0
 - 기본 MainActivity 구조 완성, 백엔드 API 연동 예정
 
@@ -133,4 +135,4 @@
 2. web-shop/web-admin E2E 스모크 추가
 3. 서비스 기동 순서 + 환경변수 포함 실행 스크립트 정리
 4. Dockerfile 작성 및 docker-compose 로컬 통합 실행 환경 구성
-5. Android 앱 백엔드 API 연동 (app-android-shop/user/kiosk)
+5. Android 앱 백엔드 API 연동 (app-android-shop/user/kiosk/delivery)

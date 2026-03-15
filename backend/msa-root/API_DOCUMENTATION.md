@@ -31,11 +31,11 @@
 [API Gateway — service-gateway]
      │  JWT 토큰 검증 (AuthorizationHeaderFilter)
      │  X-User-Id 헤더 주입
-     ├──▶ /auth/**     → service-auth   (port 7000)
-     ├──▶ /users/**    → service-user   (port 8010)
-     ├──▶ /stores/**   → service-store  (port 8020)
-     ├──▶ /events/**   → service-event  (port 8030)
-     ├──▶ /orders/**   → service-order  (port 8040)
+     ├──▶ /auth/**   → service-auth   (port 7000)
+     ├──▶ /users/**  → service-user   (port 8010)
+     ├──▶ /stores/** → service-store  (port 8020)
+     ├──▶ /events/** → service-event  (port 8030)
+     ├──▶ /orders/** → service-order  (port 8040)
      └──▶ /deliveries/** → service-delivery (port 8050)
 ```
 

@@ -1,25 +1,25 @@
 # 07. 로컬 개발 환경 설정 (Development Setup)
 
 ## 1. 필수 요구 사항 (Prerequisites)
-*   **Java**: JDK 17 LTS 이상
-*   **Node.js**: v18.16.0 이상 (LTS 권장)
-*   **IDE**: IntelliJ IDEA (Backend), VS Code (Frontend)
-*   **Git**: 최신 버전
+* **Java**: JDK 17 LTS 이상
+* **Node.js**: v18.16.0 이상 (LTS 권장)
+* **IDE**: IntelliJ IDEA (Backend), VS Code (Frontend)
+* **Git**: 최신 버전
 
 ## 2. 프로젝트 실행 순서 (Backend)
 MSA 특성상 실행 순서가 중요합니다.
 
 1.  **Discovery Service (Eureka)**
-    *   Path: `backend/msa-root/service-discovery`
-    *   Command: `./gradlew bootRun`
-    *   Check: `http://localhost:8100` 접속
+    * Path: `backend/msa-root/service-discovery`
+    * Command: `./gradlew bootRun`
+    * Check: `http://localhost:8100` 접속
 2.  **API Gateway**
-    *   Path: `backend/msa-root/service-gateway`
-    *   Command: `./gradlew bootRun`
-    *   Port: `8000`
+    * Path: `backend/msa-root/service-gateway`
+    * Command: `./gradlew bootRun`
+    * Port: `8000`
 3.  **Core Services (Auth, Store, Order)**
-    *   Profile: `-Dspring.profiles.active=local` 옵션 필수.
-    *   DB: `local` 프로필 사용 시 프로젝트 내 `sqlite` 파일 자동 생성됨.
+    * Profile: `-Dspring.profiles.active=local` 옵션 필수.
+    * DB: `local` 프로필 사용 시 프로젝트 내 `sqlite` 파일 자동 생성됨.
 
 ## 3. 프로젝트 실행 순서 (Frontend)
 1.  **의존성 설치**: `npm install` (각 프로젝트 루트에서)

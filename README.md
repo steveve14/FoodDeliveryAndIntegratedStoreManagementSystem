@@ -19,7 +19,7 @@
 - [x] Spring gRPC 1.0.2 GA 기반 서비스 간 통신 구현
 - [x] 프론트 웹앱 3종 구축 (`web-admin`, `web-shop`, `web-user`)
 - [x] 핵심 도메인 E2E 플로우 완성 — 주문 생성→상태전이→조회 (Playwright 14단계 통과)
-- [x] Android 앱 3종 스캐폴드 (`app-android-shop`, `app-android-user`, `app-android-kiosk`)
+- [x] Android 앱 4종 스캐폴드 (`app-android-shop`, `app-android-user`, `app-android-kiosk`, `app-android-delivery`)
 - [ ] Android 앱 백엔드 API 연동
 - [ ] Dockerfile / K8s 배포 자동화
 
@@ -47,7 +47,8 @@ FoodDeliveryAndIntegratedStoreManagementSystem/
 │   ├── web-user/                 # 고객 배달 웹앱 (Nuxt, port 3200)
 │   ├── app-android-shop/         # 매장용 Android 앱 (SDK 34)
 │   ├── app-android-user/         # 고객용 Android 앱 (SDK 34)
-│   └── app-android-kiosk/        # 키오스크용 Android 앱 (SDK 34)
+│   ├── app-android-kiosk/        # 키오스크용 Android 앱 (SDK 34)
+│   └── app-android-delivery/     # 라이더/배달용 Android 앱 (SDK 34)
 ├── docs/                         # 프로젝트 문서 (01~13)
 └── README.md
 ```

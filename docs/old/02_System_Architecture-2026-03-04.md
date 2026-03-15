@@ -26,7 +26,7 @@ graph TD
 
 ### Backend
 | 구분 | 기술 | 설명 |
-|---|---|---|
+| --- | --- | --- |
 | **Framework** | Spring Boot 3.x | 메인 백엔드 프레임워크 |
 | **Language** | Java 17+ | 최신 LTS 버전 사용 |
 | **Build Tool** | Gradle (Kotlin DSL) | 멀티 모듈 빌드 관리 |
@@ -37,7 +37,7 @@ graph TD
 
 ### Frontend
 | 구분 | 기술 | 설명 |
-|---|---|---|
+| --- | --- | --- |
 | **Framework** | Nuxt.js 3 | Vue 3 기반의 SSR 프레임워크 |
 | **State** | Pinia | 가볍고 직관적인 상태 관리 라이브러리 |
 | **Style** | Tailwind CSS | 유틸리티 퍼스트 CSS 프레임워크 |

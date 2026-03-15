@@ -9,17 +9,17 @@
 
 ## 🏗️ 1. 핵심 설계 원칙 (Core Principles)
 
-1.  **ID 전략 (Identity Strategy)**
+1. **ID 전략 (Identity Strategy)**
     * 모든 PK는 **UUID v7 (TSID)** 또는 **ULID**를 사용합니다.
     * DB Auto-Increment 사용을 지양하고, 애플리케이션 레벨에서 ID를 생성하여 분산 환경에서의 충돌을 방지합니다.
     * 타입: `VARCHAR(100)` (가독성 및 호환성 고려)
 
-2.  **서비스 간 참조 (Service References)**
+2. **서비스 간 참조 (Service References)**
     * 각 마이크로서비스는 독립적인 DB 스키마를 가집니다.
     * 서비스 간의 Join은 불가능하므로, **논리적 ID 참조(Soft Reference)**만 유지합니다.
     * 데이터 무결성은 애플리케이션 레벨(Saga Pattern) 또는 Event Driven Architecture(Kafka)를 통해 관리합니다.
 
-3.  **시간 및 위치 (Time & Location)**
+3. **시간 및 위치 (Time & Location)**
     * 시간: `TIMESTAMPTZ` (UTC 기준 저장 권장)
     * 위치: `DOUBLE PRECISION` (위도/경도) 또는 PostGIS `GEOMETRY(Point, 4326)` 사용.
 

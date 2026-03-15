@@ -30,8 +30,9 @@ graph TD
 ## 2. 기술 스택 상세
 
 ### Backend
+
 | 구분 | 기술 | 설명 |
-|---|---|---|
+| --- | --- | --- |
 | **Framework** | Spring Boot 4.0.2 | 메인 백엔드 프레임워크 |
 | **Language** | Java 17 (LTS) | Eclipse Temurin JDK 17 |
 | **Build Tool** | Gradle 9.2.1 (Groovy DSL) | 멀티 모듈 빌드 관리 |
@@ -50,7 +51,7 @@ graph TD
 ### Frontend
 
 | 구분 | 기술 | 설명 |
-|---|---|---|
+| --- | --- | --- |
 | **Framework** | Nuxt.js 4.2.2 | Vue 3 기반의 SSR 프레임워크 |
 | **UI 컴포넌트** | @nuxt/ui 4.3.0 | Tailwind CSS 포함 |
 | **상태 관리** | composable (useApi, useAuth) | web-admin / web-shop / web-user 기반 |
@@ -62,10 +63,10 @@ graph TD
 ### Mobile (Android)
 
 | 구분 | 기술 | 설명 |
-|---|---|---|
+| --- | --- | --- |
 | **플랫폼** | Android SDK 34 | minSdk 24, Gradle 8.1.1 |
 | **UI** | Material Design 1.10.0 | XML 레이아웃 기반 |
-| **앱 구성** | app-android-shop / user / kiosk | 매장용, 고객용, 키오스크용 |
+| **앱 구성** | app-android-shop / user / kiosk / delivery | 매장용, 고객용, 키오스크용, 라이더/배달용 |
 
 ## 3. Gateway 라우팅 원칙
 
@@ -78,7 +79,7 @@ graph TD
 ## 4. 서비스 gRPC 통신 구조
 
 | 호출자 | 대상 | Proto | 용도 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | service-gateway | service-auth | `auth.proto` | JWT `ValidateToken` |
 | service-auth | service-user | `user.proto` | 사용자 `Authenticate` / `GetUserByEmail` |
 | service-order | service-store | `store.proto` | `GetProductById` |
@@ -90,7 +91,7 @@ graph TD
 ## 5. 서비스별 포트 매핑
 
 | 서비스 | HTTP 포트 | gRPC 포트 | Eureka 등록명 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | service-discovery | 8100 | — | discovery-service |
 | service-gateway | 8000 | — (클라이언트만) | service-gateway |
 | service-auth | 7000 | 9000 | service-auth |

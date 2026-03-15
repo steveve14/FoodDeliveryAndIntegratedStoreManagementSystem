@@ -1,9 +1,11 @@
 # 08. 배포 전략 및 Kubernetes 구성 (Deployment & K8s)
 
 ## 1. 컨테이너 빌드 전략 (Docker)
+
 Java 17과 Spring Boot Jar 파일을 기반으로 경량 이미지를 생성합니다.
 
 ### Dockerfile 예시
+
 ```dockerfile
 # Build Stage (Gradle 빌드)
 FROM gradle:7.6-jdk17-alpine AS builder
@@ -24,9 +26,11 @@ ENTRYPOINT ["java", "-jar", "-Djava.security.egd=file:/dev/./urandom", "-Dspring
 ```
 
 ## 2. Kubernetes 리소스 구조
+
 각 마이크로서비스는 `Deployment`와 `Service` 리소스를 가집니다.
 
 ### deployment.yaml (예시)
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -60,6 +64,8 @@ spec:
 ```
 
 ## 3. 외부 노출 전략 (Ingress)
+
 외부(인터넷)에서의 접근은 `Nginx Ingress Controller`를 통해 `service-gateway`로만 허용합니다.
-*   `api.mydomain.com` -> `service-gateway`
-*   나머지 마이크로서비스(`service-store`, `service-order` 등)는 `ClusterIP` 타입으로 설정하여 외부 직접 접근 차단.
+
+* `api.mydomain.com` -> `service-gateway`
+* 나머지 마이크로서비스(`service-store`, `service-order` 등)는 `ClusterIP` 타입으로 설정하여 외부 직접 접근 차단.

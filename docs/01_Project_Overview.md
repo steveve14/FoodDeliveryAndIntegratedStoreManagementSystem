@@ -34,5 +34,6 @@
 - `frontend/app-android-shop/`: 사장님(매장)용 Android 앱 (Material Design, SDK 34)
 - `frontend/app-android-user/`: 고객용 Android 앱
 - `frontend/app-android-kiosk/`: 키오스크용 Android 앱
+- `frontend/app-android-delivery/`: 라이더/배달용 Android 앱
 - 현재 상태: 기본 스캐폴드(MainActivity) 구축 완료. 백엔드 API 연동은 추후 진행 예정.
 - 빌드: Gradle 8.1.1, Android SDK 34 (minSdk 24)
