@@ -27,7 +27,7 @@ Get-ChildItem -Path $root -Recurse -Include *.java | ForEach-Object {
                     $found = $true
                 }
                 $linenum = $j + 1
-                Write-Output "  Line $linenum: $($lines[$j].Trim())"
+                Write-Output "  Line $linenum : $($lines[$j].Trim())"
             }
         }
         if ($found) { Write-Output "" }

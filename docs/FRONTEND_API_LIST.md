@@ -1,6 +1,6 @@
 # 프론트엔드 API 목록
 
-> **기준일**: 2026-03-10
+> **기준일**: 2026-03-15
 > **Base URL**: `http://localhost:8000` (Gateway → 각 서비스로 프록시)
 > **응답 포맷**: 모든 응답은 `ApiResponse<T>` 래퍼로 감싸여 반환됩니다.
 
@@ -278,9 +278,12 @@ Response: `data: null`
 
 ## 4. 가게 (Store) `/api/v1/stores/**`
 
-> 🔐 인증 필요
+> � 가게 목록/상세/메뉴 조회는 인증 불필요 (2026-03-13 P0-0 완료)
+> 🔐 가게 생성/수정/삭제는 인증 필요 (STORE/ADMIN 권한)
 
 ### 4-1. 가게 목록 조회
+
+> 🔓 인증 불필요
 
 ```http
 GET /api/v1/stores?category={category}&status={status}

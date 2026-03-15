@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+.nuxt/
+test-results/
+app-android-shop/
+app-android-user/
+app-android-kiosk/

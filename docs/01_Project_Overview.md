@@ -19,8 +19,8 @@
 - **MSA 환경 구축**: `service-discovery`, `service-gateway` 및 `service-*` 모듈 설정/관리.
 - **API 개발**: 도메인별(주문, 가게, 유저) 독립적인 REST API 서버 개발.
 - **데이터 설계**: Spring Data JDBC를 활용한 DB 접근 계층 구성. 로컬(H2 in-memory) / 운영(PostgreSQL) 환경 분리.
-- **내부 통신**: **Spring gRPC**(공식 Spring 프로젝트, 1.0.0-RC1)를 이용한 서비스 간 gRPC 통신 구현. (Protobuf 스키마 공유, 서비스별 GrpcClientConfig 빈 등록)
-- **인증**: jjwt 0.12.x (Jakarta EE 호환) 기반 JWT Access/Refresh Token 발급 및 검증.
+- **내부 통신**: **Spring gRPC**(공식 Spring 프로젝트, 1.0.2 GA)를 이용한 서비스 간 gRPC 통신 구현. (Protobuf 스키마 공유, 서비스별 GrpcClientConfig 빈 등록)
+- **인증**: jjwt 0.12.6 (Jakarta EE 호환) 기반 JWT Access/Refresh Token 발급 및 검증.
 
 ### 3.2. 프론트엔드 개발 (Nuxt.js)
 
@@ -31,5 +31,8 @@
 
 ### 3.3. 모바일 개발 (Android)
 
-- 현재 저장소에 `mobile/` 디렉토리 미포함. 추후 별도 리포지토리 또는 서브모듈로 분리 예정.
-- 계획: 위치 기반 배달 라이더 앱, 고객 앱 (웹뷰 하이브리드 검토 중).
+- `frontend/app-android-shop/`: 사장님(매장)용 Android 앱 (Material Design, SDK 34)
+- `frontend/app-android-user/`: 고객용 Android 앱
+- `frontend/app-android-kiosk/`: 키오스크용 Android 앱
+- 현재 상태: 기본 스캐폴드(MainActivity) 구축 완료. 백엔드 API 연동은 추후 진행 예정.
+- 빌드: Gradle 8.1.1, Android SDK 34 (minSdk 24)

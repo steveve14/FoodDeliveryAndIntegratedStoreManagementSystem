@@ -1,7 +1,7 @@
 ﻿# 보안 감사 보고서
 
 > **작성일**: 2026-03-01  
-> **최종 수정**: 2026-03-10  
+> **최종 수정**: 2026-03-15  
 > **대상**: 전체 백엔드(MSA) + 프론트엔드(3개 앱)  
 > **프로젝트 성격**: 토이 프로젝트 (소스 공개 허용, 금전 관련 없음)
 
@@ -106,8 +106,8 @@
 ## 3. 권장 개선사항 (미수정 — 토이 프로젝트 기준 허용)
 
 ### 3.1 JWT 시크릿 하드코딩
-- `application.yml`에 Base64 시크릿이 직접 커밋됨
-- 토이 프로젝트이므로 허용. 실무에서는 `${TOKEN_SECRET}` 환경변수 치환 필수
+- `application.yml`의 JWT 시크릿은 `${TOKEN_SECRET}` 환경변수로 전환 완료 (P0-5)
+- gateway 재기동 시 동일 Base64 secret 주입 필수
 
 ### 3.2 DB 비밀번호 기본값
 - `${DB_PASSWORD:password}` 폴백 존재
@@ -120,9 +120,9 @@
 - 향후 Spring Security의 `@PreAuthorize`까지 통합하면 정책 가시성과 테스트성이 더 좋아짐
 
 ### 3.4 CORS 설정
-- 백엔드: CORS 설정 전무
-- 프론트엔드: `cors: true` (와일드카드)
-- 개발 환경에서는 허용. 배포 시 오리진 제한 필요
+- 백엔드: gateway에 `allowedOrigins` 설정 완료 (localhost:3000, 3001, 3002, 3010, 3100, 3200)
+- 프론트엔드: Nitro 프록시로 백엔드 통신
+- 배포 시 오리진 제한 필요
 
 ### 3.5 Rate Limiting 미적용
 - 로그인 무차별 대입 공격 방어 없음
@@ -153,14 +153,14 @@
 |------------|-----------|------|
 | Spring Boot | 4.0.2 | 최신 |
 | JJWT | **0.12.6** | ✅ 최신 (Jakarta EE 호환, deprecated API 완전 제거) |
-| Spring gRPC | **1.0.0-RC1** | ✅ 공식 Spring 프로젝트 (net.devh 대체) |
-| io.grpc | **1.76.0** | Spring gRPC BOM 관리 |
-| Protobuf | **4.32.1** | Spring gRPC BOM 관리 |
+| Spring gRPC | **1.0.2** | ✅ 최신 GA (공식 Spring 프로젝트, Maven Central) |
+| io.grpc | **1.77.1** | Spring gRPC BOM 관리 |
+| Protobuf | **4.33.2** | Spring gRPC BOM 관리 |
 | Nuxt | ^4.2.2 | 최신 |
 
 > **2026-03-04 변경사항**:  
 > - jjwt `0.11.5` → **`0.12.6`** 업그레이드 (javax 네임스페이스 → jakarta, deprecated API 완전 제거)  
-> - gRPC `net.devh:grpc-spring-boot-starter:3.1.0.RELEASE` → **`org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.0-RC1`** 교체  
-> - gRPC 코어 `1.62.2` → **`1.76.0`** (Spring gRPC BOM 관리)
+> - gRPC `net.devh:grpc-spring-boot-starter:3.1.0.RELEASE` → **`org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2`** 교체  
+> - gRPC 코어 `1.62.2` → **`1.77.1`** (Spring gRPC BOM 관리)
 
 ---

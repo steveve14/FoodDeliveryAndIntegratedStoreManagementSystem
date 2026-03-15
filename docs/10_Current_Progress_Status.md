@@ -1,4 +1,4 @@
-# 10. 현재 진행 상황 정리 (2026-03-10)
+# 10. 현재 진행 상황 정리 (2026-03-15)
 
 ## 0) 2026-03-10 추가 반영 (금일)
 
@@ -32,11 +32,24 @@
   - 결과: `1 passed (4.1s)`
 - **gateway CORS 개선**: `allowedOrigins`에 개발 서버 포트 3010, 3100, 3200 추가
 
+## 0-2) 2026-03-15 추가 반영
+
+- **Spring gRPC GA 업그레이드**: 1.0.0-RC1 → **1.0.2 GA** (Maven Central 정식 배포)
+  - io.grpc: 1.76.0 → **1.77.1**, Protobuf: 4.32.1 → **4.33.2**
+  - Spring Boot 4.0.2 정식 지원
+- **Android 앱 스캐폴드 추가**: 3개 네이티브 앱 프로젝트 구축
+  - `frontend/app-android-shop/` (매장용, `com.fooddelivery.shop`)
+  - `frontend/app-android-user/` (고객용, `com.fooddelivery.user`)
+  - `frontend/app-android-kiosk/` (키오스크용, `com.fooddelivery.kiosk`)
+  - Android SDK 34, minSdk 24, Material Design, ConstraintLayout
+  - 기본 MainActivity 스캐폴드 완료, API 연동 추후 진행
+- **전체 문서 최신화**: docs/ 전체 문서를 실제 코드 기준으로 정렬
+
 ## 1) 요약
 
 현재 저장소는 **MSA 인프라 골격 + 인증/회원 기능 + 서비스 간 gRPC 통신 + 프론트 실연동 초기 단계**까지 진행되었습니다.
 
-**2026-03-04 마이그레이션 완료**: net.devh gRPC → Spring gRPC 1.0.0-RC1, jjwt 0.11.5 → 0.12.6, 전체 `BUILD SUCCESSFUL` 확인.
+**2026-03-04 마이그레이션 완료**: net.devh gRPC → Spring gRPC 1.0.2 GA, jjwt 0.11.5 → 0.12.6, 전체 `BUILD SUCCESSFUL` 확인.
 
 ## 2) 완료/구축된 항목
 
@@ -50,7 +63,7 @@
   - `/api/v1/admin/users/**`, `/api/v1/stores/manage/**` 제거
   - 실제 공개/보호 경로만 유지
   - 세부 권한은 각 서비스의 `@RequireRole` 및 소유권 검증으로 위임
-- **Spring gRPC 1.0.0-RC1** 기반 서비스 간 통신 구현
+- **Spring gRPC 1.0.2 GA** 기반 서비스 간 통신 구현
   - gateway→auth (JWT ValidateToken)
   - auth→user (Authenticate / GetUserByEmail)
   - order→store (GetProductById)
@@ -78,6 +91,15 @@
 - `web-user`: 카테고리/매장/장바구니/체크아웃/주문내역 연동 경로 확보
 - pnpm 10.26.1 워크스페이스 기반 패키지 관리
 
+### Android 앱
+
+- 3개 네이티브 앱 스캐폴드 구축 완료
+  - `app-android-shop` (매장용, com.fooddelivery.shop)
+  - `app-android-user` (고객용, com.fooddelivery.user)
+  - `app-android-kiosk` (키오스크용, com.fooddelivery.kiosk)
+- Android SDK 34, minSdk 24, Material Design 1.10.0
+- 기본 MainActivity 구조 완성, 백엔드 API 연동 예정
+
 ## 3) 진행 중 항목
 
 - 공통 응답 포맷(`ApiResponse`) 및 API 버저닝(`/api/v1`) 규칙 전 서비스 100% 일관 적용은 추가 정리 필요
@@ -89,8 +111,8 @@
 | --- | --- |
 | Spring Boot | 4.0.2 |
 | Build | Gradle 9.2.1 (Groovy DSL) |
-| gRPC | Spring gRPC 1.0.0-RC1 / io.grpc 1.76.0 |
-| Protobuf | 4.32.1 |
+| gRPC | Spring gRPC 1.0.2 GA / io.grpc 1.77.1 |
+| Protobuf | 4.33.2 |
 | JWT | jjwt 0.12.6 |
 | DB (local) | H2 in-memory |
 | DB (prod) | PostgreSQL 6000 |
@@ -103,6 +125,7 @@
 - API 문서와 구현 간 일부 불일치 잔존
 - Dockerfile / docker-compose / K8s 매니페스트 부재
 - gateway 재기동 시 `TOKEN_SECRET` 누락 위험 (운영 스크립트 보강 필요)
+- Android 앱 API 연동 미구현 (스캐폴드만 완료)
 
 ## 6) 다음 액션(권장)
 
@@ -110,3 +133,4 @@
 2. web-shop/web-admin E2E 스모크 추가
 3. 서비스 기동 순서 + 환경변수 포함 실행 스크립트 정리
 4. Dockerfile 작성 및 docker-compose 로컬 통합 실행 환경 구성
+5. Android 앱 백엔드 API 연동 (app-android-shop/user/kiosk)

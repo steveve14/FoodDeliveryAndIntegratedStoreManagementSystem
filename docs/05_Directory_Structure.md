@@ -1,6 +1,6 @@
 # 05. 프로젝트 폴더 구조 (Directory Structure)
 
-> **최종 수정**: 2026-03-04
+> **최종 수정**: 2026-03-15
 
 이 프로젝트는 모노레포(Monorepo) 스타일로 구성되어 있습니다.
 
@@ -8,7 +8,7 @@
 ```text
 ProjectRoot/
 ├── backend/       # Spring Boot 마이크로서비스 집합
-├── frontend/      # Nuxt.js 웹 프로젝트 집합
+├── frontend/      # Nuxt.js 웹 프로젝트 + Android 앱
 ├── docs/          # 프로젝트 문서 (old/ 에 이전 버전 보관)
 └── README.md
 ```
@@ -45,36 +45,57 @@ service-auth/src/main/java/com/example/auth/
 
 | 서비스 | proto 파일 |
 |---|---|
-| service-auth | `auth.proto` |
+| service-auth | `auth.proto`, `user.proto` |
 | service-user | `user.proto` |
 | service-store | `store.proto` |
-| service-order | `order.proto` |
+| service-order | `order.proto`, `store.proto` |
+| service-delivery | `delivery.proto`, `order.proto` |
+| service-event | `event.proto` |
+| service-gateway | `auth.proto` |
 
 ## 3. Frontend 구조 (`/frontend`)
-Nuxt.js 4.x 기반의 웹 애플리케이션들입니다. 패키지 관리자는 **pnpm**을 사용합니다.
+Nuxt.js 4.x 기반의 웹 애플리케이션들과 Android 네이티브 앱으로 구성되어 있습니다. 패키지 관리자는 **pnpm**을 사용합니다.
 
-*   `web-user/`: 일반 고객이 웹 브라우저로 접속하는 배달 사이트
-*   `web-shop/`: 사장님/매장 운영용 웹 앱 (POS 겸용)
-*   `web-admin/`: 시스템 관리자 운영 웹 앱
+*   `web-user/`: 일반 고객이 웹 브라우저로 접속하는 배달 사이트 (port 3200)
+*   `web-shop/`: 사장님/매장 운영용 웹 앱 (POS 겸용, port 3100)
+*   `web-admin/`: 시스템 관리자 운영 웹 앱 (port 3000)
+*   `app-android-shop/`: 사장님/매장용 Android 앱 (SDK 34)
+*   `app-android-user/`: 고객용 Android 앱 (SDK 34)
+*   `app-android-kiosk/`: 키오스크용 Android 앱 (SDK 34)
 
 ```text
 frontend/
 ├── web-admin/
 │   ├── app/
 │   │   ├── components/
-│   │   ├── composables/     # useApi, useAuth 등
-│   │   ├── pages/
+│   │   ├── composables/     # useApi, useAuth, useStoreApi, useOrderApi 등
+│   │   ├── pages/           # index, login, stores, users, finance, marketing 등
+│   │   ├── middleware/      # auth.global.ts (ADMIN 권한 필수)
 │   │   └── ...
+│   ├── server/              # Nitro 서버 프록시
 │   ├── nuxt.config.ts
 │   └── package.json
 ├── web-shop/
-│   └── (web-admin과 유사 구조)
-└── web-user/
-    └── (Pinia 상태 관리 포함)
+│   └── (web-admin과 유사 구조, STORE 권한)
+├── web-user/
+│   └── (composable + cookie session 기반, USER 권한)
+├── app-android-shop/
+│   ├── app/src/main/java/   # MainActivity
+│   ├── build.gradle
+│   └── settings.gradle
+├── app-android-user/
+│   └── (app-android-shop과 동일 구조)
+└── app-android-kiosk/
+    └── (app-android-shop과 동일 구조)
 ```
 
-## 4. Mobile 구조 (`/mobile`)
-*   현재 저장소 기준 별도 `mobile/` 디렉토리는 없습니다. (추후 분리/추가 예정)
+## 4. Mobile 구조 (`/frontend/app-android-*`)
+*   `frontend/app-android-shop/`: 매장용 Android 앱 (`com.fooddelivery.shop`)
+*   `frontend/app-android-user/`: 고객용 Android 앱 (`com.fooddelivery.user`)
+*   `frontend/app-android-kiosk/`: 키오스크용 Android 앱 (`com.fooddelivery.kiosk`)
+*   빌드: Gradle 8.1.1, Android SDK 34 (minSdk 24)
+*   UI: Material Design + ConstraintLayout (XML 레이아웃)
+*   현재 상태: 기본 스캐폴드(MainActivity) 구축 완료, 백엔드 API 연동 예정
 
 ## 5. 문서 (`/docs`)
 *   `docs/`: 최신 버전 문서

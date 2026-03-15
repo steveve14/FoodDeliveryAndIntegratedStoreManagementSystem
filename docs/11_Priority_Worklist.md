@@ -2,7 +2,7 @@
 
 기준일: 2026-03-04
 
-업데이트: 2026-03-10
+업데이트: 2026-03-15
 
 ## 우선순위 기준
 - **P0**: 아키텍처/연동 기준선 확립 (없으면 전체 개발이 흔들리는 항목)
@@ -37,11 +37,11 @@
 - Eureka/CORS 주소 `${EUREKA_DEFAULT_ZONE}`, `${GATEWAY_ALLOWED_ORIGIN_*}` 외부화 완료
 
 ### ✅ P0-3. 서비스 간 통신 표준 적용 (완료 — 2026-03-04)
-- **결정**: OpenFeign 폐기 → **Spring gRPC 1.0.0-RC1** (Protobuf 스키마 기반) 채택
+- **결정**: OpenFeign 폐기 → **Spring gRPC 1.0.2 GA** (Protobuf 스키마 기반) 채택
 - **완료 내역**:
   - `net.devh:grpc-spring-boot-starter:3.1.0.RELEASE` 제거
-  - `org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.0-RC1` 적용
-  - Spring gRPC BOM (`spring-grpc-dependencies:1.0.0-RC1`) → io.grpc 1.76.0, protobuf 4.32.1 관리
+  - `org.springframework.grpc:spring-grpc-spring-boot-starter:1.0.2` 적용
+  - Spring gRPC BOM (`spring-grpc-dependencies:1.0.2`) → io.grpc 1.77.1, protobuf 4.33.2 관리
   - 5개 gRPC 서버 `@GrpcService` import 마이그레이션 (`net.devh` → `org.springframework.grpc`)
   - 4개 gRPC 클라이언트: `@GrpcClient` 필드 주입 → `GrpcChannelFactory` 생성자 주입 전환
   - 4개 `GrpcClientConfig.java` 생성 (auth, gateway, order, delivery)
@@ -68,24 +68,33 @@
 - 현재 정적/템플릿 중심 화면을 API 연동형으로 전환
 - 완료조건: 가게검색→장바구니→주문까지 실제 데이터 흐름 연결
 
+### P1-4. Android 앱 백엔드 API 연동
+
+- app-android-shop/user/kiosk 스캐폴드에 REST API 클라이언트 구현
+- 완료조건: 로그인 → 메인 화면 로드 시나리오 1개 앱에서 동작
+
 ## P2 (안정화/확장)
 
 ### P2-1. 배포/운영 표준화
+
 - Dockerfile / K8s 매니페스트 / 환경변수 전략 정비
 - 완료조건: 스테이징 1회 배포 성공 + 롤백 절차 문서화
 
 ### P2-2. 테스트 체계 강화
+
 - 서비스별 API 통합 테스트, 계약 테스트, 핵심 E2E 자동화
 - 완료조건: 핵심 플로우 CI 자동검증 구축
 
 ### P2-3. 관측성/장애 대응
+
 - 공통 로깅, 트레이싱, 헬스체크, 기본 알람 체계
 - 완료조건: 주요 장애 시나리오에 대한 탐지 가능 상태 확보
 
 ## 실행 순서 권장
+
 1. API 표준 고정 (P0-2)
-2. MVP 플로우 구현 (P0-4)
-3. 사용자 기능 확장 (P1)
+2. 사용자 기능 확장 (P1)
+3. Android 앱 API 연동 (P1-4)
 4. 운영 고도화 (P2)
 
 ---

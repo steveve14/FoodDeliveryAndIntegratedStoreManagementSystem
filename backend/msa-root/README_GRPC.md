@@ -77,25 +77,47 @@
 
 ## gRPC 클라이언트 사용 예시
 
+각 gRPC 클라이언트 서비스는 `GrpcClientConfig.java`에서 `GrpcChannelFactory`를 이용해 `BlockingStub` 빈을 등록합니다.
+
+```java
+@Configuration
+public class GrpcClientConfig {
+    @Bean
+    UserGrpcServiceGrpc.UserGrpcServiceBlockingStub userGrpcStub(GrpcChannelFactory channels) {
+        return UserGrpcServiceGrpc.newBlockingStub(channels.createChannel("service-user"));
+    }
+}
+```
+
 ```java
 @Service
+@RequiredArgsConstructor
 public class MyService {
-    
-    @GrpcClient("service-user")
-    private UserGrpcServiceGrpc.UserGrpcServiceBlockingStub userStub;
-    
+
+    private final UserGrpcServiceGrpc.UserGrpcServiceBlockingStub userStub;
+
     public void authenticateUser(String email, String password) {
         AuthenticateRequest request = AuthenticateRequest.newBuilder()
                 .setEmail(email)
                 .setPassword(password)
                 .build();
         AuthenticateResponse response = userStub.authenticate(request);
-        
+
         if (response.getSuccess()) {
             // 인증 성공
         }
     }
 }
+```
+
+채널 주소는 `application.yml`에서 설정합니다:
+```yaml
+spring:
+  grpc:
+    client:
+      channels:
+        service-user:
+          address: static://localhost:9010
 ```
 
 ## application.yml 설정

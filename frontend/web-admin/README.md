@@ -1,43 +1,27 @@
-# Nuxt Dashboard Template
+# web-admin — 관리자 대시보드
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+![Nuxt](https://img.shields.io/badge/Nuxt-4.2.2-00DC82?logo=nuxt)
+![Nuxt UI](https://img.shields.io/badge/Nuxt%20UI-4.3.0-00DC82?logo=nuxt&labelColor=020420)
 
-Get started with the Nuxt dashboard template with multiple pages, collapsible sidebar, keyboard shortcuts, light & dark mode, command palette and more, powered by [Nuxt UI](https://ui.nuxt.com).
+> 시스템 관리자를 위한 웹 대시보드입니다. 사용자/매장/주문/배달/이벤트 관리 기능을 제공합니다.
 
-- [Live demo](https://dashboard-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+## 주요 기능
 
-<a href="https://dashboard-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/dashboard-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/dashboard-light.png">
-    <img alt="Nuxt Dashboard Template" src="https://ui.nuxt.com/assets/templates/nuxt/dashboard-light.png">
-  </picture>
-</a>
+- 대시보드 KPI 차트, 알림, 빠른 액션
+- 사용자 관리 / 매장 관리 / 주문 관리
+- 배달 추적 / 이벤트·쿠폰 관리
+- 재무 분석 / 마케팅 / 시스템 설정
+- ADMIN 역할 기반 접근 제어
 
-> The dashboard template for Vue is on https://github.com/nuxt-ui-templates/dashboard-vue.
+## 기술 스택
 
-## Quick Start
+- **Framework**: Nuxt 4.2.2 (Vue 3)
+- **UI**: @nuxt/ui 4.3.0 (Tailwind CSS)
+- **State**: composable (useApi, useAuth, useStoreApi, useOrderApi 등)
+- **인증**: httpOnly 쿠키 기반, 자동 토큰 갱신
+- **API**: Gateway(http://localhost:8000) 경유, Nitro 서버 프록시
 
-```bash [Terminal]
-npm create nuxt@latest -- -t github:nuxt-ui-templates/dashboard
-```
-
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=dashboard&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fdashboard&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fdashboard-dark.png&demo-url=https%3A%2F%2Fdashboard-template.nuxt.dev%2F&demo-title=Nuxt%20Dashboard%20Template&demo-description=A%20dashboard%20template%20with%20multi-column%20layout%20for%20building%20sophisticated%20admin%20interfaces.)
-
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
-pnpm install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## 개발 서버 (port 3000)
 
 ```bash
 pnpm dev
@@ -59,6 +43,12 @@ pnpm preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-## Renovate integration
+## 환경변수
 
-Install [Renovate GitHub app](https://github.com/apps/renovate/installations/select_target) on your repository and you are good to go.
+| 변수 | 기본값 | 설명 |
+|------|--------|------|
+| `NUXT_PUBLIC_API_BASE_URL` | `http://localhost:8000` | 백엔드 Gateway 주소 |
+
+## 관련 문서
+
+- [BACKEND_INTEGRATION_GUIDE.md](BACKEND_INTEGRATION_GUIDE.md) — 백엔드 연동 가이드

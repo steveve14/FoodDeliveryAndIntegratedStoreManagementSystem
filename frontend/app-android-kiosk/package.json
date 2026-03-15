@@ -1,0 +1,11 @@
+{
+  "name": "frontend",
+  "private": true,
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^9.22.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}
