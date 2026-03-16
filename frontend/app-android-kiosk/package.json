@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "app-android-kiosk",
   "private": true,
   "scripts": {
     "lint": "eslint ."
