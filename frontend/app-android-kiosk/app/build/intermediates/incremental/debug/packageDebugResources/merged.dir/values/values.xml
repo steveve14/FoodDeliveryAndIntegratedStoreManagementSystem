@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="red_500">#FFC62828</color>
+    <color name="red_700">#FF8E0000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="yellow_300">#FFFFEE58</color>
+    <string name="app_name">FoodDelivery Kiosk</string>
+    <string name="home_subtitle">매장 방문 고객을 위한 빠른 주문 화면입니다.</string>
+    <string name="home_title">키오스크 주문 시작</string>
+    <string name="primary_action">주문 시작</string>
+    <style name="Theme.AppAndroidKiosk" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/red_500</item>
+        <item name="colorPrimaryVariant">@color/red_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/yellow_300</item>
+        <item name="colorOnSecondary">@color/black</item>
+    </style>
+</resources>

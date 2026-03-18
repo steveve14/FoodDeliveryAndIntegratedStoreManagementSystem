@@ -1,0 +1,32 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color ic_launcher_background
+color red_500
+color red_700
+color white
+color yellow_300
+drawable ic_launcher_background
+drawable logo
+id bottom_checkout_container
+id btn_checkout
+id cart_fragment_container
+id main_fragment_container
+id nav_menu_order
+id nav_order_status
+id nav_view
+id tv_cart_title
+id tv_category_title
+layout activity_main
+layout fragment_cart
+layout fragment_menu_order
+layout fragment_order_status
+menu kiosk_nav_menu
+mipmap ic_launcher
+mipmap ic_launcher_foreground
+mipmap ic_launcher_round
+string app_name
+string home_subtitle
+string home_title
+string primary_action
+style Theme.AppAndroidKiosk
