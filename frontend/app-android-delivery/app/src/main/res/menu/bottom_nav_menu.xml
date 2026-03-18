@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_active"
         android:icon="@android:drawable/ic_menu_compass"
-        android:title="홈" />
+        android:title="진행중 배달" />
     <item
-        android:id="@+id/nav_search"
-        android:icon="@android:drawable/ic_menu_search"
-        android:title="검색" />
-    <item
-        android:id="@+id/nav_cart"
-        android:icon="@android:drawable/ic_menu_myplaces"
-        android:title="장바구니" />
+        android:id="@+id/nav_history"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="배달 내역" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@android:drawable/ic_menu_info_details"

@@ -9,21 +9,23 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:paddingTop="8dp"
-        android:src="@drawable/logo" />
+        android:id="@+id/imageView"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:contentDescription="app icon"
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="맛있는 치킨 본점"
+        android:text="상점 관리"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="영업 중"
-        android:textColor="@color/teal_200" />
+        android:text="admin@testshop.com" />
+
 </LinearLayout>

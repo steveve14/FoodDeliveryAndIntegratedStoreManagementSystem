@@ -2,21 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:gravity="center">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="메뉴/상품 관리"
+        android:text="상품 관리 환면"
         android:textSize="24sp"
         android:textStyle="bold" />
-        
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="상품 목록 및 메뉴 수정 기능이 들어갈 자리입니다."
+        android:layout_marginTop="16dp"
+        android:text="메뉴를 추가하거나 수정할 수 있는 화면입니다."
         android:textSize="16sp" />
 </LinearLayout>

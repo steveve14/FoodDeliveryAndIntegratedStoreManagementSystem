@@ -1,110 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:weightSum="2"
-    android:background="#000000">
+    android:background="#121212">
 
-    <!-- Preparing Status -->
+    <!-- Preparing Section (Dark) -->
     <LinearLayout
+        android:id="@+id/preparing_section"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:gravity="center_horizontal"
+        android:paddingTop="48dp"
+        app:layout_constraintEnd_toStartOf="@+id/serving_section"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_weight="1">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#424242"
-            android:gravity="center"
-            android:padding="24dp"
-            android:text="준비중인 번호"
-            android:textColor="#FFFFFF"
-            android:textSize="36sp"
+            android:text="음식을 준비 중입니다"
+            android:textColor="#E0E0E0"
+            android:textSize="32sp"
             android:textStyle="bold" />
 
-        <GridView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="32dp"
-            android:numColumns="2"
-            android:verticalSpacing="24dp">
-            <!-- Placeholders for grid items, normally handled by adapter -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="102"
-                android:textColor="#BDBDBD"
-                android:textSize="48sp"
-                android:textStyle="bold" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="103"
-                android:textColor="#BDBDBD"
-                android:textSize="48sp"
-                android:textStyle="bold" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="104"
-                android:textColor="#BDBDBD"
-                android:textSize="48sp"
-                android:textStyle="bold" />
-        </GridView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Preparing"
+            android:textColor="#9E9E9E"
+            android:textSize="20sp" />
+
+        <!-- Mock order numbers -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:text="102"
+            android:textColor="#FFFFFF"
+            android:textSize="64sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="103"
+            android:textColor="#FFFFFF"
+            android:textSize="64sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="104"
+            android:textColor="#BDBDBD"
+            android:textSize="48sp" />
+
     </LinearLayout>
 
     <View
-        android:layout_width="4dp"
+        android:layout_width="2dp"
         android:layout_height="match_parent"
-        android:background="#424242" />
+        android:background="#333333"
+        app:layout_constraintStart_toEndOf="@id/preparing_section"
+        app:layout_constraintEnd_toStartOf="@id/serving_section" />
 
-    <!-- Now Serving Status -->
+    <!-- Serving Section (Highlight) -->
     <LinearLayout
+        android:id="@+id/serving_section"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:gravity="center_horizontal"
+        android:paddingTop="48dp"
+        android:background="#FF5722"
+        app:layout_constraintStart_toEndOf="@+id/preparing_section"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#E91E63"
-            android:gravity="center"
-            android:padding="24dp"
-            android:text="나오는 번호"
+            android:text="음식이 나왔습니다"
             android:textColor="#FFFFFF"
             android:textSize="36sp"
             android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Now Serving"
+            android:textColor="#FFCCBC"
+            android:textSize="24sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="101"
-                android:textColor="#FF9800"
-                android:textSize="120sp"
-                android:textStyle="bold" />
-                
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="맛있게 드세요!"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp" />
-        </LinearLayout>
+        <!-- Current order being served -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:text="101"
+            android:textColor="#FFFFFF"
+            android:textSize="120sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="카운터에서 음식을 받아가주세요"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

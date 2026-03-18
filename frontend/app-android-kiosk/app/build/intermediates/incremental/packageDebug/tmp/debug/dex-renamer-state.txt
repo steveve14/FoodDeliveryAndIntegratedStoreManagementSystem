@@ -1,4 +1,4 @@
-#Wed Mar 18 13:28:39 KST 2026
+#Wed Mar 18 14:15:32 KST 2026
 base.2=C\:\\Users\\User\\WorkStation\\FoodDeliveryAndIntegratedStoreManagementSystem\\frontend\\app-android-kiosk\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\9\\classes.dex
 path.2=9/classes.dex
 base.1=C\:\\Users\\User\\WorkStation\\FoodDeliveryAndIntegratedStoreManagementSystem\\frontend\\app-android-kiosk\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex

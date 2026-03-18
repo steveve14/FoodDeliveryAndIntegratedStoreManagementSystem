@@ -1412,6 +1412,8 @@ color error_color_material_dark
 color error_color_material_light
 color foreground_material_dark
 color foreground_material_light
+color green_500
+color green_700
 color highlighted_text_material_dark
 color highlighted_text_material_light
 color ic_launcher_background
@@ -2041,6 +2043,7 @@ color mtrl_textinput_focused_box_stroke_color
 color mtrl_textinput_hovered_box_stroke_color
 color notification_action_color_filter
 color notification_icon_bg_color
+color orange_300
 color primary_dark_material_dark
 color primary_dark_material_light
 color primary_material_dark
@@ -2049,9 +2052,6 @@ color primary_text_default_material_dark
 color primary_text_default_material_light
 color primary_text_disabled_material_dark
 color primary_text_disabled_material_light
-color purple_200
-color purple_500
-color purple_700
 color ripple_material_dark
 color ripple_material_light
 color secondary_text_default_material_dark
@@ -2064,8 +2064,6 @@ color switch_thumb_material_dark
 color switch_thumb_material_light
 color switch_thumb_normal_material_dark
 color switch_thumb_normal_material_light
-color teal_200
-color teal_700
 color tooltip_background_dark
 color tooltip_background_light
 color white
@@ -3141,15 +3139,18 @@ id beginning
 id bestChoice
 id blocking
 id bottom
+id bottom_checkout_bar
 id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btn_checkout
 id buttonPanel
 id cache_measures
 id callMeasure
 id cancel_button
 id carryVelocity
+id category_scroll
 id center
 id centerCrop
 id centerInside
@@ -3160,6 +3161,7 @@ id chain2
 id chains
 id checkbox
 id checked
+id chip_group_recent
 id chronometer
 id circle_center
 id clear_text
@@ -3204,6 +3206,7 @@ id disableIntraAutoTransition
 id disablePostScroll
 id disableScroll
 id disjoint
+id divider
 id dragAnticlockwise
 id dragClockwise
 id dragDown
@@ -3267,6 +3270,7 @@ id ifRoom
 id ignore
 id ignoreRequest
 id image
+id imageView
 id immediateStop
 id included
 id indeterminate
@@ -3347,10 +3351,13 @@ id mtrl_picker_text_input_range_start
 id mtrl_picker_title_text
 id mtrl_view_tag_bottom_padding
 id multiply
+id nav_cart
 id nav_delivery
 id nav_home
 id nav_orders
 id nav_products
+id nav_profile
+id nav_search
 id nav_settings
 id nav_view
 id navigation_bar_item_active_indicator_view
@@ -3406,6 +3413,7 @@ id pin
 id position
 id postLayout
 id pressed
+id profile_header
 id progress_circular
 id progress_horizontal
 id radio
@@ -3431,10 +3439,12 @@ id scrollView
 id scrollable
 id search_badge
 id search_bar
+id search_bar_card
 id search_button
 id search_close_btn
 id search_edit_frame
 id search_go_btn
+id search_header
 id search_mag_icon
 id search_plate
 id search_src_text
@@ -3501,6 +3511,7 @@ id textSpacerNoButtons
 id textSpacerNoTitle
 id textStart
 id textTop
+id textView
 id text_input_end_icon
 id text_input_error_icon
 id text_input_start_icon
@@ -3527,6 +3538,10 @@ id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
 id triangle
+id tv_cart_title
+id tv_recent_searches
+id tv_recommendation_title
+id tv_trending
 id unchecked
 id uniform
 id unlabeled
@@ -3681,10 +3696,13 @@ layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
+layout fragment_cart
 layout fragment_delivery
 layout fragment_home
 layout fragment_orders
 layout fragment_products
+layout fragment_profile
+layout fragment_search
 layout fragment_settings
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
@@ -3748,6 +3766,7 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
+menu bottom_nav_menu
 menu drawer_menu
 mipmap ic_launcher
 mipmap ic_launcher_foreground
@@ -3799,6 +3818,8 @@ string exposed_dropdown_menu_content_description
 string fab_transformation_scrim_behavior
 string fab_transformation_sheet_behavior
 string hide_bottom_view_on_scroll_behavior
+string home_subtitle
+string home_title
 string icon_content_description
 string item_view_role_description
 string m3_exceed_max_badge_text_suffix
@@ -3906,6 +3927,7 @@ string path_password_eye
 string path_password_eye_mask_strike_through
 string path_password_eye_mask_visible
 string path_password_strike_through
+string primary_action
 string search_menu_title
 string searchbar_scrolling_view_behavior
 string searchview_clear_text_content_description

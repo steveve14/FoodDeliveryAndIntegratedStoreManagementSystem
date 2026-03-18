@@ -68,7 +68,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- History Card 1 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -122,7 +121,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- History Card 2 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

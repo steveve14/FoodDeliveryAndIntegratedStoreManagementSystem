@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="amber_300">#FFFFD54F</color>
     <color name="black">#FF000000</color>
-    <color name="green_500">#FF43A047</color>
-    <color name="green_700">#FF2E7D32</color>
+    <color name="green_500">#FF2E7D32</color>
+    <color name="green_700">#FF1B5E20</color>
     <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="orange_300">#FFFFB74D</color>
     <color name="white">#FFFFFFFF</color>
-    <string name="app_name">FoodDelivery Rider</string>
-    <string name="home_subtitle">신규 배달 요청을 확인하고 배달 상태를 관리하세요.</string>
-    <string name="home_title">라이더 배달 관리</string>
-    <string name="primary_action">배달 콜 확인</string>
-    <style name="Theme.AppAndroidDelivery" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <string name="app_name">FoodDelivery Delivery</string>
+    <string name="home_subtitle">빠른 재주문과 배달 현황을 확인하세요.</string>
+    <string name="home_title">사용자 주문 홈</string>
+    <string name="primary_action">주문하러 가기</string>
+    <style name="Theme.AppAndroidDelivery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/green_500</item>
         <item name="colorPrimaryVariant">@color/green_700</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/amber_300</item>
+        <item name="colorSecondary">@color/orange_300</item>
         <item name="colorOnSecondary">@color/black</item>
     </style>
 </resources>
