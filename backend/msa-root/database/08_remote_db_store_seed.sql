@@ -5,7 +5,8 @@ DELETE FROM menu WHERE id IN ('menu-001', 'menu-002', 'menu-003', 'menu-004', 'm
   'menu-019', 'menu-020', 'menu-021', 'menu-022', 'menu-023', 'menu-024', 'menu-025', 'menu-026', 'menu-027', 'menu-028',
   'menu-029', 'menu-030', 'menu-031', 'menu-032', 'menu-033', 'menu-034', 'menu-035', 'menu-036', 'menu-037');
 DELETE FROM store WHERE id IN ('store-seoul-1', 'store-seoul-2', 'store-incheon-1', 'store-busan-1', 'store-daejeon-1', 'store-suwon-1', 'store-daegu-1', 'store-seoul-3',
-  'store-seoul-4', 'store-seoul-5', 'store-suwon-2', 'store-seongnam-1', 'store-seongnam-2', 'store-seoul-6');
+  'store-seoul-4', 'store-seoul-5', 'store-suwon-2', 'store-seongnam-1', 'store-seongnam-2', 'store-seoul-6',
+  'store-seed-001', 'store-seed-002', 'store-seed-003', 'store-seed-004', 'store-seed-005');
 
 INSERT INTO store (id, owner_id, name, address, phone, category, status, latitude, longitude, min_order_amount, rating_avg, description, opening_hours, created_at) VALUES
   ('store-seoul-1', 'store-owner-1', '강남 한식당', '서울특별시 강남구 강남대로 100', '02-555-1001', 'KOREAN', 'OPEN', 37.4979, 127.0276, 15000, 4.7, '직장인 점심 수요가 많은 한식 배달 전문점', '10:00-21:00', NOW() - INTERVAL '15 day'),
@@ -21,7 +22,12 @@ INSERT INTO store (id, owner_id, name, address, phone, category, status, latitud
   ('store-suwon-2', 'store-owner-11', '수원 장충보쌈', '경기도 수원시 팔달구 정조로 812', '031-555-1011', 'BOSSAM', 'OPEN', 37.2803, 127.0155, 22000, 4.6, '앞다리 수육과 막국수를 함께 즐기는 족발·보쌈 전문점', '11:00-23:30', NOW() - INTERVAL '6 day'),
   ('store-seongnam-1', 'store-owner-12', '판교 아시안키친', '경기도 성남시 분당구 판교역로 152', '031-555-1012', 'ASIAN', 'OPEN', 37.3947, 127.1112, 15000, 4.5, '팟타이와 나시고렝을 중심으로 한 아시안 푸드 전문점', '11:00-21:30', NOW() - INTERVAL '6 day'),
   ('store-seongnam-2', 'store-owner-13', '분당 그린볼', '경기도 성남시 분당구 정자일로 135', '031-555-1013', 'SALAD', 'OPEN', 37.3676, 127.1079, 13000, 4.7, '프로틴 볼과 샐러드를 판매하는 건강식 전문 매장', '09:00-20:30', NOW() - INTERVAL '5 day'),
-  ('store-seoul-6', 'store-owner-14', '용산 한끼도시락', '서울특별시 용산구 한강대로 40', '02-555-1014', 'LUNCHBOX', 'OPEN', 37.5296, 126.9648, 11000, 4.6, '직장인 점심 수요에 맞춘 수제 도시락 전문점', '08:00-19:30', NOW() - INTERVAL '5 day');
+  ('store-seoul-6', 'store-owner-14', '용산 한끼도시락', '서울특별시 용산구 한강대로 40', '02-555-1014', 'LUNCHBOX', 'OPEN', 37.5296, 126.9648, 11000, 4.6, '직장인 점심 수요에 맞춘 수제 도시락 전문점', '08:00-19:30', NOW() - INTERVAL '5 day'),
+  ('store-seed-001', 'store-owner-1', '시드 강동 분식', '서울특별시 강동구 천호대로 200', '02-599-2001', 'SNACK', 'OPEN', 37.5381, 127.1236, 9000, 4.3, 'DB 시드 확장용 분식 매장', '10:00-22:00', NOW() - INTERVAL '4 hour'),
+  ('store-seed-002', 'store-owner-2', '시드 송도 샐러드', '인천광역시 연수구 인천타워대로 323', '032-599-2002', 'SALAD', 'OPEN', 37.3826, 126.6569, 12000, 4.5, 'DB 시드 확장용 샐러드 매장', '09:00-20:00', NOW() - INTERVAL '4 hour'),
+  ('store-seed-003', 'store-owner-3', '시드 광안 파스타', '부산광역시 수영구 광안해변로 250', '051-599-2003', 'WESTERN', 'OPEN', 35.1534, 129.1185, 17000, 4.4, 'DB 시드 확장용 파스타 매장', '11:00-22:30', NOW() - INTERVAL '3 hour'),
+  ('store-seed-004', 'store-owner-4', '시드 성수 디저트', '서울특별시 성동구 왕십리로 112', '02-599-2004', 'DESSERT', 'OPEN', 37.5444, 127.0557, 8000, 4.8, 'DB 시드 확장용 디저트 매장', '10:00-21:30', NOW() - INTERVAL '3 hour'),
+  ('store-seed-005', 'store-owner-5', '시드 대전 국밥', '대전광역시 서구 둔산로 75', '042-599-2005', 'KOREAN', 'OPEN', 36.3504, 127.3845, 10000, 4.2, 'DB 시드 확장용 한식 매장', '07:00-21:00', NOW() - INTERVAL '2 hour');
 
 INSERT INTO menu (id, store_id, name, description, price, available, created_at) VALUES
   ('menu-001', 'store-seoul-1', '직화 제육덮밥', '매콤한 제육과 반숙 계란이 올라간 덮밥', 9500, TRUE, NOW() - INTERVAL '12 day'),

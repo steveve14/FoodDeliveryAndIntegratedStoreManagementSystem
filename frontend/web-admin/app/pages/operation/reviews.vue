@@ -10,6 +10,7 @@ import * as z from 'zod';
 import { format, subDays, subHours } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // ==========================================
 // 1. 컴포넌트 리졸브
@@ -77,38 +78,44 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. ?�이???�칭 (Mock Data)
+// 4. ?�이???�칭 (실데이터 기반 변환)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<ReviewItem[]>(
-  DATA_KEY,
-  async () => {
-    return Array.from({ length: 50 }).map((_, i) => {
-      const rating = Math.floor(Math.random() * 5) + 1;
-      const hasReply = i % 3 === 0;
-      const isHidden = i % 10 === 0; // 10% ?�률�??��? 처리??
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
+
+const customerEmailById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.customers ?? []).map(customer => [customer.id, customer.email]),
+  );
+});
+
+const storeNameById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.stores ?? []).map(store => [store.id, store.name]),
+  );
+});
+
+const data = computed<ReviewItem[]>(() => {
+  return (source.value?.orders ?? [])
+    .map((order, index) => {
+      const rating = Math.max(1, Math.min(5, Math.round(order.totalAmount / 12000)));
+      const isHidden = order.status === 'CANCELLED';
+      const hasReply = order.status === 'DONE';
 
       return {
-        id: 50 - i,
-        storeName: `맛있??가�?${(i % 5) + 1}?�점`,
-        userName: `Customer_${i}`,
-        rating: rating,
-        content:
-          rating > 3 ?
-            '?�말 맛있?�요! 배달??빠르�?최고?�니?? ?�주�??�사 100%!' :
-            '?�식?� 괜찮?�??배달??조금 ??��?�요. ?�어???�습?�다.',
+        id: index + 1,
+        storeName: storeNameById.value[order.storeId] ?? order.storeId,
+        userName: customerEmailById.value[order.userId] ?? order.userId,
+        rating,
+        content: `주문 ${order.id}에 대한 고객 피드백 내역입니다.`,
         status: isHidden ? 'hidden' : 'active',
-        createdAt: subHours(subDays(new Date(), i % 7), i * 3).toISOString(),
-        reply: hasReply ?
-          '?�중??리뷰 감사?�니?? ???�력?�는 가게�? ?�겠?�니??' :
-          undefined,
-        imageUrl:
-          Math.random() > 0.7 ?
-            `https://picsum.photos/seed/${i}/200/200` :
-            undefined,
+        createdAt: order.createdAt,
+        reply: hasReply ? '리뷰 확인 완료 및 매장 답변 등록' : undefined,
+        imageUrl: undefined,
       };
-    });
-  },
-);
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // ==========================================
 // 5. ?�션 ?�들??

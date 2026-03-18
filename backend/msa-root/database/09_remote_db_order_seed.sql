@@ -3,12 +3,14 @@
 DELETE FROM order_item WHERE id IN (
   'order-item-001', 'order-item-002', 'order-item-003', 'order-item-004', 'order-item-005', 'order-item-006', 'order-item-007', 'order-item-008',
   'order-item-009', 'order-item-010', 'order-item-011', 'order-item-012', 'order-item-013', 'order-item-014', 'order-item-015',
-  'order-item-016', 'order-item-017', 'order-item-018', 'order-item-019', 'order-item-020', 'order-item-021', 'order-item-022', 'order-item-023'
+  'order-item-016', 'order-item-017', 'order-item-018', 'order-item-019', 'order-item-020', 'order-item-021', 'order-item-022', 'order-item-023',
+  'order-item-024', 'order-item-025', 'order-item-026', 'order-item-027', 'order-item-028'
 );
 DELETE FROM orders WHERE id IN (
   'order-001', 'order-002', 'order-003', 'order-004', 'order-005',
   'order-006', 'order-007', 'order-008', 'order-009', 'order-010',
-  'order-011', 'order-012', 'order-013', 'order-014', 'order-015'
+  'order-011', 'order-012', 'order-013', 'order-014', 'order-015',
+  'order-016', 'order-017', 'order-018', 'order-019', 'order-020'
 );
 
 INSERT INTO orders (id, user_id, store_id, total_amount, status, created_at) VALUES
@@ -27,7 +29,12 @@ INSERT INTO orders (id, user_id, store_id, total_amount, status, created_at) VAL
   ('order-012', 'user-naeun', 'store-daejeon-1', 31000, 'DELIVERED', NOW() - INTERVAL '4 day 1 hour'),
   ('order-013', 'user-chaeyeon', 'store-suwon-1', 28000, 'CANCELLED', NOW() - INTERVAL '5 day 3 hour'),
   ('order-014', 'user-sangjun', 'store-seoul-1', 22500, 'DELIVERING', NOW() - INTERVAL '30 minute'),
-  ('order-015', 'user-yoona', 'store-seoul-3', 25500, 'DELIVERED', NOW() - INTERVAL '2 day 8 hour');
+  ('order-015', 'user-yoona', 'store-seoul-3', 25500, 'DELIVERED', NOW() - INTERVAL '2 day 8 hour'),
+  ('order-016', 'user-seed-001', 'store-seed-001', 9500, 'CREATED', NOW() - INTERVAL '25 minute'),
+  ('order-017', 'user-seed-002', 'store-seed-002', 14900, 'CONFIRMED', NOW() - INTERVAL '22 minute'),
+  ('order-018', 'user-seed-003', 'store-seed-003', 17000, 'DELIVERING', NOW() - INTERVAL '18 minute'),
+  ('order-019', 'user-seed-004', 'store-seed-004', 11000, 'DELIVERED', NOW() - INTERVAL '3 hour'),
+  ('order-020', 'user-seed-005', 'store-seed-005', 10000, 'CANCELLED', NOW() - INTERVAL '4 hour');
 
 INSERT INTO order_item (id, order_id, menu_id, quantity, price_snapshot) VALUES
   ('order-item-001', 'order-001', 'menu-001', 1, 9500),
@@ -53,4 +60,9 @@ INSERT INTO order_item (id, order_id, menu_id, quantity, price_snapshot) VALUES
   ('order-item-020', 'order-012', 'menu-014', 1, 15000),
   ('order-item-021', 'order-012', 'menu-013', 1, 12000),
   ('order-item-022', 'order-013', 'menu-017', 1, 32000),
-  ('order-item-023', 'order-014', 'menu-001', 1, 9500);
+  ('order-item-023', 'order-014', 'menu-001', 1, 9500),
+  ('order-item-024', 'order-016', 'menu-026', 1, 9500),
+  ('order-item-025', 'order-017', 'menu-035', 1, 14900),
+  ('order-item-026', 'order-018', 'menu-032', 1, 14500),
+  ('order-item-027', 'order-019', 'menu-025', 1, 11000),
+  ('order-item-028', 'order-020', 'menu-019', 1, 10000);

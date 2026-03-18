@@ -9,6 +9,7 @@ import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
 
 import * as z from 'zod'; // 유효성 검증 라이브러리
 import { format } from 'date-fns'; // 날짜 포맷팅
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // [중요] TanStack Table 정렬 및 페이지네이션 코어 함수
 import { getPaginationRowModel } from '@tanstack/table-core';
@@ -89,56 +90,41 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data 생성)
+// 4. 데이터 페칭 (실데이터 기반 변환)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<NoticeItem[]>(
-  DATA_KEY,
-  async () => {
-    // 랜덤 데이터 생성 헬퍼 함수
-    function getRandom<T> (arr: readonly T[]): T | undefined {
-      if (arr.length === 0) {
-        return undefined;
-      }
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
 
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
+const ordersByStoreId = computed(() => {
+  return (source.value?.orders ?? []).reduce<Record<string, number>>((acc, order) => {
+    acc[order.storeId] = (acc[order.storeId] ?? 0) + 1;
+    return acc;
+  }, {});
+});
 
-    const categories = ['general', 'urgent', 'event'] as const;
-    const statuses = ['active', 'inactive', 'scheduled'] as const;
-    const authors = ['관리자', '운영팀', '김철수 매니저', 'CS팀'];
-    const titles = [
-      '개인정보 처리방침 변경 안내',
-      '새벽 정기 서버 점검 안내',
-      '신규 가입자 웰컴 쿠폰 증정',
-      '일부 결제 시스템 오류 수정 완료',
-      '추석 연휴 고객센터 운영 일정 안내',
-    ];
-
-    // 50개의 목업 데이터 생성
-    return Array.from({ length: 50 }).map((_, i) => {
-      const category = getRandom(categories) ?? 'general';
-      const status = getRandom(statuses) ?? 'active';
+const data = computed<NoticeItem[]>(() => {
+  return (source.value?.stores ?? [])
+    .map((store, index) => {
+      const orderCount = ordersByStoreId.value[store.id] ?? 0;
+      const category: NoticeItem['category'] =
+        orderCount >= 20 ? 'event' : store.status === 'CLOSED' ? 'urgent' : 'general';
+      const status: NoticeItem['status'] =
+        store.status === 'OPEN' ? 'active' : category === 'event' ? 'scheduled' : 'inactive';
 
       return {
-        id: 50 - i, // ID 내림차순 생성
-        title: `[${category === 'urgent' ? '긴급' : '안내'}] ${getRandom(titles)}`,
-        content: '공지사항 상세 내용입니다.',
-        status: status,
-        category: category,
-        createdAt: new Date(
-          Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000),
-        ).toISOString(),
-        author: getRandom(authors) ?? '관리자',
-        isPinned: category === 'urgent' || Math.random() < 0.1,
-        // [추가] 약 30% 확률로 이미지 포함
-        imageUrl:
-          Math.random() > 0.7 ?
-            `https://picsum.photos/seed/${i}/200/200` :
-            undefined,
+        id: index + 1,
+        title: `[${category === 'urgent' ? '긴급' : category === 'event' ? '이벤트' : '안내'}] ${store.name} 운영 공지`,
+        content: `${store.name} 매장의 운영 상태(${store.status}) 및 주문 현황(${orderCount}건)을 반영한 공지입니다.`,
+        status,
+        category,
+        createdAt: new Date().toISOString(),
+        author: '운영팀',
+        isPinned: category === 'urgent',
+        imageUrl: undefined,
       };
-    });
-  },
-);
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // ==========================================
 // 5. 비즈니스 로직 및 핸들러

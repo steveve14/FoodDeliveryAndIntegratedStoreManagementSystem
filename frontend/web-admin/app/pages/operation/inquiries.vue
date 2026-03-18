@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { format, subDays, subHours } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // ==========================================
 // 1. 컴포넌트 리졸브
@@ -83,45 +84,44 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. 데이터 페칭 (실데이터 기반 변환)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<InquiryItem[]>(
-  DATA_KEY,
-  async () => {
-    const types = ['결제/환불', '계정 이용', '서비스 장애', '기타 문의'];
-    const titles = [
-      '결제가 중복으로 되었습니다',
-      '로그인이 안돼요',
-      '환불 규정이 어떻게 되나요',
-      '앱이 자꾸 꺼집니다.',
-      '회원 탈퇴는 어디서 하나요',
-    ];
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
 
-    return Array.from({ length: 50 }).map((_, i) => {
-      const isPending = i % 3 === 0;
-      const randomType: string = types[i % types.length]!;
-      const randomTitle: string = titles[i % titles.length]!;
-      const date = subHours(subDays(new Date(), i % 10), i * 2).toISOString();
+const customerEmailById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.customers ?? []).map(customer => [customer.id, customer.email]),
+  );
+});
+
+const data = computed<InquiryItem[]>(() => {
+  return (source.value?.orders ?? [])
+    .map((order, index) => {
+      const type =
+        order.status === 'CANCELLED' ?
+          '결제/환불' :
+          order.status === 'DELIVERING' ?
+            '배송 문의' :
+            order.status === 'DONE' ?
+              '이용 후기' :
+              '주문 진행';
+      const isPending = order.status !== 'DONE' && order.status !== 'CANCELLED';
 
       return {
-        id: 50 - i,
-        user: `User-${1000 + i}`,
-        type: randomType,
-        title: randomTitle,
-        content: `문의사항 상세 내용입니다 (${randomTitle})\n빠른 확인 부탁드립니다`,
+        id: index + 1,
+        type,
+        title: `[주문 ${order.id}] ${type} 요청`,
+        content: `주문 상태(${order.status}) 기준으로 자동 분류된 문의 내역입니다.`,
+        user: customerEmailById.value[order.userId] ?? order.userId,
         status: isPending ? 'pending' : 'resolved',
-        createdAt: date,
-        answer: isPending ?
-          '' :
-          '문의주셔서 감사합니다. 해당 내용은 처리되었습니다.',
-        imageUrl:
-          Math.random() > 0.8 ?
-            `https://picsum.photos/seed/${i}/200/200` :
-            undefined,
+        createdAt: order.createdAt,
+        answer: isPending ? '' : '주문 서비스 상태를 기준으로 처리 완료되었습니다.',
+        imageUrl: undefined,
       };
-    });
-  },
-);
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // ==========================================
 // 5. 액션 핸들러

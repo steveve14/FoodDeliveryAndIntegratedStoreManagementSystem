@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { format, subMinutes } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // ==========================================
 // 1. 컴포넌트 리졸브
@@ -71,33 +72,36 @@ const initialFormState: FormSchema = { status: 'open', adminNote: '' };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. 데이터 페칭 (실데이터 기반 변환)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<ErrorLogItem[]>(
-  DATA_KEY,
-  async () => {
-    return Array.from({ length: 50 }).map((_, i) => {
-      const level =
-        i % 10 === 0 ? 'critical' : i % 3 === 0 ? 'warning' : 'error';
-      const statuses: ErrorLogItem['status'][] = ['open', 'in_progress', 'resolved'];
-      const status = statuses[i % statuses.length] ?? 'open';
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
+
+const data = computed<ErrorLogItem[]>(() => {
+  return (source.value?.orders ?? [])
+    .map((order, index) => {
+      const level: ErrorLogItem['level'] =
+        order.status === 'CANCELLED' ?
+          'critical' :
+          order.status === 'DELIVERING' ?
+            'warning' :
+            'error';
+      const status: ErrorLogItem['status'] =
+        order.status === 'DONE' ? 'resolved' : order.status === 'COOKING' ? 'in_progress' : 'open';
 
       return {
-        id: 5000 - i,
-        timestamp: subMinutes(new Date(), i * 15).toISOString(),
-        level: level,
-        status: status,
-        message:
-          i % 10 === 0 ?
-            '데이터베이스 연결 실패' :
-            `JSON 파싱 ${i}에서 예상하지 못한 토큰`,
-        source: i % 2 === 0 ? '/api/auth/login' : '/components/Dashboard.vue',
-        traceId: `trace-${Math.random().toString(36).substring(7)}`,
-        stackTrace: `Error: ${i % 10 === 0 ? '데이터베이스 연결 실패' : '예상하지 못한 토큰'}\n    at /app/server/api.ts:45:12\n    at async /app/server/handler.ts:22:5`,
+        id: index + 1,
+        timestamp: order.createdAt,
+        level,
+        status,
+        message: `[주문 ${order.id}] 상태 ${order.status} 점검 필요 로그`,
+        source: '/api/v1/orders',
+        traceId: `trace-${order.id.slice(0, 8)}`,
+        stackTrace: `OrderStatusError: ${order.status}\n    at service-order(OrderController)\n    at gateway-route(/api/v1/orders)` ,
       };
-    });
-  },
-);
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // ==========================================
 // 5. 액션 핸들러

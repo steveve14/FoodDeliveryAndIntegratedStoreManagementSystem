@@ -1,38 +1,69 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui';
+import { formatDistanceToNow } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { useHomeStoreSource } from '~/composables/useHomeStoreSource';
 
 const route = useRoute();
 const open = ref(false);
 const toast = useToast();
+const { data: source } = await useHomeStoreSource();
+
+type PendingOrderItem = {
+  id: string;
+  menu: string;
+  address: string;
+  time: string;
+  price: string;
+};
 
 // --- [추가됨] 1. 배달 기사 호출 관련 상태 및 데이터 ---
 const isRiderModalOpen = ref(false);
-const selectedOrderId = ref<number | null>(null);
+const selectedOrderId = ref<string | null>(null);
 
-// 배달 대기 중인 주문 더미 데이터
-const pendingOrders = ref([
-  {
-    id: 101,
-    menu: '황금 올리브 치킨 외 2건',
-    address: '서울시 강남구 역삼동 123-45',
-    time: '10분 전 접수',
-    price: '24,000원',
-  },
-  {
-    id: 102,
-    menu: '양념 반 후라이드 반',
-    address: '서울시 강남구 논현동 55-1',
-    time: '5분 전 접수',
-    price: '19,000원',
-  },
-  {
-    id: 103,
-    menu: '치즈볼 세트 A',
-    address: '서울시 서초구 서초동 777',
-    time: '방금 전 접수',
-    price: '12,000원',
-  },
-]);
+const pendingOrders = computed<PendingOrderItem[]>(() => {
+  const menuNameById = source.value?.menuNameById ?? {};
+
+  return (source.value?.orders ?? [])
+    .filter(order => order.status === 'CREATED' || order.status === 'COOKING')
+    .sort(
+      (left, right) =>
+        new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
+    )
+    .slice(0, 20)
+    .map((order) => {
+      const firstItem = order.items[0];
+      const firstMenuName = firstItem ? menuNameById[firstItem.productId] : undefined;
+      const menu =
+        order.items.length <= 1 ?
+          `${firstMenuName ?? '메뉴 정보 없음'} x ${firstItem?.quantity ?? 1}` :
+          `${firstMenuName ?? '메뉴 정보 없음'} 외 ${order.items.length - 1}건`;
+
+      return {
+        id: order.id,
+        menu,
+        address: '주소 정보 없음',
+        time: `${formatDistanceToNow(new Date(order.createdAt), {
+          addSuffix: true,
+          locale: ko,
+        })} 접수`,
+        price: new Intl.NumberFormat('ko-KR', {
+          style: 'currency',
+          currency: 'KRW',
+          maximumFractionDigits: 0,
+        }).format(order.totalAmount),
+      };
+    });
+});
+
+const pendingOrderBadge = computed(() => {
+  const count = pendingOrders.value.length;
+  if (count <= 0) {
+    return undefined;
+  }
+
+  return count > 99 ? '99+' : `${count}`;
+});
 
 // 기사 호출 모달 열기
 const openCallRiderModal = () => {
@@ -98,7 +129,7 @@ const links = computed(
           label: '실시간 주문접수',
           icon: 'i-lucide-list-checks',
           to: '/orders',
-          badge: '3', // 신규 주문 개수
+          badge: pendingOrderBadge.value,
           onSelect: () => {
             open.value = false;
           },

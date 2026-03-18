@@ -10,6 +10,7 @@ import * as z from 'zod';
 import { format, subDays, subHours } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // ==========================================
 // 1. 컴포넌트 리졸브
@@ -71,42 +72,48 @@ const initialFormState: FormSchema = { status: 'resolved', adminNote: '' };
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. 데이터 페칭 (실데이터 기반 변환)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<ReportItem[]>(
-  DATA_KEY,
-  async () => {
-    const targetTypes: Array<'Review' | 'User' | 'Post'> = [
-      'Review',
-      'User',
-      'Post',
-    ];
-    const reasons: Array<'spam' | 'abuse' | 'sexual' | 'fraud'> = [
-      'spam',
-      'abuse',
-      'sexual',
-      'fraud',
-    ];
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
 
-    return Array.from({ length: 50 }).map((_, i) => {
-      const isOpen = i % 3 === 0;
-      const type = targetTypes[i % targetTypes.length];
-      const reason = reasons[i % reasons.length];
+const customerEmailById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.customers ?? []).map(customer => [customer.id, customer.email]),
+  );
+});
+
+const data = computed<ReportItem[]>(() => {
+  const targetTypes: Array<'Review' | 'User' | 'Post'> = ['Review', 'User', 'Post'];
+
+  return (source.value?.orders ?? [])
+    .map((order, index) => {
+      const targetType = targetTypes[index % targetTypes.length] ?? 'Post';
+      const reason: ReportItem['reason'] =
+        order.status === 'CANCELLED' ?
+          'fraud' :
+          order.status === 'DELIVERING' ?
+            'abuse' :
+            order.status === 'COOKING' ?
+              'spam' :
+              'sexual';
+      const status: ReportItem['status'] =
+        order.status === 'CREATED' ? 'open' : order.status === 'CANCELLED' ? 'dismissed' : 'resolved';
 
       return {
-        id: 50 - i,
-        targetType: type,
-        targetName: type === 'User' ? `@user_${i}` : `${type} #${1000 + i}`,
-        reason: reason,
-        description: '부?�절???�용???�함?�고 ?�습?�다. ?�인 부?�드립니??',
-        reporter: `reporter_${i}`,
-        status: isOpen ? 'open' : i % 2 === 0 ? 'resolved' : 'dismissed',
-        createdAt: subHours(subDays(new Date(), i % 5), i).toISOString(),
-        adminNote: isOpen ? undefined : '?�영 ?�책 ?�반 ?�인?�어 조치??',
-      } as ReportItem;
-    });
-  },
-);
+        id: index + 1,
+        targetType,
+        targetName: targetType === 'User' ? `@${order.userId}` : `${targetType} #${order.id}`,
+        reason,
+        description: `주문 ${order.id} 상태(${order.status})를 기반으로 분류된 신고 내역입니다.`,
+        reporter: customerEmailById.value[order.userId] ?? order.userId,
+        status,
+        createdAt: order.createdAt,
+        adminNote: status === 'open' ? undefined : '실데이터 기반 자동 분류 처리',
+      };
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // ==========================================
 // 5. 액션 핸들러

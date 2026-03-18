@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.AppAndroidDelivery" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.AppAndroidUser" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/green_500</item>
         <item name="colorPrimaryVariant">@color/green_700</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/amber_300</item>
+        <item name="colorSecondary">@color/orange_300</item>
         <item name="colorOnSecondary">@color/black</item>
     </style>
 </resources>

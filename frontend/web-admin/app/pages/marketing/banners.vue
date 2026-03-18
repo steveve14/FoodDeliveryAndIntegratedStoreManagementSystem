@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { format, addDays, subDays } from 'date-fns'; // isWithinInterval 제거 (미사용)
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // ==========================================
 // 1. 컴포넌트 리졸브
@@ -88,34 +89,44 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. 데이터 페칭 (실데이터 기반 변환)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<BannerItem[]>(
-  DATA_KEY,
-  async () => {
-    const positions = ['main_top', 'main_middle', 'sidebar', 'popup'] as const;
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
 
-    return Array.from({ length: 30 }).map((_, i) => {
-      // [수정] 강제 "main_top"으로 추가하여 undefined 접근 오류 해결
-      const position = positions[i % positions.length] ?? 'main_top';
-      const isActive = i % 5 !== 0;
+const orderCountByStoreId = computed(() => {
+  return (source.value?.orders ?? []).reduce<Record<string, number>>((acc, order) => {
+    acc[order.storeId] = (acc[order.storeId] ?? 0) + 1;
+    return acc;
+  }, {});
+});
+
+const data = computed<BannerItem[]>(() => {
+  const positions: BannerItem['position'][] = ['main_top', 'main_middle', 'sidebar', 'popup'];
+
+  return (source.value?.stores ?? [])
+    .map((store, index) => {
+      const orderCount = orderCountByStoreId.value[store.id] ?? 0;
+      const position = positions[index % positions.length] ?? 'main_top';
+      const status: BannerItem['status'] =
+        store.status === 'OPEN' ? 'active' : orderCount > 0 ? 'scheduled' : 'inactive';
 
       return {
-        id: 30 - i,
-        title: `프로모션 배너 ${i + 1} - ${position}`,
-        imageUrl: `https://picsum.photos/seed/banner${i}/400/200`,
-        linkUrl: 'https://example.com/event',
-        position: position,
-        priority: (i % 5) + 1,
-        startDate: format(subDays(new Date(), i), 'yyyy-MM-dd'),
-        endDate: format(addDays(new Date(), 30 - i), 'yyyy-MM-dd'),
-        status: isActive ? 'active' : 'inactive',
-        clickCount: Math.floor(Math.random() * 5000),
+        id: index + 1,
+        title: `${store.name} 프로모션 배너`,
+        imageUrl: `https://picsum.photos/seed/${store.id}/400/200`,
+        linkUrl: `/stores/${store.id}`,
+        position,
+        priority: (index % 5) + 1,
+        startDate: format(subDays(new Date(), index % 7), 'yyyy-MM-dd'),
+        endDate: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
+        status,
+        clickCount: orderCount * 9,
         createdAt: new Date().toISOString(),
       };
-    });
-  },
-);
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // ==========================================
 // 5. 액션 핸들러

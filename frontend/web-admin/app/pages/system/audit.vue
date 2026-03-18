@@ -10,6 +10,7 @@ import type { TableColumn } from '@nuxt/ui';
 import { format, subMinutes, subDays } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // 1. 컴포넌트 리졸브
 const UButton = resolveComponent('UButton');
@@ -47,38 +48,45 @@ const actionFilter = ref('all');
 const isModalOpen = ref(false);
 const currentLog = ref<AuditLogItem | null>(null);
 
-// 4. 데이터 페칭 (Mock Data)
-const { data, status: loadingStatus } = await useAsyncData<AuditLogItem[]>(
-  DATA_KEY,
-  async () => {
-    const actions: AuditLogItem['action'][] = [
-      'create',
-      'update',
-      'delete',
-      'login',
-      'export',
-    ];
-    const modules = ['User', 'Product', 'Order', 'Banner', 'System'];
+// 4. 데이터 페칭 (실데이터 기반 변환)
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
 
-    return Array.from({ length: 50 }).map((_, i) => {
-      const action = actions[i % actions.length];
+const data = computed<AuditLogItem[]>(() => {
+  return (source.value?.orders ?? [])
+    .map((order, index) => {
+      const action: AuditLogItem['action'] =
+        order.status === 'CREATED' ?
+          'create' :
+          order.status === 'CANCELLED' ?
+            'delete' :
+            order.status === 'DONE' ?
+              'export' :
+              'update';
+
       return {
-        id: 5000 - i,
-        adminName: `admin_${(i % 5) + 1}`,
-        adminIp: `192.168.0.${i + 10}`,
-        action: action,
-        targetModule: modules[i % modules.length],
-        targetId: action === 'login' ? undefined : `${100 + i}`,
+        id: index + 1,
+        adminName: `admin-${order.storeId.slice(0, 6)}`,
+        adminIp: 'gateway-proxy',
+        action,
+        targetModule: 'Order',
+        targetId: order.id,
         details: JSON.stringify(
-          { before: { status: 'active' }, after: { status: 'inactive' } },
+          {
+            orderId: order.id,
+            storeId: order.storeId,
+            userId: order.userId,
+            status: order.status,
+            totalAmount: order.totalAmount,
+          },
           null,
           2,
         ),
-        createdAt: subMinutes(new Date(), i * 45).toISOString(),
-      } as AuditLogItem;
-    });
-  },
-);
+        createdAt: order.createdAt,
+      };
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // 5. 액션 핸들러
 function openDetailModal (row: AuditLogItem) {

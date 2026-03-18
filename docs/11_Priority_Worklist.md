@@ -2,7 +2,7 @@
 
 기준일: 2026-03-04
 
-업데이트: 2026-03-15
+업데이트: 2026-03-17
 
 ## 우선순위 기준
 
@@ -106,5 +106,15 @@
 2. 사용자 기능 확장 (P1)
 3. Android 앱 API 연동 (P1-4)
 4. 운영 고도화 (P2)
+
+## 2026-03-17 즉시 실행 체크리스트
+
+- [ ] DB 시드 수동 반영 실행
+  - 순서: `07_remote_db_user_seed.sql` → `08_remote_db_store_seed.sql` → `09_remote_db_order_seed.sql` → `10_remote_db_delivery_seed.sql` → `11_remote_db_event_seed.sql`
+  - 근거 문서: `docs/2026-03-17-mock-data-inventory-and-db-seed-plan.md`
+- [ ] 시드 반영 후 최소 검증 쿼리 실행
+  - user/store/order/delivery/event 신규 ID 존재 여부 확인
+- [ ] web-shop/web-admin/web-user 실데이터 E2E 스모크 1회 실행
+  - 목표: 주문 생성→상태 전이→대시보드 집계 반영 흐름 확인
 
 ---

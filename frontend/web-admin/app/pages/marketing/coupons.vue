@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { format, addDays } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // ==========================================
 // 1. 컴포넌트 리졸브
@@ -90,36 +91,42 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. 데이터 페칭 (실데이터 기반 변환)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<CouponItem[]>(
-  DATA_KEY,
-  async () => {
-    return Array.from({ length: 50 }).map((_, i) => {
-      const isPercent = Math.random() > 0.5;
-      const limit = Math.random() > 0.8 ? null : 100 + i * 10;
-      const used = limit ?
-        Math.floor(Math.random() * limit) :
-        Math.floor(Math.random() * 500);
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
+
+const orderCountByStoreId = computed(() => {
+  return (source.value?.orders ?? []).reduce<Record<string, number>>((acc, order) => {
+    acc[order.storeId] = (acc[order.storeId] ?? 0) + 1;
+    return acc;
+  }, {});
+});
+
+const data = computed<CouponItem[]>(() => {
+  return (source.value?.stores ?? [])
+    .map((store, index) => {
+      const orderCount = orderCountByStoreId.value[store.id] ?? 0;
+      const totalLimit = Math.max(50, orderCount * 5);
+      const usedCount = Math.min(totalLimit, Math.floor(orderCount * 0.6));
+      const discountType: CouponItem['discountType'] = index % 2 === 0 ? 'percent' : 'amount';
 
       return {
-        id: 50 - i,
-        name: i % 2 === 0 ? `신규 가입 환영 쿠폰 ${i}` : `주말 깜짝 할인 ${i}`,
-        code: `WELCOME${50 - i}${String.fromCharCode(65 + (i % 26))}`,
-        discountType: isPercent ? 'percent' : 'amount',
-        discountValue: isPercent ?
-          (Math.floor(Math.random() * 5) + 1) * 10 :
-          (Math.floor(Math.random() * 10) + 1) * 1000,
-        totalLimit: limit,
-        usedCount: used,
+        id: index + 1,
+        name: `${store.name} 전용 쿠폰`,
+        code: `STORE${store.id.replaceAll('-', '').slice(0, 6).toUpperCase()}`,
+        discountType,
+        discountValue: discountType === 'percent' ? 10 : Math.max(1000, Math.round(store.minOrderAmount * 0.1)),
+        totalLimit,
+        usedCount,
         startDate: format(new Date(), 'yyyy-MM-dd'),
         endDate: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
-        status: i % 5 === 0 ? 'inactive' : 'active',
+        status: store.status === 'OPEN' ? 'active' : 'inactive',
         createdAt: new Date().toISOString(),
       };
-    });
-  },
-);
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // ==========================================
 // 5. 액션 핸들러

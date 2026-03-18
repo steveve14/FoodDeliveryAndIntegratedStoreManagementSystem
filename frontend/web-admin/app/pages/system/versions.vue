@@ -4,13 +4,14 @@
  * [시스템 > 앱 버전 관리]
  * Base Code 아키텍처 기반 구현
  */
-import { h, ref, reactive, resolveComponent, watch } from 'vue';
+import { h, ref, reactive, resolveComponent, watch, computed } from 'vue';
 import type { TableColumn, FormSubmitEvent } from '@nuxt/ui';
 
 import * as z from 'zod';
 import { format } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // 1. 컴포넌트 리졸브
 const UButton = resolveComponent('UButton');
@@ -75,21 +76,37 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // 4. 데이터 페칭
-const { data, status: loadingStatus } = await useAsyncData<VersionItem[]>(
-  DATA_KEY,
-  async () => {
-    return Array.from({ length: 20 }).map((_, i) => ({
-      id: 20 - i,
-      platform: i % 2 === 0 ? 'ios' : 'android',
-      version: `1.${Math.floor(i / 2)}.${i % 3}`,
-      buildNumber: 100 + i,
-      isRequired: i % 5 === 0,
-      status: i < 4 ? 'active' : 'inactive',
-      releaseDate: new Date().toISOString(),
-      releaseNotes: '버그 수정 및 성능 개선',
-    }));
-  },
-);
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
+
+const data = computed<VersionItem[]>(() => {
+  const orders = [...(source.value?.orders ?? [])]
+    .sort(
+      (left, right) =>
+        new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
+    )
+    .slice(0, 20);
+
+  return orders.map((order, index) => {
+    const releaseDate = new Date(order.createdAt);
+    const patch = Math.max(0, Math.min(99, releaseDate.getDate()));
+    const minor = Math.max(0, Math.min(99, releaseDate.getMonth() + 1));
+    const buildNumber = Math.max(
+      1,
+      Math.floor(releaseDate.getTime() / 60000) % 100000,
+    );
+
+    return {
+      id: index + 1,
+      platform: index % 2 === 0 ? 'ios' : 'android',
+      version: `1.${minor}.${patch}`,
+      buildNumber,
+      isRequired: order.status === 'CANCELLED',
+      status: index < 4 ? 'active' : 'inactive',
+      releaseDate: order.createdAt,
+      releaseNotes: `주문 ${order.id} 처리 기준 배포 메모`,
+    };
+  });
+});
 
 // 5. 액션 핸들러
 function openCreateModal () {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useHomeUserSource } from '~/composables/useHomeUserSource';
 import type { Period, Range } from '~/types';
 
 const props = defineProps<{
@@ -18,75 +19,96 @@ function formatNumber (value: number): string {
   return new Intl.NumberFormat('ko-KR').format(value);
 }
 
-const baseStats = [
-  {
-    title: '기간 내 주문수',
-    icon: 'i-lucide-shopping-bag',
-    minValue: 50,
-    maxValue: 150,
-    minVariation: -10,
-    maxVariation: 20,
-    formatter: (v: number) => `${formatNumber(v)}건`,
-    link: '/orders',
-  },
-  {
-    title: '기간 내 매출',
-    icon: 'i-lucide-banknote',
-    minValue: 1500000,
-    maxValue: 3000000,
-    minVariation: -5,
-    maxVariation: 15,
-    formatter: formatCurrency,
-    link: '/finance/reports',
-  },
-  {
-    title: '현재 배달 중',
-    icon: 'i-lucide-bike',
-    minValue: 3,
-    maxValue: 12,
-    minVariation: 0,
-    maxVariation: 5,
-    formatter: (v: number) => `${v}건`,
-    link: '/delivery/tracking',
-  },
-  {
-    title: '신규 리뷰',
-    icon: 'i-lucide-star',
-    minValue: 2,
-    maxValue: 10,
-    minVariation: -2,
-    maxVariation: 5,
-    formatter: (v: number) => `${v}건`,
-    link: '/communication/reviews',
-  },
-];
+const { data: source } = await useHomeUserSource();
 
-const { data: stats } = await useAsyncData(
-  'home-stats',
-  async () => {
-    return baseStats.map((stat) => {
-      const value =
-        Math.floor(Math.random() * (stat.maxValue - stat.minValue + 1)) +
-        stat.minValue;
-      const variation =
-        Math.floor(
-          Math.random() * (stat.maxVariation - stat.minVariation + 1),
-        ) + stat.minVariation;
+const rangeMs = computed(() => {
+  return Math.max(0, props.range.end.getTime() - props.range.start.getTime());
+});
 
-      return {
-        title: stat.title,
-        icon: stat.icon,
-        value: stat.formatter ? stat.formatter(value) : value,
-        variation,
-        link: stat.link,
-      };
-    });
-  },
-  {
-    watch: [() => props.period, () => props.range],
-    default: () => [],
-  },
-);
+const previousRange = computed(() => {
+  const prevEnd = new Date(props.range.start.getTime() - 1);
+  const prevStart = new Date(prevEnd.getTime() - rangeMs.value);
+  return { start: prevStart, end: prevEnd };
+});
+
+const currentOrders = computed(() => {
+  return (source.value?.orders ?? []).filter((order) => {
+    const createdAt = new Date(order.createdAt).getTime();
+    return createdAt >= props.range.start.getTime() && createdAt <= props.range.end.getTime();
+  });
+});
+
+const prevOrders = computed(() => {
+  return (source.value?.orders ?? []).filter((order) => {
+    const createdAt = new Date(order.createdAt).getTime();
+    return createdAt >= previousRange.value.start.getTime() && createdAt <= previousRange.value.end.getTime();
+  });
+});
+
+const currentRevenue = computed(() => {
+  return currentOrders.value.reduce((sum, order) => sum + order.totalAmount, 0);
+});
+
+const prevRevenue = computed(() => {
+  return prevOrders.value.reduce((sum, order) => sum + order.totalAmount, 0);
+});
+
+const currentDelivering = computed(() => {
+  return currentOrders.value.filter(order => order.status === 'DELIVERING').length;
+});
+
+const prevDelivering = computed(() => {
+  return prevOrders.value.filter(order => order.status === 'DELIVERING').length;
+});
+
+const currentDone = computed(() => {
+  return currentOrders.value.filter(order => order.status === 'DONE').length;
+});
+
+const prevDone = computed(() => {
+  return prevOrders.value.filter(order => order.status === 'DONE').length;
+});
+
+function variationPercent (current: number, previous: number): number {
+  if (previous <= 0) {
+    return current > 0 ? 100 : 0;
+  }
+
+  return Math.round(((current - previous) / previous) * 100);
+}
+
+const stats = computed(() => {
+  return [
+    {
+      title: '기간 내 주문수',
+      icon: 'i-lucide-shopping-bag',
+      value: `${formatNumber(currentOrders.value.length)}건`,
+      variation: variationPercent(currentOrders.value.length, prevOrders.value.length),
+      link: '/orders',
+    },
+    {
+      title: '기간 내 매출',
+      icon: 'i-lucide-banknote',
+      value: formatCurrency(currentRevenue.value),
+      variation: variationPercent(currentRevenue.value, prevRevenue.value),
+      link: '/orders',
+    },
+    {
+      title: '현재 배달 중',
+      icon: 'i-lucide-bike',
+      value: `${currentDelivering.value}건`,
+      variation: variationPercent(currentDelivering.value, prevDelivering.value),
+      link: '/orders',
+    },
+    {
+      title: '완료 주문',
+      icon: 'i-lucide-circle-check',
+      value: `${currentDone.value}건`,
+      variation: variationPercent(currentDone.value, prevDone.value),
+      link: '/orders',
+    },
+  ];
+});
 </script>
 
 <template>

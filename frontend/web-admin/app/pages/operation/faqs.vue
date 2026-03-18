@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { format, subDays, subHours } from 'date-fns';
 import { getPaginationRowModel } from '@tanstack/table-core';
 import type { Row, Table } from '@tanstack/table-core';
+import { useAdminHomeSource } from '~/composables/useAdminHomeSource';
 
 // ==========================================
 // 1. 컴포넌트 리졸브
@@ -77,32 +78,43 @@ const initialFormState: FormSchema = {
 const formState = reactive<FormSchema>({ ...initialFormState });
 
 // ==========================================
-// 4. 데이터 페칭 (Mock Data)
+// 4. 데이터 페칭 (실데이터 기반 변환)
 // ==========================================
-const { data, status: loadingStatus } = await useAsyncData<FaqItem[]>(
-  DATA_KEY,
-  async () => {
-    const categories = ['member', 'payment', 'shipping', 'etc'] as const;
+const { data: source, status: loadingStatus } = await useAdminHomeSource();
 
-    return Array.from({ length: 50 }).map((_, i) => {
-      const category = categories[i % 4] as
-        | 'member' |
-        'payment' |
-        'shipping' |
-        'etc';
+const storeNameById = computed(() => {
+  return Object.fromEntries(
+    (source.value?.stores ?? []).map(store => [store.id, store.name]),
+  );
+});
+
+const data = computed<FaqItem[]>(() => {
+  return (source.value?.orders ?? [])
+    .map((order, index) => {
+      const category: FaqItem['category'] =
+        order.status === 'CANCELLED' ?
+          'payment' :
+          order.status === 'DELIVERING' ?
+            'shipping' :
+            order.status === 'CREATED' || order.status === 'COOKING' ?
+              'member' :
+              'etc';
+
+      const storeName = storeNameById.value[order.storeId] ?? order.storeId;
 
       return {
-        id: 50 - i,
-        category: category,
-        question: `자주 묻는 질문 예시입니다 (${i + 1})`,
-        answer: '해당 질문에 대한 상세 답변 내용입니다.\n줄바꿈이 포함된 예시 테스트입니다.',
-        viewCount: Math.floor(Math.random() * 2000),
-        isPublished: i % 10 !== 0, // 10% 확률로 비공개
-        createdAt: subDays(new Date(), i).toISOString(),
+        id: index + 1,
+        category,
+        question: `[주문 ${order.id}] ${storeName} 관련 자주 묻는 문의`,
+        answer: `${storeName} 주문 상태(${order.status}) 기준 안내입니다. 주문 상세는 주문 관리 화면에서 확인할 수 있습니다.`,
+        viewCount: Math.max(1, order.items.reduce((sum, item) => sum + item.quantity, 0) * 12),
+        isPublished: order.status !== 'CANCELLED',
+        createdAt: order.createdAt,
       };
-    });
-  },
-);
+    })
+    .sort((left, right) => right.id - left.id)
+    .slice(0, 50);
+});
 
 // ==========================================
 // 5. 액션 핸들러

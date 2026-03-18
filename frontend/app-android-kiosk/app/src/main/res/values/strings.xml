@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">FoodDelivery Kiosk</string>
-    <string name="home_title">키오스크 주문 시작</string>
-    <string name="home_subtitle">매장 방문 고객을 위한 빠른 주문 화면입니다.</string>
-    <string name="primary_action">주문 시작</string>
+    <string name="app_name">FoodDelivery User</string>
+    <string name="home_title">사용자 주문 홈</string>
+    <string name="home_subtitle">빠른 재주문과 배달 현황을 확인하세요.</string>
+    <string name="primary_action">주문하러 가기</string>
 </resources>

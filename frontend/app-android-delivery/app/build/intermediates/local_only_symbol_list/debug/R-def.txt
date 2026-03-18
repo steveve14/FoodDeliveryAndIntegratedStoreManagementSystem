@@ -1,0 +1,31 @@
+R_DEF: Internal format may change without notice
+local
+color amber_300
+color black
+color green_500
+color green_700
+color ic_launcher_background
+color white
+drawable ic_launcher_background
+drawable logo
+id bottom_nav_view
+id btn_action
+id earnings_header
+id fragment_container
+id map_placeholder
+id nav_active
+id nav_history
+id nav_profile
+layout activity_main
+layout fragment_active_delivery
+layout fragment_history
+layout fragment_profile
+menu bottom_nav_menu
+mipmap ic_launcher
+mipmap ic_launcher_foreground
+mipmap ic_launcher_round
+string app_name
+string home_subtitle
+string home_title
+string primary_action
+style Theme.AppAndroidDelivery

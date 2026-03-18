@@ -4,6 +4,9 @@ import {
   eachWeekOfInterval,
   eachMonthOfInterval,
   format,
+  startOfDay,
+  startOfWeek,
+  startOfMonth,
 } from 'date-fns';
 import { ko } from 'date-fns/locale'; // ★ 한국어 로케일 추가
 import {
@@ -15,6 +18,7 @@ import {
   VisTooltip,
 } from '@unovis/vue';
 import type { Period, Range } from '~/types';
+import { useHomeUserSource } from '~/composables/useHomeUserSource';
 
 const cardRef = useTemplateRef<HTMLElement | null>('cardRef');
 
@@ -29,11 +33,23 @@ type DataRecord = {
 };
 
 const { width } = useElementSize(cardRef);
+const { data: source } = await useHomeUserSource();
 
 const data = ref<DataRecord[]>([]);
 
+const bucketStart = (date: Date): Date => {
+  switch (props.period) {
+    case 'weekly':
+      return startOfWeek(date, { locale: ko });
+    case 'monthly':
+      return startOfMonth(date);
+    default:
+      return startOfDay(date);
+  }
+};
+
 watch(
-  [() => props.period, () => props.range],
+  [() => props.period, () => props.range, () => source.value],
   () => {
     try {
       const dates = (
@@ -44,16 +60,26 @@ watch(
         } as Record<Period, typeof eachDayOfInterval>
       )[props.period](props.range);
 
-      const min = 1000;
-      const max = 10000;
+      const amountByBucket = new Map<number, number>();
+      for (const order of source.value?.orders ?? []) {
+        const createdAt = new Date(order.createdAt);
+        if (Number.isNaN(createdAt.getTime())) {
+          continue;
+        }
+        if (createdAt < props.range.start || createdAt > props.range.end) {
+          continue;
+        }
+
+        const key = bucketStart(createdAt).getTime();
+        amountByBucket.set(key, (amountByBucket.get(key) ?? 0) + order.totalAmount);
+      }
 
       data.value = dates.map(date => ({
         date,
-        amount: Math.floor(Math.random() * (max - min + 1)) + min,
+        amount: amountByBucket.get(bucketStart(date).getTime()) ?? 0,
       }));
-    } catch (e) {
+    } catch {
       data.value = []; // 날짜 범위 오류 방지
-      console.error('기간 범위가 유효하지 않습니다:', e);
     }
   },
   { immediate: true },

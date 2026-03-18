@@ -6,7 +6,8 @@ DELETE FROM refresh_tokens WHERE user_id IN (
   'store-owner-9', 'store-owner-10', 'store-owner-11', 'store-owner-12', 'store-owner-13', 'store-owner-14',
   'user-minsu', 'user-seoyeon', 'user-jihoon', 'user-yujin', 'user-haneul', 'user-subin', 'user-dohyun', 'user-sohee',
   'user-taehyun', 'user-jisoo', 'user-minho', 'user-naeun', 'user-junho', 'user-hyerin',
-  'user-sangjun', 'user-yoona', 'user-dongwook', 'user-chaeyeon', 'user-hyunwoo', 'user-sojung'
+  'user-sangjun', 'user-yoona', 'user-dongwook', 'user-chaeyeon', 'user-hyunwoo', 'user-sojung',
+  'user-seed-001', 'user-seed-002', 'user-seed-003', 'user-seed-004', 'user-seed-005'
 );
 
 DELETE FROM user_notifications WHERE id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
@@ -20,7 +21,8 @@ DELETE FROM users WHERE id IN (
   'store-owner-9', 'store-owner-10', 'store-owner-11', 'store-owner-12', 'store-owner-13', 'store-owner-14',
   'user-minsu', 'user-seoyeon', 'user-jihoon', 'user-yujin', 'user-haneul', 'user-subin', 'user-dohyun', 'user-sohee',
   'user-taehyun', 'user-jisoo', 'user-minho', 'user-naeun', 'user-junho', 'user-hyerin',
-  'user-sangjun', 'user-yoona', 'user-dongwook', 'user-chaeyeon', 'user-hyunwoo', 'user-sojung'
+  'user-sangjun', 'user-yoona', 'user-dongwook', 'user-chaeyeon', 'user-hyunwoo', 'user-sojung',
+  'user-seed-001', 'user-seed-002', 'user-seed-003', 'user-seed-004', 'user-seed-005'
 );
 
 INSERT INTO users (
@@ -70,7 +72,12 @@ INSERT INTO users (
   ('user-dongwook', 'dongwook.shin@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '신동욱', '010-3000-0017', 'USER', 'google', 'google-uid-dongwook', 'dongwook_shin', 'https://i.pravatar.cc/128?u=fdms-user-17', 'unsubscribed', '서울특별시 강북구', NULL, NOW() - INTERVAL '3 day'),
   ('user-chaeyeon', 'chaeyeon.baek@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '백채연', '010-3000-0018', 'USER', 'google', 'google-uid-chaeyeon', 'chaeyeon_baek', 'https://i.pravatar.cc/128?u=fdms-user-18', 'subscribed', '경기도 성남시', NULL, NOW() - INTERVAL '3 day'),
   ('user-hyunwoo', 'hyunwoo.jang@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '장현우', '010-3000-0019', 'USER', 'kakao', 'kakao-uid-hyunwoo', 'hyunwoo_jang', 'https://i.pravatar.cc/128?u=fdms-user-19', 'subscribed', '부산광역시 남구', NULL, NOW() - INTERVAL '2 day'),
-  ('user-sojung', 'sojung.hong@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '홍소정', '010-3000-0020', 'USER', 'kakao', 'kakao-uid-sojung', 'sojung_hong', 'https://i.pravatar.cc/128?u=fdms-user-20', 'subscribed', '인천광역시 남동구', NULL, NOW() - INTERVAL '1 day');
+  ('user-sojung', 'sojung.hong@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '홍소정', '010-3000-0020', 'USER', 'kakao', 'kakao-uid-sojung', 'sojung_hong', 'https://i.pravatar.cc/128?u=fdms-user-20', 'subscribed', '인천광역시 남동구', NULL, NOW() - INTERVAL '1 day'),
+  ('user-seed-001', 'seed001@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '시드사용자1', '010-3999-0001', 'USER', 'local', NULL, 'seed_user_1', 'https://i.pravatar.cc/128?u=fdms-seed-1', 'subscribed', '서울특별시 광진구', NULL, NOW() - INTERVAL '12 hour'),
+  ('user-seed-002', 'seed002@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '시드사용자2', '010-3999-0002', 'USER', 'local', NULL, 'seed_user_2', 'https://i.pravatar.cc/128?u=fdms-seed-2', 'subscribed', '서울특별시 성동구', NULL, NOW() - INTERVAL '11 hour'),
+  ('user-seed-003', 'seed003@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '시드사용자3', '010-3999-0003', 'USER', 'local', NULL, 'seed_user_3', 'https://i.pravatar.cc/128?u=fdms-seed-3', 'unsubscribed', '경기도 하남시', NULL, NOW() - INTERVAL '10 hour'),
+  ('user-seed-004', 'seed004@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '시드사용자4', '010-3999-0004', 'USER', 'google', 'google-seed-004', 'seed_user_4', 'https://i.pravatar.cc/128?u=fdms-seed-4', 'subscribed', '인천광역시 부평구', NULL, NOW() - INTERVAL '9 hour'),
+  ('user-seed-005', 'seed005@fdms.local', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '시드사용자5', '010-3999-0005', 'USER', 'kakao', 'kakao-seed-005', 'seed_user_5', 'https://i.pravatar.cc/128?u=fdms-seed-5', 'subscribed', '부산광역시 수영구', NULL, NOW() - INTERVAL '8 hour');
 
 INSERT INTO addresses (id, user_id, label, line1, line2, city, state, postal_code, country, primary_address, created_at) VALUES
   ('addr-001', 'user-minsu', '집', '강남대로 123', '101동 1201호', '서울특별시', '강남구', '06236', '대한민국', TRUE, NOW() - INTERVAL '10 day'),
