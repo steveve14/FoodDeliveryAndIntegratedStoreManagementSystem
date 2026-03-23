@@ -6,17 +6,33 @@
             android:icon="@android:drawable/ic_menu_compass"
             android:title="대시보드" />
         <item
-            android:id="@+id/nav_products"
-            android:icon="@android:drawable/ic_menu_gallery"
-            android:title="상품 관리" />
-        <item
-            android:id="@+id/nav_orders"
-            android:icon="@android:drawable/ic_menu_today"
-            android:title="주문 관리" />
-        <item
             android:id="@+id/nav_delivery"
             android:icon="@android:drawable/ic_menu_send"
             android:title="배달 관리" />
+        <item
+            android:id="@+id/nav_order_reception"
+            android:icon="@android:drawable/ic_menu_today"
+            android:title="주문 관리" />
+
+        <item
+            android:id="@+id/nav_menu_management"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="메뉴 관리" />
+
+        <item
+            android:id="@+id/nav_review_management"
+            android:icon="@android:drawable/ic_menu_recent_history"
+            android:title="리뷰 관리" />
+
+        <item
+            android:id="@+id/nav_sales_statistics"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="매출·정산" />
+
+        <item
+            android:id="@+id/nav_store_management"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="가게 관리" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@android:drawable/ic_menu_preferences"

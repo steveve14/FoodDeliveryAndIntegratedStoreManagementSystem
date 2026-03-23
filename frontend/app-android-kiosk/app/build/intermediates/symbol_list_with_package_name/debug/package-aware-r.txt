@@ -3144,7 +3144,10 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btn_add_cart
 id btn_checkout
+id btn_minus
+id btn_plus
 id buttonPanel
 id cache_measures
 id callMeasure
@@ -3277,6 +3280,7 @@ id invisible
 id inward
 id italic
 id item_touch_helper_previous_elevation
+id iv_menu_image
 id jumpToEnd
 id jumpToStart
 id labeled
@@ -3425,6 +3429,8 @@ id right_icon
 id right_side
 id rounded
 id row_index_key
+id rv_cart_items
+id rv_kiosk_menus
 id save_non_transition_alpha
 id save_overlay_view
 id sawtooth
@@ -3537,8 +3543,18 @@ id transition_transform
 id triangle
 id tv_cart_title
 id tv_category_title
+id tv_empty_cart
+id tv_item_name
+id tv_item_price
+id tv_menu_name
+id tv_menu_price
+id tv_menu_status
+id tv_preparing_orders
+id tv_quantity
 id tv_recent_searches
 id tv_recommendation_title
+id tv_serving_orders
+id tv_total_price
 id tv_trending
 id unchecked
 id uniform
@@ -3700,6 +3716,8 @@ layout fragment_menu_order
 layout fragment_order_status
 layout fragment_profile
 layout fragment_search
+layout item_cart_kiosk
+layout item_menu_kiosk
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title

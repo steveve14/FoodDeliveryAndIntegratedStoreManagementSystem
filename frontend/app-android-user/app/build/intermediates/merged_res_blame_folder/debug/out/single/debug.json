@@ -4,6 +4,10 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\mipmap-anydpi-v26\\ic_launcher.xml"
     },
     {
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\layout_fragment_store_detail.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\layout\\fragment_store_detail.xml"
+    },
+    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\layout_fragment_cart.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\layout\\fragment_cart.xml"
     },
@@ -12,12 +16,20 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\mipmap-xhdpi\\ic_launcher_foreground.webp"
     },
     {
+        "merged": "com.fooddelivery.user.app-merged_res-31:/layout_item_order_user.xml.flat",
+        "source": "com.fooddelivery.user.app-main-33:/layout/item_order_user.xml"
+    },
+    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\drawable_ic_launcher_background.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\drawable\\ic_launcher_background.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\mipmap-xxhdpi_ic_launcher_foreground.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\mipmap-xxhdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\layout_item_cart.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\layout\\item_cart.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
@@ -30,6 +42,10 @@
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\mipmap-mdpi_ic_launcher_foreground.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\mipmap-mdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.fooddelivery.user.app-merged_res-31:/layout_fragment_search.xml.flat",
+        "source": "com.fooddelivery.user.app-main-33:/layout/fragment_search.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\mipmap-hdpi_ic_launcher_round.webp.flat",
@@ -72,8 +88,8 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\layout\\fragment_search.xml"
     },
     {
-        "merged": "com.fooddelivery.user.app-merged_res-31:/layout_activity_main.xml.flat",
-        "source": "com.fooddelivery.user.app-main-33:/layout/activity_main.xml"
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\layout_item_menu.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\layout\\item_menu.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
@@ -84,12 +100,20 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\menu\\bottom_nav_menu.xml"
     },
     {
+        "merged": "com.fooddelivery.user.app-merged_res-31:/menu_bottom_nav_menu.xml.flat",
+        "source": "com.fooddelivery.user.app-main-33:/menu/bottom_nav_menu.xml"
+    },
+    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\mipmap-mdpi_ic_launcher.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\mipmap-mdpi\\ic_launcher.webp"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\mipmap-xxhdpi_ic_launcher.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\layout_item_store.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\layout\\item_store.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\layout_activity_main.xml.flat",
@@ -102,5 +126,9 @@
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-merged_res-31:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.user.app-main-33:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.fooddelivery.user.app-merged_res-31:/layout_item_menu.xml.flat",
+        "source": "com.fooddelivery.user.app-main-33:/layout/item_menu.xml"
     }
 ]

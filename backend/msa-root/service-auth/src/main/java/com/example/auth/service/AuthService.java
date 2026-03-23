@@ -58,7 +58,6 @@ public class AuthService implements AuthenticationService {
       GoogleIdToken.Payload payload = idToken.getPayload();
       String email = payload.getEmail();
       String name = (String) payload.get("name");
-      String googleProviderId = payload.getSubject();
 
       // 3. 유저 정보 확인 및 저장 (MSA 환경이므로 service-user와 통신하거나 DB 조회)
       var userResp = userGrpcClient.getUserByEmail(email);

@@ -59,7 +59,7 @@ class OrderControllerDocsTest {
 
   @Test
   void createDocumentsSuccessfulOrderCreation() throws Exception {
-    when(orderService.createOrder(eq("user-1"), any(List.class), eq("CREATED")))
+    when(orderService.createOrder(eq("user-1"), any(), eq("CREATED")))
         .thenReturn(sampleOrder());
 
     mockMvc

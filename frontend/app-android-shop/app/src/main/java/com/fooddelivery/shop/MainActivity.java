@@ -42,10 +42,10 @@ public class MainActivity extends AppCompatActivity {
                 if (id == R.id.nav_home) {
                     selectedFragment = new HomeFragment();
                     toolbar.setTitle("사장님 대시보드");
-                } else if (id == R.id.nav_products) {
+                } else if (id == R.id.nav_menu_management) {
                     selectedFragment = new ProductsFragment();
                     toolbar.setTitle("메뉴/상품 관리");
-                } else if (id == R.id.nav_orders) {
+                } else if (id == R.id.nav_order_reception) {
                     selectedFragment = new OrdersFragment();
                     toolbar.setTitle("실시간 주문접수");
                 } else if (id == R.id.nav_delivery) {

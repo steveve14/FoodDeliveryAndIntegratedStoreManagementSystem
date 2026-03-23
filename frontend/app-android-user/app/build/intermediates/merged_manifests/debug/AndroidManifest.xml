@@ -8,6 +8,8 @@
         android:minSdkVersion="24"
         android:targetSdkVersion="36" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <permission
         android:name="com.fooddelivery.user.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
@@ -24,7 +26,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:testOnly="true"
-        android:theme="@style/Theme.AppAndroidUser" >
+        android:theme="@style/Theme.AppAndroidUser"
+        android:usesCleartextTraffic="true" >
         <activity
             android:name="com.fooddelivery.user.MainActivity"
             android:exported="true" >

@@ -2,8 +2,10 @@ package com.example.order.dto;
 
 import java.time.Instant;
 import lombok.Builder;
+import lombok.Getter;
 
 /** InfoResponse 타입입니다. */
+@Getter
 @Builder
 public class InfoResponse {
   private String service;

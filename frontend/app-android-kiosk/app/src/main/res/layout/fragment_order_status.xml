@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#121212">
 
-    <!-- Preparing Section (Dark) -->
+    <!-- Preparing Section -->
     <LinearLayout
         android:id="@+id/preparing_section"
         android:layout_width="0dp"
@@ -33,33 +33,23 @@
             android:textColor="#9E9E9E"
             android:textSize="20sp" />
 
-        <!-- Mock order numbers -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:text="102"
-            android:textColor="#FFFFFF"
-            android:textSize="64sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="103"
-            android:textColor="#FFFFFF"
-            android:textSize="64sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="104"
-            android:textColor="#BDBDBD"
-            android:textSize="48sp" />
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="32dp">
+            
+            <TextView
+                android:id="@+id/tv_preparing_orders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="#FFFFFF"
+                android:textSize="48sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="16dp" />
+        </ScrollView>
     </LinearLayout>
 
     <View
@@ -69,7 +59,7 @@
         app:layout_constraintStart_toEndOf="@id/preparing_section"
         app:layout_constraintEnd_toStartOf="@id/serving_section" />
 
-    <!-- Serving Section (Highlight) -->
+    <!-- Serving Section -->
     <LinearLayout
         android:id="@+id/serving_section"
         android:layout_width="0dp"
@@ -98,20 +88,29 @@
             android:textColor="#FFCCBC"
             android:textSize="24sp" />
 
-        <!-- Current order being served -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:text="101"
-            android:textColor="#FFFFFF"
-            android:textSize="120sp"
-            android:textStyle="bold" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="48dp">
+            
+            <TextView
+                android:id="@+id/tv_serving_orders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="#FFFFFF"
+                android:textSize="80sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="24dp" />
+        </ScrollView>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp"
             android:text="카운터에서 음식을 받아가주세요"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
