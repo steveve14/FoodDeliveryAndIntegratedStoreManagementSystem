@@ -173,4 +173,11 @@
 - [ ] web-shop/web-admin/web-user 실데이터 E2E 스모크 1회 실행
   - 목표: 주문 생성→상태 전이→대시보드 집계 반영 흐름 확인
 
+## 2026-04-06 체크리스트
+
+- [x] `service-event` application.yml `token.secret` 기본값 추가 (기동 시 `BeanCreationException` 해소)
+- [x] `service-order`, `service-user`, `service-store`, `service-delivery`, `service-gateway` application.yml `token.secret` 기본값 추가
+- [x] 로컬 환경에서 `TOKEN_SECRET` 미설정 시 기동 실패 문제 전 서비스 해소
+- [x] 기본값을 auth 서비스 개발용 키와 통일하여 서비스 간 JWT 검증 호환성 확보
+
 ---

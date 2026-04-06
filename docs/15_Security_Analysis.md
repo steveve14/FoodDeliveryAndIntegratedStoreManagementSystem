@@ -66,6 +66,7 @@
 
 - 상태: ✅ 해결
 - 조치: `docker-compose.yml`에 내부 서비스용 `TOKEN_SECRET` 전달 추가
+- 추가 조치 (2026-04-06): `service-event`, `service-order`, `service-user`, `service-store`, `service-delivery`, `service-gateway` `application.yml`에 로컬 기동용 기본값 추가. 미설정 시 발생하던 기동 오류 해소.
 
 ---
 

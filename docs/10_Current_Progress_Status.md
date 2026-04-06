@@ -95,6 +95,14 @@
   - `docker-compose.yml`에 내부 검증용 `TOKEN_SECRET` 전달 추가
   - 변경 대상 서비스 컴파일 검증 완료: `service-auth`, `service-user`, `service-store`, `service-order`, `service-delivery`, `service-event`
 
+## 0-6) 2026-04-06 추가 반영
+
+- **서비스 기동 안정성 보강**
+  - `service-event`, `service-order`, `service-user`, `service-store`, `service-delivery`, `service-gateway` application.yml에 `TOKEN_SECRET` 기본값 추가
+  - `TOKEN_SECRET` 환경변수 미설정 시에도 로컬 기동 가능 (개발용 Base64 기본 키로 동작)
+  - 기본값을 auth 서비스와 동일한 개발용 키로 통일하여 서비스 간 JWT 검증 호환성 유지
+  - 기동 시 발생하던 `BeanCreationException: token.secret is empty` 오류 해소
+
 ## 1) 요약
 
 현재 저장소는 **MSA 인프라 골격 + 인증/회원 기능 + 서비스 간 gRPC 통신 + 프론트 실연동 + 1차 서비스 보안 하드닝 단계**까지 진행되었습니다.
@@ -179,7 +187,7 @@
 ## 5) 리스크 및 남은 항목
 
 - API 문서와 구현 간 일부 불일치 잔존
-- gateway 및 내부 서비스 기동 시 `TOKEN_SECRET` 누락 위험 (운영 스크립트 보강 필요)
+- 운영 환경에서 `TOKEN_SECRET` 미주입 시 기본 키로 동작하여 auth 서비스와 시크릿 불일치 위험 (각 서비스 application.yml에 로컬 개발용 기본값 추가 완료, **운영 환경에서는 반드시 환경변수로 재정의 필요**)
 - Refresh Token 해시 저장 전 발급된 세션은 재로그인이 필요할 수 있음
 - Docker Compose에서 내부 서비스 포트가 여전히 호스트에 노출됨
 - Android 앱 API 연동 미구현 (스캐폴드만 완료)

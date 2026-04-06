@@ -1,6 +1,7 @@
 # 2026-04-05 Security Hardening Summary
 
 > 작성일: 2026-04-05
+> 최종 수정: 2026-04-06
 > 범위: backend/msa-root 보안 하드닝 1차 반영 결과 요약
 
 ---
@@ -60,6 +61,13 @@
   - `service-delivery`
   - `service-event`
 
+### 1.5 서비스 YML `token.secret` 기본값 추가 (2026-04-06)
+
+- 대상: `service-event`, `service-order`, `service-user`, `service-store`, `service-delivery`, `service-gateway`
+- 변경 내용: 각 서비스 `application.yml`에 `TOKEN_SECRET` 미설정 시에도 기동 가능하도록 개발용 기본값 추가
+- 효과: 로컬 기동 시 `BeanCreationException: token.secret is empty` 해소
+- **주의**: 기본값은 개발 전용 키이며 운영 환경에서는 반드시 환경변수로 재정의 필요
+
 ---
 
 ## 2. 배포/운영 영향
@@ -72,6 +80,9 @@
 
 - 이제 auth 서비스뿐 아니라 내부 서비스도 `TOKEN_SECRET`가 필요함
 - 누락 시 서비스 내부 JWT 재검증이 실패하여 인증 요청이 차단될 수 있음
+- **운영 환경 배포 체크리스트**: `TOKEN_SECRET`를 모든 내부 서비스에 동일한 값으로 반드시 주입
+  - 영향 서비스: `service-gateway`, `service-user`, `service-store`, `service-order`, `service-delivery`, `service-event`
+  - YML 기본값은 개발용이므로 운영에서 그대로 사용하면 auth 서비스와 시크릿 불일치 위험
 
 ### 2.3 로컬 개발 영향
 
@@ -87,6 +98,7 @@
 - `customer-summaries`의 STORE 범위 tenant scoping 정교화
 - Docker Compose 내부 서비스 포트 외부 노출 제거
 - Gateway 선행 `X-User-*` 헤더 제거 후 재주입 정책 명시화
+- **서비스 직접 포트 접근 정책 재검토**: 현재 내부 서비스 포트가 호스트에 노출되어 있으므로, 운영 환경에서는 Gateway와 필수 포트만 외부 공개하고 나머지는 internal network로 제한 필요. 로컬 개발은 허용하되 QA/CI 기준 테스트는 반드시 Gateway를 통해 수행
 
 ### 3.2 운영 배포 전
 

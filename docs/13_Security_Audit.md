@@ -85,6 +85,7 @@
 
 - 상태: ✅ 완료
 - 결과: `docker-compose.yml`에서 `service-user`, `service-store`, `service-event`, `service-order`, `service-delivery`에 `TOKEN_SECRET` 전달
+- 추가 조치 (2026-04-06): 각 서비스 및 `service-gateway`의 `application.yml`에 로컬 개발용 기본값 추가. `TOKEN_SECRET` 미설정 환경에서 기동 시 `BeanCreationException` 발생하던 문제 해소. 운영 환경에서는 기본값 대신 환경변수로 반드시 재정의 필요.
 
 ---
 

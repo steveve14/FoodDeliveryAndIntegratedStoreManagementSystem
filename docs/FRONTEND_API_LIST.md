@@ -555,6 +555,31 @@ Response: `data: OrderDto`
 
 ---
 
+### 6-6. 고객 집계 조회 (프론트 전용)
+
+> 🔐 `STORE`, `ADMIN`만 접근 가능합니다.
+> 일반 사용자 앱(`web-user`)에서 직접 호출하지 않습니다.
+> ⚠️ 현재 조회 범위 제한(tenant scoping) 없이 STORE 역할 전체에 허용됨. 추후 매장 기준 범위 제한 예정.
+
+```http
+GET /api/v1/orders/frontend/customer-summaries
+```
+
+#### Response — `data: CustomerSummaryDto[]`
+
+```json
+[
+  {
+    "userId": "uuid",
+    "userName": "홍길동",
+    "orderCount": 5,
+    "totalAmount": 90000
+  }
+]
+```
+
+---
+
 ## 7. 배달 (Delivery) `/api/v1/deliveries/**`
 
 > 🔐 인증 필요
