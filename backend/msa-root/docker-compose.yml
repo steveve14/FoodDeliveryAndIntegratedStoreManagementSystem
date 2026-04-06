@@ -1,0 +1,258 @@
+# ============================================================
+# docker-compose.yml — FoodDelivery MSA 전체 로컬 통합 실행 환경
+# ============================================================
+# 사용법:
+#   1. .env.compose 파일 생성 (아래 env_file 섹션 참조)
+#   2. docker-compose up -d --build
+#   3. 서비스 상태 확인: docker-compose ps
+#   4. 로그 확인: docker-compose logs -f [service-name]
+#   5. 종료: docker-compose down
+# ============================================================
+
+services:
+
+  # ─── Infrastructure ──────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: fd-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: postgres
+    ports:
+      - "${DB_PORT:-6000}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro   # DB 초기화 스크립트
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fd-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: fd-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fd-net
+
+  # ─── Core MSA Services ───────────────────────────────────────────────────────
+
+  service-discovery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-discovery
+    container_name: fd-discovery
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/db_discovery
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - fd-net
+
+  service-auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-auth
+    container_name: fd-auth
+    restart: unless-stopped
+    environment:
+      EUREKA_DEFAULT_ZONE: http://service-discovery:8080/eureka/
+      DB_URL: jdbc:postgresql://postgres:5432/db_auth
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TOKEN_SECRET: ${TOKEN_SECRET}
+      SERVICE_USER_GRPC_ADDR: static://service-user:9010
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - fd-net
+
+  service-user:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-user
+    container_name: fd-user
+    restart: unless-stopped
+    environment:
+      EUREKA_DEFAULT_ZONE: http://service-discovery:8080/eureka/
+      DB_URL: jdbc:postgresql://postgres:5432/db_user
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      TOKEN_SECRET: ${TOKEN_SECRET}
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - fd-net
+
+  service-store:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-store
+    container_name: fd-store
+    restart: unless-stopped
+    environment:
+      EUREKA_DEFAULT_ZONE: http://service-discovery:8080/eureka/
+      DB_URL: jdbc:postgresql://postgres:5432/db_store
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      TOKEN_SECRET: ${TOKEN_SECRET}
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - fd-net
+
+  service-event:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-event
+    container_name: fd-event
+    restart: unless-stopped
+    environment:
+      EUREKA_DEFAULT_ZONE: http://service-discovery:8080/eureka/
+      DB_URL: jdbc:postgresql://postgres:5432/db_event
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      TOKEN_SECRET: ${TOKEN_SECRET}
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - fd-net
+
+  service-order:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-order
+    container_name: fd-order
+    restart: unless-stopped
+    environment:
+      EUREKA_DEFAULT_ZONE: http://service-discovery:8080/eureka/
+      DB_URL: jdbc:postgresql://postgres:5432/db_order
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      TOKEN_SECRET: ${TOKEN_SECRET}
+      SERVICE_STORE_GRPC_ADDR: static://service-store:9020
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+      service-store:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    networks:
+      - fd-net
+
+  service-delivery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-delivery
+    container_name: fd-delivery
+    restart: unless-stopped
+    environment:
+      EUREKA_DEFAULT_ZONE: http://service-discovery:8080/eureka/
+      DB_URL: jdbc:postgresql://postgres:5432/db_delivery
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      TOKEN_SECRET: ${TOKEN_SECRET}
+      SERVICE_ORDER_GRPC_ADDR: static://service-order:9040
+      DELIVERY_DEFAULT_FEE: ${DELIVERY_DEFAULT_FEE:-3000}
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+      service-order:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    networks:
+      - fd-net
+
+  service-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-gateway
+    container_name: fd-gateway
+    restart: unless-stopped
+    environment:
+      EUREKA_DEFAULT_ZONE: http://service-discovery:8080/eureka/
+      DB_URL: jdbc:postgresql://postgres:5432/db_gateway
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      TOKEN_SECRET: ${TOKEN_SECRET}
+      SERVICE_AUTH_GRPC_ADDR: static://service-auth:9000
+      GATEWAY_ALLOWED_ORIGIN_1: http://localhost:3010
+      GATEWAY_ALLOWED_ORIGIN_2: http://localhost:3100
+      GATEWAY_ALLOWED_ORIGIN_3: http://localhost:3200
+    ports:
+      - "8000:8080"
+    depends_on:
+      service-discovery:
+        condition: service_healthy
+      service-auth:
+        condition: service_started
+    networks:
+      - fd-net
+
+# ─── Volumes & Networks ────────────────────────────────────────────────────────
+
+volumes:
+  postgres_data:
+    name: fd-postgres-data
+
+networks:
+  fd-net:
+    name: fd-network
+    driver: bridge

@@ -2,6 +2,7 @@ package com.example.userservice.controller;
 
 import com.example.userservice.dto.AddressDto;
 import com.example.userservice.dto.ApiResponse;
+import com.example.userservice.security.RequireRole;
 import com.example.userservice.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users/me/addresses")
 @RequiredArgsConstructor
+@RequireRole({"USER", "ADMIN"})
 public class AddressController {
 
   private final AddressService addressService;

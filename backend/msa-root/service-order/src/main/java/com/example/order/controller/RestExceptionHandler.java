@@ -1,6 +1,7 @@
 package com.example.order.controller;
 
 import com.example.order.dto.ApiResponse;
+import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,13 @@ public class RestExceptionHandler {
   public ResponseEntity<ApiResponse<Object>> handleBadRequest(IllegalArgumentException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponse.error(400, ex.getMessage()));
+  }
+
+  /** 리소스 미존재 예외를 처리합니다. */
+  @ExceptionHandler(NoSuchElementException.class)
+  public ResponseEntity<ApiResponse<Object>> handleNotFound(NoSuchElementException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(ApiResponse.error(404, ex.getMessage()));
   }
 
   /** 상태 충돌 예외를 처리합니다. */

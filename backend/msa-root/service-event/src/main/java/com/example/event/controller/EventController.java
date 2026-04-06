@@ -2,6 +2,7 @@ package com.example.event.controller;
 
 import com.example.event.dto.ApiResponse;
 import com.example.event.dto.EventDto;
+import com.example.event.security.RequireRole;
 import com.example.event.service.EventService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** EventController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1/events")
+@RequireRole({"USER", "STORE", "ADMIN"})
 public class EventController {
 
   private final EventService eventService;

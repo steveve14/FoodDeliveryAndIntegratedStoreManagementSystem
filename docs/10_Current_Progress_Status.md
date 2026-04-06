@@ -1,4 +1,4 @@
-# 10. 현재 진행 상황 정리 (2026-03-17)
+# 10. 현재 진행 상황 정리 (2026-04-05)
 
 ## 0) 2026-03-10 추가 반영 (금일)
 
@@ -60,9 +60,44 @@
   - TODO 반영: `docs/2026-03-13-todo-list.md` 최신 상태로 갱신
   - MVP 계획 문서 링크 반영: `docs/2026-02-28/MVP_실행계획.md`
 
+## 0-4) 2026-03-30 추가 반영
+
+- **P0-2 API 표준 통일 100% 완료**
+  - 전 서비스 `RestExceptionHandler` 에러 코드 정책 통일
+  - `service-auth` `RestExceptionHandler` `public class`로 공개 접근 수정
+  - 전 서비스(auth/store/order/delivery/event) `NoSuchElementException` → 404 핸들러 추가
+- **P1-4 Android 앱 API 연동 개선**
+  - `app-android-delivery`: `DeliveryDto` 모델 추가, 배달 전용 API 엔드포인트(`/api/v1/deliveries`) 추가
+  - `app-android-kiosk`: 하드코딩 스토어 ID → `KioskConfig` (SharedPreferences 기반) 설정 관리로 교체
+- **Docker 인프라 구성 완료**
+  - `backend/msa-root/Dockerfile` 작성 (멀티 스테이지, `ARG SERVICE_NAME`으로 공용화)
+  - `backend/msa-root/docker-compose.yml` 작성 (8개 서비스 + PostgreSQL + Redis 통합)
+  - `database/init/00_create_databases.sql` 작성 (Docker 컨테이너 초기화용)
+  - `database/apply-db-seeds.ps1` 작성 (시드 데이터 순차 적용 자동화)
+
+## 0-5) 2026-04-05 추가 반영
+
+- **보안 하드닝 1차 적용 완료**
+  - `service-user`, `service-store`, `service-order`, `service-delivery`, `service-event`에 서비스 내부 JWT 재검증 로직 추가
+  - `X-User-Id`, `X-User-Role` 헤더를 토큰 클레임과 대조하도록 변경하여 Gateway 우회 시 헤더 스푸핑 방어 강화
+- **민감 엔드포인트 인가 강화**
+  - `GET /api/v1/orders/{id}`: `USER`, `STORE`, `ADMIN` 권한 + 소유권/역할 검증 적용
+  - `GET /api/v1/deliveries/{id}`: `STORE`, `ADMIN` 권한 적용
+  - `GET /api/v1/orders/frontend/customer-summaries`: `STORE`, `ADMIN` 권한 적용
+  - `GET /api/v1/users/me/addresses/**`: `USER`, `ADMIN` 권한 적용
+  - `GET /api/v1/users/frontend/**`: `ADMIN` 권한 적용
+  - `service-event` 이벤트 생성/조회: 역할 기반 접근 제어 추가
+- **Auth 보안 설정 강화**
+  - `access-token`, `refresh-token` 쿠키를 `ResponseCookie`로 발급/삭제하도록 변경
+  - `SameSite=Lax` 기본 적용, `Secure`는 기본 true / local 프로파일 false로 분리
+  - Refresh Token DB 저장 방식을 평문에서 SHA-256 해시 저장으로 변경
+- **운영 설정 정렬**
+  - `docker-compose.yml`에 내부 검증용 `TOKEN_SECRET` 전달 추가
+  - 변경 대상 서비스 컴파일 검증 완료: `service-auth`, `service-user`, `service-store`, `service-order`, `service-delivery`, `service-event`
+
 ## 1) 요약
 
-현재 저장소는 **MSA 인프라 골격 + 인증/회원 기능 + 서비스 간 gRPC 통신 + 프론트 실연동 확장 단계**까지 진행되었습니다.
+현재 저장소는 **MSA 인프라 골격 + 인증/회원 기능 + 서비스 간 gRPC 통신 + 프론트 실연동 + 1차 서비스 보안 하드닝 단계**까지 진행되었습니다.
 
 **2026-03-04 마이그레이션 완료**: net.devh gRPC → Spring gRPC 1.0.2 GA, jjwt 0.11.5 → 0.12.6, 전체 `BUILD SUCCESSFUL` 확인.
 
@@ -84,6 +119,7 @@
   - order→store (GetProductById)
   - delivery→order (GetOrderById)
 - **jjwt 0.12.6** JWT 생성/검증
+- 서비스 내부 JWT 재검증 + 헤더/클레임 일치 검증 적용
 - Bean Validation (`@Valid`, `@NotBlank`, etc.) 전 서비스 DTO 적용
 - 전역 예외 처리기(`RestExceptionHandler`) 전 서비스 적용
 - Spotless + google-java-format 코드 포맷 강제
@@ -92,12 +128,14 @@
 
 - Auth 서비스: 로그인, 소셜 로그인(Google OAuth2), 토큰 갱신, 로그아웃 구현
 - 인증 상태는 httpOnly 쿠키(access-token, refresh-token) 중심으로 운영
+- Refresh Token은 DB에 해시값으로 저장
 - User 서비스: 회원 등록/조회 API 구현
 - Store/Order/Delivery: 기본 CRUD 구조 및 gRPC 엔드포인트 구현
 - Order MVP 경로 구현
   - 주문 생성 (`POST /api/v1/orders`)
   - 주문 조회 (`GET /api/v1/orders/my`, `GET /api/v1/orders/{id}`)
   - 주문 상태 전이 (`PATCH /api/v1/orders/{id}/status`)
+- Event 서비스 역할 기반 보호 적용
 
 ### 프론트엔드
 
@@ -118,9 +156,10 @@
 
 ## 3) 진행 중 항목
 
-- 공통 응답 포맷(`ApiResponse`) 및 API 버저닝(`/api/v1`) 규칙 전 서비스 100% 일관 적용은 추가 정리 필요
 - web-shop, web-admin, web-user 실데이터 화면 기준 E2E 스모크 확장 필요
 - DB 시드 수동 반영(07→11 순차 실행) 및 반영 후 검증 로그 정리 필요
+- `customer-summaries` 엔드포인트의 매장 단위 tenant scoping 정교화 필요
+- Docker 환경에서 내부 서비스 HTTP 포트 외부 노출 최소화 필요
 
 ## 4) 현재 기술 스택 (실제 코드 기준)
 
@@ -140,15 +179,16 @@
 ## 5) 리스크 및 남은 항목
 
 - API 문서와 구현 간 일부 불일치 잔존
-- Dockerfile / docker-compose / K8s 매니페스트 부재
-- gateway 재기동 시 `TOKEN_SECRET` 누락 위험 (운영 스크립트 보강 필요)
+- gateway 및 내부 서비스 기동 시 `TOKEN_SECRET` 누락 위험 (운영 스크립트 보강 필요)
+- Refresh Token 해시 저장 전 발급된 세션은 재로그인이 필요할 수 있음
+- Docker Compose에서 내부 서비스 포트가 여전히 호스트에 노출됨
 - Android 앱 API 연동 미구현 (스캐폴드만 완료)
 
 ## 6) 다음 액션(권장)
 
-1. API 표준(버전/응답 포맷/에러 모델) 전 서비스 적용
-2. DB 시드 수동 반영 실행 (`07` → `08` → `09` → `10` → `11`) 및 결과 확인
-3. web-shop/web-admin/web-user E2E 스모크 추가
-4. 서비스 기동 순서 + 환경변수 포함 실행 스크립트 정리
-5. Dockerfile 작성 및 docker-compose 로컬 통합 실행 환경 구성
+1. `customer-summaries` 매장 범위 제한 정책 구체화 및 구현
+2. Docker Compose 내부 서비스 포트 외부 노출 축소
+3. DB 시드 수동 반영 실행 (`07` → `08` → `09` → `10` → `11`) 및 결과 확인
+4. web-shop/web-admin/web-user E2E 스모크 추가
+5. 서비스 기동 순서 + 환경변수 포함 실행 스크립트 정리
 6. Android 앱 백엔드 API 연동 (app-android-shop/user/kiosk/delivery)

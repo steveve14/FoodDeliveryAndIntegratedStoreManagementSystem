@@ -2,7 +2,7 @@
 
 기준일: 2026-03-04
 
-업데이트: 2026-03-17
+업데이트: 2026-04-05
 
 ## 우선순위 기준
 
@@ -22,24 +22,17 @@
 
 - 결정: **코드 기준으로 문서를 정렬** (현실을 반영한 문서 최신화)
 - 기준 디렉토리: `web-admin`, `web-shop`, `web-user` / `service-*`
-- 기술스택 확정: Spring Boot 4.0.2 / Gradle Groovy DSL / H2+PostgreSQL / Spring Data JDBC / Spring gRPC 1.0.0-RC1 / pnpm
+- 기술스택 확정: Spring Boot 4.0.2 / Gradle Groovy DSL / H2+PostgreSQL / Spring Data JDBC / Spring gRPC 1.0.2 / pnpm
 
-### ⬜ P0-2. API 표준 통일 (진행 필요)
+### ✅ P0-2. API 표준 통일 (완료 — 2026-03-30)
 
 - 목표: `/api/v1` 버저닝 + 공통 응답 모델 + 표준 에러 포맷 전 서비스 적용
-- 작업:
-  - 공통 `ApiResponse` 모델 전 서비스 일관 적용
-  - 전 서비스 컨트롤러 응답 형식 통일
-  - 글로벌 예외 처리기(에러 코드 정책 포함) 정비
-- 완료조건: Auth/User/Store/Order 서비스의 신규·기존 공개 API 100% 표준 준수
-
-### ✅ P0-5. 하드코딩 고위험 항목 제거 (완료 — 2026-03-10)
-
-- gateway JWT secret `${TOKEN_SECRET}` 환경변수화 완료
-- delivery 고정 배달비 `${DELIVERY_DEFAULT_FEE:3000}` 분리 완료
-- order VIP 기준 `${ORDER_VIP_THRESHOLD:10}` 분리 완료
-- gRPC 주소 `${SERVICE_*_GRPC_ADDR:...}` 환경변수 전환 완료
-- Eureka/CORS 주소 `${EUREKA_DEFAULT_ZONE}`, `${GATEWAY_ALLOWED_ORIGIN_*}` 외부화 완료
+- 완료 내역:
+  - 공통 `ApiResponse` 모델 전 서비스 일관 적용 (✔)
+  - 전 서비스 컨트롤러 응답 형식 통일 (✔)
+  - `service-auth` `RestExceptionHandler` `public class` 접근 통일 (✔)
+  - 전 서비스 `NoSuchElementException` → 404 핸들러 추가 (✔)
+  - 글로벌 예외 처리기(에러 코드 정책 포함) 정비 (✔)
 
 ### ✅ P0-3. 서비스 간 통신 표준 적용 (완료 — 2026-03-04)
 
@@ -61,6 +54,23 @@
 - Playwright E2E 시나리오 통과: 홈 → 카테고리 → 매장 → 장바구니 담기 → 결제(주문 확정) → 주문 내역 화면 진입
 - `run/e2e/order-flow.spec.ts` 14단계 시나리오 `1 passed (4.1s)` 확인 (2026-03-13)
 
+### ✅ P0-5. 하드코딩 고위험 항목 제거 (완료 — 2026-03-10)
+
+- gateway JWT secret `${TOKEN_SECRET}` 환경변수화 완료
+- delivery 고정 배달비 `${DELIVERY_DEFAULT_FEE:3000}` 분리 완료
+- order VIP 기준 `${ORDER_VIP_THRESHOLD:10}` 분리 완료
+- gRPC 주소 `${SERVICE_*_GRPC_ADDR:...}` 환경변수 전환 완료
+- Eureka/CORS 주소 `${EUREKA_DEFAULT_ZONE}`, `${GATEWAY_ALLOWED_ORIGIN_*}` 외부화 완료
+
+### ✅ P0-6. 서비스 보안 하드닝 1차 적용 (완료 — 2026-04-05)
+
+- 내부 서비스(`user`, `store`, `order`, `delivery`, `event`)에서 JWT 직접 검증 추가
+- `X-User-Id`, `X-User-Role` 헤더와 토큰 클레임 일치 여부 검증 추가
+- 주문/배달/이벤트/사용자 프론트 집계 엔드포인트 권한 강화 완료
+- Auth 쿠키 `Secure`/`SameSite` 프로파일 분리 적용 완료
+- Refresh Token 평문 저장 제거, SHA-256 해시 저장으로 전환 완료
+- `docker-compose.yml`에 내부 서비스용 `TOKEN_SECRET` 전달 반영 완료
+
 ## P1 (P0 완료 직후)
 
 ### P1-1. 사장님 대시보드 핵심 기능
@@ -78,16 +88,22 @@
 - 현재 정적/템플릿 중심 화면을 API 연동형으로 전환
 - 완료조건: 가게검색→장바구니→주문까지 실제 데이터 흐름 연결
 
-### P1-4. Android 앱 백엔드 API 연동
+### 🟡 P1-4. Android 앱 백엔드 API 연동 (진행 중)
 
-- app-android-shop/user/kiosk/delivery 스캐폴드에 REST API 클라이언트 구현
-- 완료조건: 로그인 → 메인 화면 로드 시나리오 1개 앱에서 동작
+- 기본 네트워크 레이어(Retrofit) 4개 앱 모두 구현
+- 주요 화면 API 호출 로직 구현 (현재 실제 호출 코드 작동)
+- 배달 앱: `DeliveryDto` 모델 및 `DeliveryController` 엔드포인트 추가
+- 키오스크 앱: 하드코딩 Store ID → `KioskConfig` SharedPreferences으로 교체
+- 완료조건: E2E 로그인 → 메인 화면 로드 시나리오 동작 (실기기 테스트 필요)
 
 ## P2 (안정화/확장)
 
-### P2-1. 배포/운영 표준화
+### 🟡 P2-1. 배포/운영 표준화 (진행 중)
 
-- Dockerfile / K8s 매니페스트 / 환경변수 전략 정비
+- `Dockerfile` (멀티 스테이지, `ARG SERVICE_NAME` 공용화) 작성 ✔
+- `docker-compose.yml` (8개 서비스 + PostgreSQL + Redis) 작성 ✔
+- `database/init/00_create_databases.sql` Docker 초기화용 작성 ✔
+- K8s 매니페스트 / 환경변수 전략 정비 (미완)
 - 완료조건: 스테이징 1회 배포 성공 + 롤백 절차 문서화
 
 ### P2-2. 테스트 체계 강화
@@ -100,12 +116,52 @@
 - 공통 로깅, 트레이싱, 헬스체크, 기본 알람 체계
 - 완료조건: 주요 장애 시나리오에 대한 탐지 가능 상태 확보
 
+### P2-4. 보안 후속 하드닝
+
+- `customer-summaries`를 STORE 기준 tenant-scoped 조회로 정교화
+- Docker Compose 및 운영 환경에서 내부 서비스 포트 외부 노출 제거
+- Gateway 선행 헤더 제거/재주입 정책 명시적 적용
+- 운영 환경 gRPC TLS 또는 내부 네트워크 보호 정책 정비
+- 완료조건: Gateway 우회 접근과 내부 네트워크 노출을 전제로 한 추가 보안 시나리오 문서화 및 반영
+
 ## 실행 순서 권장
 
-1. API 표준 고정 (P0-2)
-2. 사용자 기능 확장 (P1)
-3. Android 앱 API 연동 (P1-4)
+1. 사용자 기능 확장 (P1)
+2. Android 앱 API 연동 (P1-4)
+3. 보안 후속 하드닝 (P2-4)
 4. 운영 고도화 (P2)
+
+## 2026-04-05 완료/진행 체크리스트
+
+- [x] 내부 서비스 JWT 직접 검증 추가 (`service-user`, `service-store`, `service-order`, `service-delivery`, `service-event`)
+- [x] `X-User-*` 헤더와 JWT 클레임 일치 검증 추가
+- [x] `GET /api/v1/orders/{id}` 접근제어 강화
+- [x] `GET /api/v1/deliveries/{id}` 접근제어 강화
+- [x] `GET /api/v1/orders/frontend/customer-summaries` 역할 제한 추가
+- [x] `GET /api/v1/users/me/addresses/**` 역할 제한 추가
+- [x] `GET /api/v1/users/frontend/**` ADMIN 제한 추가
+- [x] Event API 역할 보호 적용
+- [x] Auth 쿠키 `Secure` / `SameSite` 설정 외부화
+- [x] Refresh Token 해시 저장 전환
+- [x] 변경 서비스 컴파일 검증 성공
+- [ ] `customer-summaries` STORE 범위 tenant scoping 구현
+- [ ] Docker Compose 내부 서비스 포트 비공개화
+- [ ] 운영 환경 gRPC TLS 또는 내부망 보호정책 수립
+
+## 2026-03-30 완료/진행 체크리스트
+
+- [x] P0-2 API 표준 통일: 전 서비스 `RestExceptionHandler` 통일
+- [x] `service-auth` `RestExceptionHandler` 접근제한 통일 (package-private → public)
+- [x] 전 서비스 `NoSuchElementException` 404 핸들러 추가
+- [x] `app-android-delivery` 배달 API 연동 개선 (`DeliveryDto` + 엔드포인트)
+- [x] `app-android-kiosk` 하드코딩 스토어 ID 제거 (`KioskConfig` 도입)
+- [x] `docker-compose.yml` 작성 (전체 8개 서비스 + PostgreSQL + Redis 통합)
+- [x] `Dockerfile` 작성 (멀티 스테이지)
+- [x] `database/apply-db-seeds.ps1` DB 시드 자동화 스크립트
+- [x] `docs/10_Current_Progress_Status.md` 최신화
+- [x] `docs/11_Priority_Worklist.md` 최신화
+- [ ] Docker 이미지 빌드 및 실행 테스트 (`docker-compose up`)
+- [ ] Android 앱 실기기 API 연동 E2E 실테스트
 
 ## 2026-03-17 즉시 실행 체크리스트
 

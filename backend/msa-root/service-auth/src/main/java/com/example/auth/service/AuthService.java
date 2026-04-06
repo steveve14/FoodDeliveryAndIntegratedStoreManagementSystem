@@ -11,6 +11,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -78,7 +82,7 @@ public class AuthService implements AuthenticationService {
           RefreshToken.builder()
               .id(java.util.UUID.randomUUID().toString())
               .userId(userId)
-              .token(refreshToken)
+            .token(hashToken(refreshToken))
               .revoked(false)
               .createdAt(java.time.Instant.now())
               .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
@@ -139,7 +143,7 @@ public class AuthService implements AuthenticationService {
         RefreshToken.builder()
             .id(java.util.UUID.randomUUID().toString())
             .userId(userId)
-            .token(refreshToken)
+        .token(hashToken(refreshToken))
             .revoked(false)
             .createdAt(java.time.Instant.now())
             .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
@@ -156,24 +160,24 @@ public class AuthService implements AuthenticationService {
     if (refreshToken == null) {
       throw new IllegalArgumentException("refreshToken required");
     }
-    Optional<RefreshToken> opt = refreshTokenRepository.findByToken(refreshToken);
+    Optional<RefreshToken> opt = refreshTokenRepository.findByToken(hashToken(refreshToken));
     if (opt.isEmpty() || opt.get().isRevoked()) {
       throw new IllegalArgumentException("Invalid refresh token");
     }
 
     RefreshToken stored = opt.get();
     // validate token signature/expiry
-    if (!jwtProvider.validateToken(stored.getToken())) {
+    if (!jwtProvider.validateToken(refreshToken)) {
       throw new IllegalArgumentException("Refresh token invalid or expired");
     }
 
-    String userId = jwtProvider.getUserIdFromToken(stored.getToken());
-    String roles = jwtProvider.getRolesFromToken(stored.getToken());
+    String userId = jwtProvider.getUserIdFromToken(refreshToken);
+    String roles = jwtProvider.getRolesFromToken(refreshToken);
 
     String newRefresh = jwtProvider.createRefreshToken(userId, roles);
 
     // update stored token (rotate)
-    stored.setToken(newRefresh);
+    stored.setToken(hashToken(newRefresh));
     stored.setCreatedAt(java.time.Instant.now());
     stored.setExpiresAt(java.time.Instant.now().plusMillis(1209600000L));
     refreshTokenRepository.save(stored);
@@ -187,13 +191,14 @@ public class AuthService implements AuthenticationService {
     if (refreshToken == null) {
       return;
     }
-    Optional<RefreshToken> opt = refreshTokenRepository.findByToken(refreshToken);
+    String hashedToken = hashToken(refreshToken);
+    Optional<RefreshToken> opt = refreshTokenRepository.findByToken(hashedToken);
     opt.ifPresent(
         rt -> {
           rt.setRevoked(true);
           refreshTokenRepository.save(rt);
           // optionally remove from DB
-          refreshTokenRepository.deleteByToken(refreshToken);
+          refreshTokenRepository.deleteByToken(hashedToken);
         });
   }
 
@@ -228,7 +233,7 @@ public class AuthService implements AuthenticationService {
         RefreshToken.builder()
             .id(java.util.UUID.randomUUID().toString())
             .userId(userId)
-            .token(refreshToken)
+        .token(hashToken(refreshToken))
             .revoked(false)
             .createdAt(java.time.Instant.now())
             .expiresAt(java.time.Instant.now().plusMillis(1209600000L))
@@ -238,5 +243,15 @@ public class AuthService implements AuthenticationService {
 
     return new LoginResult(
         new TokenResponse(accessToken, refreshToken), userId, email, userName, role);
+  }
+
+  private String hashToken(String token) {
+    try {
+      MessageDigest digest = MessageDigest.getInstance("SHA-256");
+      byte[] hashed = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+      return Base64.getEncoder().encodeToString(hashed);
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("SHA-256 algorithm unavailable", e);
+    }
   }
 }

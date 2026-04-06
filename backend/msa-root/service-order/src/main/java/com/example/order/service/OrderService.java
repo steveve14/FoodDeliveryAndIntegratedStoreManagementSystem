@@ -9,6 +9,9 @@ import com.example.order.grpc.client.StoreGrpcClient;
 import com.example.order.repository.OrderItemRepository;
 import com.example.order.repository.OrderRepository;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -49,7 +52,20 @@ public class OrderService {
   }
 
   /** 고객 주문 요약 목록을 조회합니다. */
-  public java.util.List<FrontendCustomerOrderSummaryDto> getFrontendCustomerSummaries() {
+  public java.util.List<FrontendCustomerOrderSummaryDto> getFrontendCustomerSummaries(
+      String currentUserId, String currentUserRole) {
+    if ("ADMIN".equals(currentUserRole)) {
+      return getGlobalCustomerSummaries();
+    }
+
+    if (!"STORE".equals(currentUserRole)) {
+      throw new IllegalStateException("고객 요약 목록을 조회할 권한이 없습니다.");
+    }
+
+    return getStoreScopedCustomerSummaries(currentUserId);
+  }
+
+  private java.util.List<FrontendCustomerOrderSummaryDto> getGlobalCustomerSummaries() {
     return jdbcTemplate.query(
         """
         SELECT user_id, COUNT(*) AS orders_count, MAX(created_at) AS last_order_at
@@ -64,6 +80,57 @@ public class OrderService {
                 rs.getLong("orders_count"),
                 rs.getTimestamp("last_order_at").toInstant(),
                 rs.getLong("orders_count") >= vipThreshold ? "vip" : "regular"));
+  }
+
+  private java.util.List<FrontendCustomerOrderSummaryDto> getStoreScopedCustomerSummaries(
+      String currentUserId) {
+    java.util.List<StoreScopedCustomerSummaryRow> rows =
+        jdbcTemplate.query(
+            """
+            SELECT user_id, store_id, COUNT(*) AS orders_count, MAX(created_at) AS last_order_at
+            FROM orders
+            WHERE user_id IS NOT NULL AND store_id IS NOT NULL
+            GROUP BY user_id, store_id
+            ORDER BY last_order_at DESC
+            """,
+            (rs, rowNum) ->
+                new StoreScopedCustomerSummaryRow(
+                    rs.getString("user_id"),
+                    rs.getString("store_id"),
+                    rs.getLong("orders_count"),
+                    rs.getTimestamp("last_order_at").toInstant()));
+
+    Map<String, Boolean> ownedStoreCache = new HashMap<>();
+    Map<String, CustomerSummaryAccumulator> mergedByUser = new HashMap<>();
+
+    for (StoreScopedCustomerSummaryRow row : rows) {
+      boolean ownedStore =
+          ownedStoreCache.computeIfAbsent(
+              row.storeId(), key -> isStoreOwnedByUser(key, currentUserId));
+
+      if (!ownedStore) {
+        continue;
+      }
+
+      mergedByUser
+          .computeIfAbsent(row.userId(), key -> new CustomerSummaryAccumulator())
+          .merge(row.ordersCount(), row.lastOrderAt());
+    }
+
+    java.util.List<FrontendCustomerOrderSummaryDto> result = new ArrayList<>();
+    for (Map.Entry<String, CustomerSummaryAccumulator> entry : mergedByUser.entrySet()) {
+      CustomerSummaryAccumulator acc = entry.getValue();
+      result.add(
+          new FrontendCustomerOrderSummaryDto(
+              entry.getKey(),
+              acc.ordersCount,
+              acc.lastOrderAt,
+              acc.ordersCount >= vipThreshold ? "vip" : "regular"));
+    }
+
+    result.sort(
+        Comparator.comparing(FrontendCustomerOrderSummaryDto::getLastOrderAt).reversed());
+    return result;
   }
 
   /** 주문을 생성합니다. */
@@ -140,6 +207,25 @@ public class OrderService {
         .toList();
   }
 
+  /** 현재 사용자가 주문 상세를 조회할 수 있는지 검증합니다. */
+  public boolean canAccessOrder(OrderDto order, String currentUserId, String currentUserRole) {
+    if ("ADMIN".equals(currentUserRole)) {
+      return true;
+    }
+    if ("USER".equals(currentUserRole)) {
+      return currentUserId != null && currentUserId.equals(order.getUserId());
+    }
+    if (!"STORE".equals(currentUserRole)) {
+      return false;
+    }
+    try {
+      validateStoreAccess(order.getStoreId(), currentUserId, currentUserRole);
+      return true;
+    } catch (RuntimeException ex) {
+      return false;
+    }
+  }
+
   /** 주문 상태를 변경합니다. */
   @Transactional
   public OrderDto updateStatus(String orderId, String newStatus) {
@@ -179,6 +265,26 @@ public class OrderService {
       throw new IllegalStateException("해당 매장의 주문을 조회할 권한이 없습니다.");
     }
   }
+
+  private boolean isStoreOwnedByUser(String storeId, String currentUserId) {
+    var storeResponse = storeGrpcClient.getStoreById(storeId);
+    return storeResponse.getFound() && currentUserId.equals(storeResponse.getOwnerId());
+  }
+
+  private static class CustomerSummaryAccumulator {
+    private long ordersCount;
+    private Instant lastOrderAt;
+
+    private void merge(long count, Instant candidateLastOrderAt) {
+      this.ordersCount += count;
+      if (this.lastOrderAt == null || candidateLastOrderAt.isAfter(this.lastOrderAt)) {
+        this.lastOrderAt = candidateLastOrderAt;
+      }
+    }
+  }
+
+  private record StoreScopedCustomerSummaryRow(
+      String userId, String storeId, long ordersCount, Instant lastOrderAt) {}
 
   private OrderDto toDto(Order o, java.util.List<OrderItemDto> items) {
     return new OrderDto(

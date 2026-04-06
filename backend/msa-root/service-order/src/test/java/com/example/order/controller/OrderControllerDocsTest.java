@@ -32,6 +32,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -49,9 +50,12 @@ class OrderControllerDocsTest {
   @BeforeEach
   void setUp(RestDocumentationContextProvider restDocumentation) {
     orderService = mock(OrderService.class);
+    Environment env = mock(Environment.class);
+    when(env.getProperty("token.secret", env.getProperty("TOKEN_SECRET")))
+      .thenReturn("MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=");
     mockMvc =
         MockMvcBuilders.standaloneSetup(new OrderController(orderService))
-            .addInterceptors(new RoleCheckInterceptor())
+        .addInterceptors(new RoleCheckInterceptor(env))
             .setControllerAdvice(new RestExceptionHandler())
             .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation))
             .build();
@@ -159,14 +163,17 @@ class OrderControllerDocsTest {
 
   @Test
   void getFrontendCustomerSummariesDocumentsSuccessResponse() throws Exception {
-    when(orderService.getFrontendCustomerSummaries())
+    when(orderService.getFrontendCustomerSummaries("owner-1", "STORE"))
         .thenReturn(
             List.of(
                 new FrontendCustomerOrderSummaryDto(
                     "user-1", 12L, Instant.parse("2026-03-13T00:00:00Z"), "vip")));
 
     mockMvc
-        .perform(get("/api/v1/orders/frontend/customer-summaries"))
+      .perform(
+        get("/api/v1/orders/frontend/customer-summaries")
+          .header("X-User-Id", "owner-1")
+          .header("X-User-Role", "STORE"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data[0].userId").value("user-1"))
         .andDo(
@@ -174,6 +181,9 @@ class OrderControllerDocsTest {
                 "orders-frontend-customer-summaries-success",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+          requestHeaders(
+            headerWithName("X-User-Id").description("Requester user id"),
+            headerWithName("X-User-Role").description("Requester role")),
                 responseFields(
                     fieldWithPath("success").description("Whether request succeeded"),
                     fieldWithPath("code").description("Response code"),

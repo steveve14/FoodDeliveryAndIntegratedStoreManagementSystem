@@ -13,3 +13,9 @@ spring:
 
   flyway:
     enabled: false
+
+app:
+  auth:
+    cookies:
+      secure: false
+      same-site: Lax

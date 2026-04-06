@@ -5,6 +5,7 @@ import com.example.userservice.dto.FrontendMailDto;
 import com.example.userservice.dto.FrontendMemberDto;
 import com.example.userservice.dto.FrontendNotificationDto;
 import com.example.userservice.dto.FrontendUserDto;
+import com.example.userservice.security.RequireRole;
 import com.example.userservice.service.FrontendDataService;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 /** FrontendDataController 타입입니다. */
 @RestController
 @RequestMapping("/api/v1/users/frontend")
+@RequireRole({"ADMIN"})
 public class FrontendDataController {
 
   private final FrontendDataService frontendDataService;

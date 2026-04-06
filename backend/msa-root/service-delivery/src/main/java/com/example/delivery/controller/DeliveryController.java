@@ -39,6 +39,7 @@ public class DeliveryController {
 
   /** 배달 ID로 배달 정보를 조회합니다. */
   @GetMapping("/{id}")
+  @RequireRole({"STORE", "ADMIN"})
   public ResponseEntity<ApiResponse<DeliveryDto>> get(@PathVariable String id) {
     return deliveryService
         .findById(id)

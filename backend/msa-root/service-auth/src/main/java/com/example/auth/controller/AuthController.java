@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +39,12 @@ class AuthController {
 
   @Value("${token.refresh_time:1209600000}")
   private long refreshTokenValidityMs;
+
+  @Value("${app.auth.cookies.secure:true}")
+  private boolean cookieSecure;
+
+  @Value("${app.auth.cookies.same-site:Lax}")
+  private String cookieSameSite;
 
   @PostMapping("/social")
   ResponseEntity<ApiResponse<LoginResponse>> socialLogin(
@@ -88,33 +96,51 @@ class AuthController {
   // ── 쿠키 헬퍼 ──────────────────────────────────────────
 
   private void addTokenCookies(HttpServletResponse response, TokenResponse tokens) {
-    Cookie accessCookie = new Cookie("access-token", tokens.getAccessToken());
-    accessCookie.setHttpOnly(true);
-    accessCookie.setSecure(false); // 개발 환경 (운영 시 true)
-    accessCookie.setPath("/");
-    accessCookie.setMaxAge((int) (accessTokenValidityMs / 1000));
-    response.addCookie(accessCookie);
+    response.addHeader(
+      HttpHeaders.SET_COOKIE,
+      ResponseCookie.from("access-token", tokens.getAccessToken())
+        .httpOnly(true)
+        .secure(cookieSecure)
+        .sameSite(cookieSameSite)
+        .path("/")
+        .maxAge(accessTokenValidityMs / 1000)
+        .build()
+        .toString());
 
-    Cookie refreshCookie = new Cookie("refresh-token", tokens.getRefreshToken());
-    refreshCookie.setHttpOnly(true);
-    refreshCookie.setSecure(false); // 개발 환경 (운영 시 true)
-    refreshCookie.setPath("/api/v1/auth");
-    refreshCookie.setMaxAge((int) (refreshTokenValidityMs / 1000));
-    response.addCookie(refreshCookie);
+    response.addHeader(
+      HttpHeaders.SET_COOKIE,
+      ResponseCookie.from("refresh-token", tokens.getRefreshToken())
+        .httpOnly(true)
+        .secure(cookieSecure)
+        .sameSite(cookieSameSite)
+        .path("/api/v1/auth")
+        .maxAge(refreshTokenValidityMs / 1000)
+        .build()
+        .toString());
   }
 
   private void clearTokenCookies(HttpServletResponse response) {
-    Cookie accessCookie = new Cookie("access-token", "");
-    accessCookie.setHttpOnly(true);
-    accessCookie.setPath("/");
-    accessCookie.setMaxAge(0);
-    response.addCookie(accessCookie);
+    response.addHeader(
+      HttpHeaders.SET_COOKIE,
+      ResponseCookie.from("access-token", "")
+        .httpOnly(true)
+        .secure(cookieSecure)
+        .sameSite(cookieSameSite)
+        .path("/")
+        .maxAge(0)
+        .build()
+        .toString());
 
-    Cookie refreshCookie = new Cookie("refresh-token", "");
-    refreshCookie.setHttpOnly(true);
-    refreshCookie.setPath("/api/v1/auth");
-    refreshCookie.setMaxAge(0);
-    response.addCookie(refreshCookie);
+    response.addHeader(
+      HttpHeaders.SET_COOKIE,
+      ResponseCookie.from("refresh-token", "")
+        .httpOnly(true)
+        .secure(cookieSecure)
+        .sameSite(cookieSameSite)
+        .path("/api/v1/auth")
+        .maxAge(0)
+        .build()
+        .toString());
   }
 
   private String extractCookie(HttpServletRequest request, String name) {

@@ -1,6 +1,6 @@
 # 프론트엔드 API 목록
 
-> **기준일**: 2026-03-15
+> **기준일**: 2026-04-05
 > **Base URL**: `http://localhost:8000` (Gateway → 각 서비스로 프록시)
 > **응답 포맷**: 모든 응답은 `ApiResponse<T>` 래퍼로 감싸여 반환됩니다.
 
@@ -15,6 +15,7 @@
 
 > **인증 방식**: access-token / refresh-token은 httpOnly 쿠키로 관리됩니다.
 > Gateway는 access-token 쿠키 또는 `Authorization: Bearer <accessToken>` 헤더를 검증할 수 있습니다.
+> 내부 서비스도 JWT를 직접 검증하므로, 프론트는 `X-User-*` 헤더를 직접 보내지 않습니다.
 > `🔓 인증 불필요` / `🔐 인증 필요 (쿠키 기반 인증)` 로 구분합니다.
 
 ---
@@ -196,9 +197,25 @@ Response: `data: null`
 
 ---
 
-## 3. 배송지 (Address) `/api/v1/users/me/addresses/**`
+### 2-6. 프론트 집계/운영 데이터 조회
 
 > 🔐 인증 필요
+> `GET /api/v1/users/frontend/**` 계열은 현재 **ADMIN 전용**입니다.
+> 일반 사용자 앱(`web-user`)에서 직접 호출하지 않습니다.
+
+주요 예시:
+
+```http
+GET /api/v1/users/frontend/dashboard
+GET /api/v1/users/frontend/customers
+GET /api/v1/users/frontend/notifications
+```
+
+---
+
+## 3. 배송지 (Address) `/api/v1/users/me/addresses/**`
+
+> 🔐 인증 필요 (`USER`, `ADMIN`)
 > ⚠️ Gateway가 JWT에서 추출한 `X-User-Id`, `X-User-Role` 헤더를 자동으로 전달합니다. 프론트에서 직접 세팅하지 않습니다.
 
 ### 3-1. 배송지 목록 조회
@@ -485,6 +502,9 @@ POST /api/v1/orders
 
 ### 6-2. 주문 조회
 
+> 🔐 `USER`, `STORE`, `ADMIN`만 접근 가능합니다.
+> `USER`는 본인 주문만 조회할 수 있으며, `STORE`는 권한 검증을 통과한 주문만 조회할 수 있습니다.
+
 ```http
 GET /api/v1/orders/{id}
 ```
@@ -514,6 +534,8 @@ Response: `data: OrderDto[]`
 ---
 
 ### 6-5. 주문 상태 변경 (사장님/내부용)
+
+> 🔐 `STORE`, `ADMIN` 전용
 
 ```http
 PATCH /api/v1/orders/{id}/status
@@ -572,6 +594,9 @@ POST /api/v1/deliveries
 
 ### 7-2. 배달 조회
 
+> 🔐 현재 `STORE`, `ADMIN`만 접근 가능합니다.
+> 고객 앱은 주문 상세 경로를 통해 배달 상태를 확인하는 흐름을 우선 사용합니다.
+
 ```http
 GET /api/v1/deliveries/{id}
 ```
@@ -581,6 +606,8 @@ Response: `data: DeliveryDto` (7-1과 동일)
 ---
 
 ### 7-3. 배달 상태 변경
+
+> 🔐 권한 정책은 운영자/내부 프로세스 중심으로 관리합니다.
 
 ```http
 PATCH /api/v1/deliveries/{id}/status
@@ -603,6 +630,7 @@ Response: `data: DeliveryDto`
 ## 8. 이벤트 (Event) `/api/v1/events/**`
 
 > 🔐 인증 필요
+> 현재 이벤트 API는 역할 기반 보호가 적용되며, 일반 사용자 앱에서 직접 사용하는 API로 보지 않습니다.
 
 ### 8-1. 이벤트 발행
 
@@ -714,9 +742,9 @@ POST /api/v1/users/authenticate
 | 주문 생성 | ✅ | — | — |
 | 주문 조회 | ✅ | ✅ | ✅ |
 | 주문 상태 변경 | — | ✅ | ✅ |
-| 배달 조회 | ✅ | ✅ | ✅ |
+| 배달 조회 | — | ✅ | ✅ |
 | 배달 상태 변경 | — | — | ✅ |
-| 이벤트 발행/조회 | — | — | ✅ |
+| 이벤트 발행/조회 | — | 제한적 | ✅ |
 
 ---
 

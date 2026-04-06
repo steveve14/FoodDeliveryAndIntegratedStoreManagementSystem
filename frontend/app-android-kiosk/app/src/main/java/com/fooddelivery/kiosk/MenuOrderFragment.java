@@ -26,7 +26,6 @@ import retrofit2.Response;
 public class MenuOrderFragment extends Fragment {
 
     private KioskMenuAdapter menuAdapter;
-    private static final String DEFAULT_STORE_ID = "1"; // Kiosk is fixed to a store for MVP
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,8 +47,13 @@ public class MenuOrderFragment extends Fragment {
     }
 
     private void loadMenus() {
+        String storeId = KioskConfig.getInstance(requireContext()).getStoreId();
+        if (storeId == null) {
+            Toast.makeText(getContext(), "매장 ID가 설정되지 않았습니다. 관리자에게 문의하세요.", Toast.LENGTH_LONG).show();
+            return;
+        }
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        apiService.getStoreMenus(DEFAULT_STORE_ID).enqueue(new Callback<ApiResponse<List<MenuDto>>>() {
+        apiService.getStoreMenus(storeId).enqueue(new Callback<ApiResponse<List<MenuDto>>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<List<MenuDto>>> call, @NonNull Response<ApiResponse<List<MenuDto>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
