@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-surface": "#2e3134",
+              "surface-tint": "#296290",
+              "primary": "#003354",
+              "tertiary-fixed": "#ffdcc3",
+              "on-background": "#191c1f",
+              "on-primary-container": "#86baed",
+              "tertiary-fixed-dim": "#ffb77d",
+              "surface-dim": "#d9dade",
+              "on-primary-fixed": "#001d33",
+              "surface-container-highest": "#e1e2e7",
+              "surface-bright": "#f8f9fd",
+              "background": "#f8f9fd",
+              "on-error": "#ffffff",
+              "tertiary-container": "#6e3900",
+              "on-surface": "#191c1f",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#a0f399",
+              "on-secondary-fixed-variant": "#005312",
+              "on-secondary-container": "#217128",
+              "on-secondary": "#ffffff",
+              "primary-fixed-dim": "#98cbff",
+              "on-tertiary-container": "#f0a465",
+              "secondary-fixed": "#a3f69c",
+              "error": "#ba1a1a",
+              "on-secondary-fixed": "#002204",
+              "on-tertiary-fixed": "#2f1500",
+              "outline-variant": "#c1c7d0",
+              "outline": "#727880",
+              "surface": "#f8f9fd",
+              "primary-container": "#004a77",
+              "on-surface-variant": "#41474f",
+              "surface-variant": "#e1e2e7",
+              "on-tertiary-fixed-variant": "#6e3900",
+              "surface-container-high": "#e7e8ec",
+              "on-primary-fixed-variant": "#004a77",
+              "surface-container": "#edeef2",
+              "on-error-container": "#93000a",
+              "tertiary": "#4d2600",
+              "surface-container-low": "#f3f3f8",
+              "inverse-on-surface": "#f0f0f5",
+              "error-container": "#ffdad6",
+              "secondary": "#1b6d24",
+              "on-primary": "#ffffff",
+              "inverse-primary": "#98cbff",
+              "secondary-fixed-dim": "#88d982",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#cfe5ff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-[#f8f9fd] dark:bg-slate-950 flex justify-between items-center px-6 py-4 w-full docked full-width top-0 sticky z-50 no-border">
+<div class="flex items-center gap-4">
+<button class="hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors p-2 rounded-full scale-95 duration-200">
+<span class="material-symbols-outlined text-[#003354] dark:text-blue-400">menu</span>
+</button>
+<h1 class="font-manrope font-bold text-2xl tracking-tight text-[#003354] dark:text-blue-400">매출·정산</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors p-2 rounded-full scale-95 duration-200">
+<span class="material-symbols-outlined text-[#003354] dark:text-blue-400">notifications</span>
+</button>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 pt-10 pb-20">
+<!-- Hero KPI Section - Asymmetric Bento Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+<!-- Main Revenue Card -->
+<div class="md:col-span-8 bg-surface-container-lowest p-10 rounded-xl shadow-[0_8px_24px_rgba(25,28,31,0.04)] flex flex-col justify-between min-h-[320px]">
+<div>
+<span class="text-on-surface-variant font-label text-sm uppercase tracking-widest font-semibold">총 매출 • 10월</span>
+<div class="flex items-baseline gap-4 mt-4">
+<h2 class="text-6xl font-headline font-extrabold tracking-tighter text-primary">$142,850.40</h2>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span> 12.5%
+                        </span>
+</div>
+</div>
+<div class="w-full h-32 flex items-end gap-1 mt-8">
+<!-- Faux Chart Bars using Theme Colors -->
+<div class="flex-1 bg-primary-fixed hover:bg-primary h-[40%] rounded-t-sm transition-all duration-300"></div>
+<div class="flex-1 bg-primary-fixed hover:bg-primary h-[65%] rounded-t-sm transition-all duration-300"></div>
+<div class="flex-1 bg-primary-fixed hover:bg-primary h-[55%] rounded-t-sm transition-all duration-300"></div>
+<div class="flex-1 bg-primary-fixed hover:bg-primary h-[85%] rounded-t-sm transition-all duration-300"></div>
+<div class="flex-1 bg-primary-fixed hover:bg-primary h-[70%] rounded-t-sm transition-all duration-300"></div>
+<div class="flex-1 bg-primary-fixed hover:bg-primary h-[95%] rounded-t-sm transition-all duration-300"></div>
+<div class="flex-1 bg-primary hover:bg-primary h-[100%] rounded-t-sm transition-all duration-300"></div>
+</div>
+</div>
+<!-- Settlement Summary Sidebar -->
+<div class="md:col-span-4 space-y-6">
+<div class="bg-primary p-8 rounded-xl text-on-primary shadow-xl">
+<h3 class="font-headline text-lg font-bold mb-6">정산 예정 금액</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-primary-fixed-dim text-sm">총 판매액</span>
+<span class="font-bold">$12,402</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-primary-fixed-dim text-sm">플랫폼 수수료 (2%)</span>
+<span class="font-bold text-error-container">-$248</span>
+</div>
+<div class="h-px bg-primary-container w-full"></div>
+<div class="flex justify-between items-center pt-2">
+<span class="text-white font-semibold">실지급액</span>
+<span class="text-2xl font-headline font-extrabold">$12,154</span>
+</div>
+</div>
+<button class="w-full mt-8 py-3 bg-secondary-container text-on-secondary-container font-bold rounded-md hover:opacity-90 transition-opacity">
+                        출금 신청하기
+                    </button>
+</div>
+</div>
+</div>
+<!-- Secondary Insights Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+<!-- Top Selling Items - Glassmorphism Feel -->
+<div class="lg:col-span-2">
+<div class="flex justify-between items-end mb-8">
+<h3 class="font-headline text-3xl font-extrabold tracking-tight">인기 메뉴</h3>
+<div class="flex gap-4">
+<button class="text-sm font-bold text-primary border-b-2 border-primary pb-1">일간</button>
+<button class="text-sm font-medium text-on-surface-variant pb-1">주간</button>
+<button class="text-sm font-medium text-on-surface-variant pb-1">월간</button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="p-4 bg-surface-container flex text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+<div class="flex-[3]">상품명</div>
+<div class="flex-1 text-right">수량</div>
+<div class="flex-1 text-right">매출액</div>
+<div class="flex-1 text-right">상태</div>
+</div>
+<!-- Item Row 1 -->
+<div class="p-6 flex items-center hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex-[3] flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-white flex items-center justify-center border border-outline-variant/20 shadow-sm">
+<span class="material-symbols-outlined text-primary">watch</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">정밀 크로노그래프 A1</p>
+<p class="text-xs text-on-surface-variant">Electronics • ID: 992-K</p>
+</div>
+</div>
+<div class="flex-1 text-right font-medium">842</div>
+<div class="flex-1 text-right font-bold">$24,418</div>
+<div class="flex-1 text-right">
+<span class="bg-secondary-container/50 text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded">재고 있음</span>
+</div>
+</div>
+<!-- Item Row 2 -->
+<div class="p-6 flex items-center hover:bg-surface-container-highest transition-colors cursor-pointer group bg-white/40">
+<div class="flex-[3] flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-white flex items-center justify-center border border-outline-variant/20 shadow-sm">
+<span class="material-symbols-outlined text-primary">headphones</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">에제큐티브 오디오 프로</p>
+<p class="text-xs text-on-surface-variant">Accessories • ID: 441-L</p>
+</div>
+</div>
+<div class="flex-1 text-right font-medium">612</div>
+<div class="flex-1 text-right font-bold">$18,360</div>
+<div class="flex-1 text-right">
+<span class="bg-error-container text-on-error-container text-[10px] font-bold px-2 py-0.5 rounded">재고 부족</span>
+</div>
+</div>
+<!-- Item Row 3 -->
+<div class="p-6 flex items-center hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex-[3] flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-white flex items-center justify-center border border-outline-variant/20 shadow-sm">
+<span class="material-symbols-outlined text-primary">laptop_mac</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">럭스 카본 노트북</p>
+<p class="text-xs text-on-surface-variant">Electronics • ID: 102-X</p>
+</div>
+</div>
+<div class="flex-1 text-right font-medium">124</div>
+<div class="flex-1 text-right font-bold">$154,800</div>
+<div class="flex-1 text-right">
+<span class="bg-secondary-container/50 text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded">재고 있음</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Metric Column -->
+<div class="space-y-6">
+<h3 class="font-headline text-2xl font-extrabold tracking-tight mb-8">성과 지표</h3>
+<div class="bg-surface-container-low p-6 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<p class="text-on-surface-variant text-sm font-medium">고객 유지율</p>
+<span class="material-symbols-outlined text-primary">group</span>
+</div>
+<p class="text-4xl font-headline font-bold text-primary">78.4%</p>
+<div class="w-full bg-outline-variant/20 h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="bg-primary h-full w-[78%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<p class="text-on-surface-variant text-sm font-medium">평균 주문 금액</p>
+<span class="material-symbols-outlined text-primary">receipt</span>
+</div>
+<p class="text-4xl font-headline font-bold text-primary">$242.00</p>
+<p class="text-xs text-secondary font-bold mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">arrow_upward</span> +$14 지난달 대비
+                    </p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/10 p-6 rounded-xl shadow-sm">
+<div class="flex items-center gap-4 mb-4">
+<div class="bg-tertiary-fixed text-on-tertiary-fixed p-2 rounded-lg">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<p class="font-bold text-sm">전략적 통찰</p>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                        화요일 <span class="text-primary font-bold">18:00에서 21:00</span> 사이에 매출이 가장 높습니다. 전환율을 극대화하기 위해 이 시간대에 타겟 프로모션을 고려해 보세요.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-2xl border-t border-[#c1c7d0]/20 shadow-[0_-8px_24px_rgba(25,28,31,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">홈</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">주문</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">star</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">리뷰</span>
+</a>
+<!-- Sales is Active -->
+<a class="flex flex-col items-center justify-center bg-[#cfe5ff] dark:bg-blue-900 text-[#003354] dark:text-blue-100 rounded-xl px-4 py-1.5 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">매출</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>알림 설정</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#004a77",
+              "surface-container": "#edeef2",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#88d982",
+              "primary-fixed": "#cfe5ff",
+              "primary": "#003354",
+              "on-error-container": "#93000a",
+              "outline-variant": "#c1c7d0",
+              "surface-container-high": "#e7e8ec",
+              "on-tertiary-fixed": "#2f1500",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f3f3f8",
+              "primary-fixed-dim": "#98cbff",
+              "on-secondary-fixed-variant": "#005312",
+              "on-secondary-fixed": "#002204",
+              "on-primary-fixed-variant": "#004a77",
+              "outline": "#727880",
+              "on-secondary-container": "#217128",
+              "surface-bright": "#f8f9fd",
+              "inverse-primary": "#98cbff",
+              "surface-tint": "#296290",
+              "surface": "#f8f9fd",
+              "on-error": "#ffffff",
+              "surface-dim": "#d9dade",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#a3f69c",
+              "surface-variant": "#e1e2e7",
+              "on-surface": "#191c1f",
+              "on-background": "#191c1f",
+              "secondary": "#1b6d24",
+              "inverse-surface": "#2e3134",
+              "tertiary-fixed-dim": "#ffb77d",
+              "surface-container-highest": "#e1e2e7",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#86baed",
+              "secondary-container": "#a0f399",
+              "inverse-on-surface": "#f0f0f5",
+              "tertiary-fixed": "#ffdcc3",
+              "tertiary": "#4d2600",
+              "tertiary-container": "#6e3900",
+              "on-tertiary-container": "#f0a465",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed-variant": "#6e3900",
+              "on-tertiary": "#ffffff",
+              "on-primary-fixed": "#001d33",
+              "on-surface-variant": "#41474f",
+              "background": "#f8f9fd"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fd;
+            color: #191c1f;
+        }
+        .toggle-switch:checked + .toggle-bg {
+            background-color: #003354;
+        }
+        .toggle-switch:checked + .toggle-bg .toggle-dot {
+            transform: translateX(1.25rem);
+            background-color: #ffffff;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-[#f8f9fd] dark:bg-slate-950 z-50">
+<div class="flex items-center px-6 py-4 w-full bg-[#edeef2] dark:bg-slate-900">
+<button class="mr-4 text-[#003354] dark:text-blue-400 active:scale-95 duration-200 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-manrope font-bold text-xl tracking-tight text-[#003354] dark:text-blue-400">알림 설정</h1>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-6 pt-8 pb-32 max-w-2xl mx-auto w-full space-y-10">
+<!-- Order Notifications Section -->
+<section class="space-y-4">
+<h2 class="font-headline font-extrabold text-sm uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="shopping_bag">shopping_bag</span>
+                주문 알림
+            </h2>
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm">
+<!-- Row 1 -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors rounded-lg group">
+<div>
+<p class="font-body font-semibold text-on-surface">새 주문 알림</p>
+<p class="font-body text-xs text-on-surface-variant">신규 주문이 접수되면 즉시 알려드립니다</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-switch" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors duration-200 toggle-bg">
+<div class="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-200 toggle-dot"></div>
+</div>
+</label>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors rounded-lg group">
+<div>
+<p class="font-body font-semibold text-on-surface">주문 취소 알림</p>
+<p class="font-body text-xs text-on-surface-variant">취소 요청 및 완료 시 알림을 보냅니다</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-switch" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors duration-200 toggle-bg">
+<div class="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-200 toggle-dot"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Review Notifications Section -->
+<section class="space-y-4">
+<h2 class="font-headline font-extrabold text-sm uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="rate_review">rate_review</span>
+                리뷰 알림
+            </h2>
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm">
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors rounded-lg">
+<div>
+<p class="font-body font-semibold text-on-surface">새 리뷰 등록 알림</p>
+<p class="font-body text-xs text-on-surface-variant">고객님이 리뷰를 남기면 알림을 드립니다</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-switch" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors duration-200 toggle-bg">
+<div class="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-200 toggle-dot"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Marketing & Notices Section -->
+<section class="space-y-4">
+<h2 class="font-headline font-extrabold text-sm uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="campaign">campaign</span>
+                마케팅 및 공지
+            </h2>
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm">
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors rounded-lg">
+<div>
+<p class="font-body font-semibold text-on-surface">이벤트 및 혜택 알림</p>
+<p class="font-body text-xs text-on-surface-variant">진행 중인 이벤트와 전용 혜택 정보입니다</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only toggle-switch" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors duration-200 toggle-bg">
+<div class="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-200 toggle-dot"></div>
+</div>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors rounded-lg">
+<div>
+<p class="font-body font-semibold text-on-surface">공지사항 알림</p>
+<p class="font-body text-xs text-on-surface-variant">서비스 이용 관련 중요 업데이트 사항입니다</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-switch" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors duration-200 toggle-bg">
+<div class="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-200 toggle-dot"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Notification Methods Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline font-extrabold text-sm uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="phonelink_setup">phonelink_setup</span>
+                    알림 수단
+                </h2>
+<span class="text-[10px] font-bold text-primary bg-primary-fixed px-2 py-0.5 rounded uppercase">Verified</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-transparent hover:border-primary/10 transition-all flex flex-col justify-between">
+<div class="mb-4">
+<span class="material-symbols-outlined text-primary mb-2 block" data-icon="notifications_active">notifications_active</span>
+<p class="font-body font-bold text-on-surface text-sm">푸시 알림</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-switch" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors duration-200 toggle-bg">
+<div class="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-200 toggle-dot"></div>
+</div>
+</label>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-transparent hover:border-primary/10 transition-all flex flex-col justify-between">
+<div class="mb-4">
+<span class="material-symbols-outlined text-primary mb-2 block" data-icon="sms">sms</span>
+<p class="font-body font-bold text-on-surface text-sm">SMS/알림톡</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only toggle-switch" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full transition-colors duration-200 toggle-bg">
+<div class="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-200 toggle-dot"></div>
+</div>
+</label>
+</div>
+</div>
+<p class="text-[11px] text-on-surface-variant px-1">
+                알림톡 수신이 거부될 경우 일반 SMS로 대체 발송될 수 있습니다.
+            </p>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#ffffff] dark:bg-slate-900 z-50 border-t border-[#c1c7d0]/20 shadow-[0_-8px_24px_rgba(25,28,31,0.06)]">
+<button class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-400 px-4 py-1.5 hover:bg-[#edeef2] dark:hover:bg-slate-800 transition-all active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-inter text-[11px] font-medium uppercase tracking-wider">홈</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-400 px-4 py-1.5 hover:bg-[#edeef2] dark:hover:bg-slate-800 transition-all active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-inter text-[11px] font-medium uppercase tracking-wider">주문</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-400 px-4 py-1.5 hover:bg-[#edeef2] dark:hover:bg-slate-800 transition-all active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="notifications">notifications</span>
+<span class="font-inter text-[11px] font-medium uppercase tracking-wider">알림</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-[#cfe5ff] dark:bg-blue-900/40 text-[#003354] dark:text-blue-100 rounded-xl px-4 py-1.5 hover:bg-[#edeef2] dark:hover:bg-slate-800 transition-all active:scale-90 duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-inter text-[11px] font-medium uppercase tracking-wider">설정</span>
+</button>
+</nav>
+</body></html>

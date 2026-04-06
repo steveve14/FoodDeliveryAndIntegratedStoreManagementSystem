@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_menu_order"
-        android:icon="@android:drawable/ic_menu_agenda"
+        android:icon="@drawable/ic_menu_food"
         android:title="메뉴 주문" />
     <item
         android:id="@+id/nav_order_status"
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@drawable/ic_order_status"
         android:title="주문 현황" />
 </menu>

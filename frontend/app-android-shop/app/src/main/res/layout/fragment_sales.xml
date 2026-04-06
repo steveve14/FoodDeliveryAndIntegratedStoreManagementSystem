@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/page_horizontal_padding"
+        android:paddingTop="@dimen/spacing_6"
+        android:paddingBottom="@dimen/spacing_8">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="매출 · 정산"
+            android:textAppearance="@style/TextAppearance.App.Headline.Small"
+            android:layout_marginBottom="@dimen/spacing_5" />
+
+        <!-- Period selector chips -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_period"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_5"
+            app:singleSelection="true">
+            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="오늘" android:checked="true" style="@style/Widget.Material3.Chip.Filter" />
+            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="이번 주" style="@style/Widget.Material3.Chip.Filter" />
+            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="이번 달" style="@style/Widget.Material3.Chip.Filter" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Revenue Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_5"
+            style="@style/Widget.App.Card">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_5">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="총 매출액" android:textAppearance="@style/TextAppearance.App.Label.Small" android:layout_marginBottom="@dimen/spacing_2" />
+                <TextView android:id="@+id/tv_total_revenue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₩0" android:textAppearance="@style/TextAppearance.App.Headline.Large" android:textColor="@color/primary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Stats Grid -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_5">
+            <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_2" style="@style/Widget.App.Card.Tonal">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/spacing_4">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="주문 건수" android:textAppearance="@style/TextAppearance.App.Label.Small" />
+                    <TextView android:id="@+id/tv_order_count_sales" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0건" android:textAppearance="@style/TextAppearance.App.Title.Large" android:textColor="@color/secondary" android:layout_marginTop="@dimen/spacing_1" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_2" style="@style/Widget.App.Card.Tonal">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/spacing_4">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="평균 주문" android:textAppearance="@style/TextAppearance.App.Label.Small" />
+                    <TextView android:id="@+id/tv_avg_order_sales" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₩0" android:textAppearance="@style/TextAppearance.App.Title.Large" android:textColor="@color/tertiary" android:layout_marginTop="@dimen/spacing_1" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>영업 시간 설정 - Executive Inventory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb77d",
+                        "secondary-fixed-dim": "#88d982",
+                        "on-surface": "#191c1f",
+                        "secondary-container": "#a0f399",
+                        "inverse-on-surface": "#f0f0f5",
+                        "tertiary-container": "#6e3900",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#001d33",
+                        "surface-container-highest": "#e1e2e7",
+                        "surface": "#f8f9fd",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2e3134",
+                        "on-primary-container": "#86baed",
+                        "tertiary": "#4d2600",
+                        "surface-container-high": "#e7e8ec",
+                        "primary-fixed-dim": "#98cbff",
+                        "surface-container": "#edeef2",
+                        "outline": "#727880",
+                        "on-secondary-fixed": "#002204",
+                        "on-error-container": "#93000a",
+                        "on-background": "#191c1f",
+                        "primary": "#003354",
+                        "on-tertiary-fixed": "#2f1500",
+                        "secondary": "#1b6d24",
+                        "outline-variant": "#c1c7d0",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d9dade",
+                        "on-secondary-container": "#217128",
+                        "on-tertiary-fixed-variant": "#6e3900",
+                        "tertiary-fixed": "#ffdcc3",
+                        "background": "#f8f9fd",
+                        "surface-tint": "#296290",
+                        "on-primary-fixed-variant": "#004a77",
+                        "surface-container-low": "#f3f3f8",
+                        "primary-container": "#004a77",
+                        "on-surface-variant": "#41474f",
+                        "on-tertiary-container": "#f0a465",
+                        "primary-fixed": "#cfe5ff",
+                        "surface-variant": "#e1e2e7",
+                        "inverse-primary": "#98cbff",
+                        "surface-bright": "#f8f9fd",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#005312",
+                        "secondary-fixed": "#a3f69c"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fd;
+        }
+        .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen overflow-hidden">
+<!-- SideNavBar (from JSON) -->
+<aside class="hidden md:flex flex-col h-screen w-64 left-0 border-none bg-[#edeef2] dark:bg-slate-900 py-6 px-4 space-y-2 shrink-0">
+<div class="px-4 mb-8">
+<h1 class="font-headline font-black text-[#003354] dark:text-blue-500 text-2xl tracking-tight">Executive</h1>
+<p class="text-xs text-[#41474f] dark:text-slate-400 font-medium opacity-70">Store ID: 8842</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-4 py-3 text-[#41474f] dark:text-slate-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-md transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-body text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#41474f] dark:text-slate-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-md transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+<span class="font-body text-sm font-medium">Inventory</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#41474f] dark:text-slate-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-md transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="payments">payments</span>
+<span class="font-body text-sm font-medium">Sales</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#41474f] dark:text-slate-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-md transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="calendar_today">calendar_today</span>
+<span class="font-body text-sm font-medium">Schedules</span>
+</a>
+<a class="flex items-center px-4 py-3 bg-[#ffffff] dark:bg-slate-800 text-[#003354] dark:text-blue-300 rounded-md font-bold shadow-sm translate-x-1 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="font-body text-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 space-y-1">
+<a class="flex items-center px-4 py-3 text-[#41474f] dark:text-slate-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-md transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="help_outline">help_outline</span>
+<span class="font-body text-sm font-medium">Help</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#41474f] dark:text-slate-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-md transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+<span class="font-body text-sm font-medium">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+<!-- TopAppBar (from JSON) -->
+<header class="w-full top-0 border-none bg-[#f8f9fd] dark:bg-slate-950 flex justify-between items-center px-8 h-20 shrink-0 sticky z-10">
+<div class="flex flex-col">
+<h2 class="font-headline font-bold text-lg tracking-tight text-[#003354] dark:text-blue-400">Executive Inventory</h2>
+<span class="text-[10px] text-on-surface-variant font-semibold tracking-widest uppercase opacity-60">System Configuration</span>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-4">
+<button class="p-2 text-[#41474f] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-[#41474f] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="h-10 w-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="Store Manager Profile" class="w-full h-full object-cover" data-alt="Portrait of a professional store manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1yXYfQaxej8OYa_jlu_qqSqw-Ey9Ai-M7Weur47T6-mHXVu3ldk7qFgMHoR59-WI90bOAIQs3TxXBkTOLMX0r8kqPDpi9mCEpcoHiTh4FP7M7U_Cko8V_pn2TCNW-AYNQ1rjl9IfjU5dxQXKoIlsKek0FsXiMg2N4JXhrvXLrg9-8RfGkKZ8fFp4ZzJn0cWsL9AUA1JNEbGN2TM339fPvRkHyr_OPr39_uz8qCjsVBcN6jLD_Vw9kqfC_c07bMXPkasE2Qh0DaMI"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="p-10 space-y-10 max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-2">
+<h1 class="font-headline text-5xl font-extrabold text-primary tracking-tight">영업 시간 설정</h1>
+<p class="text-on-surface-variant font-medium text-lg max-w-2xl">스토어의 운영 시간과 휴무일을 정밀하게 관리하세요.</p>
+</div>
+<!-- Immediate Control Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_8px_24px_rgba(25,28,31,0.06)] border border-outline-variant/10 flex items-center justify-between min-w-[320px]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-error-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-error-container" data-icon="pause_circle">pause_circle</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">즉시 일시 정지</p>
+<p class="text-xs text-on-surface-variant">모든 온라인 주문을 차단합니다</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-error"></div>
+</label>
+</div>
+</section>
+<!-- Main Configuration Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Weekly Schedule Section -->
+<section class="lg:col-span-8 space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="font-headline text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="calendar_view_week">calendar_view_week</span>
+                            주간 운영 일정
+                        </h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Day Card Component (Repeated) -->
+<div class="bg-surface-container-low p-5 rounded-lg border border-transparent hover:border-outline-variant/20 transition-all flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-headline text-lg font-bold">월요일</span>
+<label class="relative inline-flex items-center cursor-pointer scale-90">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Open</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="09:00"/>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Close</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="22:00"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-5 rounded-lg border border-transparent hover:border-outline-variant/20 transition-all flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-headline text-lg font-bold">화요일</span>
+<label class="relative inline-flex items-center cursor-pointer scale-90">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Open</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="09:00"/>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Close</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="22:00"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-5 rounded-lg border border-transparent hover:border-outline-variant/20 transition-all flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-headline text-lg font-bold">수요일</span>
+<label class="relative inline-flex items-center cursor-pointer scale-90">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Open</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="09:00"/>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Close</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="22:00"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-5 rounded-lg border border-transparent hover:border-outline-variant/20 transition-all flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-headline text-lg font-bold">목요일</span>
+<label class="relative inline-flex items-center cursor-pointer scale-90">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Open</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="09:00"/>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Close</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="22:00"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-5 rounded-lg border border-transparent hover:border-outline-variant/20 transition-all flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-headline text-lg font-bold">금요일</span>
+<label class="relative inline-flex items-center cursor-pointer scale-90">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Open</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="09:00"/>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Close</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="23:00"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-5 rounded-lg border border-transparent hover:border-outline-variant/20 transition-all flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<span class="font-headline text-lg font-bold">토요일</span>
+<label class="relative inline-flex items-center cursor-pointer scale-90">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Open</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="10:00"/>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Close</p>
+<input class="w-full bg-surface-container-lowest border-none rounded p-2 text-sm font-medium focus:ring-1 focus:ring-primary shadow-sm" type="time" value="23:00"/>
+</div>
+</div>
+</div>
+<!-- Sunday Holiday Card -->
+<div class="bg-surface-container p-5 rounded-lg border-2 border-dashed border-outline-variant/30 flex flex-col gap-4 relative overflow-hidden group">
+<div class="absolute inset-0 bg-surface-dim/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-center relative z-10">
+<div class="flex flex-col">
+<span class="font-headline text-lg font-bold text-on-surface/50">일요일</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-error-container text-on-error-container mt-1">정기 휴무</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer scale-90">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-3 opacity-30 relative z-10 pointer-events-none">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Open</p>
+<div class="bg-surface-container-lowest rounded p-2 text-sm font-medium">--:--</div>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Close</p>
+<div class="bg-surface-container-lowest rounded p-2 text-sm font-medium">--:--</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Controls (Break time, Holidays) -->
+<aside class="lg:col-span-4 space-y-8">
+<!-- Break Time Section -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_8px_24px_rgba(25,28,31,0.06)] border border-outline-variant/10 space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="font-headline text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed-variant" data-icon="coffee">coffee</span>
+                                휴게 시간
+                            </h3>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:bg-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-surface-variant after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<p class="text-sm text-on-surface-variant">브레이크 타임 중에는 주문 접수가 일시 중단됩니다.</p>
+<div class="space-y-4 pt-2">
+<div class="relative group">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+</div>
+<div class="flex flex-col pl-12 pr-4 py-3 bg-surface-container-low rounded-lg border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Start Time</label>
+<input class="bg-transparent border-none p-0 text-base font-semibold focus:ring-0" type="time" value="15:00"/>
+</div>
+</div>
+<div class="relative group">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="event_available">event_available</span>
+</div>
+<div class="flex flex-col pl-12 pr-4 py-3 bg-surface-container-low rounded-lg border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">End Time</label>
+<input class="bg-transparent border-none p-0 text-base font-semibold focus:ring-0" type="time" value="17:00"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Holiday Operations Section -->
+<div class="bg-surface-container-highest/40 p-8 rounded-xl border border-outline-variant/20 space-y-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="event_busy">event_busy</span>
+<h3 class="font-headline text-xl font-bold">공휴일 운영 설정</h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<div class="flex flex-col">
+<span class="text-sm font-bold">법정 공휴일 자동 휴무</span>
+<span class="text-[10px] text-on-surface-variant">추석, 설날 등 자동 설정</span>
+</div>
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</div>
+<button class="w-full py-3 px-4 flex items-center justify-center gap-2 text-primary font-bold text-sm bg-surface-container-lowest border border-primary/20 rounded-lg hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+                                임시 휴무일 추가하기
+                            </button>
+</div>
+</div>
+<!-- Guidance Info -->
+<div class="p-6 rounded-xl bg-primary-fixed/30 border border-primary-fixed-dim/50">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="info">info</span>
+<p class="text-sm text-on-primary-fixed font-medium leading-relaxed">
+                                설정된 영업 시간은 고객용 앱과 배달 파트너 웹사이트에 실시간으로 반영됩니다. 변경 사항은 즉시 저장되지 않으며 하단의 저장 버튼을 눌러야 확정됩니다.
+                            </p>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<!-- Sticky Footer Action Bar -->
+<footer class="mt-auto sticky bottom-0 w-full bg-surface-container-lowest py-6 px-10 border-t border-outline-variant/10 shadow-[0_-4px_24px_rgba(0,0,0,0.04)] z-20">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="history">history</span>
+<span class="text-xs font-medium">마지막 변경: 2023.10.24 14:22 (Manager_01)</span>
+</div>
+<div class="flex gap-4">
+<button class="px-8 py-3 text-sm font-bold text-primary hover:bg-surface-container-highest transition-colors rounded-md">
+                        취소
+                    </button>
+<button class="px-10 py-3 text-sm font-bold bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-md shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95">
+                        설정 저장하기
+                    </button>
+</div>
+</div>
+</footer>
+</main>
+</body></html>

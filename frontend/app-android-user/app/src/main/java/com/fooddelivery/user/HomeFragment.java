@@ -56,17 +56,19 @@ public class HomeFragment extends Fragment {
         apiService.getStores(null, null).enqueue(new Callback<ApiResponse<List<StoreDto>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<StoreDto>>> call, Response<ApiResponse<List<StoreDto>>> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     List<StoreDto> stores = response.body().getData();
                     storeAdapter.setStores(stores);
                 } else {
-                    Toast.makeText(getContext(), "매장 목록 로드 실패: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "매장 목록 로드 실패: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<StoreDto>>> call, Throwable t) {
-                Toast.makeText(getContext(), "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                if (!isAdded()) return;
+                Toast.makeText(requireContext(), "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

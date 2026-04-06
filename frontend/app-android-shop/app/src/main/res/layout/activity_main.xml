@@ -9,19 +9,25 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/surface">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:background="@color/surface"
+            app:elevation="0dp">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                android:layout_height="@dimen/top_bar_height"
+                android:background="@color/surface"
+                app:navigationIcon="@drawable/ic_menu_hamburger"
+                app:navigationIconTint="@color/on_surface"
+                app:titleTextColor="@color/on_surface"
+                app:titleTextAppearance="@style/TextAppearance.App.Title.Large" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.fragment.app.FragmentContainerView
@@ -34,10 +40,15 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="@color/surface_container_lowest"
+        app:itemTextColor="@color/on_surface"
+        app:itemIconTint="@color/on_surface_variant"
+        app:itemBackground="@drawable/nav_item_background"
+        app:itemShapeAppearance="@style/ShapeAppearance.App.SmallComponent"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu" />
 

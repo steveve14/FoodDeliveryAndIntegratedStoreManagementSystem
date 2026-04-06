@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#cfe5ff",
+              "on-error": "#ffffff",
+              "primary-fixed-dim": "#98cbff",
+              "surface-bright": "#f8f9fd",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed": "#002204",
+              "inverse-surface": "#2e3134",
+              "tertiary": "#4d2600",
+              "error": "#ba1a1a",
+              "secondary-container": "#a0f399",
+              "on-surface": "#191c1f",
+              "secondary-fixed": "#a3f69c",
+              "on-primary-fixed-variant": "#004a77",
+              "surface-container-highest": "#e1e2e7",
+              "on-tertiary-fixed-variant": "#6e3900",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdcc3",
+              "surface-container-high": "#e7e8ec",
+              "inverse-on-surface": "#f0f0f5",
+              "on-primary-container": "#86baed",
+              "tertiary-container": "#6e3900",
+              "secondary-fixed-dim": "#88d982",
+              "on-primary-fixed": "#001d33",
+              "surface-dim": "#d9dade",
+              "surface-container-low": "#f3f3f8",
+              "on-tertiary-fixed": "#2f1500",
+              "outline": "#727880",
+              "tertiary-fixed-dim": "#ffb77d",
+              "surface-container-lowest": "#ffffff",
+              "on-background": "#191c1f",
+              "surface-variant": "#e1e2e7",
+              "surface": "#f8f9fd",
+              "on-secondary-container": "#217128",
+              "outline-variant": "#c1c7d0",
+              "on-error-container": "#93000a",
+              "on-surface-variant": "#41474f",
+              "on-secondary": "#ffffff",
+              "secondary": "#1b6d24",
+              "on-tertiary-container": "#f0a465",
+              "on-secondary-fixed-variant": "#005312",
+              "surface-tint": "#296290",
+              "inverse-primary": "#98cbff",
+              "surface-container": "#edeef2",
+              "error-container": "#ffdad6",
+              "primary-container": "#004a77",
+              "background": "#f8f9fd",
+              "primary": "#003354"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body { font-family: 'Inter', sans-serif; }
+      h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-slate-50 dark:bg-slate-900 z-40">
+<div class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="text-sky-900 dark:text-sky-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-sky-900 dark:text-sky-400 font-manrope font-bold text-lg tracking-tight">Executive Inventory</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="Manager Profile" class="w-full h-full object-cover" data-alt="Professional store manager portrait profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUb2PIg1vbZT_DLGKOQvlcf8-89U4riUp6X48z4mLU3GKUM_OetKFZs3j5Lgtiyva-rEv9Bx3nJk057m-RSRwf9WSsr_s0hanjJ_Mr7tXuCMSj3GDpIk7U9QRHPnQkvOQa6MgCUtUs6kDCrX6rO5_0skgGd6D1a5fNQ-Off6MJzucwGrLYI21cDn_Tsw52gk7LikwciR0b3XQEkfHPdSm3OE64PAFfYem2HzQoxZ6BtcoBwpRw9SG9UHLYuaiDgChNc5NPz4EhP7Q"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pb-32">
+<!-- Delivery Zone Visual Section (Bento Style) -->
+<section class="px-6 py-8">
+<div class="mb-8">
+<span class="text-on-surface-variant font-label text-xs uppercase tracking-widest font-semibold">Delivery Operations</span>
+<h2 class="text-3xl font-headline font-extrabold text-primary tracking-tight mt-1">배달 지역 설정</h2>
+</div>
+<!-- Visual Map Representation -->
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container shadow-sm mb-6 border border-outline-variant/20">
+<img class="w-full h-full object-cover opacity-80" data-alt="Modern minimalist city map showing delivery radius circle" data-location="Seoul" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA80TlplCDi63Uv16B9ZhMs1ClTqcncEvRbHvXOhHocV94mqCkSlBoVrDdlrmHbna7UsJVjxbitfOcw0YYza_wYOOfE5g_XCBLWHDvSCKDZ3xZY3OLNqJqDIZ4UwTlMnDjtoMlOjnkLfvWUG9fTPipaBc0g1MXneDtFEiUdOgCdAJIu97qpnSu1eTiJRg5Is-phd4x69akOevktiT44cOQ-U4boBR6OlUUiQS6dIWqD37UrcS5tstBHW-hCs-x1NYFfbj0ltsSvV5M"/>
+<!-- Map Overlay UI -->
+<div class="absolute inset-0 bg-primary/5 pointer-events-none flex items-center justify-center">
+<div class="w-48 h-48 rounded-full border-4 border-primary/40 bg-primary/10 flex items-center justify-center">
+<div class="w-3 h-3 bg-primary rounded-full ring-4 ring-white"></div>
+</div>
+</div>
+<div class="absolute top-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md px-4 py-3 rounded-xl shadow-lg border border-outline-variant/10">
+<p class="text-[10px] font-label font-bold text-on-surface-variant uppercase tracking-tighter">Current Radius</p>
+<p class="text-2xl font-headline font-black text-primary">3.5km</p>
+</div>
+<button class="absolute bottom-4 right-4 bg-primary text-on-primary p-3 rounded-full shadow-xl active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">my_location</span>
+</button>
+</div>
+<!-- Settings Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Minimum Order -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">payments</span>
+<h3 class="font-headline font-bold text-on-surface">최소 주문 금액</h3>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-lg font-bold text-primary focus:ring-2 focus:ring-primary/20 transition-all" type="text" value="15,000"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">원</span>
+</div>
+</div>
+<!-- Delivery Fee -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+<h3 class="font-headline font-bold text-on-surface">기본 배달팁</h3>
+</div>
+<div class="flex gap-2 mb-4">
+<button class="flex-1 py-2 rounded-md bg-primary text-on-primary text-xs font-bold">고정 요금</button>
+<button class="flex-1 py-2 rounded-md bg-surface-container-high text-on-surface-variant text-xs font-bold">거리별 차등</button>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-lg font-bold text-primary focus:ring-2 focus:ring-primary/20 transition-all" type="text" value="3,000"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">원</span>
+</div>
+</div>
+</div>
+<!-- Neighborhood List -->
+<div class="mt-8">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline font-extrabold text-xl text-on-surface">지역별 상세 설정</h3>
+<button class="flex items-center gap-1 text-primary font-bold text-sm bg-primary-fixed px-3 py-1.5 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">add</span>
+                        지역 추가
+                    </button>
+</div>
+<div class="space-y-3">
+<!-- Neighborhood Item 1 -->
+<div class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl">
+<div class="flex flex-col">
+<span class="text-on-surface font-bold text-base">역삼 1동</span>
+<span class="text-on-surface-variant text-xs">매장에서 1.2km</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-primary font-black text-sm">+0원</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+<!-- Neighborhood Item 2 -->
+<div class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl">
+<div class="flex flex-col">
+<span class="text-on-surface font-bold text-base">삼성 2동</span>
+<span class="text-on-surface-variant text-xs">매장에서 2.8km</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-primary font-black text-sm">+1,000원</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+<!-- Neighborhood Item 3 -->
+<div class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl">
+<div class="flex flex-col">
+<span class="text-on-surface font-bold text-base">도곡 1동</span>
+<span class="text-on-surface-variant text-xs">매장에서 3.4km</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-error font-black text-sm">중지됨</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action Bar (Fixed) -->
+<div class="fixed bottom-24 left-0 w-full px-6 z-30">
+<button class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-xl shadow-2xl flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">save</span>
+            설정 저장하기
+        </button>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 shadow-[0_-8px_24px_rgba(25,28,31,0.06)]">
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Orders</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-sky-50 dark:bg-sky-900/30 text-sky-900 dark:text-sky-300 rounded-xl px-4 py-2 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

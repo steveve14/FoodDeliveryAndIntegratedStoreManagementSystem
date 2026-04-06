@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>인벤토리 프로 - 대시보드</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-surface": "#2e3134",
+              "surface-tint": "#296290",
+              "primary": "#003354",
+              "tertiary-fixed": "#ffdcc3",
+              "on-background": "#191c1f",
+              "on-primary-container": "#86baed",
+              "tertiary-fixed-dim": "#ffb77d",
+              "surface-dim": "#d9dade",
+              "on-primary-fixed": "#001d33",
+              "surface-container-highest": "#e1e2e7",
+              "surface-bright": "#f8f9fd",
+              "background": "#f8f9fd",
+              "on-error": "#ffffff",
+              "tertiary-container": "#6e3900",
+              "on-surface": "#191c1f",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#a0f399",
+              "on-secondary-fixed-variant": "#005312",
+              "on-secondary-container": "#217128",
+              "on-secondary": "#ffffff",
+              "primary-fixed-dim": "#98cbff",
+              "on-tertiary-container": "#f0a465",
+              "secondary-fixed": "#a3f69c",
+              "error": "#ba1a1a",
+              "on-secondary-fixed": "#002204",
+              "on-tertiary-fixed": "#2f1500",
+              "outline-variant": "#c1c7d0",
+              "outline": "#727880",
+              "surface": "#f8f9fd",
+              "primary-container": "#004a77",
+              "on-surface-variant": "#41474f",
+              "surface-variant": "#e1e2e7",
+              "on-tertiary-fixed-variant": "#6e3900",
+              "surface-container-high": "#e7e8ec",
+              "on-primary-fixed-variant": "#004a77",
+              "surface-container": "#edeef2",
+              "on-error-container": "#93000a",
+              "tertiary": "#4d2600",
+              "surface-container-low": "#f3f3f8",
+              "inverse-on-surface": "#f0f0f5",
+              "error-container": "#ffdad6",
+              "secondary": "#1b6d24",
+              "on-primary": "#ffffff",
+              "inverse-primary": "#98cbff",
+              "secondary-fixed-dim": "#88d982",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#cfe5ff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .display-font { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen pb-24 md:pb-0 md:pl-80 overflow-x-hidden">
+<!-- NavigationDrawer (Desktop Only) -->
+<aside class="hidden md:flex h-full w-80 fixed left-0 top-0 z-[60] bg-[#edeef2] dark:bg-slate-900 flex-col py-8 pr-4 shadow-2xl dark:shadow-none">
+<div class="px-8 mb-10">
+<h2 class="text-[#003354] dark:text-white font-black text-xl tracking-tighter">인벤토리 프로</h2>
+</div>
+<!-- Profile Header -->
+<div class="px-8 mb-8 flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container overflow-hidden">
+<img alt="Store Owner Profile" class="w-full h-full object-cover" data-alt="Professional store manager profile portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB262TkSm1zEFDrurqAZC2tNW7ldUYFTZ236uk7z6D_OqOuiFtCmTvRegMzEgWIiH_ABiyd_kOBhMuR2PIcPdcmFI9M4qqcU0EjMFUGw7pE1sKqfYmZKKE_YWFMTmFjuoI1iRZxrtaRve8FmHv3XW3LtjypG4ZUKBW3Zcw7VXfGuHt9Use-F2kIfsfvvZtrYKk3Eo1M535iaG8MaJtTZRHXHH9uainIO2wYCS2roNz5TrKAFJm7kUQrV9LPJ8PTP1vVL-dC1YZtw8Y"/>
+</div>
+<div>
+<p class="font-inter text-sm font-medium uppercase tracking-wider text-[#003354] dark:text-blue-200">총괄 매니저</p>
+<p class="text-[10px] text-on-surface-variant">프리미엄 스토어 ID: 8821</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 text-[10px] font-bold text-secondary px-2 py-0.5 bg-secondary-container/30 rounded-full w-fit">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 활성 상태
+        </span>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 py-3 px-8 bg-white dark:bg-slate-800 text-[#003354] dark:text-blue-200 rounded-r-full font-bold shadow-sm transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-inter text-sm font-medium uppercase tracking-wider">대시보드</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-8 text-[#41474f] dark:text-slate-400 hover:text-[#003354] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-r-full transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-inter text-sm font-medium uppercase tracking-wider">배달 관리</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-8 text-[#41474f] dark:text-slate-400 hover:text-[#003354] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-r-full transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-inter text-sm font-medium uppercase tracking-wider">주문 관리</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-8 text-[#41474f] dark:text-slate-400 hover:text-[#003354] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-r-full transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+<span class="font-inter text-sm font-medium uppercase tracking-wider">메뉴 관리</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-8 text-[#41474f] dark:text-slate-400 hover:text-[#003354] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-r-full transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="rate_review">rate_review</span>
+<span class="font-inter text-sm font-medium uppercase tracking-wider">리뷰 관리</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-8 text-[#41474f] dark:text-slate-400 hover:text-[#003354] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-r-full transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-inter text-sm font-medium uppercase tracking-wider">매출·정산</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-8 text-[#41474f] dark:text-slate-400 hover:text-[#003354] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-r-full transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-inter text-sm font-medium uppercase tracking-wider">가게 관리</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-8 text-[#41474f] dark:text-slate-400 hover:text-[#003354] hover:bg-[#e1e2e7] dark:hover:bg-slate-800 rounded-r-full transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-inter text-sm font-medium uppercase tracking-wider">설정</span>
+</a>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="bg-[#f8f9fd] dark:bg-slate-950 flex justify-between items-center px-6 py-4 w-full docked full-width top-0 sticky z-50 no-border bg-[#edeef2] dark:bg-slate-900 flat no shadows">
+<div class="flex items-center gap-4">
+<button class="md:hidden material-symbols-outlined text-[#003354] dark:text-blue-400" data-icon="menu">menu</button>
+<h1 class="font-manrope font-bold text-2xl tracking-tight text-[#003354] dark:text-blue-400">인벤토리 프로</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#003354] dark:text-blue-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors rounded-full p-2" data-icon="notifications">notifications</button>
+<div class="hidden md:flex flex-col items-end mr-2">
+<span class="text-xs font-bold text-primary">실시간 상태</span>
+<span class="text-[10px] text-secondary font-bold">영업 중</span>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto p-6 space-y-10">
+<!-- Hero Section: Asymmetric Layout -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+<div class="lg:col-span-8">
+<p class="font-inter text-sm font-semibold uppercase tracking-[0.2em] text-on-surface-variant mb-2">오늘의 현황</p>
+<h2 class="font-headline text-5xl md:text-7xl font-extrabold text-primary leading-tight tracking-tighter">
+                $12,840.00
+            </h2>
+<div class="flex items-center gap-4 mt-4">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold">어제 대비 +12.4%</span>
+<span class="text-on-surface-variant text-sm font-medium">일일 매출 장부</span>
+</div>
+</div>
+<div class="lg:col-span-4 flex flex-col gap-4">
+<div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-bold">주문 건수</p>
+<h3 class="font-headline text-3xl font-black text-primary">142</h3>
+</div>
+<span class="material-symbols-outlined text-primary/40" data-icon="receipt_long">receipt_long</span>
+</div>
+<div class="w-full bg-primary-fixed h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-3/4"></div>
+</div>
+<p class="text-[10px] mt-2 text-on-surface-variant">일일 목표의 75% 달성</p>
+</div>
+</div>
+</section>
+<!-- Bento Grid Section -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Quick Action: Store Status -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl flex flex-col justify-between min-h-[240px] shadow-[0_8px_24px_rgba(25,28,31,0.04)]">
+<div>
+<h4 class="font-headline text-xl font-bold text-primary mb-1">운영 제어</h4>
+<p class="text-sm text-on-surface-variant">모든 플랫폼의 매장 노출 상태를 관리하세요.</p>
+</div>
+<div class="flex gap-2 p-1 bg-surface-container rounded-xl">
+<button class="flex-1 py-3 px-4 rounded-lg bg-secondary text-white font-bold text-sm flex items-center justify-center gap-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+                    영업 중
+                </button>
+<button class="flex-1 py-3 px-4 rounded-lg text-on-surface-variant font-bold text-sm hover:bg-surface-variant transition-colors">
+                    영업 종료
+                </button>
+</div>
+</div>
+<!-- Visual Performance Chart (Simulated with SVG/CSS) -->
+<div class="md:col-span-2 bg-primary p-8 rounded-2xl text-on-primary relative overflow-hidden flex flex-col justify-between">
+<div class="relative z-10">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline text-xl font-bold mb-1">성과 곡선</h4>
+<p class="text-sm text-on-primary-container">현재 시간별 판매 속도</p>
+</div>
+<div class="bg-white/10 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">실시간</div>
+</div>
+</div>
+<!-- Simulated Chart -->
+<div class="mt-8 relative z-10 h-32 flex items-end gap-2">
+<div class="flex-1 bg-primary-fixed-dim/30 hover:bg-primary-fixed-dim transition-colors h-[40%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary-fixed-dim/30 hover:bg-primary-fixed-dim transition-colors h-[60%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary-fixed-dim/30 hover:bg-primary-fixed-dim transition-colors h-[55%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary-fixed-dim/30 hover:bg-primary-fixed-dim transition-colors h-[85%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary-fixed-dim/30 hover:bg-primary-fixed-dim transition-colors h-[70%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary-fixed-dim/30 hover:bg-primary-fixed-dim transition-colors h-[95%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary-fixed-dim/30 hover:bg-primary-fixed-dim transition-colors h-[80%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary-fixed-dim/30 hover:bg-primary-fixed-dim transition-colors h-[60%] rounded-t-sm"></div>
+</div>
+<!-- Abstract background pattern -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<img alt="Background Pattern" class="w-full h-full object-cover" data-alt="Subtle geometric architectural grid pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQMkdH5beDbNBh5Tm6D6mH5ibksLqCmWIvny8Tq6t9lA3lAFlb29GYhvQ1zIuB9OfGZmx90PYGrAvEnkuvo91eTfPABAAjCa6UmLpTukbd3V-MU6abeyDMw_0bbsbJUBHCysS7zU4LS5sk_HE9uo-PkEvzIUoTO-zePkyxusZI1eM3WqMou-JqoLSkRg3tmOcrSL01AzcWKN7F8Z1Fu3AA7TMHVUmg4w4p_Xp0Heta3X-RJ_zXcyQe5pnPql5O2D6YIcfQ-IbLypA"/>
+</div>
+</div>
+</section>
+<!-- Recent Activity: Tonal Table (No Borders) -->
+<section class="space-y-6 pb-12">
+<div class="flex justify-between items-end">
+<div>
+<h4 class="font-headline text-2xl font-bold text-primary">최근 거래 기록</h4>
+<p class="text-sm text-on-surface-variant">가게 장부의 최신 5개 항목입니다.</p>
+</div>
+<button class="text-primary font-bold text-sm uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all">
+                전체 보기 <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-hidden">
+<div class="grid grid-cols-12 px-6 py-4 bg-surface-container text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
+<div class="col-span-4">주문번호</div>
+<div class="col-span-3">항목</div>
+<div class="col-span-3 text-right">금액</div>
+<div class="col-span-2 text-right">상태</div>
+</div>
+<div class="space-y-1 mt-1">
+<!-- Row 1 -->
+<div class="grid grid-cols-12 px-6 py-5 bg-surface-container-low hover:bg-surface-container-highest transition-colors items-center group">
+<div class="col-span-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-mono text-sm text-primary font-bold">#ORD-882-01</span>
+</div>
+<div class="col-span-3 text-sm font-medium">유기농 블렌드 커피 x4</div>
+<div class="col-span-3 text-right font-headline font-bold">$142.50</div>
+<div class="col-span-2 flex justify-end">
+<span class="bg-secondary-container/50 text-on-secondary-container px-2 py-0.5 rounded text-[10px] font-bold">처리 중</span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 px-6 py-5 bg-surface-container-low hover:bg-surface-container-highest transition-colors items-center group">
+<div class="col-span-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-mono text-sm text-primary font-bold">#ORD-882-02</span>
+</div>
+<div class="col-span-3 text-sm font-medium">사워도우 베이커리 키트</div>
+<div class="col-span-3 text-right font-headline font-bold">$89.00</div>
+<div class="col-span-2 flex justify-end">
+<span class="bg-primary-fixed text-on-primary-fixed-variant px-2 py-0.5 rounded text-[10px] font-bold">배송 완료</span>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-12 px-6 py-5 bg-surface-container-low hover:bg-surface-container-highest transition-colors items-center group">
+<div class="col-span-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/30 group-hover:text-primary transition-colors" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-mono text-sm text-primary font-bold">#ORD-881-99</span>
+</div>
+<div class="col-span-3 text-sm font-medium">프리미엄 세라믹 세트</div>
+<div class="col-span-3 text-right font-headline font-bold">$420.00</div>
+<div class="col-span-2 flex justify-end">
+<span class="bg-error-container text-on-error-container px-2 py-0.5 rounded text-[10px] font-bold">취소됨</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-2xl border-t border-[#c1c7d0]/20 shadow-[0_-8px_24px_rgba(25,28,31,0.06)]">
+<a class="flex flex-col items-center justify-center bg-[#cfe5ff] dark:bg-blue-900 text-[#003354] dark:text-blue-100 rounded-xl px-4 py-1.5 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-0.5">홈</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-0.5">주문</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="star">star</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-0.5">리뷰</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-0.5">매출</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/page_horizontal_padding"
+        android:paddingTop="@dimen/spacing_6"
+        android:paddingBottom="@dimen/spacing_8">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="결제 설정" android:textAppearance="@style/TextAppearance.App.Headline.Small" android:layout_marginBottom="@dimen/spacing_5" />
+
+        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/spacing_5" style="@style/Widget.App.Card">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/spacing_5">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="정산 계좌" android:textAppearance="@style/TextAppearance.App.Label.Medium" android:textColor="@color/on_surface_variant" android:layout_marginBottom="@dimen/spacing_4" />
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/til_bank" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="은행명" android:layout_marginBottom="@dimen/spacing_3" style="@style/Widget.App.TextInputLayout">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_bank" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/til_account" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="계좌번호" style="@style/Widget.App.TextInputLayout">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/et_account" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button android:id="@+id/btn_save_payment" android:layout_width="match_parent" android:layout_height="@dimen/button_height_md" android:text="저장" style="@style/Widget.App.Button.Primary" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

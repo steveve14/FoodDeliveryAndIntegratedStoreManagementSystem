@@ -3,83 +3,79 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@color/surface">
 
-    <TextView
-        android:id="@+id/tv_cart_title"
+    <LinearLayout
+        android:id="@+id/cart_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:gravity="center"
-        android:paddingVertical="16dp"
-        android:text="장바구니"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/page_horizontal_padding"
+        android:paddingVertical="@dimen/spacing_5"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_cart_store_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:text="가게 이름"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/tv_cart_title" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="장바구니"
+            android:textAppearance="@style/TextAppearance.App.Headline.Small"
+            android:layout_marginBottom="@dimen/spacing_1" />
+
+        <TextView
+            android:id="@+id/tv_cart_store_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.App.Body.Medium"
+            android:textColor="@color/on_surface_variant" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cart_items"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_checkout_bar"
-        app:layout_constraintTop_toBottomOf="@id/tv_cart_store_name" />
+        android:paddingHorizontal="@dimen/page_horizontal_padding"
+        app:layout_constraintTop_toBottomOf="@id/cart_header"
+        app:layout_constraintBottom_toTopOf="@id/bottom_checkout_bar" />
 
     <LinearLayout
         android:id="@+id/bottom_checkout_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:elevation="8dp"
+        android:background="@drawable/bg_glass_card"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:paddingHorizontal="@dimen/page_horizontal_padding"
+        android:paddingVertical="@dimen/spacing_5"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_4">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="총 결제금액"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.App.Body.Large" />
 
             <TextView
                 android:id="@+id/tv_total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0원"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textAppearance="@style/TextAppearance.App.Title.Large"
+                android:textColor="@color/primary" />
         </LinearLayout>
 
         <Button
             android:id="@+id/btn_checkout"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#FF5722"
-            android:text="배달 주문하기"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_height="@dimen/button_height_md"
+            android:text="주문하기"
+            style="@style/Widget.App.Button.Primary" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

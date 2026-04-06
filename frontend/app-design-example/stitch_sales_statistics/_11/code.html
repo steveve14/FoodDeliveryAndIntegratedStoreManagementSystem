@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#cfe5ff",
+              "on-error": "#ffffff",
+              "primary-fixed-dim": "#98cbff",
+              "surface-bright": "#f8f9fd",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed": "#002204",
+              "inverse-surface": "#2e3134",
+              "tertiary": "#4d2600",
+              "error": "#ba1a1a",
+              "secondary-container": "#a0f399",
+              "on-surface": "#191c1f",
+              "secondary-fixed": "#a3f69c",
+              "on-primary-fixed-variant": "#004a77",
+              "surface-container-highest": "#e1e2e7",
+              "on-tertiary-fixed-variant": "#6e3900",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#ffdcc3",
+              "surface-container-high": "#e7e8ec",
+              "inverse-on-surface": "#f0f0f5",
+              "on-primary-container": "#86baed",
+              "tertiary-container": "#6e3900",
+              "secondary-fixed-dim": "#88d982",
+              "on-primary-fixed": "#001d33",
+              "surface-dim": "#d9dade",
+              "surface-container-low": "#f3f3f8",
+              "on-tertiary-fixed": "#2f1500",
+              "outline": "#727880",
+              "tertiary-fixed-dim": "#ffb77d",
+              "surface-container-lowest": "#ffffff",
+              "on-background": "#191c1f",
+              "surface-variant": "#e1e2e7",
+              "surface": "#f8f9fd",
+              "on-secondary-container": "#217128",
+              "outline-variant": "#c1c7d0",
+              "on-error-container": "#93000a",
+              "on-surface-variant": "#41474f",
+              "on-secondary": "#ffffff",
+              "secondary": "#1b6d24",
+              "on-tertiary-container": "#f0a465",
+              "on-secondary-fixed-variant": "#005312",
+              "surface-tint": "#296290",
+              "inverse-primary": "#98cbff",
+              "surface-container": "#edeef2",
+              "error-container": "#ffdad6",
+              "primary-container": "#004a77",
+              "background": "#f8f9fd",
+              "primary": "#003354"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, .font-headline { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col pb-24">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-slate-50 dark:bg-slate-900 flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="text-sky-900 dark:text-sky-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-sky-900 dark:text-sky-100 font-extrabold tracking-tighter text-lg">Executive Inventory</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant/20">
+<img alt="Store Manager Profile" class="w-full h-full object-cover" data-alt="Professional store manager profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt-KR6h4RtXkGtVzeOL8n-c3eLsRP_M34Lglvflps6QP9rddPvhRQBWYqmboJY64JnH9bC02b-smGPA1Cof2zx8f3Uijt9n9VkI1hJbWEg0qqVZ3qWz5NqN-HP9MJ4aXy-nk_sJsVtPOEhDm2qM5alyp9dPtn6ufUMfjl3Mhj471u4Nefc61BOewU584aELspz7kklGUlPeLC09D6WUbVHFek2Svay21BpgYc0sBX0bGBnpsczZ8E4XdX81sqcT1TlVTh-ILWmJZE"/>
+</div>
+</div>
+</header>
+<main class="flex-1 px-6 py-8 max-w-2xl mx-auto w-full">
+<!-- Page Title & Intro -->
+<section class="mb-10">
+<h2 class="text-3xl font-extrabold text-primary mb-2 tracking-tight">결제 수단 관리</h2>
+<p class="text-on-surface-variant text-sm">매장에서 사용 가능한 결제 수단과 정산 계좌를 설정합니다.</p>
+</section>
+<!-- Settlement Account Section (Editorial Layout) -->
+<section class="mb-12">
+<div class="flex items-end justify-between mb-4">
+<div class="space-y-1">
+<span class="text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant">Primary Account</span>
+<h3 class="text-xl font-bold text-on-surface">정산 계좌 정보</h3>
+</div>
+<button class="text-primary text-sm font-semibold hover:underline">변경하기</button>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/10 shadow-[0_8px_24px_rgba(25,28,31,0.04)] relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed/20 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+<div class="relative z-10 flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<p class="text-on-surface font-bold text-lg">신한은행 110-456-789012</p>
+<p class="text-on-surface-variant text-sm mt-1">예금주: 주식회사 메인스트리트허브</p>
+<div class="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-secondary-container/30 text-on-secondary-container rounded-full text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            정상 연결됨
+                        </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Payment Methods Grid (Asymmetric/Bento Style) -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold text-on-surface">활성 결제 수단</h3>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-md font-semibold text-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                    수단 추가
+                </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Method: Credit Card -->
+<div class="bg-surface-container-low p-5 rounded-xl border border-transparent hover:border-primary/10 transition-all flex flex-col justify-between h-36 group">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="credit_card">credit_card</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div>
+<p class="font-bold text-on-surface">신용/체크카드</p>
+<p class="text-xs text-on-surface-variant">모든 국내외 카드사 지원</p>
+</div>
+</div>
+<!-- Method: Kakao Pay -->
+<div class="bg-surface-container-low p-5 rounded-xl border border-transparent hover:border-primary/10 transition-all flex flex-col justify-between h-36">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 bg-[#FFEB00] rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-black" data-icon="chat_bubble">chat_bubble</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div>
+<p class="font-bold text-on-surface">카카오페이</p>
+<p class="text-xs text-on-surface-variant">QR 및 바코드 결제</p>
+</div>
+</div>
+<!-- Method: Naver Pay -->
+<div class="bg-surface-container-low p-5 rounded-xl border border-transparent hover:border-primary/10 transition-all flex flex-col justify-between h-36">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 bg-[#03C75A] rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-white" data-icon="p_circle" style="font-variation-settings: 'FILL' 1;">circle</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div>
+<p class="font-bold text-on-surface">네이버페이</p>
+<p class="text-xs text-on-surface-variant">현장 결제 및 멤버십</p>
+</div>
+</div>
+<!-- Method: Apple Pay (Disabled Sample) -->
+<div class="bg-surface-container p-5 rounded-xl border border-transparent flex flex-col justify-between h-36 opacity-70">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 bg-on-surface rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-white" data-icon="apple">ios</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div>
+<p class="font-bold text-on-surface">애플페이</p>
+<p class="text-xs text-on-surface-variant">비활성화 상태</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Notification Settings -->
+<section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/10 p-1 mb-8">
+<div class="flex items-center justify-between p-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">자동 정산 알림</p>
+<p class="text-xs text-on-surface-variant">정산 완료 시 푸시 알림을 받습니다.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-[28px] rtl:peer-checked:after:-translate-x-[28px] peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</section>
+<!-- Helpful Banner (Editorial Style) -->
+<div class="bg-primary p-8 rounded-2xl text-on-primary relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[120px]" data-icon="verified_user">verified_user</span>
+</div>
+<h4 class="text-xl font-bold mb-2">안전한 통합 결제 관리</h4>
+<p class="text-primary-container text-sm leading-relaxed max-w-[80%]">
+                Inventory Pro는 최고 수준의 보안 표준을 준수합니다. 모든 정산 데이터는 암호화되어 보호됩니다.
+            </p>
+<div class="mt-6">
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2 rounded-md font-bold text-sm active:scale-95 transition-all">보안 보고서 보기</button>
+</div>
+</div>
+</main>
+<!-- NavigationDrawer (Suppressed on Mobile as per BottomNavBar rule, but including structure for compliance) -->
+<!-- On Mobile, BottomNavBar is used. On Web, SideNav is used. -->
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 shadow-[0_-8px_24px_rgba(25,28,31,0.06)] md:hidden">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="list_alt">list_alt</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-sky-50 dark:bg-sky-900/30 text-sky-900 dark:text-sky-300 rounded-xl px-4 py-2 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

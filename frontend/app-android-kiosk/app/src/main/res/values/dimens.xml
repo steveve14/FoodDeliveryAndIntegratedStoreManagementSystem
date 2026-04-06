@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing tokens (4dp base grid) -->
+    <dimen name="spacing_1">4dp</dimen>
+    <dimen name="spacing_2">8dp</dimen>
+    <dimen name="spacing_3">12dp</dimen>
+    <dimen name="spacing_4">16dp</dimen>
+    <dimen name="spacing_5">20dp</dimen>
+    <dimen name="spacing_6">24dp</dimen>
+    <dimen name="spacing_7">32dp</dimen>
+    <dimen name="spacing_8">40dp</dimen>
+    <dimen name="spacing_9">48dp</dimen>
+    <dimen name="spacing_10">56dp</dimen>
+
+    <!-- Corner radius tokens (modern rounded) -->
+    <dimen name="radius_xs">4dp</dimen>
+    <dimen name="radius_sm">8dp</dimen>
+    <dimen name="radius_md">12dp</dimen>
+    <dimen name="radius_lg">16dp</dimen>
+    <dimen name="radius_xl">24dp</dimen>
+    <dimen name="radius_2xl">32dp</dimen>
+    <dimen name="radius_full">100dp</dimen>
+
+    <!-- Elevation tokens -->
+    <dimen name="elevation_none">0dp</dimen>
+    <dimen name="elevation_xs">1dp</dimen>
+    <dimen name="elevation_sm">2dp</dimen>
+    <dimen name="elevation_md">4dp</dimen>
+    <dimen name="elevation_lg">8dp</dimen>
+
+    <!-- Component sizes (kiosk: larger touch targets) -->
+    <dimen name="top_bar_height">72dp</dimen>
+    <dimen name="bottom_nav_height">80dp</dimen>
+    <dimen name="button_height_lg">64dp</dimen>
+    <dimen name="button_height_md">56dp</dimen>
+    <dimen name="button_height_sm">48dp</dimen>
+    <dimen name="touch_target_min">64dp</dimen>
+    <dimen name="touch_target_kiosk">64dp</dimen>
+    <dimen name="icon_size_sm">24dp</dimen>
+    <dimen name="icon_size_md">32dp</dimen>
+    <dimen name="icon_size_lg">40dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="page_horizontal_padding">24dp</dimen>
+    <dimen name="kiosk_sidebar_width">220dp</dimen>
+    <dimen name="kiosk_cart_panel_width">340dp</dimen>
+    <dimen name="store_image_height">200dp</dimen>
+    <dimen name="avatar_size">56dp</dimen>
+    <dimen name="avatar_size_lg">80dp</dimen>
+</resources>

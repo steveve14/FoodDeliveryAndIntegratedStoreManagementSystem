@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventory Pro - 설정</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-high": "#e7e8ec",
+                        "surface": "#f8f9fd",
+                        "primary-fixed-dim": "#98cbff",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#98cbff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#005312",
+                        "tertiary-fixed-dim": "#ffb77d",
+                        "secondary-container": "#a0f399",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#6e3900",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#6e3900",
+                        "tertiary": "#4d2600",
+                        "surface-container": "#edeef2",
+                        "surface-container-low": "#f3f3f8",
+                        "on-tertiary-fixed": "#2f1500",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#f0a465",
+                        "outline-variant": "#c1c7d0",
+                        "tertiary-fixed": "#ffdcc3",
+                        "primary-fixed": "#cfe5ff",
+                        "surface-dim": "#d9dade",
+                        "on-secondary-container": "#217128",
+                        "background": "#f8f9fd",
+                        "primary-container": "#004a77",
+                        "on-primary-fixed-variant": "#004a77",
+                        "surface-container-highest": "#e1e2e7",
+                        "on-primary-container": "#86baed",
+                        "on-surface-variant": "#41474f",
+                        "on-surface": "#191c1f",
+                        "on-primary-fixed": "#001d33",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#296290",
+                        "on-background": "#191c1f",
+                        "surface-bright": "#f8f9fd",
+                        "outline": "#727880",
+                        "secondary-fixed-dim": "#88d982",
+                        "secondary": "#1b6d24",
+                        "inverse-surface": "#2e3134",
+                        "secondary-fixed": "#a3f69c",
+                        "primary": "#003354",
+                        "on-secondary-fixed": "#002204",
+                        "surface-variant": "#e1e2e7",
+                        "inverse-on-surface": "#f0f0f5"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased pb-24">
+<!-- TopAppBar -->
+<header class="bg-slate-50 dark:bg-slate-950 sticky top-0 z-50 flex justify-between items-center px-6 py-4 w-full max-w-none">
+<div class="flex items-center gap-4">
+<button class="text-[#003354] dark:text-[#cfe5ff] active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-xl tracking-tight text-[#003354] dark:text-[#cfe5ff]">설정</h1>
+</div>
+<button class="text-[#003354] dark:text-[#cfe5ff] active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</header>
+<main class="px-6 py-8 space-y-10 max-w-md mx-auto">
+<!-- App Identity Branding (Asymmetric Layout) -->
+<section class="flex justify-between items-end mb-12">
+<div>
+<p class="font-label text-xs uppercase tracking-[0.2em] text-on-surface-variant mb-1">Store Dashboard</p>
+<h2 class="font-headline font-extrabold text-4xl text-primary tracking-tighter">Inventory Pro</h2>
+</div>
+<div class="text-right">
+<p class="font-label text-[10px] text-on-surface-variant">v2.4.0 (Stable)</p>
+</div>
+</section>
+<!-- 상점 정보 관리 Section -->
+<section class="space-y-4">
+<h3 class="font-headline font-bold text-lg text-primary px-1">상점 정보 관리</h3>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+<!-- Menu Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-[#e1e2e7] transition-colors active:scale-95 duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="store">store</span>
+</div>
+<span class="font-body font-medium text-on-surface">기본 정보</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+<!-- Menu Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-[#e1e2e7] transition-colors active:scale-95 duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+</div>
+<span class="font-body font-medium text-on-surface">영업 시간</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+<!-- Menu Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-[#e1e2e7] transition-colors active:scale-95 duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="distance">distance</span>
+</div>
+<span class="font-body font-medium text-on-surface">배달 지역</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- 결제 및 정산 Section -->
+<section class="space-y-4">
+<h3 class="font-headline font-bold text-lg text-primary px-1">결제 및 정산</h3>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+<!-- Menu Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-[#e1e2e7] transition-colors active:scale-95 duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<span class="font-body font-medium text-on-surface">결제 수단 관리</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+<!-- Menu Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-[#e1e2e7] transition-colors active:scale-95 duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+</div>
+<span class="font-body font-medium text-on-surface">정산 계좌 설정</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- 앱 설정 Section -->
+<section class="space-y-4">
+<h3 class="font-headline font-bold text-lg text-primary px-1">앱 설정</h3>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+<!-- Menu Item -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-[#e1e2e7] transition-colors active:scale-95 duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</div>
+<span class="font-body font-medium text-on-surface">알림 설정</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+<!-- Menu Item (Logout) -->
+<button class="w-full flex items-center justify-between p-4 hover:bg-error-container/20 transition-colors active:scale-95 duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container/30 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+</div>
+<span class="font-body font-medium text-error">로그아웃</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-4 pt-2 bg-white dark:bg-slate-900 shadow-[0_-8px_24px_rgba(25,28,31,0.06)] z-50">
+<!-- Dashboard -->
+<button class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-400 px-3 py-1 transition-all duration-300 ease-in-out hover:text-[#003354] dark:hover:text-white">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Dashboard</span>
+</button>
+<!-- Orders -->
+<button class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-400 px-3 py-1 transition-all duration-300 ease-in-out hover:text-[#003354] dark:hover:text-white">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Orders</span>
+</button>
+<!-- Menu -->
+<button class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-400 px-3 py-1 transition-all duration-300 ease-in-out hover:text-[#003354] dark:hover:text-white">
+<span class="material-symbols-outlined mb-1" data-icon="restaurant_menu">restaurant_menu</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Menu</span>
+</button>
+<!-- Reviews -->
+<button class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-400 px-3 py-1 transition-all duration-300 ease-in-out hover:text-[#003354] dark:hover:text-white">
+<span class="material-symbols-outlined mb-1" data-icon="rate_review">rate_review</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Reviews</span>
+</button>
+<!-- Sales (Active Logic: Assuming Settings might lead to account/sales context or keeping active state visible if this was the last tab, though usually 'More' or a specific tab corresponds. Here we map it based on context - usually Settings is its own destination but using the JSON structure provided) -->
+<button class="flex flex-col items-center justify-center text-[#003354] dark:text-[#cfe5ff] bg-[#cfe5ff] dark:bg-[#004a77] rounded-xl px-3 py-1 transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined mb-1" data-icon="payments">payments</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide">Sales</span>
+</button>
+</nav>
+</body></html>

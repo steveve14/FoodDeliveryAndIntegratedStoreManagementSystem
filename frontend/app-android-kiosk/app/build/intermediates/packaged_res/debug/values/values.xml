@@ -1,20 +1,386 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:ns1="http://schemas.android.com/tools">
     <color name="black">#FF000000</color>
-    <color name="green_500">#FF2E7D32</color>
-    <color name="green_700">#FF1B5E20</color>
+    <color name="error">#FFDC2626</color>
+    <color name="error_container">#FFFEE2E2</color>
+    <color name="glass_border">#40FFFFFF</color>
+    <color name="glass_dark">#B3003354</color>
+    <color name="glass_overlay">#1A003354</color>
+    <color name="glass_white">#CCF5F5F4</color>
+    <color name="glass_white_light">#80FFFFFF</color>
+    <color name="gradient_accent_end">#FFF59E0B</color>
+    <color name="gradient_accent_start">#FFD97706</color>
+    <color name="gradient_hero_end">#FF003354</color>
+    <color name="gradient_hero_start">#FF001B2E</color>
+    <color name="gradient_primary_end">#FF006BAE</color>
+    <color name="gradient_primary_mid">#FF004B7A</color>
+    <color name="gradient_primary_start">#FF003354</color>
+    <color name="gradient_success_end">#FF34D399</color>
+    <color name="gradient_success_start">#FF059669</color>
     <color name="ic_launcher_background">#FFFFFF</color>
-    <color name="orange_300">#FFFFB74D</color>
+    <color name="inverse_on_surface">#FFF5F5F4</color>
+    <color name="inverse_primary">#FF7CB8FF</color>
+    <color name="inverse_surface">#FF292524</color>
+    <color name="on_error">#FFFFFFFF</color>
+    <color name="on_error_container">#FF991B1B</color>
+    <color name="on_primary">#FFFFFFFF</color>
+    <color name="on_primary_container">#FF001A33</color>
+    <color name="on_secondary">#FFFFFFFF</color>
+    <color name="on_secondary_container">#FF064E3B</color>
+    <color name="on_surface">#FF1C1917</color>
+    <color name="on_surface_variant">#FF57534E</color>
+    <color name="on_tertiary">#FFFFFFFF</color>
+    <color name="on_tertiary_container">#FF92400E</color>
+    <color name="outline">#FF78716C</color>
+    <color name="outline_variant">#FFD6D3D1</color>
+    <color name="primary">#FF003354</color>
+    <color name="primary_container">#FFD4E4FF</color>
+    <color name="primary_fixed">#FFCFE5FF</color>
+    <color name="primary_fixed_dim">#FF98CBFF</color>
+    <color name="secondary">#FF059669</color>
+    <color name="secondary_container">#FFD1FAE5</color>
+    <color name="shimmer_base">#FFE7E5E4</color>
+    <color name="shimmer_highlight">#FFF5F5F4</color>
+    <color name="status_error">#FFDC2626</color>
+    <color name="status_info">#FF003354</color>
+    <color name="status_success">#FF059669</color>
+    <color name="status_warning">#FFD97706</color>
+    <color name="surface">#FFFAFAF9</color>
+    <color name="surface_bright">#FFFAFAF9</color>
+    <color name="surface_container">#FFF1F0EE</color>
+    <color name="surface_container_high">#FFEBEBEA</color>
+    <color name="surface_container_highest">#FFE6E5E3</color>
+    <color name="surface_container_low">#FFF7F6F4</color>
+    <color name="surface_container_lowest">#FFFFFFFF</color>
+    <color name="surface_dim">#FFEDECEA</color>
+    <color name="surface_variant">#FFE7E5E4</color>
+    <color name="tertiary">#FFD97706</color>
+    <color name="tertiary_container">#FFFEF3C7</color>
     <color name="white">#FFFFFFFF</color>
+    <dimen name="avatar_size">56dp</dimen>
+    <dimen name="avatar_size_lg">80dp</dimen>
+    <dimen name="bottom_nav_height">80dp</dimen>
+    <dimen name="button_height_lg">64dp</dimen>
+    <dimen name="button_height_md">56dp</dimen>
+    <dimen name="button_height_sm">48dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="elevation_lg">8dp</dimen>
+    <dimen name="elevation_md">4dp</dimen>
+    <dimen name="elevation_none">0dp</dimen>
+    <dimen name="elevation_sm">2dp</dimen>
+    <dimen name="elevation_xs">1dp</dimen>
+    <dimen name="icon_size_lg">40dp</dimen>
+    <dimen name="icon_size_md">32dp</dimen>
+    <dimen name="icon_size_sm">24dp</dimen>
+    <dimen name="kiosk_cart_panel_width">340dp</dimen>
+    <dimen name="kiosk_sidebar_width">220dp</dimen>
+    <dimen name="page_horizontal_padding">24dp</dimen>
+    <dimen name="radius_2xl">32dp</dimen>
+    <dimen name="radius_full">100dp</dimen>
+    <dimen name="radius_lg">16dp</dimen>
+    <dimen name="radius_md">12dp</dimen>
+    <dimen name="radius_sm">8dp</dimen>
+    <dimen name="radius_xl">24dp</dimen>
+    <dimen name="radius_xs">4dp</dimen>
+    <dimen name="spacing_1">4dp</dimen>
+    <dimen name="spacing_10">56dp</dimen>
+    <dimen name="spacing_2">8dp</dimen>
+    <dimen name="spacing_3">12dp</dimen>
+    <dimen name="spacing_4">16dp</dimen>
+    <dimen name="spacing_5">20dp</dimen>
+    <dimen name="spacing_6">24dp</dimen>
+    <dimen name="spacing_7">32dp</dimen>
+    <dimen name="spacing_8">40dp</dimen>
+    <dimen name="spacing_9">48dp</dimen>
+    <dimen name="store_image_height">200dp</dimen>
+    <dimen name="top_bar_height">72dp</dimen>
+    <dimen name="touch_target_kiosk">64dp</dimen>
+    <dimen name="touch_target_min">64dp</dimen>
     <string name="app_name">FoodDelivery Kiosk</string>
     <string name="home_subtitle">빠른 재주문과 배달 현황을 확인하세요.</string>
     <string name="home_title">사용자 주문 홈</string>
     <string name="primary_action">주문하러 가기</string>
-    <style name="Theme.AppAndroidKiosk" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/green_500</item>
-        <item name="colorPrimaryVariant">@color/green_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/orange_300</item>
-        <item name="colorOnSecondary">@color/black</item>
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">@dimen/radius_lg</item>
+    </style>
+    <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">@dimen/radius_md</item>
+    </style>
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">@dimen/radius_sm</item>
+    </style>
+    <style name="TextAppearance.App.Body" parent="TextAppearance.Material3.BodyMedium"/>
+    <style name="TextAppearance.App.Body.Large">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+    </style>
+    <style name="TextAppearance.App.Body.Medium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:lineSpacingMultiplier">1.45</item>
+    </style>
+    <style name="TextAppearance.App.Body.Small">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+    </style>
+    <style name="TextAppearance.App.Display" parent="TextAppearance.Material3.DisplayMedium"/>
+    <style name="TextAppearance.App.Display.Large">
+        <item name="android:textSize">52sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.025</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Display.Medium">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Headline" parent="TextAppearance.Material3.HeadlineMedium"/>
+    <style name="TextAppearance.App.Headline.Large">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.015</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Headline.Medium">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Headline.Small">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Label" parent="TextAppearance.Material3.LabelMedium"/>
+    <style name="TextAppearance.App.Label.Large">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Label.Medium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Label.Small">
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+    <style name="TextAppearance.App.Title" parent="TextAppearance.Material3.TitleMedium"/>
+    <style name="TextAppearance.App.Title.Large">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Title.Medium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Title.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="Theme.AppAndroidKiosk" parent="Theme.Material3.DayNight.NoActionBar">
+        
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorPrimaryContainer">@color/primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_primary_container</item>
+        
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorSecondaryContainer">@color/secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/on_secondary_container</item>
+        
+        <item name="colorTertiary">@color/tertiary</item>
+        <item name="colorOnTertiary">@color/on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/on_tertiary_container</item>
+        
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/on_error</item>
+        <item name="colorErrorContainer">@color/error_container</item>
+        <item name="colorOnErrorContainer">@color/on_error_container</item>
+        
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
+        <item name="colorSurfaceContainerLowest">@color/surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/surface_container_highest</item>
+        
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorOutlineVariant">@color/outline_variant</item>
+        
+        <item name="android:windowBackground">@color/surface</item>
+        <item name="android:statusBarColor" ns1:targetApi="l">@color/surface</item>
+        <item name="android:windowLightStatusBar" ns1:targetApi="m">true</item>
+        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="android:windowLightNavigationBar" ns1:targetApi="o_mr1">true</item>
+        
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.App.LargeComponent</item>
+    </style>
+    <style name="Widget.App" parent=""/>
+    <style name="Widget.App.Badge" parent="">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:paddingVertical">4dp</item>
+    </style>
+    <style name="Widget.App.Badge.Error">
+        <item name="android:background">@drawable/bg_badge_error</item>
+        <item name="android:textColor">@color/on_error_container</item>
+    </style>
+    <style name="Widget.App.Badge.Info">
+        <item name="android:background">@drawable/bg_badge_info</item>
+        <item name="android:textColor">@color/primary</item>
+    </style>
+    <style name="Widget.App.Badge.New">
+        <item name="android:background">@drawable/bg_badge_new</item>
+        <item name="android:textColor">@color/on_tertiary_container</item>
+    </style>
+    <style name="Widget.App.Badge.Success">
+        <item name="android:background">@drawable/bg_badge_success</item>
+        <item name="android:textColor">@color/on_secondary_container</item>
+    </style>
+    <style name="Widget.App.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/surface_container_lowest</item>
+        <item name="itemIconTint">@color/on_surface_variant</item>
+        <item name="itemTextColor">@color/on_surface_variant</item>
+        <item name="elevation">@dimen/elevation_md</item>
+    </style>
+    <style name="Widget.App.Button.Accent" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/tertiary</item>
+        <item name="android:textColor">@color/on_tertiary</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="elevation">@dimen/elevation_sm</item>
+    </style>
+    <style name="Widget.App.Button.Danger" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/error</item>
+        <item name="android:textColor">@color/on_error</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Widget.App.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="strokeColor">@color/outline_variant</item>
+    </style>
+    <style name="Widget.App.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/on_primary</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_lg</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="elevation">@dimen/elevation_sm</item>
+    </style>
+    <style name="Widget.App.Button.Secondary" parent="Widget.Material3.Button.TonalButton">
+        <item name="backgroundTint">@color/secondary_container</item>
+        <item name="android:textColor">@color/on_secondary_container</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Widget.App.Button.Tertiary" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+    </style>
+    <style name="Widget.App.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/surface_container_lowest</item>
+        <item name="cardElevation">@dimen/elevation_sm</item>
+        <item name="cardCornerRadius">@dimen/radius_lg</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_3</item>
+    </style>
+    <style name="Widget.App.Card.Elevated">
+        <item name="cardBackgroundColor">@color/surface_container_lowest</item>
+        <item name="cardElevation">@dimen/elevation_md</item>
+        <item name="cardCornerRadius">@dimen/radius_xl</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+    <style name="Widget.App.Card.Glass">
+        <item name="cardBackgroundColor">@color/glass_white</item>
+        <item name="cardElevation">@dimen/elevation_none</item>
+        <item name="cardCornerRadius">@dimen/radius_xl</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/glass_border</item>
+    </style>
+    <style name="Widget.App.Card.Hero">
+        <item name="cardBackgroundColor">@color/primary</item>
+        <item name="cardElevation">@dimen/elevation_md</item>
+        <item name="cardCornerRadius">@dimen/radius_xl</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+    <style name="Widget.App.Card.Tonal">
+        <item name="cardBackgroundColor">@color/surface_container_low</item>
+        <item name="cardElevation">@dimen/elevation_none</item>
+        <item name="cardCornerRadius">@dimen/radius_lg</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+    <style name="Widget.App.Chip.Filter" parent="Widget.Material3.Chip.Filter">
+        <item name="chipCornerRadius">@dimen/radius_full</item>
+        <item name="chipBackgroundColor">@color/surface_container</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="Widget.App.Divider">
+        <item name="android:background">@color/outline_variant</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginVertical">@dimen/spacing_4</item>
+    </style>
+    <style name="Widget.App.SectionHeader">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginTop">@dimen/spacing_8</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_3</item>
+    </style>
+    <style name="Widget.App.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/surface_container_lowest</item>
+        <item name="boxStrokeColor">@color/outline_variant</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_md</item>
+        <item name="hintTextColor">@color/on_surface_variant</item>
+    </style>
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextColor">@color/on_surface</item>
+        <item name="subtitleTextColor">@color/on_surface_variant</item>
+        <item name="titleTextAppearance">@style/TextAppearance.App.Title.Large</item>
     </style>
 </resources>

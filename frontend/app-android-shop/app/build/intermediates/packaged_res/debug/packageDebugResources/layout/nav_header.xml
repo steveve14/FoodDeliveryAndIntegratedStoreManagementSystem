@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="176dp"
-    android:background="?attr/colorPrimary"
-    android:gravity="bottom"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:background="@drawable/bg_gradient_primary"
+    android:padding="@dimen/spacing_6">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:contentDescription="app icon"
-        android:src="@mipmap/ic_launcher" />
+        android:id="@+id/iv_nav_logo"
+        android:layout_width="@dimen/avatar_size_lg"
+        android:layout_height="@dimen/avatar_size_lg"
+        android:src="@drawable/logo"
+        android:contentDescription="매장 로고"
+        android:layout_marginBottom="@dimen/spacing_4" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:text="상점 관리"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_store_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="admin@testshop.com" />
+        android:text="가게 이름"
+        android:textAppearance="@style/TextAppearance.App.Title.Large"
+        android:textColor="@color/on_primary"
+        android:layout_marginBottom="@dimen/spacing_1" />
 
+    <TextView
+        android:id="@+id/tv_store_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="영업중"
+        android:textAppearance="@style/TextAppearance.App.Label.Small"
+        android:textColor="@color/primary_fixed_dim" />
 </LinearLayout>

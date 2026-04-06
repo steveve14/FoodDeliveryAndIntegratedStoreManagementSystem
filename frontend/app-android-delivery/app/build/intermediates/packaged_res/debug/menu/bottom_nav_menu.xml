@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_active"
-        android:icon="@android:drawable/ic_menu_compass"
+        android:icon="@drawable/ic_active_delivery"
         android:title="진행중 배달" />
     <item
         android:id="@+id/nav_history"
-        android:icon="@android:drawable/ic_menu_recent_history"
+        android:icon="@drawable/ic_history"
         android:title="배달 내역" />
     <item
         android:id="@+id/nav_profile"
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@drawable/ic_profile"
         android:title="내 정보" />
 </menu>

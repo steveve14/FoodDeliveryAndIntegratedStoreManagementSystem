@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Executive Inventory - 주문 접수</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-high": "#e7e8ec",
+                        "inverse-on-surface": "#f0f0f5",
+                        "on-background": "#191c1f",
+                        "tertiary-fixed": "#ffdcc3",
+                        "primary-container": "#004a77",
+                        "background": "#f8f9fd",
+                        "secondary-fixed": "#a3f69c",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f8f9fd",
+                        "on-error": "#ffffff",
+                        "outline": "#727880",
+                        "on-primary": "#ffffff",
+                        "surface": "#f8f9fd",
+                        "on-surface": "#191c1f",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#98cbff",
+                        "on-surface-variant": "#41474f",
+                        "on-primary-container": "#86baed",
+                        "on-primary-fixed": "#001d33",
+                        "inverse-surface": "#2e3134",
+                        "secondary-fixed-dim": "#88d982",
+                        "surface-dim": "#d9dade",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#a0f399",
+                        "on-primary-fixed-variant": "#004a77",
+                        "surface-container-highest": "#e1e2e7",
+                        "on-secondary-fixed": "#002204",
+                        "on-secondary-container": "#217128",
+                        "outline-variant": "#c1c7d0",
+                        "tertiary-fixed-dim": "#ffb77d",
+                        "tertiary-container": "#6e3900",
+                        "surface-tint": "#296290",
+                        "surface-container-low": "#f3f3f8",
+                        "error": "#ba1a1a",
+                        "primary": "#003354",
+                        "on-tertiary-fixed": "#2f1500",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e1e2e7",
+                        "surface-container": "#edeef2",
+                        "on-secondary-fixed-variant": "#005312",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#98cbff",
+                        "primary-fixed": "#cfe5ff",
+                        "on-tertiary-container": "#f0a465",
+                        "secondary": "#1b6d24",
+                        "on-tertiary-fixed-variant": "#6e3900",
+                        "tertiary": "#4d2600"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 h-full w-72 border-none bg-[#edeef2] dark:bg-slate-900 font-['Manrope'] antialiased text-sm font-medium">
+<div class="px-8 mb-12">
+<span class="text-xl font-bold text-[#003354] dark:text-blue-200 tracking-tight">The Executive</span>
+<div class="mt-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="관리자 프로필 사진" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASbinVYloo0r-fgnkbXmqjJkqbIEuSifbX_1gfosdYvFJ8JLOE3mnYvd_VbR-riT8Gbun9ieZXKWRxJcpkr6Eoe3aqW0TPqo4rfaehlV924MFmVH1TPmv2T8M606znBlJ_dwLHFaQ2u7TG0PsuAF2Q-VotTYZILdxHg_HmfYNS5U34CKZ62UfTEm8AnscHemhV9vHtZTZ9rS91ACkugSqATzeGbE7Ko9U4e87fg6t3iSpyFgJEyAw9utEHwvscY8suYLCPv9ypW6M"/>
+</div>
+<div>
+<p class="font-bold text-primary">관리자 프로필</p>
+<p class="text-xs text-on-surface-variant">스토어 매니저</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 text-[#41474f] dark:text-slate-400 hover:text-[#191c1f] dark:hover:text-slate-200 px-8 py-4 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>대시보드</span>
+</a>
+<a class="flex items-center gap-4 bg-[#ffffff] dark:bg-slate-800 text-[#003354] dark:text-white rounded-l-xl ml-4 shadow-sm px-8 py-4 translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span>주문 접수</span>
+</a>
+<a class="flex items-center gap-4 text-[#41474f] dark:text-slate-400 hover:text-[#191c1f] dark:hover:text-slate-200 px-8 py-4 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+<span>메뉴 관리</span>
+</a>
+<a class="flex items-center gap-4 text-[#41474f] dark:text-slate-400 hover:text-[#191c1f] dark:hover:text-slate-200 px-8 py-4 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="rate_review">rate_review</span>
+<span>리뷰 관리</span>
+</a>
+<a class="flex items-center gap-4 text-[#41474f] dark:text-slate-400 hover:text-[#191c1f] dark:hover:text-slate-200 px-8 py-4 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span>매출 통계</span>
+</a>
+<a class="flex items-center gap-4 text-[#41474f] dark:text-slate-400 hover:text-[#191c1f] dark:hover:text-slate-200 px-8 py-4 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span>매장 관리</span>
+</a>
+<a class="flex items-center gap-4 text-[#41474f] dark:text-slate-400 hover:text-[#191c1f] dark:hover:text-slate-200 px-8 py-4 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>설정</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-72 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="flex items-center justify-between pl-8 pr-8 w-full h-20 bg-[#f8f9fd] dark:bg-slate-950 no-border">
+<h1 class="font-['Manrope'] font-bold text-2xl text-[#003354] dark:text-blue-200">주문 접수</h1>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined text-[#41474f] cursor-pointer hover:opacity-80 transition-opacity" data-icon="notifications">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
+</div>
+<span class="material-symbols-outlined text-[#41474f] cursor-pointer hover:opacity-80 transition-opacity" data-icon="help_outline">help_outline</span>
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="관리자 프로필 사진" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9e-oSnIRRgzpOVZLBz_XdhdniHeDMIt6y8ovXV13wQD8QjOig94Uy6SFYdIqWEobo8YmCPDmj2sC89-Jt9IScVf3_vZxv8VzgVcknAR1Beqz6P4uvPQn7yXqipgiaIXIy1y6zrSRZ9kdJiF8r7qwnB_yDJ1ELP-TPsFM3CXN-LmMLB0MvEKWSGwR4WDT-3LJYsBFG88TWUMHv24uDwvceYSuwhDTMX0WRq-_a4tN6A-EUUm0bJNywhZ9MGi1tfH5lzX5nf8tkQ7U"/>
+</div>
+</div>
+</header>
+<!-- Contextual Content -->
+<div class="flex-1 flex overflow-hidden p-8 gap-8">
+<!-- Left Side: Order Lists -->
+<div class="w-2/5 flex flex-col gap-6 overflow-hidden">
+<!-- Status Cards Bento -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-primary text-on-primary p-6 rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span class="text-xs font-medium px-2 py-1 bg-primary-container text-on-primary-container rounded-full">실시간</span>
+</div>
+<p class="text-sm opacity-80 mb-1">신규 주문</p>
+<p class="headline text-3xl font-extrabold tracking-tight">12</p>
+</div>
+<div class="bg-secondary-container text-on-secondary-container p-6 rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined" data-icon="outdoor_grill">outdoor_grill</span>
+</div>
+<p class="text-sm opacity-80 mb-1">준비 중</p>
+<p class="headline text-3xl font-extrabold tracking-tight">08</p>
+</div>
+</div>
+<!-- Scrollable Order Lists -->
+<div class="flex-1 overflow-y-auto no-scrollbar space-y-6">
+<!-- Section: Incoming Requests -->
+<section>
+<div class="flex items-center justify-between mb-4 px-2">
+<h2 class="font-bold text-primary tracking-tight">신규 요청 (Incoming)</h2>
+<span class="text-xs text-on-surface-variant font-medium">최신순</span>
+</div>
+<div class="space-y-3">
+<!-- Active/Selected Order Item -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border-l-4 border-primary shadow-sm cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="text-xs font-bold text-primary">#ORD-2024-089</span>
+<span class="text-xs text-on-surface-variant">2분 전</span>
+</div>
+<h3 class="font-bold text-lg mb-1">프리미엄 안심 스테이크 외 2건</h3>
+<p class="text-sm text-on-surface-variant mb-4">서울 강남구 테헤란로 427</p>
+<div class="flex items-center justify-between">
+<span class="text-lg font-bold text-primary">₩78,500</span>
+<span class="px-3 py-1 bg-error-container text-on-error-container text-xs font-bold rounded-lg uppercase">NEW</span>
+</div>
+</div>
+<div class="bg-surface-container-low hover:bg-surface-container-highest transition-colors p-5 rounded-xl cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<span class="text-xs font-bold text-outline">#ORD-2024-088</span>
+<span class="text-xs text-on-surface-variant">5분 전</span>
+</div>
+<h3 class="font-bold text-lg mb-1">콰트로 치즈 피자 L</h3>
+<p class="text-sm text-on-surface-variant mb-4">서울 서초구 반포대로 12-3</p>
+<div class="flex items-center justify-between">
+<span class="text-lg font-bold text-on-surface">₩32,000</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Processing Pipeline -->
+<section>
+<div class="flex items-center justify-between mb-4 px-2">
+<h2 class="font-bold text-primary tracking-tight">처리 중 (Processing)</h2>
+</div>
+<div class="space-y-3 opacity-70">
+<div class="bg-surface-container-low p-5 rounded-xl border-l-4 border-secondary">
+<div class="flex justify-between items-start mb-3">
+<span class="text-xs font-bold text-outline">#ORD-2024-085</span>
+<span class="text-xs text-on-surface-variant">15분 전</span>
+</div>
+<h3 class="font-bold text-lg mb-1">베이컨 머쉬룸 파스타</h3>
+<div class="flex items-center gap-2 mb-4">
+<div class="flex-1 h-1 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-3/4"></div>
+</div>
+<span class="text-[10px] font-bold text-secondary">준비 75%</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-lg font-bold text-on-surface">₩18,900</span>
+<span class="text-xs text-secondary font-bold">조리중</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Right Side: Order Detail View -->
+<div class="flex-1 bg-surface-container-lowest rounded-2xl shadow-sm flex flex-col overflow-hidden">
+<!-- Detail Header -->
+<div class="p-8 bg-surface-container-low flex justify-between items-center">
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h2 class="headline text-2xl font-extrabold tracking-tight text-primary">주문 상세 #ORD-2024-089</h2>
+<span class="px-3 py-1 bg-primary text-on-primary text-[10px] font-bold rounded-full">승인 대기</span>
+</div>
+<p class="text-sm text-on-surface-variant">2024년 5월 24일 오후 02:34 접수됨</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-3 rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="print">print</span>
+</button>
+</div>
+</div>
+<!-- Detail Content -->
+<div class="flex-1 overflow-y-auto p-8 no-scrollbar">
+<div class="grid grid-cols-12 gap-8">
+<!-- Customer Info -->
+<div class="col-span-12 lg:col-span-4 space-y-8">
+<div>
+<h4 class="text-xs font-bold text-outline mb-4 uppercase tracking-widest">고객 정보</h4>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="font-bold text-primary">김</span>
+</div>
+<div>
+<p class="font-bold">김지석 고객님</p>
+<p class="text-xs text-on-surface-variant">VVIP 회원</p>
+</div>
+</div>
+<div class="space-y-2 pt-2 border-t border-outline-variant border-opacity-20">
+<div class="flex gap-2 text-sm">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="call">call</span>
+<span>010-45**-08**</span>
+</div>
+<div class="flex gap-2 text-sm">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="location_on">location_on</span>
+<span>서울시 강남구 테헤란로 427 <br/>아이타워 15층</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-tertiary-fixed rounded-xl">
+<h4 class="text-xs font-bold text-on-tertiary-fixed mb-2 uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="comment">comment</span> 요청 사항
+                                </h4>
+<p class="text-sm text-on-tertiary-fixed font-medium">"스테이크는 미디엄 레어로 부탁드려요. 소스는 따로 담아주세요."</p>
+</div>
+</div>
+<!-- Product List -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<h4 class="text-xs font-bold text-outline mb-4 uppercase tracking-widest">주문 품목</h4>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="프리미엄 안심 스테이크" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuh7DqOP8E3X-8XqYKPXS1GrJnqyvN8QrqSi5hBHBQckOtbwp2EuLCVo_y-CHFQeDiBibnG7xlMmtrvdW5SpJ_NYhFUuNAVmGyu2M3opapd84DBYkf6A6Rs5a_xlZvpstDfKfvLcxIno8UNrXTwCdqW2Q72kgX_zdh7zFCEuwzDHqsG94h-fIRxOdcqF6OZ7UgLprEIO3xbbgQjFpMxvh1Z2Bzv4smNdTknFD7ni4O5MWng3t88gg7tuK38HkLticY7Bq4fRpaNE8"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h5 class="font-bold">프리미엄 안심 스테이크</h5>
+<span class="font-bold text-on-surface">₩45,000</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-2">옵션: 미디엄 레어, 소스 따로</p>
+<div class="text-xs font-medium text-primary bg-primary-fixed inline-block px-2 py-0.5 rounded">수량: 1</div>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="하우스 샐러드" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-dNlHeAQLgkxLqOwNN1Ez5tFCx8vBymY9QjFVL_fCywElPwJISkaIob_IPTFl4thAqzqWk4Qsn3QdHLpBkAGl8T4tQTopdkmakk-A8sQ8eVk5Jm0echmYh7dm9fg0Ab7JCXr1b6jti5J_3IHJCgsnh_Ff35NZCQ6aDbGUhMcLLusOZSRcHIm_o9Bqjr-QQHRwBACqxCDZb6vdhZ39e_rlf_6eJN7A-GwIxgb3qjdWrRFDh6LIM0vZIHehr343A--GkNJ0mZaVKdM"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h5 class="font-bold">하우스 그린 샐러드</h5>
+<span class="font-bold text-on-surface">₩12,000</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-2">기본 드레싱</p>
+<div class="text-xs font-medium text-primary bg-primary-fixed inline-block px-2 py-0.5 rounded">수량: 1</div>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="오렌지 에이드" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDCOXjAeY0-2H02YoawrJcbI0KFZvE65pUpQUqU2hm1jWtWaF5LL3Lgiawb5WjvV9l1_9DMlN6QveP82SvdKzEpqTPbzVAdFslDvlBHy8H5ZAuOa-hCMpojEATx1T3RHUjbi743yzCeu1nVBvhlbN1klHQlfzDDmeC7RIDQkaNGRgskARZGPUoTkApMkGQNi-7Otf6sNWL55Rj8cjbOg3RtePC4zrqnhgqweeT2N0nnZ085FBH_Aw5ywhyRZkXI7Vu0UhP6Ng9gLo"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h5 class="font-bold">수제 오렌지 에이드</h5>
+<span class="font-bold text-on-surface">₩7,500</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-2">얼음 적게</p>
+<div class="text-xs font-medium text-primary bg-primary-fixed inline-block px-2 py-0.5 rounded">수량: 2</div>
+</div>
+</div>
+</div>
+<!-- Total Pricing -->
+<div class="mt-8 pt-6 border-t border-outline-variant">
+<div class="flex justify-between text-sm text-on-surface-variant mb-2">
+<span>주문 금액</span>
+<span>₩72,000</span>
+</div>
+<div class="flex justify-between text-sm text-on-surface-variant mb-2">
+<span>배달 팁</span>
+<span>₩6,500</span>
+</div>
+<div class="flex justify-between text-xl font-bold text-primary mt-4">
+<span>최종 결제 금액</span>
+<span>₩78,500</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="p-8 border-t border-outline-variant flex gap-4">
+<button class="flex-1 py-4 bg-error text-on-error font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+                        주문 거절
+                    </button>
+<button class="flex-[2] py-4 bg-primary text-on-primary font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg">
+<span class="material-symbols-outlined" data-icon="check">check</span>
+                        주문 승인 (예상 시간 30분)
+                    </button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

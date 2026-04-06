@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed": "#cfe5ff",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#98cbff",
+                        "surface-bright": "#f8f9fd",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#002204",
+                        "inverse-surface": "#2e3134",
+                        "tertiary": "#4d2600",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#a0f399",
+                        "on-surface": "#191c1f",
+                        "secondary-fixed": "#a3f69c",
+                        "on-primary-fixed-variant": "#004a77",
+                        "surface-container-highest": "#e1e2e7",
+                        "on-tertiary-fixed-variant": "#6e3900",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#ffdcc3",
+                        "surface-container-high": "#e7e8ec",
+                        "inverse-on-surface": "#f0f0f5",
+                        "on-primary-container": "#86baed",
+                        "tertiary-container": "#6e3900",
+                        "secondary-fixed-dim": "#88d982",
+                        "on-primary-fixed": "#001d33",
+                        "surface-dim": "#d9dade",
+                        "surface-container-low": "#f3f3f8",
+                        "on-tertiary-fixed": "#2f1500",
+                        "outline": "#727880",
+                        "tertiary-fixed-dim": "#ffb77d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#191c1f",
+                        "surface-variant": "#e1e2e7",
+                        "surface": "#f8f9fd",
+                        "on-secondary-container": "#217128",
+                        "outline-variant": "#c1c7d0",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#41474f",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#1b6d24",
+                        "on-tertiary-container": "#f0a465",
+                        "on-secondary-fixed-variant": "#005312",
+                        "surface-tint": "#296290",
+                        "inverse-primary": "#98cbff",
+                        "surface-container": "#edeef2",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#004a77",
+                        "background": "#f8f9fd",
+                        "primary": "#003354"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-slate-50 dark:bg-slate-900 flex items-center justify-between px-6 py-4 w-full z-40">
+<div class="flex items-center gap-4">
+<button class="text-sky-900 dark:text-sky-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-sky-900 dark:text-sky-100 font-extrabold tracking-tighter text-lg">Executive Inventory</h1>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant">
+<img alt="Store Manager Profile" data-alt="Professional avatar of a store manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBw6-_oT_KjoYCHXa7NaIdQjQoofm2rcEM0jtnFusS2rwhDKBL6XvTpVQQNVm7A_46fAQ4FSzznrVFQPwSls65mFTH8rjOF-TZZD0AXjx7PvwVM9cIKZTZDhGhT4iWaSWEU0XXMY-8vYuFkRRZfR3-UMToFV1FBLm29VYLpVGEyeDgs1PQROilgteMOTfrj2h3eDrmGNBnjJHKyuQJwtAst0_1jb4PJ253jlzJp21JRaZYcdvl6FaMPppMggPd_zG06N4hfaPvj3rU"/>
+</div>
+</header>
+<main class="max-w-md mx-auto px-4 pt-6 space-y-8">
+<!-- Title & Subtitle Editorial Layout -->
+<section class="space-y-1">
+<h2 class="text-[2rem] font-extrabold text-primary leading-tight tracking-tight">영업 시간 설정</h2>
+<p class="text-on-surface-variant text-sm font-medium">스토어의 운영 시간과 휴무일을 정밀하게 관리하세요.</p>
+</section>
+<!-- Temporary Closing (Hero Action) -->
+<section class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/20 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="space-y-1">
+<h3 class="font-headline font-bold text-lg text-primary">즉시 일시 정지</h3>
+<p class="text-xs text-on-surface-variant">현재 영업을 일시적으로 중단합니다.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-error"></div>
+</label>
+</div>
+</section>
+<!-- Operating Hours List -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline font-bold text-lg text-primary">요일별 운영 설정</h3>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Weekly Schedule</span>
+</div>
+<div class="space-y-3">
+<!-- Day Row Template -->
+<div class="bg-surface-container-low rounded-xl p-4 transition-all hover:bg-surface-container">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center font-bold text-primary">월</div>
+<span class="font-semibold text-on-surface">월요일</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase ml-1">Open</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-sm font-semibold p-3 focus:ring-2 focus:ring-primary/20" type="time" value="09:00"/>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase ml-1">Close</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-sm font-semibold p-3 focus:ring-2 focus:ring-primary/20" type="time" value="22:00"/>
+</div>
+</div>
+</div>
+<!-- Tuesday (Active) -->
+<div class="bg-surface-container-low rounded-xl p-4 transition-all hover:bg-surface-container">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center font-bold text-primary">화</div>
+<span class="font-semibold text-on-surface">화요일</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase ml-1">Open</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-sm font-semibold p-3 focus:ring-2 focus:ring-primary/20" type="time" value="09:00"/>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-on-surface-variant uppercase ml-1">Close</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-lg text-sm font-semibold p-3 focus:ring-2 focus:ring-primary/20" type="time" value="22:00"/>
+</div>
+</div>
+</div>
+<!-- Sunday (Closed State Example) -->
+<div class="bg-surface-container-low/50 rounded-xl p-4 opacity-60">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center font-bold text-error">일</div>
+<span class="font-semibold text-on-surface-variant">일요일 (정기 휴무)</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Break Time Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline font-bold text-lg text-primary">브레이크 타임</h3>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Break Interval</span>
+</div>
+<div class="bg-tertiary-fixed/20 rounded-xl p-5 border-l-4 border-tertiary">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">coffee</span>
+<span class="font-bold text-tertiary text-sm">휴게 시간 활성화</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-on-tertiary-fixed-variant uppercase ml-1">Start</label>
+<input class="w-full bg-white border-none rounded-lg text-sm font-semibold p-3 focus:ring-2 focus:ring-tertiary/20" type="time" value="15:00"/>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-on-tertiary-fixed-variant uppercase ml-1">End</label>
+<input class="w-full bg-white border-none rounded-lg text-sm font-semibold p-3 focus:ring-2 focus:ring-tertiary/20" type="time" value="17:00"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Holiday Multi-select -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline font-bold text-lg text-primary">공휴일 운영</h3>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-full border border-primary text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors">공휴일 휴무</button>
+<button class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant text-xs font-bold bg-white">공휴일 정상 영업</button>
+</div>
+</section>
+<!-- Save Button (Floating Area) -->
+<div class="fixed bottom-24 left-0 w-full px-4 z-40">
+<button class="w-full max-w-md mx-auto flex items-center justify-center gap-3 bg-primary text-on-primary py-4 rounded-xl shadow-xl hover:bg-primary-container transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">save</span>
+<span class="font-headline font-bold text-lg">설정 저장하기</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 shadow-[0_-8px_24px_rgba(25,28,31,0.06)]">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-sky-50 dark:bg-sky-900/30 text-sky-900 dark:text-sky-300 rounded-xl px-4 py-2 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">schedule</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Operating Hours</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-4 py-2 hover:text-sky-700 dark:hover:text-sky-200 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-manrope font-semibold text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

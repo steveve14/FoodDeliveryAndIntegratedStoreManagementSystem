@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base parent styles (implicit parent resolution) -->
+    <style name="TextAppearance.App.Display" parent="TextAppearance.Material3.DisplayMedium" />
+    <style name="TextAppearance.App.Headline" parent="TextAppearance.Material3.HeadlineMedium" />
+    <style name="TextAppearance.App.Title" parent="TextAppearance.Material3.TitleMedium" />
+    <style name="TextAppearance.App.Body" parent="TextAppearance.Material3.BodyMedium" />
+    <style name="TextAppearance.App.Label" parent="TextAppearance.Material3.LabelMedium" />
+
+    <!-- ── Display: Hero numbers ─── -->
+    <style name="TextAppearance.App.Display.Large">
+        <item name="android:textSize">52sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.025</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Display.Medium">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <!-- ── Headline: Page titles ─── -->
+    <style name="TextAppearance.App.Headline.Large">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.015</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Headline.Medium">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Headline.Small">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <!-- ── Title: Section headings ─── -->
+    <style name="TextAppearance.App.Title.Large">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Title.Medium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Title.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <!-- ── Body: Content text ─── -->
+    <style name="TextAppearance.App.Body.Large">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+    </style>
+    <style name="TextAppearance.App.Body.Medium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:lineSpacingMultiplier">1.45</item>
+    </style>
+    <style name="TextAppearance.App.Body.Small">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+    </style>
+
+    <!-- ── Label: Buttons, badges, metadata ─── -->
+    <style name="TextAppearance.App.Label.Large">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Label.Medium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="TextAppearance.App.Label.Small">
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+</resources>

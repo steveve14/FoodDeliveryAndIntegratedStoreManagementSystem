@@ -1,120 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212">
+    android:orientation="vertical"
+    android:background="@color/surface"
+    android:padding="@dimen/spacing_6">
 
-    <!-- Preparing Section -->
-    <LinearLayout
-        android:id="@+id/preparing_section"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingTop="48dp"
-        app:layout_constraintEnd_toStartOf="@+id/serving_section"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_weight="1">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="주문 현황"
+        android:textAppearance="@style/TextAppearance.App.Headline.Medium"
+        android:layout_marginBottom="@dimen/spacing_6" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="음식을 준비 중입니다"
-            android:textColor="#E0E0E0"
-            android:textSize="32sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Preparing"
-            android:textColor="#9E9E9E"
-            android:textSize="20sp" />
-
-        <ScrollView
+    <!-- Preparing Orders -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_5"
+        style="@style/Widget.App.Card.Hero">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="32dp">
-            
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_gradient_primary"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_6">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="준비중"
+                android:textAppearance="@style/TextAppearance.App.Label.Medium"
+                android:textColor="@color/primary_fixed_dim"
+                android:layout_marginBottom="@dimen/spacing_3" />
+
             <TextView
                 android:id="@+id/tv_preparing_orders"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="-"
-                android:textColor="#FFFFFF"
-                android:textSize="48sp"
-                android:textStyle="bold"
-                android:lineSpacingExtra="16dp" />
-        </ScrollView>
-    </LinearLayout>
+                android:text="준비중인 주문이 없습니다"
+                android:textAppearance="@style/TextAppearance.App.Title.Large"
+                android:textColor="@color/on_primary" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-    <View
-        android:layout_width="2dp"
-        android:layout_height="match_parent"
-        android:background="#333333"
-        app:layout_constraintStart_toEndOf="@id/preparing_section"
-        app:layout_constraintEnd_toStartOf="@id/serving_section" />
-
-    <!-- Serving Section -->
-    <LinearLayout
-        android:id="@+id/serving_section"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingTop="48dp"
-        android:background="#FF5722"
-        app:layout_constraintStart_toEndOf="@+id/preparing_section"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="음식이 나왔습니다"
-            android:textColor="#FFFFFF"
-            android:textSize="36sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Now Serving"
-            android:textColor="#FFCCBC"
-            android:textSize="24sp" />
-
-        <ScrollView
+    <!-- Serving Orders -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.App.Card">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="48dp">
-            
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_6">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="완료"
+                android:textAppearance="@style/TextAppearance.App.Label.Medium"
+                android:textColor="@color/secondary"
+                android:layout_marginBottom="@dimen/spacing_3" />
+
             <TextView
                 android:id="@+id/tv_serving_orders"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="-"
-                android:textColor="#FFFFFF"
-                android:textSize="80sp"
-                android:textStyle="bold"
-                android:lineSpacingExtra="24dp" />
-        </ScrollView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="32dp"
-            android:text="카운터에서 음식을 받아가주세요"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+                android:text="완료된 주문이 없습니다"
+                android:textAppearance="@style/TextAppearance.App.Title.Large"
+                android:textColor="@color/on_surface" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

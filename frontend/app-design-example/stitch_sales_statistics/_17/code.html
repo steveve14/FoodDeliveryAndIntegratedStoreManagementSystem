@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-low": "#f3f3f8",
+              "on-error": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed-variant": "#005312",
+              "on-primary-fixed-variant": "#004a77",
+              "primary": "#003354",
+              "outline": "#727880",
+              "outline-variant": "#c1c7d0",
+              "primary-container": "#004a77",
+              "on-surface": "#191c1f",
+              "background": "#f8f9fd",
+              "on-primary": "#ffffff",
+              "on-secondary-fixed": "#002204",
+              "secondary-container": "#a0f399",
+              "on-tertiary-fixed": "#2f1500",
+              "on-tertiary-container": "#f0a465",
+              "tertiary-fixed": "#ffdcc3",
+              "on-tertiary-fixed-variant": "#6e3900",
+              "inverse-on-surface": "#f0f0f5",
+              "inverse-surface": "#2e3134",
+              "on-primary-container": "#86baed",
+              "tertiary-fixed-dim": "#ffb77d",
+              "surface-container-lowest": "#ffffff",
+              "tertiary": "#4d2600",
+              "primary-fixed": "#cfe5ff",
+              "primary-fixed-dim": "#98cbff",
+              "on-background": "#191c1f",
+              "tertiary-container": "#6e3900",
+              "on-primary-fixed": "#001d33",
+              "secondary-fixed-dim": "#88d982",
+              "secondary-fixed": "#a3f69c",
+              "on-secondary-container": "#217128",
+              "surface-dim": "#d9dade",
+              "surface": "#f8f9fd",
+              "on-error-container": "#93000a",
+              "surface-bright": "#f8f9fd",
+              "surface-container-high": "#e7e8ec",
+              "on-secondary": "#ffffff",
+              "surface-tint": "#296290",
+              "surface-container-highest": "#e1e2e7",
+              "on-surface-variant": "#41474f",
+              "secondary": "#1b6d24",
+              "inverse-primary": "#98cbff",
+              "error-container": "#ffdad6",
+              "surface-container": "#edeef2",
+              "surface-variant": "#e1e2e7",
+              "error": "#ba1a1a"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #003354; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #003354; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col z-40 h-screen w-20 md:w-64 bg-slate-100 dark:bg-slate-900 font-['Manrope'] antialiased">
+<div class="px-6 py-8">
+<h1 class="text-xl font-bold text-sky-900 dark:text-sky-100">Inventory Pro</h1>
+<p class="text-xs text-slate-500 mt-1">Flagship Store</p>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-800 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="hidden md:block">Dashboard</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-800 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="hidden md:block">Inventory</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-800 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="hidden md:block">Orders</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-800 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="hidden md:block">Analytics</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-white dark:bg-slate-800 text-sky-900 dark:text-sky-400 font-bold shadow-sm translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="hidden md:block">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-slate-300 overflow-hidden">
+<img alt="Store Manager Profile" class="w-full h-full object-cover" data-alt="Store manager circular profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXmn_LUHBMBDvDpGDceIWosS0_Ayv4QaDBGYskkMUXVbsMlOHD3q6iyEq2hmkLsUsPl7-2KLzxRWKfBmA-OMrGD_sWo7rvbZPfg1hbFjVQoR1A-uVtxpYYP6fCw0y_EIeBZqYvTBit66aVHt0hOPjAMZ3tuqtz4DlrbeYcDaxZzCAnl73xrcYFrRHDBSqIeE9Ha5rqLI3whE5haOwxWqt8yTBVBf4eBmJwccjcKay0FxIxbI0oXYoHgWPQ0R2ealniOYxMJk5gGpc"/>
+</div>
+<div class="hidden md:block">
+<p class="text-sm font-bold text-sky-900">Manager</p>
+<p class="text-xs text-slate-500">Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<div class="ml-20 md:ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-30 flex justify-between items-center px-8 py-4 w-full bg-slate-50 dark:bg-slate-950 font-['Manrope'] font-semibold tracking-tight">
+<h2 class="text-lg font-extrabold text-sky-900 dark:text-sky-100">Notification Settings</h2>
+<div class="flex items-center space-x-6 text-slate-500 dark:text-slate-400">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150 relative">
+<span class="material-symbols-outlined">notifications_none</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="p-8 lg:p-12 max-w-6xl mx-auto space-y-12">
+<!-- Page Header Asymmetry -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end border-b border-transparent pb-8">
+<div class="md:col-span-8">
+<p class="text-primary font-bold tracking-widest text-xs mb-2 uppercase">System Preference</p>
+<h3 class="text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight leading-none">알림 설정</h3>
+</div>
+<div class="md:col-span-4 text-right">
+<span class="text-label-sm text-on-surface-variant leading-relaxed">매장 운영 및 마케팅 정보를 실시간으로 받아보세요.</span>
+</div>
+</div>
+<!-- Bento Layout for Settings -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Section 1: Order Notifications -->
+<section class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border-l-4 border-primary">
+<div class="flex items-center space-x-3 mb-8">
+<span class="material-symbols-outlined text-primary">shopping_bag</span>
+<h4 class="text-xl font-bold text-on-surface">주문 알림</h4>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">새 주문 알림</p>
+<p class="text-sm text-on-surface-variant">신규 주문 발생 시 실시간 알림</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">주문 취소 알림</p>
+<p class="text-sm text-on-surface-variant">고객 요청에 의한 취소 알림</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Section 2: Review Notifications -->
+<section class="bg-surface-container p-8 rounded-xl">
+<div class="flex items-center space-x-3 mb-8">
+<span class="material-symbols-outlined text-primary">rate_review</span>
+<h4 class="text-xl font-bold text-on-surface">리뷰 알림</h4>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">새 리뷰 등록 알림</p>
+<p class="text-sm text-on-surface-variant">고객이 작성한 새로운 리뷰 알림</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Section 3: Marketing & Announcements -->
+<section class="md:col-span-2 bg-surface-container-low p-8 rounded-xl">
+<div class="flex items-center space-x-3 mb-8">
+<span class="material-symbols-outlined text-primary">campaign</span>
+<h4 class="text-xl font-bold text-on-surface">마케팅 및 공지</h4>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">이벤트 및 혜택 알림</p>
+<p class="text-sm text-on-surface-variant">다양한 프로모션 및 쿠폰 정보</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">공지사항 알림</p>
+<p class="text-sm text-on-surface-variant">시스템 점검 및 중요 정책 변경</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Section 4: Notification Methods Grid -->
+<div class="md:col-span-2 space-y-4">
+<h4 class="text-xs font-extrabold uppercase tracking-[0.2em] text-on-surface-variant mt-4">알림 수단</h4>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Push Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex items-start justify-between hover:bg-surface-container transition-colors duration-300">
+<div class="flex items-start space-x-4">
+<div class="p-3 bg-primary-fixed rounded-lg text-primary">
+<span class="material-symbols-outlined">notifications_active</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<p class="font-bold text-on-surface">푸시 알림</p>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-bold">VERIFIED</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">현재 사용 중인 브라우저/기기</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- SMS Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl flex items-start justify-between hover:bg-surface-container transition-colors duration-300">
+<div class="flex items-start space-x-4">
+<div class="p-3 bg-surface-container rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined">sms</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<p class="font-bold text-on-surface">SMS/알림톡</p>
+<span class="text-[10px] bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded-full font-bold">010-****-5678</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">등록된 연락처로 수신</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Global Action Footer -->
+<div class="pt-8 flex justify-end items-center space-x-4">
+<button class="px-6 py-3 text-primary font-bold hover:bg-primary/5 transition-colors rounded-md">초기화</button>
+<button class="px-10 py-3 bg-primary text-on-primary font-bold rounded-md shadow-md hover:opacity-90 active:scale-95 transition-all">설정 저장하기</button>
+</div>
+</main>
+</div>
+</body></html>

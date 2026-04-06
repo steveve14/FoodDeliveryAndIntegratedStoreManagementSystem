@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>주문 관리 | The Executive Inventory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "inverse-surface": "#2e3134",
+                        "surface-tint": "#296290",
+                        "primary": "#003354",
+                        "tertiary-fixed": "#ffdcc3",
+                        "on-background": "#191c1f",
+                        "on-primary-container": "#86baed",
+                        "tertiary-fixed-dim": "#ffb77d",
+                        "surface-dim": "#d9dade",
+                        "on-primary-fixed": "#001d33",
+                        "surface-container-highest": "#e1e2e7",
+                        "surface-bright": "#f8f9fd",
+                        "background": "#f8f9fd",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#6e3900",
+                        "on-surface": "#191c1f",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#a0f399",
+                        "on-secondary-fixed-variant": "#005312",
+                        "on-secondary-container": "#217128",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#98cbff",
+                        "on-tertiary-container": "#f0a465",
+                        "secondary-fixed": "#a3f69c",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#002204",
+                        "on-tertiary-fixed": "#2f1500",
+                        "outline-variant": "#c1c7d0",
+                        "outline": "#727880",
+                        "surface": "#f8f9fd",
+                        "primary-container": "#004a77",
+                        "on-surface-variant": "#41474f",
+                        "surface-variant": "#e1e2e7",
+                        "on-tertiary-fixed-variant": "#6e3900",
+                        "surface-container-high": "#e7e8ec",
+                        "on-primary-fixed-variant": "#004a77",
+                        "surface-container": "#edeef2",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#4d2600",
+                        "surface-container-low": "#f3f3f8",
+                        "inverse-on-surface": "#f0f0f5",
+                        "error-container": "#ffdad6",
+                        "secondary": "#1b6d24",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#98cbff",
+                        "secondary-fixed-dim": "#88d982",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#cfe5ff"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed">
+<!-- TopAppBar -->
+<header class="bg-[#f8f9fd] dark:bg-slate-950 docked full-width top-0 sticky z-50 flex justify-between items-center px-6 py-4 w-full no-border bg-[#edeef2] dark:bg-slate-900 flat no shadows">
+<div class="flex items-center gap-4">
+<button class="hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors p-2 rounded-lg scale-95 duration-200">
+<span class="material-symbols-outlined text-[#003354] dark:text-blue-400">menu</span>
+</button>
+<h1 class="font-manrope font-bold text-2xl tracking-tight text-[#003354] dark:text-blue-400">The Executive Inventory</h1>
+</div>
+<div class="flex items-center gap-2">
+<nav class="hidden md:flex items-center gap-6 mr-6">
+<a class="text-[#41474f] dark:text-slate-400 hover:bg-[#e1e2e7] px-3 py-1 rounded transition-colors" href="#">대시보드</a>
+<a class="text-[#003354] dark:text-blue-300 font-bold px-3 py-1 rounded" href="#">주문 관리</a>
+<a class="text-[#41474f] dark:text-slate-400 hover:bg-[#e1e2e7] px-3 py-1 rounded transition-colors" href="#">배송</a>
+</nav>
+<button class="hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors p-2 rounded-lg scale-95 duration-200 relative">
+<span class="material-symbols-outlined text-[#003354] dark:text-blue-400">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<main class="min-h-screen pb-32">
+<!-- Content Canvas -->
+<div class="max-w-7xl mx-auto px-6 pt-10">
+<!-- Hero Stats Row (Asymmetric Layout) -->
+<div class="flex flex-col md:flex-row items-end justify-between gap-8 mb-12">
+<div class="w-full md:w-2/3">
+<span class="font-label text-sm font-semibold uppercase tracking-[0.2em] text-on-surface-variant mb-2 block">실시간 대기열</span>
+<h2 class="text-6xl font-extrabold text-primary tracking-tighter">주문 관리</h2>
+<p class="mt-4 text-on-surface-variant max-w-md font-medium leading-relaxed">
+                        12개의 활성 스트림 관리 중. 프리미엄 매장 ID: 8821 실시간 주문 추적 활성화.
+                    </p>
+</div>
+<div class="w-full md:w-1/3 flex gap-4">
+<div class="bg-surface-container-low p-6 flex-1 rounded-xl">
+<span class="block text-3xl font-bold text-primary">08</span>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">준비 중</span>
+</div>
+<div class="bg-primary p-6 flex-1 rounded-xl">
+<span class="block text-3xl font-bold text-primary-fixed">04</span>
+<span class="text-xs font-bold text-primary-fixed-dim uppercase tracking-wider">신규 주문</span>
+</div>
+</div>
+</div>
+<!-- Bento-Style Grid for Orders -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- New Orders Section (Priority Area) -->
+<div class="lg:col-span-8 space-y-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xl font-bold text-on-surface flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary rounded-full"></span>
+                            신규 요청
+                        </h3>
+<span class="text-sm font-medium text-on-surface-variant">4건 검토 대기</span>
+</div>
+<!-- Order Card 1: Incoming -->
+<div class="bg-surface-container-lowest border-l-4 border-primary p-8 rounded-xl shadow-[0_8px_24px_rgba(25,28,31,0.04)] transition-all hover:translate-y-[-4px]">
+<div class="flex flex-wrap justify-between items-start gap-4">
+<div class="flex-1 min-w-[200px]">
+<div class="flex items-center gap-3 mb-2">
+<span class="text-2xl font-black text-primary">#ORD-9921</span>
+<span class="bg-primary-fixed text-on-primary-fixed text-[10px] px-2 py-0.5 font-bold rounded uppercase tracking-widest">익스프레스</span>
+</div>
+<div class="space-y-1">
+<p class="text-on-surface font-semibold">프리미엄 가죽 데스크 매트 2개, 알루미늄 허브 1개</p>
+<p class="text-on-surface-variant text-sm">고객: 줄리안 베인 • 합계: $342.50</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 bg-primary text-on-primary font-bold rounded-md hover:bg-primary-container transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check</span> 수락
+                                </button>
+<button class="px-6 py-3 text-primary font-bold hover:bg-surface-container-highest rounded-md transition-all">
+                                    거절
+                                </button>
+</div>
+</div>
+</div>
+<!-- Order Card 2: Incoming -->
+<div class="bg-surface-container-lowest border-l-4 border-primary p-8 rounded-xl shadow-[0_8px_24px_rgba(25,28,31,0.04)] transition-all hover:translate-y-[-4px]">
+<div class="flex flex-wrap justify-between items-start gap-4">
+<div class="flex-1 min-w-[200px]">
+<div class="flex items-center gap-3 mb-2">
+<span class="text-2xl font-black text-primary">#ORD-9922</span>
+</div>
+<div class="space-y-1">
+<p class="text-on-surface font-semibold">미니멀리스트 세라믹 화분 5개</p>
+<p class="text-on-surface-variant text-sm">고객: 사라 첸 • 합계: $125.00</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 bg-primary text-on-primary font-bold rounded-md hover:bg-primary-container transition-all">
+                                    수락
+                                </button>
+<button class="px-6 py-3 text-primary font-bold hover:bg-surface-container-highest rounded-md transition-all">
+                                    거절
+                                </button>
+</div>
+</div>
+</div>
+<div class="pt-8">
+<h3 class="text-xl font-bold text-on-surface mb-6">처리 파이프라인</h3>
+<!-- List view with tonal separation (No borders) -->
+<div class="bg-surface-container-low rounded-2xl overflow-hidden">
+<div class="flex items-center justify-between p-6 bg-surface-container-high/50">
+<div class="flex items-center gap-6">
+<span class="font-bold text-on-surface w-24">#ORD-9915</span>
+<div>
+<p class="text-sm font-bold">인체공학 사무용 의자 1개</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">준비 중 • 12분 전 시작됨</p>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] px-3 py-1 font-bold rounded-full uppercase">준비 중</span>
+</div>
+<div class="flex items-center justify-between p-6 bg-surface-container-low">
+<div class="flex items-center gap-6">
+<span class="font-bold text-on-surface w-24">#ORD-9912</span>
+<div>
+<p class="text-sm font-bold">무선 기계식 키보드 3개</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">배송 중 • 택배 기사 ID: 442</p>
+</div>
+</div>
+<span class="bg-primary-fixed text-on-primary-fixed text-[10px] px-3 py-1 font-bold rounded-full uppercase">배송 중</span>
+</div>
+<div class="flex items-center justify-between p-6 bg-surface-container-high/50">
+<div class="flex items-center gap-6">
+<span class="font-bold text-on-surface w-24">#ORD-9899</span>
+<div>
+<p class="text-sm font-bold">임원용 노트북 12개</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">완료됨 • 4시간 전 배송 완료</p>
+</div>
+</div>
+<span class="bg-surface-dim text-on-surface-variant text-[10px] px-3 py-1 font-bold rounded-full uppercase">완료됨</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Summary (Editorial Sidebar) -->
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-primary p-8 rounded-2xl text-on-primary">
+<h4 class="font-bold text-lg mb-6">일일 할당량</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs font-bold uppercase tracking-widest mb-2 opacity-80">
+<span>목표 대비</span>
+<span>84%</span>
+</div>
+<div class="h-1.5 bg-primary-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed w-[84%]"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-4">
+<div>
+<span class="text-2xl font-black block">142</span>
+<span class="text-[10px] font-bold uppercase opacity-70">완료</span>
+</div>
+<div>
+<span class="text-2xl font-black block">$4.2k</span>
+<span class="text-[10px] font-bold uppercase opacity-70">매출</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-8 rounded-2xl">
+<h4 class="font-bold text-on-surface mb-4">재고 알림</h4>
+<div class="space-y-4">
+<div class="flex gap-4 items-start">
+<div class="w-10 h-10 bg-error-container rounded flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-error-container text-xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">데스크 매트 (새들 브라운)</p>
+<p class="text-xs text-on-error-container font-semibold">재고 2개 남음</p>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="w-10 h-10 bg-primary-fixed rounded flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-xl">inventory</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">허브 (알루미늄)</p>
+<p class="text-xs text-on-surface-variant">목요일 재입고 예정</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-outline-variant/30 rounded font-bold text-xs uppercase tracking-widest text-primary hover:bg-surface-container-highest transition-colors">
+                            재고 관리하기
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-2xl border-t border-[#c1c7d0]/20 shadow-[0_-8px_24px_rgba(25,28,31,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">홈</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#cfe5ff] dark:bg-blue-900 text-[#003354] dark:text-blue-100 rounded-xl px-4 py-1.5 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">주문</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">star</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">리뷰</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">매출</span>
+</a>
+</nav>
+</body></html>

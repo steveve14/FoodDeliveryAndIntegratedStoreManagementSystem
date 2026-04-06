@@ -3,39 +3,35 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@android:drawable/ic_menu_compass"
+            android:icon="@drawable/ic_dashboard"
             android:title="대시보드" />
         <item
             android:id="@+id/nav_delivery"
-            android:icon="@android:drawable/ic_menu_send"
+            android:icon="@drawable/ic_delivery"
             android:title="배달 관리" />
         <item
             android:id="@+id/nav_order_reception"
-            android:icon="@android:drawable/ic_menu_today"
+            android:icon="@drawable/ic_orders"
             android:title="주문 관리" />
-
         <item
             android:id="@+id/nav_menu_management"
-            android:icon="@android:drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_products"
             android:title="메뉴 관리" />
-
         <item
             android:id="@+id/nav_review_management"
-            android:icon="@android:drawable/ic_menu_recent_history"
+            android:icon="@drawable/ic_reviews"
             android:title="리뷰 관리" />
-
         <item
             android:id="@+id/nav_sales_statistics"
-            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:icon="@drawable/ic_sales"
             android:title="매출·정산" />
-
         <item
             android:id="@+id/nav_store_management"
-            android:icon="@android:drawable/ic_menu_preferences"
+            android:icon="@drawable/ic_store"
             android:title="가게 관리" />
         <item
             android:id="@+id/nav_settings"
-            android:icon="@android:drawable/ic_menu_preferences"
+            android:icon="@drawable/ic_settings"
             android:title="설정" />
     </group>
 </menu>

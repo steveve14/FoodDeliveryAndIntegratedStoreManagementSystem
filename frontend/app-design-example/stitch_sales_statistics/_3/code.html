@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>메뉴 관리 | The Executive Inventory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-surface": "#2e3134",
+              "surface-tint": "#296290",
+              "primary": "#003354",
+              "tertiary-fixed": "#ffdcc3",
+              "on-background": "#191c1f",
+              "on-primary-container": "#86baed",
+              "tertiary-fixed-dim": "#ffb77d",
+              "surface-dim": "#d9dade",
+              "on-primary-fixed": "#001d33",
+              "surface-container-highest": "#e1e2e7",
+              "surface-bright": "#f8f9fd",
+              "background": "#f8f9fd",
+              "on-error": "#ffffff",
+              "tertiary-container": "#6e3900",
+              "on-surface": "#191c1f",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#a0f399",
+              "on-secondary-fixed-variant": "#005312",
+              "on-secondary-container": "#217128",
+              "on-secondary": "#ffffff",
+              "primary-fixed-dim": "#98cbff",
+              "on-tertiary-container": "#f0a465",
+              "secondary-fixed": "#a3f69c",
+              "error": "#ba1a1a",
+              "on-secondary-fixed": "#002204",
+              "on-tertiary-fixed": "#2f1500",
+              "outline-variant": "#c1c7d0",
+              "outline": "#727880",
+              "surface": "#f8f9fd",
+              "primary-container": "#004a77",
+              "on-surface-variant": "#41474f",
+              "surface-variant": "#e1e2e7",
+              "on-tertiary-fixed-variant": "#6e3900",
+              "surface-container-high": "#e7e8ec",
+              "on-primary-fixed-variant": "#004a77",
+              "surface-container": "#edeef2",
+              "on-error-container": "#93000a",
+              "tertiary": "#4d2600",
+              "surface-container-low": "#f3f3f8",
+              "inverse-on-surface": "#f0f0f5",
+              "error-container": "#ffdad6",
+              "secondary": "#1b6d24",
+              "on-primary": "#ffffff",
+              "inverse-primary": "#98cbff",
+              "secondary-fixed-dim": "#88d982",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#cfe5ff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 sticky z-50 no-border bg-[#edeef2] dark:bg-slate-900 flex justify-between items-center px-6 py-4 w-full flat no shadows">
+<div class="flex items-center gap-4">
+<button class="text-[#003354] dark:text-blue-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-manrope font-bold text-2xl tracking-tight text-[#003354] dark:text-blue-400">The Executive Inventory</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-[#003354] dark:text-blue-400 hover:bg-[#e1e2e7] dark:hover:bg-slate-800 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 pt-10 pb-20">
+<!-- Header Section: Asymmetric Editorial Layout -->
+<section class="mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+<div class="space-y-2">
+<p class="text-on-surface-variant font-medium tracking-widest uppercase text-xs">Operational Canvas</p>
+<h2 class="text-5xl font-extrabold tracking-tighter text-primary">메뉴 관리</h2>
+<p class="text-on-surface-variant max-w-md">메뉴 구성을 정교하게 조정하세요. 가격, 노출 여부, 품절 상태를 실시간으로 업데이트할 수 있습니다.</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-high text-primary px-6 py-3 rounded-md font-bold flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined">category</span>
+                    카테고리 추가
+                </button>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-md font-bold flex items-center gap-2 hover:opacity-90 transition-opacity shadow-lg">
+<span class="material-symbols-outlined">add</span>
+                    새 메뉴 추가
+                </button>
+</div>
+</section>
+<!-- Menu Categories Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Category Sidebar / Navigation -->
+<aside class="lg:col-span-3 space-y-1">
+<h3 class="text-label-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4 px-2">카테고리</h3>
+<nav class="flex flex-col gap-1">
+<a class="bg-primary-container text-on-primary-container flex items-center justify-between px-4 py-3 rounded-md font-bold transition-all" href="#">
+<span>전체 메뉴</span>
+<span class="text-xs bg-primary text-on-primary px-2 py-0.5 rounded-full">24</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container px-4 py-3 rounded-md flex items-center justify-between transition-colors" href="#">
+<span>시그니처 스테이크</span>
+<span class="text-xs text-outline">8</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container px-4 py-3 rounded-md flex items-center justify-between transition-colors" href="#">
+<span>와인 셀러</span>
+<span class="text-xs text-outline">12</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container px-4 py-3 rounded-md flex items-center justify-between transition-colors" href="#">
+<span>수제 디저트</span>
+<span class="text-xs text-outline">4</span>
+</a>
+</nav>
+</aside>
+<!-- Main Menu List -->
+<div class="lg:col-span-9 space-y-10">
+<!-- Section: Signature Steaks -->
+<section>
+<div class="flex items-center gap-4 mb-6">
+<h3 class="text-2xl font-bold tracking-tight text-primary">시그니처 스테이크</h3>
+<div class="h-[1px] flex-grow bg-outline-variant/20"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Menu Item Card 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex gap-5 group hover:shadow-xl transition-all duration-300 border border-transparent hover:border-primary/5">
+<div class="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-surface-container">
+<img class="h-full w-full object-cover" data-alt="Premium grilled ribeye steak on a plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiQoFX340PpHrbqqjDxFVr95M8vQt5MFtxNp23ddUg8vxhLfRAm9jVeaXFiW4U_kC2Yh7X0TafzmYzy5NVDNRhfP881BpqBTVuO6qdYueoyHDDOuceUtOdgv3Ey0z-H9dgJ_Qq-0_acRWItHNKk3kSspv38m5yW7QwAgO0yCvhqhIZig5SjrfL1Kp1MUssDQHkpbvWEIH0nCXiQ9y26LyqREV-vU-4UMimt9N_mCQW85Y_L1Kcos1D4iI1rvo3UNlt4GMnwWb8Zu0"/>
+<div class="absolute top-2 left-2">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-tighter">베스트</span>
+</div>
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-bold text-lg text-primary leading-tight">드라이 에이징 꽃등심</h4>
+<p class="text-on-surface-variant text-sm line-clamp-1">28일 숙성, 본인...</p>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-bold text-primary">$48.00</span>
+<div class="flex items-center gap-3">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">판매 중</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Menu Item Card 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex gap-5 group hover:shadow-xl transition-all duration-300 border border-transparent hover:border-primary/5">
+<div class="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-surface-container">
+<img class="h-full w-full object-cover grayscale opacity-60" data-alt="Filet Mignon with peppercorn sauce" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsuVUdmj7OFfFAA6TDu3tePTsikrZomXD-uYJR50_I7yAVIIpf75qOwlymReQdv7excyT4bXh72aPb7bMiP5kqCe0AIUNmjKH0PutysCKzwsP0Vf6i6bWLZjgsarLDt2TVZER-zYs_2OZWxusWSdy1t9w6gp_LmjJ5UBbDWglpq9o4YJgg85KIJt0-EVsbqhAVASzeicQKdCeafiyGI3j2nk5GRr_9h3XzqzGh4mQUoX5Ww2_tOlfQAPeu5qRfdwrDA5pHdP_pbuk"/>
+<div class="absolute inset-0 flex items-center justify-center bg-inverse-surface/40">
+<span class="text-white text-[10px] font-black uppercase tracking-widest px-2 py-1 border border-white">품절</span>
+</div>
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-bold text-lg text-primary opacity-50 leading-tight">클래식 안심 스테이크</h4>
+<p class="text-on-surface-variant text-sm line-clamp-1">목초 사육 소고기...</p>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-bold text-primary opacity-50">$52.00</span>
+<div class="flex items-center gap-3">
+<span class="text-[10px] font-bold text-error uppercase tracking-widest">일시 품절</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Wine Cellar -->
+<section>
+<div class="flex items-center gap-4 mb-6">
+<h3 class="text-2xl font-bold tracking-tight text-primary">와인 셀러</h3>
+<div class="h-[1px] flex-grow bg-outline-variant/20"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Menu Item Card 3 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex gap-5 group hover:shadow-xl transition-all duration-300 border border-transparent hover:border-primary/5">
+<div class="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-surface-container">
+<img class="h-full w-full object-cover" data-alt="Luxury red wine bottle and glass" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBULVboJw0USAs2006IkoMS9akBJ82iorkLcj7heVQlY9SpTmdCpPEr18j8dL7ZhHyoV63UViZtXojA500CU72O29p6W63TdvWe2GuPkq18AdxGutZyr7aMVkYL7uYatcZ1uTlIC8d8tD51ATAjtgI-XRRPIYSYT6E51_TGaHJyUvuhNMryMRRbJ6pfW6nOzP1WrrAl_Et2Nkj8jX4k0yH_oVM703LCgksFggr-UDyC0Pe-YzzZ3rF3blMBTdh949m4xKzuq6BciMQ"/>
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-bold text-lg text-primary leading-tight">카베르네 소비뇽</h4>
+<p class="text-on-surface-variant text-sm line-clamp-1">Napa Valley, Reserve 2018</p>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-bold text-primary">$120.00</span>
+<div class="flex items-center gap-3">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">판매 중</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Menu Item Card 4 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex gap-5 group hover:shadow-xl transition-all duration-300 border border-transparent hover:border-primary/5">
+<div class="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-surface-container">
+<img class="h-full w-full object-cover" data-alt="White wine pouring into a glass" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVKdx75i1dzN0i21SH-AxfxD4jo-HdOvcZtWfiQWre5pJryER3N7ARZMbUtRKat4FQziAJU1d5LuKFOWmjeEC15CDqWjoFqchj4keI_KeXsusxSsbIJPi6C-3pl9xnKYdNoldBV6xENNal6IM146XjF1GXZ_oXnUMbsGRae-RUCQ1ExtvcJKcQfgEXJ8-Hla-vHtlScIdQ9mhKRiguuZ1A5QTQDHyj_Vp0cu5KOIXJ8-mi-B9wAiAIquhwyphkVczg6Dv7ThYVIZE"/>
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-bold text-lg text-primary leading-tight">샤도네이</h4>
+<p class="text-on-surface-variant text-sm line-clamp-1">Marlborough, Crisp White</p>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-4">
+<span class="font-bold text-primary">$85.00</span>
+<div class="flex items-center gap-3">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">판매 중</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-50 rounded-t-2xl border-t border-[#c1c7d0]/20 shadow-[0_-8px_24px_rgba(25,28,31,0.06)] md:hidden">
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">홈</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">주문</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#cfe5ff] dark:bg-blue-900 text-[#003354] dark:text-blue-100 rounded-xl px-4 py-1.5 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">메뉴</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#41474f] dark:text-slate-500 opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">star</span>
+<span class="font-inter text-[10px] font-semibold uppercase mt-1">리뷰</span>
+</a>
+</nav>
+<!-- Floating Action Button for Mobile -->
+<button class="fixed right-6 bottom-28 md:bottom-10 bg-primary text-on-primary w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</body></html>

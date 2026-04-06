@@ -3,27 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@color/surface">
 
-    <TextView
-        android:id="@+id/tv_orders_title"
+    <LinearLayout
+        android:id="@+id/orders_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:gravity="center"
-        android:paddingVertical="16dp"
-        android:text="주문 현황"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/page_horizontal_padding"
+        android:paddingVertical="@dimen/spacing_5"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="주문 관리"
+            android:textAppearance="@style/TextAppearance.App.Headline.Small" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_empty_orders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="들어온 주문이 없습니다."
-        android:textSize="16sp"
+        android:text="주문 내역이 없습니다"
+        android:textAppearance="@style/TextAppearance.App.Body.Medium"
+        android:textColor="@color/on_surface_variant"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -35,8 +41,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_orders_title" />
+        android:paddingHorizontal="@dimen/page_horizontal_padding"
+        android:paddingBottom="@dimen/spacing_6"
+        app:layout_constraintTop_toBottomOf="@id/orders_header"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

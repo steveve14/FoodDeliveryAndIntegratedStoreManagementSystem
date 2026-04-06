@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Executive Inventory - 설정</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts: Manrope & Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary": "#4d2600",
+              "on-surface": "#191c1f",
+              "on-secondary-container": "#217128",
+              "surface-container-highest": "#e1e2e7",
+              "secondary": "#1b6d24",
+              "primary": "#003354",
+              "on-error-container": "#93000a",
+              "surface": "#f8f9fd",
+              "secondary-fixed": "#a3f69c",
+              "on-tertiary": "#ffffff",
+              "surface-container-high": "#e7e8ec",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed-dim": "#98cbff",
+              "on-tertiary-fixed": "#2f1500",
+              "on-primary-container": "#86baed",
+              "error": "#ba1a1a",
+              "inverse-on-surface": "#f0f0f5",
+              "on-tertiary-container": "#f0a465",
+              "surface-container-low": "#f3f3f8",
+              "on-background": "#191c1f",
+              "on-primary-fixed-variant": "#004a77",
+              "surface-tint": "#296290",
+              "outline": "#727880",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed-variant": "#6e3900",
+              "background": "#f8f9fd",
+              "on-secondary-fixed-variant": "#005312",
+              "on-secondary": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-variant": "#e1e2e7",
+              "outline-variant": "#c1c7d0",
+              "primary-container": "#004a77",
+              "on-secondary-fixed": "#002204",
+              "on-primary-fixed": "#001d33",
+              "inverse-primary": "#98cbff",
+              "surface-dim": "#d9dade",
+              "surface-bright": "#f8f9fd",
+              "on-error": "#ffffff",
+              "tertiary-container": "#6e3900",
+              "on-surface-variant": "#41474f",
+              "inverse-surface": "#2e3134",
+              "primary-fixed": "#cfe5ff",
+              "tertiary-fixed": "#ffdcc3",
+              "tertiary-fixed-dim": "#ffb77d",
+              "surface-container": "#edeef2",
+              "secondary-container": "#a0f399",
+              "secondary-fixed-dim": "#88d982"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- SideNavBar (Authority: JSON & Design System) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-72 border-r-0 bg-slate-100 dark:bg-slate-900 z-50">
+<div class="text-xl font-bold text-sky-900 dark:text-white px-6 py-8">
+<div class="font-headline text-2xl font-bold">The Executive Inventory</div>
+<div class="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wider">상점 관리자</div>
+</div>
+<nav class="flex-1 mt-4">
+<!-- Active Tab: 상점 정보 -->
+<a class="flex items-center bg-white dark:bg-slate-800 text-sky-900 dark:text-sky-100 font-bold rounded-l-lg ml-4 transition-colors scale-95 active:duration-150 px-8 py-4" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="storefront">storefront</span>
+<span class="font-label">상점 정보</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors px-8 py-4" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="schedule">schedule</span>
+<span class="font-label">영업 시간</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors px-8 py-4" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="distance">distance</span>
+<span class="font-label">배달 지역</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors px-8 py-4" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="payments">payments</span>
+<span class="font-label">결제 수단</span>
+</a>
+<a class="flex items-center text-slate-500 dark:text-slate-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors px-8 py-4" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="notifications">notifications</span>
+<span class="font-label">알림 설정</span>
+</a>
+</nav>
+<div class="p-8 mt-auto border-t border-slate-200/50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">A</div>
+<div>
+<div class="text-sm font-bold text-sky-900">Admin User</div>
+<div class="text-xs text-slate-400">관리자 프로필</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 flex justify-between items-center h-20 pl-80 pr-12 w-full bg-slate-50 dark:bg-slate-950 z-40">
+<h1 class="font-manrope text-3xl font-bold text-sky-900 dark:text-sky-200">설정</h1>
+<div class="flex items-center gap-6">
+<!-- Search Bar on Right -->
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-white border-0 rounded-lg text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="설정 검색..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-400 hover:text-sky-700 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-sky-700 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-slate-200">
+<img alt="사용자 아바타" class="w-full h-full object-cover" data-alt="User profile avatar icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8OIOaZ5YhLS4MvfpRg9Iy8arwi7XCJr5eyYnzRiBgRlEja3AYSqGuIny6wvn5_Sh7U1JHC_EqPc2GtLCtTUCIEuDcaznT9PSZcS3J2dmVU1_yVgu1-YZ1IdLLAV3gEs4WHXeQ2AP9o6nZkNrqIZnU5ocrlAuK-g01CTQmxG8DzPOeVS1MrPaZbfClJ2AT77wNo05intBXIc3OydSyDZ2Gmbd4w_ZRthXL-Vn41hjQrR0hqc_VISsxb8WWVqHvMeF0ZJkK-ftr7GI"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-32 pl-80 pr-12 pb-20 max-w-7xl mx-auto">
+<div class="grid grid-cols-12 gap-10">
+<!-- Section 1: Basic Info (Architectural Bento Style) -->
+<section class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 transition-all">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="text-2xl font-headline font-bold text-primary">기본 정보 관리</h2>
+<p class="text-sm font-label text-on-surface-variant mt-1">상점의 핵심 아이덴티티를 설정합니다.</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-md font-bold text-sm hover:opacity-90 transition-all">저장하기</button>
+</div>
+<div class="space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">상점명</label>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:bg-surface-container-lowest transition-all px-0 py-3 text-lg font-medium text-on-surface" type="text" value="The Executive Inventory Gangnam"/>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">대표자 연락처</label>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:bg-surface-container-lowest transition-all px-0 py-3 text-lg font-medium text-on-surface" type="text" value="02-1234-5678"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">상점 설명</label>
+<textarea class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:bg-surface-container-lowest transition-all px-0 py-3 text-base text-on-surface resize-none" rows="3">강남 중심가에 위치한 프리미엄 리테일 스토어입니다. 최상의 품질과 신뢰를 바탕으로 고객님께 다가갑니다.</textarea>
+</div>
+<div class="pt-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">상점 로고</label>
+<div class="flex items-center gap-6">
+<div class="w-24 h-24 rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant/20">
+<img alt="상점 로고" class="w-full h-full object-cover" data-alt="Store brand logo mockup" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZvZXffB7eeAHTIgQg2wv3s6lLTicf-qy7JmHI1O8khFNxBXpDxi-mI3vE2BZgTxgiRi8SAAS-FePsTCqAjQLurcy0alXlxzr5r-X-eNTV_MsfrONfvD0cHd2tjqcSVSG2CZeEH4B_krzvgCeNZS7jNk1E1HvzPPOwJqFWi8iyeCEmI7C2WxgaKXVqi-9XHyuP9HOtV0-lq2uVO-1Dist3MFuKcM1O6tU-uqVtR8NbmspsOG9R1hVA2B_TQ81-fe8DLd5wQ29JsW0"/>
+</div>
+<div class="space-y-2">
+<button class="text-primary font-bold text-sm border border-primary px-4 py-2 rounded-md hover:bg-primary/5 transition-colors">이미지 업로드</button>
+<p class="text-[10px] text-on-surface-variant">최소 500x500px, PNG 또는 JPG 형식을 권장합니다.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Business Hours (Right Side Column) -->
+<section class="col-span-12 lg:col-span-4 bg-surface-container-low rounded-xl p-8">
+<h2 class="text-xl font-headline font-bold text-primary mb-6">영업 시간 설정</h2>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<span class="text-sm font-bold w-12 text-on-surface">월요일</span>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span>09:00</span><span>-</span><span>22:00</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<span class="text-sm font-bold w-12 text-on-surface">화요일</span>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span>09:00</span><span>-</span><span>22:00</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<span class="text-sm font-bold w-12 text-on-surface">수요일</span>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span>09:00</span><span>-</span><span>22:00</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 border-l-4 border-l-error">
+<span class="text-sm font-bold w-12 text-error">일요일</span>
+<span class="text-sm text-error font-medium">정기 휴무</span>
+<span class="material-symbols-outlined text-error text-sm" data-icon="block">block</span>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/30 space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<span class="block text-sm font-bold">임시 휴무 설정</span>
+<span class="text-xs text-on-surface-variant">즉시 상점 노출을 중단합니다.</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</div>
+<div class="bg-primary/5 p-4 rounded-lg">
+<div class="flex items-center gap-2 mb-2 text-primary font-bold text-sm">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+                            브레이크 타임
+                        </div>
+<div class="text-xs text-on-surface-variant">매일 15:00 - 17:00 (2시간)</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Delivery/Takeout (Wide Layout) -->
+<section class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-8">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="local_shipping">local_shipping</span>
+<h2 class="text-xl font-headline font-bold text-primary">배달 / 포장 설정</h2>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">배달 가능 반경</label>
+<div class="flex items-end gap-2">
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 focus:border-primary focus:bg-white transition-all px-0 py-2 text-2xl font-bold" type="number" value="3.5"/>
+<span class="text-sm font-bold text-on-surface pb-3">km</span>
+</div>
+</div>
+<div class="space-y-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">최소 주문 금액</label>
+<div class="flex items-end gap-2">
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-primary/20 focus:border-primary focus:bg-white transition-all px-0 py-2 text-2xl font-bold" type="number" value="15000"/>
+<span class="text-sm font-bold text-on-surface pb-3">원</span>
+</div>
+</div>
+</div>
+<div class="mt-8 flex items-center justify-between p-4 bg-secondary-container/20 rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="shopping_bag">shopping_bag</span>
+<div>
+<div class="text-sm font-bold text-on-secondary-container">매장 포장 주문 활성화</div>
+<div class="text-xs text-on-secondary-container/70">주문 고객에게 10% 할인을 자동 적용합니다.</div>
+</div>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</div>
+</div>
+</section>
+<!-- Section 4: Payment Methods (Grid Style) -->
+<section class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-8">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="credit_card">credit_card</span>
+<h2 class="text-xl font-headline font-bold text-primary">결제 수단 관리</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface rounded-lg flex items-center justify-between border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-5 bg-primary/10 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-primary" data-icon="payments">payments</span>
+</div>
+<span class="text-sm font-medium">신용/체크카드</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="check">check</span>
+</div>
+<div class="p-4 bg-surface rounded-lg flex items-center justify-between border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-5 bg-yellow-400/20 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-yellow-700" data-icon="qr_code">qr_code</span>
+</div>
+<span class="text-sm font-medium">카카오페이</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="check">check</span>
+</div>
+<div class="p-4 bg-surface rounded-lg flex items-center justify-between border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-5 bg-green-400/20 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-green-700" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<span class="text-sm font-medium">네이버페이</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="check">check</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg flex items-center justify-between border border-dashed border-outline-variant">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+<span class="text-sm font-medium">결제수단 추가</span>
+</div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-surface-container-low rounded-lg flex items-center justify-between">
+<div>
+<div class="text-sm font-bold">자동 정산 알림</div>
+<div class="text-xs text-on-surface-variant">매월 1일 정산 보고서를 전송합니다.</div>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="mail">mail</span>
+</div>
+</section>
+</div>
+</main>
+<!-- FAB Suppression: Contextually suppressed on settings screens as per hierarchy -->
+</body></html>
