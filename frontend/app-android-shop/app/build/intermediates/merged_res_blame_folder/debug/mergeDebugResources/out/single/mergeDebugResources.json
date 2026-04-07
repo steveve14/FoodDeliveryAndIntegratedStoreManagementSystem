@@ -16,6 +16,10 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\layout\\item_product.xml"
     },
     {
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\layout_fragment_store_management.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\layout\\fragment_store_management.xml"
+    },
+    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\layout_fragment_payment_settings.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\layout\\fragment_payment_settings.xml"
     },
@@ -44,10 +48,6 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\ic_search.xml"
     },
     {
-        "merged": "com.fooddelivery.shop.app-debug-31:/layout_fragment_orders.xml.flat",
-        "source": "com.fooddelivery.shop.app-main-33:/layout/fragment_orders.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\drawable_ic_menu.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\ic_menu.xml"
     },
@@ -68,16 +68,20 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\mipmap-mdpi\\ic_launcher.webp"
     },
     {
+        "merged": "com.fooddelivery.shop.app-debug-31:/layout_fragment_store_management.xml.flat",
+        "source": "com.fooddelivery.shop.app-main-33:/layout/fragment_store_management.xml"
+    },
+    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\mipmap-xxxhdpi_ic_launcher_foreground.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\mipmap-xxxhdpi\\ic_launcher_foreground.webp"
     },
     {
-        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\drawable_ic_menu_food.xml.flat",
-        "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\ic_menu_food.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\anim_fade_in.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\anim\\fade_in.xml"
+    },
+    {
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\drawable_ic_menu_food.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\ic_menu_food.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\mipmap-xhdpi_ic_launcher_foreground.webp.flat",
@@ -114,6 +118,10 @@
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\drawable_ic_order_status.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\ic_order_status.xml"
+    },
+    {
+        "merged": "com.fooddelivery.shop.app-debug-31:/layout_fragment_home.xml.flat",
+        "source": "com.fooddelivery.shop.app-main-33:/layout/fragment_home.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\drawable_bg_glass_search.xml.flat",
@@ -212,10 +220,6 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\bg_badge_new.xml"
     },
     {
-        "merged": "com.fooddelivery.shop.app-debug-31:/layout_fragment_products.xml.flat",
-        "source": "com.fooddelivery.shop.app-main-33:/layout/fragment_products.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
     },
@@ -252,6 +256,10 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\layout\\item_order.xml"
     },
     {
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\layout_item_review.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\layout\\item_review.xml"
+    },
+    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\layout_nav_header.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\layout\\nav_header.xml"
     },
@@ -268,10 +276,6 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\ic_home.xml"
     },
     {
-        "merged": "com.fooddelivery.shop.app-debug-31:/layout_fragment_settings.xml.flat",
-        "source": "com.fooddelivery.shop.app-main-33:/layout/fragment_settings.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\anim_fade_out.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\anim\\fade_out.xml"
     },
@@ -286,10 +290,6 @@
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\layout_fragment_profile.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\layout\\fragment_profile.xml"
-    },
-    {
-        "merged": "com.fooddelivery.shop.app-debug-31:/layout_item_order.xml.flat",
-        "source": "com.fooddelivery.shop.app-main-33:/layout/item_order.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\mipmap-xxhdpi_ic_launcher.webp.flat",
@@ -336,16 +336,16 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\ic_launcher_background.xml"
     },
     {
-        "merged": "com.fooddelivery.shop.app-debug-31:/layout_item_product.xml.flat",
-        "source": "com.fooddelivery.shop.app-main-33:/layout/item_product.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\mipmap-mdpi_ic_launcher_foreground.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\mipmap-mdpi\\ic_launcher_foreground.webp"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\layout_activity_main.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\drawable_bg_gradient_primary_plat.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-main-33:\\drawable\\bg_gradient_primary_plat.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.13\\com.fooddelivery.shop.app-debug-31:\\anim_slide_down.xml.flat",

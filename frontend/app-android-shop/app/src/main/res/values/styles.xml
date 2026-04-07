@@ -8,7 +8,8 @@
         <item name="cardBackgroundColor">@color/surface_container_lowest</item>
         <item name="cardElevation">@dimen/elevation_sm</item>
         <item name="cardCornerRadius">@dimen/radius_lg</item>
-        <item name="strokeWidth">0dp</item>
+        <item name="strokeWidth">1dp</item>                        <!-- 0dp → 1dp -->
+        <item name="strokeColor">@color/outline_variant</item>     <!-- 추가 -->
         <item name="android:layout_marginBottom">@dimen/spacing_3</item>
     </style>
     <style name="Widget.App.Card.Elevated">

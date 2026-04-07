@@ -51,6 +51,15 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_delivery) {
                     selectedFragment = new DeliveryFragment();
                     toolbar.setTitle("배달 관리");
+                } else if (id == R.id.nav_review_management) {
+                    selectedFragment = new ReviewsFragment();
+                    toolbar.setTitle("리뷰 관리");
+                } else if (id == R.id.nav_sales_statistics) {
+                    selectedFragment = new SalesFragment();
+                    toolbar.setTitle("매출·정산");
+                } else if (id == R.id.nav_store_management) {
+                    selectedFragment = new StoreManagementFragment();
+                    toolbar.setTitle("가게 관리");
                 } else if (id == R.id.nav_settings) {
                     selectedFragment = new SettingsFragment();
                     toolbar.setTitle("매장 설정");

@@ -84,10 +84,6 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\layout\\fragment_active_delivery.xml"
     },
     {
-        "merged": "com.fooddelivery.delivery.app-merged_res-31:/layout_fragment_history.xml.flat",
-        "source": "com.fooddelivery.delivery.app-main-33:/layout/fragment_history.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\mipmap-mdpi_ic_launcher.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\mipmap-mdpi\\ic_launcher.webp"
     },
@@ -216,20 +212,12 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\mipmap-xxxhdpi\\ic_launcher_foreground.webp"
     },
     {
-        "merged": "com.fooddelivery.delivery.app-merged_res-31:/layout_fragment_active_delivery.xml.flat",
-        "source": "com.fooddelivery.delivery.app-main-33:/layout/fragment_active_delivery.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\drawable_ic_search.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\drawable\\ic_search.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\drawable_ic_delivery.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\drawable\\ic_delivery.xml"
-    },
-    {
-        "merged": "com.fooddelivery.delivery.app-merged_res-31:/layout_item_delivery.xml.flat",
-        "source": "com.fooddelivery.delivery.app-main-33:/layout/item_delivery.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\drawable_bg_glass_search.xml.flat",
@@ -298,10 +286,6 @@
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\layout_item_delivery.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\layout\\item_delivery.xml"
-    },
-    {
-        "merged": "com.fooddelivery.delivery.app-merged_res-31:/layout_item_history.xml.flat",
-        "source": "com.fooddelivery.delivery.app-main-33:/layout/item_history.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\layout_activity_main.xml.flat",

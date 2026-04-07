@@ -6,7 +6,10 @@ import com.fooddelivery.shop.models.LoginRequest;
 import com.fooddelivery.shop.models.MenuDto;
 import com.fooddelivery.shop.models.OrderDto;
 import com.fooddelivery.shop.models.OrderStatusRequest;
+import com.fooddelivery.shop.models.ReplyRequest;
+import com.fooddelivery.shop.models.ReviewDto;
 import com.fooddelivery.shop.models.StoreDto;
+import com.fooddelivery.shop.models.UpdateStoreRequest;
 import com.fooddelivery.shop.models.UserDto;
 
 import java.util.List;
@@ -31,6 +34,12 @@ public interface ApiService {
     @GET("api/v1/stores/me")
     Call<ApiResponse<StoreDto>> getMyStore();
 
+    @GET("api/v1/stores/{storeId}")
+    Call<ApiResponse<StoreDto>> getStore(@Path("storeId") String storeId);
+
+    @PUT("api/v1/stores/{storeId}")
+    Call<ApiResponse<StoreDto>> updateStore(@Path("storeId") String storeId, @Body UpdateStoreRequest request);
+
     @GET("api/v1/orders/store/{storeId}")
     Call<ApiResponse<List<OrderDto>>> getStoreOrders(@Path("storeId") String storeId);
 
@@ -49,5 +58,12 @@ public interface ApiService {
 
     @DELETE("api/v1/stores/{storeId}/menus/{menuId}")
     Call<ApiResponse<Void>> deleteMenu(@Path("storeId") String storeId, @Path("menuId") String menuId);
+
+    // Reviews
+    @GET("api/v1/stores/{storeId}/reviews")
+    Call<ApiResponse<List<ReviewDto>>> getStoreReviews(@Path("storeId") String storeId);
+
+    @POST("api/v1/stores/{storeId}/reviews/{reviewId}/reply")
+    Call<ApiResponse<ReviewDto>> replyToReview(@Path("storeId") String storeId, @Path("reviewId") String reviewId, @Body ReplyRequest request);
 }
 

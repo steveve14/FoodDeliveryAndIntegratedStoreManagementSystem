@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_3"
+    style="@style/Widget.App.Card">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_5">
+
+        <!-- Header: User + Rating + Date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_2">
+
+            <TextView
+                android:id="@+id/tv_review_user"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.App.Title.Small"
+                android:textColor="@color/on_surface" />
+
+            <TextView
+                android:id="@+id/tv_review_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.App.Label.Small" />
+        </LinearLayout>
+
+        <!-- Star Rating -->
+        <TextView
+            android:id="@+id/tv_review_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/tertiary"
+            android:textSize="14sp"
+            android:layout_marginBottom="@dimen/spacing_3" />
+
+        <!-- Review Content -->
+        <TextView
+            android:id="@+id/tv_review_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.App.Body.Medium"
+            android:layout_marginBottom="@dimen/spacing_3" />
+
+        <!-- Owner Reply (if exists) -->
+        <LinearLayout
+            android:id="@+id/layout_reply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/surface_container_low"
+            android:padding="@dimen/spacing_4"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="사장님 답변"
+                android:textAppearance="@style/TextAppearance.App.Label.Medium"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="@dimen/spacing_2" />
+
+            <TextView
+                android:id="@+id/tv_reply_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.App.Body.Small" />
+        </LinearLayout>
+
+        <!-- Reply Button -->
+        <Button
+            android:id="@+id/btn_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height_sm"
+            android:text="답변 작성"
+            android:layout_marginTop="@dimen/spacing_3"
+            style="@style/Widget.App.Button.Outlined" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

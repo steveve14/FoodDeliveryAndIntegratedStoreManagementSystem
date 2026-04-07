@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface">
+    android:background="@color/surface"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,30 +22,89 @@
             android:layout_marginBottom="@dimen/spacing_5" />
 
         <!-- Period selector chips -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_period"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_5"
-            app:singleSelection="true">
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="오늘" android:checked="true" style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="이번 주" style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="이번 달" style="@style/Widget.Material3.Chip.Filter" />
-        </com.google.android.material.chip.ChipGroup>
+            android:scrollbars="none">
 
-        <!-- Revenue Card -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_today"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘"
+                    android:checked="true"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이번 주"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이번 달"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_all_period"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="전체"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Revenue Hero Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_5"
-            style="@style/Widget.App.Card">
+            style="@style/Widget.App.Card.Hero">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_gradient_primary"
                 android:orientation="vertical"
-                android:padding="@dimen/spacing_5">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="총 매출액" android:textAppearance="@style/TextAppearance.App.Label.Small" android:layout_marginBottom="@dimen/spacing_2" />
-                <TextView android:id="@+id/tv_total_revenue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₩0" android:textAppearance="@style/TextAppearance.App.Headline.Large" android:textColor="@color/primary" />
+                android:padding="@dimen/spacing_6">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="총 매출액"
+                    android:textAppearance="@style/TextAppearance.App.Label.Medium"
+                    android:textColor="@color/primary_fixed_dim"
+                    android:layout_marginBottom="@dimen/spacing_2" />
+
+                <TextView
+                    android:id="@+id/tv_total_revenue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₩0"
+                    android:textAppearance="@style/TextAppearance.App.Display.Medium"
+                    android:textColor="@color/on_primary" />
+
+                <TextView
+                    android:id="@+id/tv_completed_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="완료 주문 0건"
+                    android:textAppearance="@style/TextAppearance.App.Label.Small"
+                    android:textColor="@color/primary_fixed"
+                    android:layout_marginTop="@dimen/spacing_2" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -54,18 +114,150 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/spacing_5">
-            <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="@dimen/spacing_2" style="@style/Widget.App.Card.Tonal">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/spacing_4">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="주문 건수" android:textAppearance="@style/TextAppearance.App.Label.Small" />
-                    <TextView android:id="@+id/tv_order_count_sales" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0건" android:textAppearance="@style/TextAppearance.App.Title.Large" android:textColor="@color/secondary" android:layout_marginTop="@dimen/spacing_1" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/spacing_2"
+                style="@style/Widget.App.Card.Tonal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="총 주문"
+                        android:textAppearance="@style/TextAppearance.App.Label.Small" />
+
+                    <TextView
+                        android:id="@+id/tv_order_count_sales"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0건"
+                        android:textAppearance="@style/TextAppearance.App.Title.Large"
+                        android:textColor="@color/secondary"
+                        android:layout_marginTop="@dimen/spacing_1" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-            <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_2" style="@style/Widget.App.Card.Tonal">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/spacing_4">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="평균 주문" android:textAppearance="@style/TextAppearance.App.Label.Small" />
-                    <TextView android:id="@+id/tv_avg_order_sales" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₩0" android:textAppearance="@style/TextAppearance.App.Title.Large" android:textColor="@color/tertiary" android:layout_marginTop="@dimen/spacing_1" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="@dimen/spacing_2"
+                style="@style/Widget.App.Card.Tonal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="평균 주문"
+                        android:textAppearance="@style/TextAppearance.App.Label.Small" />
+
+                    <TextView
+                        android:id="@+id/tv_avg_order_sales"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="₩0"
+                        android:textAppearance="@style/TextAppearance.App.Title.Large"
+                        android:textColor="@color/tertiary"
+                        android:layout_marginTop="@dimen/spacing_1" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_2"
+                style="@style/Widget.App.Card.Tonal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="취소"
+                        android:textAppearance="@style/TextAppearance.App.Label.Small" />
+
+                    <TextView
+                        android:id="@+id/tv_cancel_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0건"
+                        android:textAppearance="@style/TextAppearance.App.Title.Large"
+                        android:textColor="@color/error"
+                        android:layout_marginTop="@dimen/spacing_1" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Status Breakdown -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="상태별 주문"
+            style="@style/Widget.App.SectionHeader" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_5"
+            style="@style/Widget.App.Card">
+
+            <LinearLayout
+                android:id="@+id/layout_status_breakdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_5">
+
+                <TextView
+                    android:id="@+id/tv_status_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="주문 데이터가 없습니다"
+                    android:textAppearance="@style/TextAppearance.App.Body.Small"
+                    android:gravity="center" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Recent Orders -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="최근 완료 주문"
+            style="@style/Widget.App.SectionHeader" />
+
+        <LinearLayout
+            android:id="@+id/layout_recent_orders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_recent_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="완료된 주문이 없습니다"
+                android:textAppearance="@style/TextAppearance.App.Body.Small"
+                android:textColor="@color/on_surface_variant"
+                android:gravity="center"
+                android:paddingVertical="@dimen/spacing_6" />
         </LinearLayout>
 
     </LinearLayout>

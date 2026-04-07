@@ -5,21 +5,124 @@
     android:layout_height="match_parent"
     android:background="@color/surface">
 
+    <!-- Header -->
     <LinearLayout
         android:id="@+id/reviews_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingHorizontal="@dimen/page_horizontal_padding"
-        android:paddingVertical="@dimen/spacing_5"
+        android:paddingTop="@dimen/spacing_5"
+        android:paddingBottom="@dimen/spacing_3"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="리뷰 관리"
-            android:textAppearance="@style/TextAppearance.App.Headline.Small" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_3">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="리뷰 관리"
+                android:textAppearance="@style/TextAppearance.App.Headline.Small" />
+
+            <TextView
+                android:id="@+id/tv_review_summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="평균 0.0 · 총 0건"
+                android:textAppearance="@style/TextAppearance.App.Label.Small" />
+        </LinearLayout>
+
+        <!-- Rating Filter Chips -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="전체"
+                    android:checked="true"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_star5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 5"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_star4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 4"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_star3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 3"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_star2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 2"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_star1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="★ 1"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_no_reply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="미답변"
+                    android:layout_marginStart="@dimen/spacing_2"
+                    style="@style/Widget.App.Chip.Filter" />
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
 
+    <!-- Empty State -->
+    <TextView
+        android:id="@+id/tv_empty_reviews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="등록된 리뷰가 없습니다"
+        android:textAppearance="@style/TextAppearance.App.Body.Medium"
+        android:textColor="@color/on_surface_variant"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Review List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_reviews"
         android:layout_width="match_parent"
