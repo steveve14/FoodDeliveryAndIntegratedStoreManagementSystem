@@ -62,7 +62,7 @@
     <dimen name="bottom_nav_height">72dp</dimen>
     <dimen name="button_height_lg">52dp</dimen>
     <dimen name="button_height_md">44dp</dimen>
-    <dimen name="button_height_sm">36dp</dimen>
+    <dimen name="button_height_sm">38dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
     <dimen name="elevation_lg">8dp</dimen>
     <dimen name="elevation_md">4dp</dimen>

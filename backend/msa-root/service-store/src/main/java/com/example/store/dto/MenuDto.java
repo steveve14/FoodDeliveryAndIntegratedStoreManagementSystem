@@ -17,5 +17,6 @@ public class MenuDto {
   private String description;
   private long price;
   private boolean available;
+  private String imageUrl;
   private Instant createdAt;
 }

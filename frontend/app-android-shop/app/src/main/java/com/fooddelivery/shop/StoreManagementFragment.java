@@ -112,6 +112,10 @@ public class StoreManagementFragment extends Fragment {
                     String status = store.getStatus();
                     if (status != null) {
                         setStatus(status);
+                        StoreManager.getInstance().setStatus(status);
+                        if (getActivity() instanceof MainActivity) {
+                            ((MainActivity) getActivity()).refreshStatusDisplay();
+                        }
                     }
                 }
             }
@@ -178,6 +182,10 @@ public class StoreManagementFragment extends Fragment {
                         StoreManager.getInstance().setStore(
                                 updated.getId(), updated.getName(),
                                 StoreManager.getInstance().getOwnerName());
+                        StoreManager.getInstance().setStatus(currentStatus);
+                        if (getActivity() instanceof MainActivity) {
+                            ((MainActivity) getActivity()).refreshStatusDisplay();
+                        }
                     }
                 } else {
                     Toast.makeText(getContext(), "저장 실패", Toast.LENGTH_SHORT).show();

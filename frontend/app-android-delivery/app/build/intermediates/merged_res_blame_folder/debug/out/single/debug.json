@@ -76,10 +76,6 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\mipmap-hdpi\\ic_launcher_round.webp"
     },
     {
-        "merged": "com.fooddelivery.delivery.app-merged_res-31:/layout_fragment_profile.xml.flat",
-        "source": "com.fooddelivery.delivery.app-main-33:/layout/fragment_profile.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\layout_fragment_active_delivery.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\layout\\fragment_active_delivery.xml"
     },
@@ -218,6 +214,10 @@
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\drawable_ic_delivery.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-main-33:\\drawable\\ic_delivery.xml"
+    },
+    {
+        "merged": "com.fooddelivery.delivery.app-merged_res-31:/layout_fragment_home.xml.flat",
+        "source": "com.fooddelivery.delivery.app-main-33:/layout/fragment_home.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.delivery.app-merged_res-31:\\drawable_bg_glass_search.xml.flat",

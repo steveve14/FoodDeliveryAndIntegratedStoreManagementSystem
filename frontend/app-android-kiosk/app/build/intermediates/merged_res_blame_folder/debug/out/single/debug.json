@@ -16,10 +16,6 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\drawable\\bg_gradient_success.xml"
     },
     {
-        "merged": "com.fooddelivery.kiosk.app-merged_res-31:/layout_item_menu_kiosk.xml.flat",
-        "source": "com.fooddelivery.kiosk.app-main-33:/layout/item_menu_kiosk.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-merged_res-31:\\drawable_ic_orders.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\drawable\\ic_orders.xml"
     },
@@ -204,12 +200,12 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\drawable\\ripple_surface.xml"
     },
     {
-        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-merged_res-31:\\drawable_bg_badge_info.xml.flat",
-        "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\drawable\\bg_badge_info.xml"
-    },
-    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-merged_res-31:\\layout_item_menu_kiosk.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\layout\\item_menu_kiosk.xml"
+    },
+    {
+        "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-merged_res-31:\\drawable_bg_badge_info.xml.flat",
+        "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\drawable\\bg_badge_info.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-merged_res-31:\\layout_fragment_search.xml.flat",
@@ -240,16 +236,16 @@
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\mipmap-xhdpi\\ic_launcher.webp"
     },
     {
+        "merged": "com.fooddelivery.kiosk.app-merged_res-31:/drawable_bg_gradient_primary.xml.flat",
+        "source": "com.fooddelivery.kiosk.app-main-33:/drawable/bg_gradient_primary.xml"
+    },
+    {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-merged_res-31:\\drawable_ic_reviews.xml.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\drawable\\ic_reviews.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-merged_res-31:\\mipmap-hdpi_ic_launcher_round.webp.flat",
         "source": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-main-33:\\mipmap-hdpi\\ic_launcher_round.webp"
-    },
-    {
-        "merged": "com.fooddelivery.kiosk.app-merged_res-31:/layout_item_cart_kiosk.xml.flat",
-        "source": "com.fooddelivery.kiosk.app-main-33:/layout/item_cart_kiosk.xml"
     },
     {
         "merged": "C:\\Users\\User\\.gradle\\daemon\\8.2.1\\com.fooddelivery.kiosk.app-merged_res-31:\\drawable_bg_glass_search.xml.flat",

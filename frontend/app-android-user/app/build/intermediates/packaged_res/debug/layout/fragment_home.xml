@@ -1,76 +1,612 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/surface">
 
-    <!-- Glass Search Bar -->
+    <!-- ── Sticky TopAppBar ── -->
     <LinearLayout
-        android:id="@+id/search_bar_card"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginHorizontal="@dimen/page_horizontal_padding"
-        android:layout_marginTop="@dimen/spacing_6"
-        android:layout_marginBottom="@dimen/spacing_4"
-        android:background="@drawable/bg_glass_search"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="2dp"
         android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/spacing_5">
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/page_horizontal_padding"
+        android:paddingVertical="@dimen/spacing_4">
 
         <ImageView
-            android:layout_width="@dimen/icon_size_sm"
-            android:layout_height="@dimen/icon_size_sm"
-            android:src="@drawable/ic_search"
-            android:contentDescription="검색" />
+            android:layout_width="@dimen/icon_size_md"
+            android:layout_height="@dimen/icon_size_md"
+            android:contentDescription="위치"
+            android:src="@drawable/ic_store"
+            android:tint="@color/primary" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_location"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_3"
-            android:text="먹고 싶은 메뉴, 가게 검색"
-            android:textAppearance="@style/TextAppearance.App.Body.Medium"
-            android:textColor="@color/on_surface_variant" />
+            android:layout_marginStart="@dimen/spacing_2"
+            android:layout_weight="1"
+            android:text="주소를 입력해주세요"
+            android:textColor="@color/primary"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_search_top"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ripple_surface"
+            android:contentDescription="검색"
+            android:padding="@dimen/spacing_2"
+            android:src="@drawable/ic_search"
+            android:tint="@color/primary" />
+
+        <ImageButton
+            android:id="@+id/btn_notification"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/spacing_1"
+            android:background="@drawable/ripple_surface"
+            android:contentDescription="알림"
+            android:padding="@dimen/spacing_2"
+            android:src="@drawable/ic_notification"
+            android:tint="@color/primary" />
     </LinearLayout>
 
-    <!-- Category Chips -->
-    <HorizontalScrollView
-        android:id="@+id/category_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:clipToPadding="false"
-        android:paddingHorizontal="@dimen/page_horizontal_padding"
-        android:layout_marginBottom="@dimen/spacing_5">
-
-        <com.google.android.material.chip.ChipGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:singleSelection="true">
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="전체" style="@style/Widget.Material3.Chip.Filter" android:checked="true" />
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1인분" style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="치킨" style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="피자/양식" style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="한식" style="@style/Widget.Material3.Chip.Filter" />
-            <com.google.android.material.chip.Chip android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="중식" style="@style/Widget.Material3.Chip.Filter" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
-
-    <TextView
-        android:id="@+id/tv_recommendation_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/page_horizontal_padding"
-        android:layout_marginBottom="@dimen/spacing_4"
-        android:text="우리 동네 맛집 추천"
-        android:textAppearance="@style/TextAppearance.App.Title.Medium" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_stores"
+    <!-- ── Scrollable Content ── -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/spacing_6" />
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/spacing_6">
+
+            <!-- ── Search Bar ── -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="@dimen/page_horizontal_padding"
+                android:layout_marginTop="@dimen/spacing_4"
+                android:layout_marginBottom="@dimen/spacing_2">
+
+                <EditText
+                    android:id="@+id/et_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_glass_search"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="오늘은 어떤 음식을 드시고 싶으신가요?"
+                    android:inputType="text"
+                    android:paddingEnd="@dimen/spacing_4"
+                    android:paddingStart="48dp"
+                    android:singleLine="true"
+                    android:textColorHint="@color/on_surface_variant" />
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size_sm"
+                    android:layout_height="@dimen/icon_size_sm"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="14dp"
+                    android:contentDescription="검색"
+                    android:src="@drawable/ic_search"
+                    android:tint="@color/outline" />
+            </FrameLayout>
+
+            <!-- ── Category Bento Grid ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/page_horizontal_padding"
+                android:layout_marginVertical="@dimen/spacing_4"
+                android:orientation="vertical">
+
+                <!-- Row 1+2: 한식 large (left 50%) + 4 small cells (right 50%) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- 한식 featured (2-row height) -->
+                    <LinearLayout
+                        android:id="@+id/cat_korean"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="@dimen/spacing_1"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_category_featured"
+                        android:minHeight="140dp"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_4">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="한식"
+                            android:textColor="@color/primary_fixed_dim"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_1"
+                            android:text="따뜻한 집밥의 정석"
+                            android:textColor="@color/primary_fixed"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|end"
+                            android:layout_marginTop="@dimen/spacing_3"
+                            android:layout_weight="1"
+                            android:text="🍚"
+                            android:textSize="40sp" />
+                    </LinearLayout>
+
+                    <!-- Right 2×2 grid -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/spacing_1"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/cat_burger"
+                                android:layout_width="0dp"
+                                android:layout_height="64dp"
+                                android:layout_marginStart="@dimen/spacing_1"
+                                android:layout_marginEnd="@dimen/spacing_1"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_category_item"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🍔"
+                                    android:textSize="22sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="버거"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/cat_pizza"
+                                android:layout_width="0dp"
+                                android:layout_height="64dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_category_item"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🍕"
+                                    android:textSize="22sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="피자"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/cat_chinese"
+                                android:layout_width="0dp"
+                                android:layout_height="64dp"
+                                android:layout_marginStart="@dimen/spacing_1"
+                                android:layout_marginEnd="@dimen/spacing_1"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_category_item"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🥢"
+                                    android:textSize="22sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="중식"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/cat_japanese"
+                                android:layout_width="0dp"
+                                android:layout_height="64dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_category_item"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="🍣"
+                                    android:textSize="22sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="일식"
+                                    android:textColor="@color/on_surface"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Row 3: 4 small items -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_1"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/cat_snack"
+                        android:layout_width="0dp"
+                        android:layout_height="64dp"
+                        android:layout_marginEnd="@dimen/spacing_1"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_category_item"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🥕"
+                            android:textSize="22sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="분식"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cat_chicken"
+                        android:layout_width="0dp"
+                        android:layout_height="64dp"
+                        android:layout_marginEnd="@dimen/spacing_1"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_category_item"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🍗"
+                            android:textSize="22sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="치킨"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cat_cafe"
+                        android:layout_width="0dp"
+                        android:layout_height="64dp"
+                        android:layout_marginEnd="@dimen/spacing_1"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_category_item"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="☕"
+                            android:textSize="22sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="카페"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cat_more"
+                        android:layout_width="0dp"
+                        android:layout_height="64dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_category_item"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="···"
+                            android:textColor="@color/primary"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="더보기"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ── Promotion Banners (horizontal scroll) ── -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:layout_marginVertical="@dimen/spacing_4"
+                android:paddingHorizontal="@dimen/page_horizontal_padding"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Banner 1: 서울사랑상품권 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="300dp"
+                        android:layout_height="120dp"
+                        android:layout_marginEnd="@dimen/spacing_3"
+                        android:elevation="0dp"
+                        app:cardCornerRadius="@dimen/radius_xl"
+                        app:cardElevation="0dp"
+                        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/bg_gradient_primary" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="bottom"
+                                android:orientation="vertical"
+                                android:padding="@dimen/page_horizontal_padding">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/spacing_1"
+                                    android:letterSpacing="0.15"
+                                    android:text="Limited Event"
+                                    android:textColor="#80A3F699"
+                                    android:textSize="10sp"
+                                    android:textAllCaps="true" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:lineSpacingMultiplier="1.2"
+                                    android:text="서울사랑상품권\n최대 10% 혜택"
+                                    android:textColor="#FFFFFFFF"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Banner 2: 오늘만 무료배달 -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="300dp"
+                        android:layout_height="120dp"
+                        android:elevation="0dp"
+                        app:cardCornerRadius="@dimen/radius_xl"
+                        app:cardElevation="0dp"
+                        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/bg_gradient_success" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="bottom"
+                                android:orientation="vertical"
+                                android:padding="@dimen/page_horizontal_padding">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/spacing_1"
+                                    android:letterSpacing="0.15"
+                                    android:text="New Store"
+                                    android:textColor="#B3FFFFFF"
+                                    android:textSize="10sp"
+                                    android:textAllCaps="true" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:lineSpacingMultiplier="1.2"
+                                    android:text="오늘만 무료배달\n우리동네 맛집"
+                                    android:textColor="#FFFFFFFF"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- ── Filter Chips ── -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:layout_marginBottom="@dimen/spacing_2"
+                android:paddingHorizontal="@dimen/page_horizontal_padding"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_free_delivery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="무료배달"
+                        style="@style/Widget.Material3.Chip.Filter" />
+
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="신규맛집"
+                        style="@style/Widget.Material3.Chip.Filter" />
+
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="포장/매장식사"
+                        style="@style/Widget.Material3.Chip.Filter" />
+
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="쿠폰할인"
+                        style="@style/Widget.Material3.Chip.Filter" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <!-- ── Featured Section Header + Countdown ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginHorizontal="@dimen/page_horizontal_padding"
+                android:layout_marginTop="@dimen/spacing_7"
+                android:layout_marginBottom="@dimen/spacing_5"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="특별 할인"
+                        android:textColor="@color/on_surface"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_1"
+                        android:text="지금 이 시간에만 만날 수 있는 혜택"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_error"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/spacing_3"
+                    android:paddingVertical="@dimen/spacing_1">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:contentDescription="타이머"
+                        android:src="@drawable/ic_orders"
+                        android:tint="@color/on_error_container" />
+
+                    <TextView
+                        android:id="@+id/tv_countdown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_1"
+                        android:text="00:00:00"
+                        android:textColor="@color/on_error_container"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ── Stores RecyclerView ── -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_stores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

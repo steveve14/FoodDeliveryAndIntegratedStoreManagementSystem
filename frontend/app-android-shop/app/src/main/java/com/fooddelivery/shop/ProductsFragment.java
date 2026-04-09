@@ -2,15 +2,22 @@ package com.fooddelivery.shop;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,6 +30,8 @@ import com.fooddelivery.shop.models.MenuDto;
 import com.fooddelivery.shop.network.ApiClient;
 import com.fooddelivery.shop.network.ApiService;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import retrofit2.Call;
@@ -35,6 +44,32 @@ public class ProductsFragment extends Fragment {
     private TextView tvEmptyProducts;
     private ProductAdapter adapter;
     private String storeId;
+
+    // 이미지 피커 상태 (다이얼로그 생명주기와 공유)
+    private ActivityResultLauncher<String> pickImageLauncher;
+    private ImageView pendingImageView;
+    private String pendingImageBase64;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri == null) return;
+                    String encoded = encodeImageToBase64(uri);
+                    if (encoded != null) {
+                        pendingImageBase64 = encoded;
+                        if (pendingImageView != null) {
+                            // 선택 직후 URI로 바로 표시 (빠름)
+                            pendingImageView.setImageURI(uri);
+                            pendingImageView.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "이미지를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,7 +98,6 @@ public class ProductsFragment extends Fragment {
 
         btnAddMenu.setOnClickListener(v -> showMenuDialog(null));
 
-        // Get storeId from StoreManager
         if (StoreManager.getInstance().getStoreId() != null) {
             storeId = StoreManager.getInstance().getStoreId();
         }
@@ -112,34 +146,83 @@ public class ProductsFragment extends Fragment {
 
     @SuppressLint("SetTextI18n")
     private void showMenuDialog(@Nullable MenuDto existing) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle(existing != null ? "메뉴 수정" : "새 메뉴 등록");
+        boolean isNew = (existing == null);
 
-        View dialogView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, null);
-        // Use a simple custom layout with EditTexts
+        // 다이얼로그별 이미지 상태 초기화
+        pendingImageBase64 = isNew ? null : existing.getImageUrl();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(isNew ? "새 메뉴 등록" : "메뉴 수정");
+
         android.widget.LinearLayout layout = new android.widget.LinearLayout(getContext());
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
         layout.setPadding(48, 32, 48, 16);
 
         EditText etName = new EditText(getContext());
-        etName.setHint("메뉴 이름");
-        if (existing != null) etName.setText(existing.getName());
+        etName.setHint("메뉴 이름 *");
+        if (!isNew) etName.setText(existing.getName());
         layout.addView(etName);
 
         EditText etPrice = new EditText(getContext());
-        etPrice.setHint("가격");
+        etPrice.setHint("가격 *");
         etPrice.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-        if (existing != null) etPrice.setText(String.valueOf(existing.getPrice()));
+        if (!isNew) etPrice.setText(String.valueOf(existing.getPrice()));
         layout.addView(etPrice);
 
         EditText etDesc = new EditText(getContext());
         etDesc.setHint("설명 (선택)");
-        if (existing != null && existing.getDescription() != null) etDesc.setText(existing.getDescription());
+        if (!isNew && existing.getDescription() != null) etDesc.setText(existing.getDescription());
         layout.addView(etDesc);
 
-        builder.setView(layout);
+        // 이미지 섹션
+        TextView tvImageLabel = new TextView(getContext());
+        tvImageLabel.setText(isNew ? "메뉴 이미지 * (필수)" : "메뉴 이미지");
+        tvImageLabel.setPadding(0, 24, 0, 8);
+        layout.addView(tvImageLabel);
 
-        builder.setPositiveButton(existing != null ? "수정" : "등록", (dialog, which) -> {
+        ImageView ivPreview = new ImageView(getContext());
+        ivPreview.setAdjustViewBounds(true);
+        ivPreview.setMaxHeight(500);
+        ivPreview.setVisibility(View.GONE);
+        layout.addView(ivPreview);
+
+        // 기존 이미지가 있으면 Base64 디코딩해서 미리보기 표시
+        if (pendingImageBase64 != null) {
+            try {
+                String base64Data = pendingImageBase64.contains(",")
+                        ? pendingImageBase64.substring(pendingImageBase64.indexOf(",") + 1)
+                        : pendingImageBase64;
+                byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+                Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (bm != null) {
+                    ivPreview.setImageBitmap(bm);
+                    ivPreview.setVisibility(View.VISIBLE);
+                }
+            } catch (Exception ignored) {
+                ivPreview.setVisibility(View.GONE);
+            }
+        }
+
+        pendingImageView = ivPreview; // 피커 콜백이 이 뷰를 갱신
+
+        Button btnPickImage = new Button(getContext());
+        btnPickImage.setText(pendingImageBase64 != null ? "이미지 변경" : "이미지 선택");
+        btnPickImage.setOnClickListener(v -> {
+            btnPickImage.setText("이미지 변경");
+            pickImageLauncher.launch("image/*");
+        });
+        layout.addView(btnPickImage);
+
+        builder.setView(layout);
+        // setPositiveButton에 null을 주어 자동 닫힘을 막고 아래서 직접 오버라이드
+        builder.setPositiveButton(isNew ? "등록" : "수정", null);
+        builder.setNegativeButton("취소", (d, w) -> pendingImageView = null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // 유효성 검사 통과 시에만 닫히도록 버튼 오버라이드
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String priceStr = etPrice.getText().toString().trim();
             String desc = etDesc.getText().toString().trim();
@@ -149,9 +232,25 @@ public class ProductsFragment extends Fragment {
                 return;
             }
 
-            int price = Integer.parseInt(priceStr);
-            CreateMenuRequest request = new CreateMenuRequest(name, desc, price, true);
+            if (isNew && pendingImageBase64 == null) {
+                Toast.makeText(getContext(), "메뉴 이미지를 선택해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int price;
+            try {
+                price = Integer.parseInt(priceStr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "가격을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String imageUrl = pendingImageBase64;
+            CreateMenuRequest request = new CreateMenuRequest(name, desc, price, true, imageUrl);
             ApiService api = ApiClient.getClient().create(ApiService.class);
+
+            pendingImageView = null;
+            dialog.dismiss();
 
             if (existing != null) {
                 api.updateMenu(storeId, existing.getId(), request).enqueue(new Callback<ApiResponse<MenuDto>>() {
@@ -181,9 +280,6 @@ public class ProductsFragment extends Fragment {
                 });
             }
         });
-
-        builder.setNegativeButton("취소", null);
-        builder.show();
     }
 
     private void confirmDelete(MenuDto menu) {
@@ -207,5 +303,26 @@ public class ProductsFragment extends Fragment {
                 })
                 .setNegativeButton("취소", null)
                 .show();
+    }
+
+    /** 갤러리에서 선택한 이미지를 Base64 data URI로 인코딩 (JPEG 80%, 최대 800px) */
+    private String encodeImageToBase64(Uri uri) {
+        try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            bitmap = scaleBitmapIfNeeded(bitmap, 800);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+            byte[] bytes = baos.toByteArray();
+            return "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Bitmap scaleBitmapIfNeeded(Bitmap bm, int maxSize) {
+        int w = bm.getWidth(), h = bm.getHeight();
+        if (w <= maxSize && h <= maxSize) return bm;
+        float scale = Math.min((float) maxSize / w, (float) maxSize / h);
+        return Bitmap.createScaledBitmap(bm, (int) (w * scale), (int) (h * scale), true);
     }
 }

@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS "menu" (
     "description" TEXT,
     "price"       BIGINT NOT NULL,
     "available"   BOOLEAN DEFAULT TRUE,
+    "image_url"   TEXT,
     "created_at"  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_menu_store FOREIGN KEY ("store_id") REFERENCES "store"("id")
 );

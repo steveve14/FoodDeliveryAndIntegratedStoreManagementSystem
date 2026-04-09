@@ -23,6 +23,7 @@ public class Menu implements Persistable<String> {
   private String description;
   private long price;
   private boolean available;
+  private String imageUrl;
   private Instant createdAt;
 
   @Transient private boolean isNewEntity;

@@ -36,6 +36,7 @@ public class MenuService {
                     m.getDescription(),
                     m.getPrice(),
                     m.isAvailable(),
+                    m.getImageUrl(),
                     m.getCreatedAt()))
         .collect(Collectors.toList());
   }
@@ -53,6 +54,7 @@ public class MenuService {
             .description(req.getDescription())
             .price(req.getPrice())
             .available(req.isAvailable())
+            .imageUrl(req.getImageUrl())
             .createdAt(Instant.now())
             .isNewEntity(true)
             .build();
@@ -64,6 +66,7 @@ public class MenuService {
         saved.getDescription(),
         saved.getPrice(),
         saved.isAvailable(),
+        saved.getImageUrl(),
         saved.getCreatedAt());
   }
 
@@ -85,6 +88,7 @@ public class MenuService {
             .description(req.getDescription())
             .price(req.getPrice())
             .available(req.isAvailable())
+            .imageUrl(req.getImageUrl())
             .build();
     Menu saved = menuRepository.save(updated);
     return new MenuDto(
@@ -94,6 +98,7 @@ public class MenuService {
         saved.getDescription(),
         saved.getPrice(),
         saved.isAvailable(),
+        saved.getImageUrl(),
         saved.getCreatedAt());
   }
 

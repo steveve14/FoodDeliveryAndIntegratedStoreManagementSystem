@@ -5,6 +5,7 @@ public class StoreManager {
     private String storeId;
     private String storeName;
     private String ownerName;
+    private String status; // "OPEN" or "CLOSED"
 
     private StoreManager() {}
 
@@ -22,10 +23,14 @@ public class StoreManager {
     public String getStoreId() { return storeId; }
     public String getStoreName() { return storeName; }
     public String getOwnerName() { return ownerName; }
-    
+
+    public void setStatus(String status) { this.status = status; }
+    public String getStatus() { return status; }
+
     public void clear() {
         storeId = null;
         storeName = null;
         ownerName = null;
+        status = null;
     }
 }
